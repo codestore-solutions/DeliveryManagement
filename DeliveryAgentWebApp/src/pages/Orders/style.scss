@@ -1,0 +1,16 @@
+@import '../../App.scss';
+
+
+#orders{
+    .header{
+       display: flex;
+       align-items: center;
+       margin-bottom: 1rem; 
+       justify-content: space-between;
+       h3{
+          font-size: 25px;
+          letter-spacing: 0.03em;
+       }
+    }
+}
+

@@ -1,0 +1,34 @@
+@import "../../App.scss";
+
+.sidebar {
+  .logo {
+    display: flex;
+    padding: 1rem 0;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    .img {
+      width: 30px;
+      height: 30px;
+      object-fit: cover;
+    }
+    .collapse-img {
+      width: 30px;
+      height: 30px;
+      object-fit: cover;
+    }
+    .logo-tag {
+       color: #fff;
+       padding-left: 15px;
+       font-size: 18px;
+       letter-spacing: 0.03em;
+    }
+    .logo-tag-collapse{
+      display: none;
+    }
+  }
+}
+
+.bottom-nav {
+  margin-top: auto;
+}

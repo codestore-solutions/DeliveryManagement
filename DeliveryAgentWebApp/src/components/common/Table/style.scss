@@ -1,0 +1,19 @@
+@import '../../../App.scss';
+
+#custom-table{
+    border-radius: 5px;
+    padding-right:  10px;
+    table{
+        box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+    }
+     thead > tr > th{
+         background:grey;
+         color: #fff;
+         font-size: 15px;
+         letter-spacing: 0.03em;
+     }
+     tr:nth-child(even) {
+        background-color: #eee;
+        
+    }
+}
