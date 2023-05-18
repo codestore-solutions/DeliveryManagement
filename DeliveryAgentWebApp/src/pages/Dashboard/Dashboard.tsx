@@ -16,33 +16,48 @@ import { Orders, Profile } from '..';
 
 const { Header, Content } = Layout;
 
+
+
 const menuItems = [
   {
-    key: '1',
+    key: 'Sub 1',
     icon: <DeliveredProcedureOutlined />,
-    label: 'Agents',
-    path: '/dashboard/agents',
+    title: 'Agents',
+    // path: '/dashboard/agents',
+    children:[
+       {
+        key: '1',
+        label: 'Available Agents',
+        path: '/dashboard/agents',
+       },
+       {
+        key: '2',
+        label: 'Agent Association',
+        path: '/dashboard/agents',
+       },
+
+    ]
   },
   {
-    key: '2',
+    key: '3',
     icon: <UnorderedListOutlined />,
     label: 'Orders',
     path: '/dashboard/orders',
   },
   {
-    key: '3',
+    key: '4',
     icon: <UserAddOutlined />,
     label: 'Profile',
     path: '/dashboard/profile',
   },
   {
-    key: '4',
+    key: '5',
     icon: <SettingOutlined />,
     label: 'Settigns',
     path: '/settings',
   },
   {
-    key: '5',
+    key: '6',
     icon: <LogoutOutlined />,
     label: 'Logout',
 
@@ -53,16 +68,13 @@ const Dashboard: React.FC = () => {
 
   return (
     <Layout id='dashboard'>
-      <Header style={{ padding: 0, position: "sticky", top: "0", borderBottom: "1px solid grey", }}>
+       <Sidebar menuItems={menuItems} collapsed={collapsed} setCollapsed={setCollapsed} />
+      <Layout>
+      <Header className='header'>
         <Navbar />
       </Header>
-      <Layout>
-        <Sidebar menuItems={menuItems} collapsed={collapsed} setCollapsed={setCollapsed} />
         <Content
-          style={{
-            height: "85vh",
-            margin: '24px 16px 0', overflowY: 'scroll'
-          }}
+          className='content'
         >
           <Routes>
             <Route path='/agents' element={<DeliveryAgents />} />

@@ -1,28 +1,19 @@
-@import '../../App.scss';
+@import "../../App.scss";
 
 
-#dashboard{
-    .slider{
-        .logo{
-            display: flex;
-            padding: 1rem 0;
-            align-items: center;
-            .img{
-                 width: 30px;
-                 height: 30px;
-                 padding: 5px;
-            }
-            .collapse-img{
-                width: 30px;
-                 height: 30px;
-                 margin: 0 auto;
-                padding: 0;
-            }
-            .logo-tag{
-                 font-weight: 700;
-                 letter-spacing: 0.02em;
-                 color: '#E74C43';
-            }
-        }
-    }
+#dashboard {
+  background-color: $background_color;
+  .header {
+    padding: 0;
+    position: sticky;
+    top: 0;
+    background-color: $buttonText_color;
+    margin-left: 1rem;
+  }
+  .content{
+    height: 85vh;
+    margin: 1rem 0 0 1rem;
+    overflow-y: scroll;
+  }
+    
 }

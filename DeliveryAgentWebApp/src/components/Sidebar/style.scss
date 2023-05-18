@@ -1,30 +1,62 @@
 @import "../../App.scss";
 
+/* Customize the sidebar container */
 .sidebar {
-  .logo {
-    display: flex;
-    padding: 1rem 0;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    .img {
-      width: 30px;
-      height: 30px;
-      object-fit: cover;
-    }
-    .collapse-img {
-      width: 30px;
-      height: 30px;
-      object-fit: cover;
-    }
-    .logo-tag {
-       color: #fff;
-       padding-left: 15px;
-       font-size: 18px;
-       letter-spacing: 0.03em;
-    }
-    .logo-tag-collapse{
-      display: none;
+  .ant-menu-item-group{
+     color: $buttonText_color;
+  }
+  .ant-layout-sider {
+    background-color: $base_color;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+  
+  }
+  /* Customize the sidebar menu */
+  .ant-menu {
+    background-color: $base_color;
+  }
+  .ant-menu-item {
+    color: $buttonText_color;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    font-size: 15px;
+  }
+  .ant-menu-item-title {
+    padding-left: 10px;
+  }
+  .ant-menu-item:hover {
+    background: $base_color;
+    color: #fff;
+  }
+  .ant-menu-item-selected {
+    border-left: 3px solid $buttonText_color;
+    color: red;
+  }
+  .container {
+    overflow: auto;
+    height: 100vh;
+    background-color: $base_color;
+    .demo-logo-vertical {
+      display: flex;
+      align-items: center;
+      margin: 1.5rem 0;
+      justify-content: center;
+      cursor: pointer;
+      .img {
+        width: 35px;
+        height: 35px;
+        object-fit: fill;
+      }
+      .logo-tag {
+        color: $buttonText_color;
+        padding-left: 5px;
+        font-size: 20px;
+        line-height: 25px;
+        letter-spacing: 0.03em;
+      }
+      .logo-tag-collapse {
+        display: none;
+      }
     }
   }
 }

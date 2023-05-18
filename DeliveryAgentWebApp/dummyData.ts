@@ -3,75 +3,67 @@ const dummyData = {
   data:[
     {
       key: "1",
-      agent_id:"23",
-      name: "Rajesh Kumar",
-      age: 32,
-      address: "Noida Sector 59 Metro Station",
-      status: ["NotVerified"],
-      availibility:['YES']
+      deliveryAgentId:"23",
+      deliveryAgentName: "Rajesh Kumar",
+      deliveryAgentAddress: "Noida sector 59 Metro Station",
+      agentStatus: 1,
+      verStatus: 0
     },
     {
       key: "2",
-      agent_id:"25",
-      name: "Raju Garg",
-      age: 42,
-      address: "Dwarika Sector 21, Delhi",
-      status: ["Pending"],
-      availibility:['NO']
+      deliveryAgentId:"23",
+      deliveryAgentName: "Rajesh Kumar",
+      deliveryAgentAddress: "Noida sector 59 Metro Station",
+      agentStatus: 1,
+      verStatus: 0
     },
     {
       key: "3",
-      agent_id:"12",
-      name: "Deepak Jain",
-      age: 32,
-      address: "Lucknow, GomtiNagar(UP)",
-      status: ["Verified"],
-      availibility:['YES']
+      deliveryAgentId:"23",
+      deliveryAgentName: "Rajesh Kumar",
+      deliveryAgentAddress: "Noida sector 59 Metro Station",
+      agentStatus: 1,
+      verStatus: 0
     },
     {
       key: "4",
-      agent_id:"03",
-      name: "Deepak Jain",
-      age: 32,
-      address: "Lucknow, GomtiNagar(UP)",
-      status: ["Verified"],
-      availibility:['YES']
+      deliveryAgentId:"23",
+      deliveryAgentName: "Rajesh Kumar",
+      deliveryAgentAddress: "Noida sector 59 Metro Station",
+      agentStatus: 1,
+      verStatus: 0
     },
     {
       key: "5",
-      agent_id:"93",
-      name: "Raju Garg",
-      age: 42,
-      address: "Dwarika Sector 21",
-      status: ["Pending"],
-      availibility:['YES']
+      deliveryAgentId:"23",
+      deliveryAgentName: "Rajesh Kumar",
+      deliveryAgentAddress: "Noida sector 59 Metro Station",
+      agentStatus: 1,
+      verStatus: 0
     },
     {
       key: "6",
-      agent_id:"55",
-      name: "Deepak Jain",
-      age: 32,
-      address: "Lucknow, GomtiNagar(UP)",
-      status: ["Verified"],
-      availibility:['NO']
+      deliveryAgentId:"23",
+      deliveryAgentName: "Rajesh Kumar",
+      deliveryAgentAddress: "Noida sector 59 Metro Station",
+      agentStatus: 1,
+      verStatus: 0
     },
     {
       key: "7",
-      agent_id:"42",
-      name: "Raju Garg",
-      age: 42,
-      address: "Dwarika Sector 21",
-      status: ["Pending"],
-      availibility:['YES']
+      deliveryAgentId:"23",
+      deliveryAgentName: "Rajesh Kumar",
+      deliveryAgentAddress: "Noida sector 59 Metro Station",
+      agentStatus: 1,
+      verStatus: 0
     },
     {
       key: "8",
-      agent_id:"31",
-      name: "Deepak Jain",
-      age: 32,
-      address: "Lucknow, GomtiNagar(UP)",
-      status: ["Verified"],
-      availibility:['YES']
+      deliveryAgentId:"23",
+      deliveryAgentName: "Rajesh Kumar",
+      deliveryAgentAddress: "Noida sector 59 Metro Station",
+      agentStatus: 1,
+      verStatus: 0
     },
   ],
   selectOptions : [
@@ -85,58 +77,78 @@ const dummyData = {
     {
       key: "1",
       order_id:"23",
-      payment_status: "Conformed",
+      payment_type: "Credit Card",
       delivery_address:"Sector 59 Noida",
-      amount: 2000
+      amount: 2000,
+      loading:false,
     },
     {
       key: "2",
       order_id:"24",
-      payment_status: "Conformed",
+      payment_type: "ONLINE",
       delivery_address:"Dwarika Sector 21, Delhi",
-      amount: 67000
+      amount: 67000,
+      loading:false
     },
     {
       key: "3",
       order_id:"25",
-      payment_status: "Conformed",
+      payment_type: "COD",
       delivery_address:"Sector 62 Noida",
-      amount: 5000
+      amount: 5000,
+      loading:false
     },
     {
       key: "4",
       order_id:"26",
-      payment_status: "Conformed",
+      payment_type: "COD",
       delivery_address:"Sector 59 Noida",
-      amount: 1000
+      amount: 1000,
+      loading:false
+    },
+    {
+      key: "5",
+      order_id:"26",
+      payment_type: "COD",
+      delivery_address:"Sector 59 Noida",
+      amount: 2000,
+      loading:false
+    },
+    {
+      key: "6",
+      order_id:"26",
+      payment_type: "COD",
+      delivery_address:"Sector 59 Noida",
+      amount: 1000,
+      loading:false
     },
   ],
   assignedOrderData: [
     {
       key: "1",
       order_id:"23",
-      payment_status: "Conformed",
+      payment_type: "UPI",
       assigned_agent:"Ram Manohar",
     
     },
     {
       key: "2",
       order_id:"93",
-      payment_status: "Conformed",
+      payment_type: "Online Banking",
       assigned_agent:"Ram Manohar",
     
     },
     {
       key: "3",
       order_id:"99",
-      payment_status: "Conformed",
+      payment_type: "Credit Card",
       assigned_agent:"Ram Manohar",
     
     },
     {
       key: "4",
       order_id:"03",
-      payment_status: "Conformed",
+      payment_type: "COD",
       assigned_agent:"Ram Manohar",
     
     },

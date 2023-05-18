@@ -1,5 +1,5 @@
 export const ApiContants = {
-     baseUrl: 'https://dummyjson.com/',
+     baseUrl: 'https://app-deliveragent-dev.azurewebsites.net/api/',
 
      // API Response Codes
      successCode: 200,
@@ -16,7 +16,9 @@ export const ApiContants = {
      signupEndpoint:  'signup',
 
      // Agents Endpoints
-     getAgentList: 'agents',
-     assignOrder: 'assignOrder',
+     getAgentList: 'businessAdmin/GetAllAgentList',
+     assignOrder: 'orderAssign',
      
+     //Orders endpoint
+     getOrders: 'order'
 }

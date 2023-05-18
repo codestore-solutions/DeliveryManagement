@@ -2,15 +2,13 @@
 
 
 #orders{
-    .header{
-       display: flex;
-       align-items: center;
-       margin-bottom: 1rem; 
-       justify-content: space-between;
-       h3{
-          font-size: 25px;
-          letter-spacing: 0.03em;
-       }
+   h3{
+      font-style: normal;
+      font-weight: 700;
+      font-size: 25px;
+      line-height: 38px;
+      color: #141C38;
+      margin: 1rem 0;
     }
 }
 

@@ -1,33 +1,33 @@
-import { Table } from 'antd';
-import { FC } from 'react'
+import { Table } from "antd";
+import { FC } from "react";
 
-import './style.scss'
+import "./style.scss";
 
-interface customTableProps{
-    columns: Array<any>;
-    data: Array<any>;
-    pageSizeOptions?: Array<number> | [3];
-    showSizeChanger?: boolean,
-    showQuickJumper?: boolean,
-    pageSize: number;
+interface customTableProps {
+  columns: Array<any>;
+  data: Array<any>;
+  pagination: {};
+  handleTableChange: any;
+  loading: boolean;
 }
 
-const CustomTable: FC<customTableProps> = ({columns, data,pageSizeOptions, pageSize,showQuickJumper,showSizeChanger}) => {
+const CustomTable: FC<customTableProps> = ({
+  columns,
+  data,
+  pagination,
+  handleTableChange,
+  loading,
+}) => {
   return (
     <Table
-        columns={columns}
-        dataSource={data}
-        pagination={{
-          pageSizeOptions: pageSizeOptions,
-          showSizeChanger: showSizeChanger,
-          showQuickJumper: showQuickJumper,
-          pageSize: pageSize,
-          showTotal: (total:any, range:any) =>
-            `${range[0]}-${range[1]} of ${total} items`,
-        }}
-        id="custom-table"
-      />
-  )
-}
+      columns={columns}
+      dataSource={data}
+      pagination={pagination}
+      onChange={handleTableChange}
+      loading={loading}
+      id="custom-table"
+    />
+  );
+};
 
-export default CustomTable
+export default CustomTable;

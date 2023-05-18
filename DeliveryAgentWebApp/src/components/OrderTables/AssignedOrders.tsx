@@ -8,7 +8,7 @@ import dummyData from "../../../dummyData";
 export interface DataType {
   key: React.Key;
   order_id: string;
-  payment_status: string;
+  payment_type: string;
   assigned_agent: string;
 
 }
@@ -24,7 +24,7 @@ const AssignedOrders = () => {
     },
     {
       title: "Payment Status",
-      dataIndex: "payment_status",
+      dataIndex: "payment_type",
       key: "payment",
       render: (text: any) => <p className="tableTxt">{text}</p>,
     },
@@ -44,7 +44,7 @@ const AssignedOrders = () => {
       pagination={{
         pageSizeOptions,
         showQuickJumper: true,
-        pageSize: 4,
+        pageSize: 6,
         showTotal: (total, range) =>
           `${range[0]}-${range[1]} of ${total} items`,
       }}
