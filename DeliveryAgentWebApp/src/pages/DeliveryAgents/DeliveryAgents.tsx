@@ -1,6 +1,7 @@
 import { Space, Button } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { AppstoreOutlined, EyeOutlined } from "@ant-design/icons";
+import {  EyeOutlined } from "@ant-design/icons";
+import { v4 as uuidv4 } from "uuid";
 import "./style.scss";
 // import dummyData from "../../../dummyData";
 import { useEffect, useState } from "react";
@@ -142,7 +143,11 @@ const DeliveryAgents: React.FC = () => {
       instance
         .getAgentsList(pagination.pageNumber, pagination.limit)
         .then((res) => {
-          setAgentsList(res);
+          const formattedData = res?.map((item: any) => ({
+            ...item,
+            key: uuidv4(),
+          }));
+          setAgentsList(formattedData);
           setLoading(false);
         });
       console.log("datal", agentsList);

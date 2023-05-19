@@ -12,7 +12,7 @@ import './style.scss';
 import { Routes, Route, } from 'react-router-dom';
 import DeliveryAgents from '../DeliveryAgents/DeliveryAgents';
 import { Navbar, Sidebar } from '../../components';
-import { Orders, Profile } from '..';
+import { AssociatedAgents, Orders, Profile } from '..';
 
 const { Header, Content } = Layout;
 
@@ -23,7 +23,6 @@ const menuItems = [
     key: 'Sub 1',
     icon: <DeliveredProcedureOutlined />,
     title: 'Agents',
-    // path: '/dashboard/agents',
     children:[
        {
         key: '1',
@@ -33,9 +32,8 @@ const menuItems = [
        {
         key: '2',
         label: 'Agent Association',
-        path: '/dashboard/agents',
+        path: '/dashboard/associatedAgents',
        },
-
     ]
   },
   {
@@ -78,6 +76,7 @@ const Dashboard: React.FC = () => {
         >
           <Routes>
             <Route path='/agents' element={<DeliveryAgents />} />
+            <Route path='/associatedAgents' element={<AssociatedAgents />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/orders" element={<Orders />} />
           </Routes>

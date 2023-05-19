@@ -18,6 +18,7 @@ export const ApiContants = {
      // Agents Endpoints
      getAgentList: 'businessAdmin/GetAllAgentList',
      assignOrder: 'orderAssign',
+     assignOrderInBulk:'orderAssign/assignOrderInBulk',
      
      //Orders endpoint
      getOrders: 'order'

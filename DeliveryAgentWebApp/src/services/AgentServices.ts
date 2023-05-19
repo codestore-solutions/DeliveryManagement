@@ -27,6 +27,15 @@ class AgentServices {
     }
     return response;
   };
+  assignBulkOrderToAgent = async (payload: any) => {
+    const url = ApiContants.assignOrderInBulk;
+    let response = await this.HttpsIntance.postRequest(url, payload);
+    if (response?.status === ApiContants.successCode) {
+      message.success("Agents Assigned Sucessfully.");
+    }
+    return response;
+  };
+
 }
 
 export default AgentServices;

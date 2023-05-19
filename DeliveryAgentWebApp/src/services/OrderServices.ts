@@ -5,7 +5,6 @@ let OrderInstance: OrderServices;
 
 class OrderServices {
   private HttpsIntance = HttpsServices.getAxiosInstance();
-
   static getInstance() {
     if (OrderInstance instanceof OrderServices) {
       return OrderInstance;
