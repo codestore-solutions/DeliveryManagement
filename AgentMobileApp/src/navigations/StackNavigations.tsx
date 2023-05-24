@@ -4,6 +4,7 @@ import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {RootStackParamList} from './types';
 import {LandingScreen, SignupScreen, LoginScreen, VerifyScreen, AddUpdateProfile} from '../screens';
+import TabNavigation from './TabNavigation';
 
 
 const RootStack = createStackNavigator<RootStackParamList>();
@@ -33,6 +34,11 @@ const StackNavigations = () => {
       <RootStack.Screen
         component={AddUpdateProfile}
         name="AddupdateProfile"
+        options={{headerShown: true}}
+      />
+      <RootStack.Screen
+        component={TabNavigation}
+        name="Home"
         options={{headerShown: false}}
       />
       

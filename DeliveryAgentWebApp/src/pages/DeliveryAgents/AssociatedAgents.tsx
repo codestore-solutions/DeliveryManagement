@@ -3,6 +3,8 @@ import type { ColumnsType } from "antd/es/table";
 import "./style.scss";
 import dummyData from "../../../dummyData";
 import { CustomTable } from "../../components";
+import { Space } from "antd";
+import { Link } from "react-router-dom";
 
 export interface DataType {
   key: React.Key;
@@ -50,6 +52,15 @@ const AssociatedAgents: React.FC = () => {
         dataIndex: "orderStatus",
         key: "orderStatus",
         render: (text) => <p className="tableTxt">{text}</p>,
+      },
+      {
+        title: "Track Agent",
+        key: "action",
+        render: () => (
+          <Space size="middle">
+               <Link to='/track' style={{}}>Track</Link>
+          </Space>
+        ),
       },
   ];
   return (

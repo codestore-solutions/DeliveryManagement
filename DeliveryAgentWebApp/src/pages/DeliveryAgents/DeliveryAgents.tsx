@@ -1,12 +1,12 @@
-import { Space, Button } from "antd";
+import { Space } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import {  EyeOutlined } from "@ant-design/icons";
 import { v4 as uuidv4 } from "uuid";
 import "./style.scss";
 // import dummyData from "../../../dummyData";
 import { useEffect, useState } from "react";
 import AgentServices from "../../services/AgentServices";
 import { CustomTable } from "../../components";
+import { DetailsIcon } from "../../assets";
 
 export interface DataType {
   key: React.Key;
@@ -42,9 +42,8 @@ const DeliveryAgents: React.FC = () => {
 
   const [pagination, setPagination] = useState({
     pageNumber: 1,
-    limit: 8,
-    total: 0,
-    pageSize: 5,
+    total: 8,
+    pageSize: 6,
     showTotal: (total: any, range: any) =>
       `${range[0]}-${range[1]} of ${total} items`,
   });
@@ -99,9 +98,9 @@ const DeliveryAgents: React.FC = () => {
         <>
           <span>
             {verStatus === 1 ? (
-              <p className="tableTxt">Verified</p>
+              <p className="verified">Verified</p>
             ) : (
-              <p className="tableTxt">Not Verified</p>
+              <p className="codStatus">Not Verified</p>
             )}{" "}
           </span>
         </>
@@ -109,29 +108,17 @@ const DeliveryAgents: React.FC = () => {
     },
     {
       title: "Details",
-      key: "details",
-      render: () => (
-        <Space size="middle">
-          <EyeOutlined style={{ color: "#545BFC" }} />
-        </Space>
-      ),
-    },
-    {
-      title: "Assign Order",
       key: "action",
       render: () => (
         <Space size="middle">
-          <Button
-            style={{ background: "#545BFC", color: "white", fontWeight: "500" }}
-          >
-            Assign Order
-          </Button>
+          <img src={DetailsIcon} alt="" />
         </Space>
       ),
     },
   ];
 
   const handleTableChange = (pagination: any, filters: any, sorter: any) => {
+    console.log("Page", pagination);
     const { current, pageSize } = pagination;
     setPagination({ ...pagination, pageNumber: current, limit: pageSize });
   };
@@ -141,7 +128,7 @@ const DeliveryAgents: React.FC = () => {
       let instance = AgentServices.getInstance();
       setLoading(true);
       instance
-        .getAgentsList(pagination.pageNumber, pagination.limit)
+        .getAgentsList(pagination.pageNumber, pagination.pageSize)
         .then((res) => {
           const formattedData = res?.map((item: any) => ({
             ...item,
@@ -153,7 +140,7 @@ const DeliveryAgents: React.FC = () => {
       console.log("datal", agentsList);
     };
     getAgents();
-  }, []);
+  }, [pagination.pageNumber]);
 
   return (
     <div id="delivery-agent">

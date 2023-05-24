@@ -86,8 +86,23 @@ const LoginScreen = () => {
               <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
                 <Text style={[styles.info, styles.signInBtn]}> Sign Up</Text>
               </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('AddupdateProfile')
+                }>
+                <Text style={[styles.info, styles.signInBtn]}> Profile</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('Home', {
+                    screen:'Assignments'
+                  })
+                }>
+                <Text style={[styles.info, styles.signInBtn]}> Home</Text>
+              </TouchableOpacity>
             </View>
           </View>
+
           <Text style={styles.info}>© Copyright 2022 AgentApp </Text>
         </View>
       )}

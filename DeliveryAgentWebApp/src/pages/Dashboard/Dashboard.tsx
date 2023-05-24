@@ -12,7 +12,7 @@ import './style.scss';
 import { Routes, Route, } from 'react-router-dom';
 import DeliveryAgents from '../DeliveryAgents/DeliveryAgents';
 import { Navbar, Sidebar } from '../../components';
-import { AssociatedAgents, Orders, Profile } from '..';
+import { AgentDetails, AssociatedAgents, Orders, Profile } from '..';
 
 const { Header, Content } = Layout;
 
@@ -76,7 +76,9 @@ const Dashboard: React.FC = () => {
         >
           <Routes>
             <Route path='/agents' element={<DeliveryAgents />} />
+            <Route path='/agent-details' element={<AgentDetails />} />
             <Route path='/associatedAgents' element={<AssociatedAgents />} />
+
             <Route path="/profile" element={<Profile />} />
             <Route path="/orders" element={<Orders />} />
           </Routes>

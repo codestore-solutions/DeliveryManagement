@@ -1,9 +1,30 @@
-
 // Varible Declearation
-$base_color:#545BFC;
-$buttonText_color:#fff;
-$background_color:#F5F5F5;
-
+$base_color: #545bfc;
+$buttonText_color: #fff;
+$background_color: #f5f5f5;
+$verified_color: #50cd89;
+$notVerified: #f1416c;
 
 // Button Design
 
+.verified {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 26px;
+  color: $verified_color;
+  background: #e8fff3;
+ border-radius: 5px;
+ padding: 0 2px;
+  text-align: center;
+}
+
+.codStatus{
+    font-weight: 500;
+  font-size: 14px;
+  line-height: 26px;
+  color: $notVerified;
+  background: rgba(241, 65, 108, 0.07);
+  text-align: center;
+  border-radius: 5px;
+  padding:0 2px;
+}

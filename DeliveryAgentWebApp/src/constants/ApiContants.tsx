@@ -21,5 +21,5 @@ export const ApiContants = {
      assignOrderInBulk:'orderAssign/assignOrderInBulk',
      
      //Orders endpoint
-     getOrders: 'order'
+     getOrders: 'order/availableOrderList'
 }

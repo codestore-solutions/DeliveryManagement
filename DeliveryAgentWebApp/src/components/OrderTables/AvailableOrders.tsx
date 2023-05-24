@@ -2,14 +2,18 @@ import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import "./style.scss";
 import "../../pages/DeliveryAgents/style.scss";
-import { Button, Space, Spin } from "antd";
+import { Button, Input, Select, SelectProps, Space, Spin } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { CustomTable } from "../index";
-import { EyeOutlined, LoadingOutlined } from "@ant-design/icons";
+import { LoadingOutlined } from "@ant-design/icons";
 import AgentServices from "../../services/AgentServices";
 import { ApiContants } from "../../constants/ApiContants";
 import { useEffect } from "react";
 import OrderServices from "../../services/OrderServices";
+import { DetailsIcon } from "../../assets";
+import { useSelector, useDispatch } from "react-redux";
+
+const { Search } = Input;
 
 export interface DataType {
   key: React.Key;
@@ -21,24 +25,46 @@ export interface DataType {
 }
 const antIcon = <LoadingOutlined style={{ color: "#fff" }} spin />;
 
+const options: SelectProps["options"] = [
+  {
+    value: 1,
+    label: "Fast Delivery",
+  },
+  {
+    value: 0,
+    label: "Normal Delivery",
+  },
+];
+
+// Payment filter
+let paymentFilter = [
+  { text: "COD", value: 1 },
+  { text: "Paid", value: 2 },
+];
+
 const AvailableOrders = () => {
-  const [isMultiSelect, setMultiSelect] = useState<boolean>(false);
+  // const [isMultiSelect, setMultiSelect] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [deliveryType, setDeliveryType] = useState<any>(1);
   const [selectedOrders, setSelectedOrders] = useState<Array<any>>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [bulkloading, setBulkLoading] = useState<boolean>(false);
   const [data, setData] = useState<any>(null);
   const [pagination, setPagination] = useState({
     pageNumber: 1,
-    limit: 8,
-    total: 0,
+    total: 6,
     pageSize: 5,
     showTotal: (total: any, range: any) =>
       `${range[0]}-${range[1]} of ${total} items`,
   });
+
+  // Handle Chnage for Table
   const handleTableChange = (pagination: any) => {
+    console.log("pag", pagination);
     const { current, pageSize } = pagination;
     setPagination({ ...pagination, pageNumber: current, limit: pageSize });
   };
+
   const columns: ColumnsType<DataType> = [
     {
       title: "Order ID",
@@ -50,7 +76,17 @@ const AvailableOrders = () => {
       title: "Payment Mode",
       dataIndex: "paymentType",
       key: "paymentType",
-      render: (text: any) => <p className="tableTxt">{text}</p>,
+      filters: paymentFilter,
+      render: (_, record: any) => (
+        <Space size="middle">
+          {record?.paymentType === 1 ? (
+            <p className="codStatus">COD</p>
+          ) : (
+            <p className="verified">Paid</p>
+          )}
+        </Space>
+      ),
+      onFilter: (value, record) => record.paymentType === value,
     },
     {
       title: "Delivery Address",
@@ -69,7 +105,7 @@ const AvailableOrders = () => {
       key: "details",
       render: () => (
         <Space size="middle">
-          <EyeOutlined style={{ color: "#545BFC" }} />
+          <img src={DetailsIcon} alt="" />
         </Space>
       ),
     },
@@ -114,14 +150,15 @@ const AvailableOrders = () => {
           return item;
         });
         setData(updatedData);
+        fetchOrders(deliveryType);
       }
     });
   };
   // Fetch Orders Function
-  const fetchOrders = async () => {
+  const fetchOrders = async (deliveryType: any) => {
     let instance = OrderServices.getInstance();
     setLoading(true);
-    const res = await instance.getOrderList("1", "6");
+    const res = await instance.getOrderList(deliveryType, 0);
     if (res?.data) {
       const formattedData = res?.data.map((item: any) => ({
         ...item,
@@ -134,7 +171,6 @@ const AvailableOrders = () => {
   };
   // Cancel MultiSelect
   const cancelMultiSelect = () => {
-    setMultiSelect(false);
     setSelectedOrders([]);
     setSelectedRowKeys([]);
   };
@@ -148,67 +184,70 @@ const AvailableOrders = () => {
     let payload: any = { orderId: [] };
     selectedOrders?.forEach((item) => payload.orderId.push(item.id));
     console.log("data", payload);
-    setLoading(true);
+    setBulkLoading(true);
     let instance = AgentServices.getInstance();
     let res = await instance.assignBulkOrderToAgent(payload);
     if (res?.status === ApiContants.successCode) {
-      setLoading(false);
+      setBulkLoading(false);
+      fetchOrders(deliveryType);
       cancelMultiSelect();
     }
   };
-  const rowSelection = isMultiSelect
-    ? {
-        selectedRowKeys,
-        onChange: handleSelectChange,
-      }
-    : null;
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: handleSelectChange,
+  };
+
+  // Handle FilterChange
+  const handleChange = (value: string | string[]) => {
+    console.log(`Selected: ${value}`);
+    setDeliveryType(value);
+    fetchOrders(value);
+  };
 
   useEffect(() => {
-    fetchOrders();
-  }, []);
+    fetchOrders(deliveryType);
+  }, [pagination.pageNumber]);
 
   return (
     <div id="available-list">
       <div className="available-list-header">
         <div className="filter">
-          <h1>Filters</h1>
+          {/* <Search placeholder="Search here.." allowClear onSearch={onSearch} style={{ width: "30vw", padding:"5px 10px", outline:"none" }} /> */}
+          <span>Filter: </span>
+          <Select
+            size={"large"}
+            defaultValue={"Fast Delivery"}
+            onChange={handleChange}
+            options={options}
+            style={{ width: "30vw" }}
+          />
         </div>
+
         <div className="action">
-          {isMultiSelect ? (
-            <Button
-              type="default"
-              className="custom-button"
-              onClick={multiAgentassignHandler}
-              style={{ backgroundColor: "#545BFC", color: "#fff" }}
-            >
-              {loading ? (
-                <p>
-                  {" "}
-                  <Spin indicator={antIcon} /> Assigning...
-                </p>
-              ) : (
-                "AssignInBulk"
-              )}
-            </Button>
-          ) : (
-            <Button
-              type="default"
-              className="custom-button"
-              onClick={() => setMultiSelect(true)}
-              style={{ backgroundColor: "#545BFC", color: "#fff" }}
-            >
-              AssignInBulk
-            </Button>
-          )}
-          {isMultiSelect && (
-            <Button
+          <Button
+            type="default"
+            className="custom-button"
+            onClick={multiAgentassignHandler}
+            style={{ backgroundColor: "#545BFC", color: "#fff" }}
+          >
+            {bulkloading ? (
+              <p>
+                {" "}
+                <Spin indicator={antIcon} /> Assigning...
+              </p>
+            ) : (
+              "AssignInBulk"
+            )}
+          </Button>
+
+          {/* <Button
               type="default"
               className="custom-button"
               onClick={cancelMultiSelect}
             >
               Cancel
-            </Button>
-          )}
+            </Button> */}
         </div>
       </div>
       <CustomTable

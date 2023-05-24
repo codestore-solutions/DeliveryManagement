@@ -2,3 +2,9 @@ export  {default as DeliveryImg} from './images/deliverySvg.webp';
 export {default as LogoImg} from './svgs/logo.jpg';
 export {default as HidePasswordIcon} from './svgs/EyeClose.svg';
 export {default as ShowPasswordIcon} from './svgs/EyeOpen.svg';
+export {default as UploadIcon} from './svgs/Upload.svg';
+export {default as CalenderIcon} from './svgs/calender.svg';
+export {default as SearchIcon} from './svgs/search-icon.svg';
+export {default as LeftArrowIcon} from './images/arrowLeft.svg'
+export {default as NotificationIcon} from './images/notification.svg'
+export {default as ChatIcon} from './svgs/chat-icon.svg'
