@@ -8,3 +8,7 @@ export {default as SearchIcon} from './svgs/search-icon.svg';
 export {default as LeftArrowIcon} from './images/arrowLeft.svg'
 export {default as NotificationIcon} from './images/notification.svg'
 export {default as ChatIcon} from './svgs/chat-icon.svg'
+export {default as EditIcon} from './svgs/editicon.svg';
+export {default as EmailIcon} from './svgs/emailIcon.svg';
+export {default as CompanyIcon} from './svgs/company.svg';
+export {default as CheckIcon} from './svgs/checkIcon.svg';

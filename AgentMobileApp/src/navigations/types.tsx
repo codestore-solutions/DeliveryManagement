@@ -11,5 +11,5 @@ export type RootStackParamList = {
     Verify: undefined;
     Profile: undefined;
     Home: NavigatorScreenParams<TabParamList>;
-    AddupdateProfile: undefined | {userId: {}};
+    VerifyAgent: undefined | {userId: {}};
   };

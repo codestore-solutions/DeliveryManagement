@@ -3,7 +3,7 @@ import React from 'react';
 
 import {createStackNavigator} from '@react-navigation/stack';
 import {RootStackParamList} from './types';
-import {LandingScreen, SignupScreen, LoginScreen, VerifyScreen, AddUpdateProfile} from '../screens';
+import {LandingScreen, SignupScreen, LoginScreen, VerifyScreen, ProfileScreen, VerifyAgent} from '../screens';
 import TabNavigation from './TabNavigation';
 
 
@@ -32,8 +32,13 @@ const StackNavigations = () => {
         options={{headerShown: false}}
       />
       <RootStack.Screen
-        component={AddUpdateProfile}
-        name="AddupdateProfile"
+        component={VerifyAgent}
+        name="VerifyAgent"
+        options={{headerShown: true}}
+      />
+       <RootStack.Screen
+        component={ProfileScreen}
+        name="Profile"
         options={{headerShown: true}}
       />
       <RootStack.Screen

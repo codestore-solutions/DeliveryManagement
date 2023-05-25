@@ -12,6 +12,11 @@ export const apiConstant = {
     
     //Authentiction endpoint
     loginEndpoint:  'login',
-    signupEndpoint:  'signup'
+    signupEndpoint:  'signup',
     
+   // Agents EndPoints
+   createAgentProfile:'createProfile',
+   getAgentProfile:'getProfile',
+   updateAgentProfile:'updateProfile',
+
   };

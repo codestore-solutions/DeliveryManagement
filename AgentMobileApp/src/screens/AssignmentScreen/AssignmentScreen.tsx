@@ -56,9 +56,7 @@ const orderData = [
 ];
 
 
-
 const AssignmentScreen = () => {
-
   return (
     <SafeAreaView>
       <View style={styles.container}>

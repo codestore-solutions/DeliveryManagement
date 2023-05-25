@@ -15,13 +15,29 @@ import styles from '../SignupScreen/SignupStyle';
 import {Formik} from 'formik';
 import {LogoImg, ShowPasswordIcon, HidePasswordIcon} from '../../assets';
 import {loginValidationSchema} from '../../utils/validations/authValidation';
+import data from '../../dummyData.json';
 
 const LoginScreen = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const loginHandler = (values: any) => {
-    console.log('form Submitted', values);
+     data?.user?.map((ele:any) =>{
+          if(ele.email === values.email && ele.password === values.password){
+               if(ele.status=== 1){
+                  navigation.navigate('Home',{ 
+                    screen:'Assignments'
+                  })
+                  return;
+               }else if(ele.status === 2){
+                  navigation.navigate('VerifyAgent');
+                  return;
+               }else{
+                navigation.navigate('Profile');
+                return;
+               }
+          }
+     })
   };
   return (
     <Formik
@@ -81,14 +97,14 @@ const LoginScreen = () => {
             <Text style={styles.formButtonText}>Sign In</Text>
           </TouchableOpacity>
           <View style={styles.containerFooter}>
-            <View style={styles.footerHeading}>
+            {/* <View style={styles.footerHeading}>
               <Text style={styles.info}>I have'nt an account?</Text>
               <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
                 <Text style={[styles.info, styles.signInBtn]}> Sign Up</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate('AddupdateProfile')
+                  navigation.navigate('VerifyAgent')
                 }>
                 <Text style={[styles.info, styles.signInBtn]}> Profile</Text>
               </TouchableOpacity>
@@ -100,7 +116,7 @@ const LoginScreen = () => {
                 }>
                 <Text style={[styles.info, styles.signInBtn]}> Home</Text>
               </TouchableOpacity>
-            </View>
+            </View> */}
           </View>
 
           <Text style={styles.info}>© Copyright 2022 AgentApp </Text>
