@@ -144,7 +144,7 @@ const DeliveryAgents: React.FC = () => {
 
   return (
     <div id="delivery-agent">
-      <h3 className="heading">Delivery Agent List</h3>
+      <h3 className="heading">Delivery Agent List For Verification</h3>
       <CustomTable
         columns={columns}
         data={agentsList}

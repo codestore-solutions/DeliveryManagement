@@ -5,3 +5,4 @@ export {default as NotFound} from './NotFoundPage/NotFound'
 export {default as Orders} from './Orders/Orders'
 export {default as AssociatedAgents} from './DeliveryAgents/AssociatedAgents';
 export {default as AgentDetails}  from './AgentDetails/AgentDetails';
+export {default as Management}  from './Dashboard/Management';

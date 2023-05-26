@@ -15,81 +15,24 @@ const ProfileScreen = () => {
       <View style={styles.container}>
         <View style={styles.Profileheader}>
           <TouchableOpacity>
-            <Text style={styles.profileButton}>Profile Details</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.profileEditIcon}
-            onPress={() => navigation.navigate('CreateProfile')}>
-            <EditIcon width={23} height={23} />
+            <Text style={styles.profileButton}>Details</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.ProfileContent}>
-          <TouchableOpacity>
-            <Image
-              source={require('../../assets/svgs/companyavatar.png')}
-              style={styles.profileAvatar}
-            />
-            <Text style={styles.profileAboutDesc}>Profile Image</Text>
-          </TouchableOpacity>
           <View style={styles.profileDescription}>
             <Text style={styles.profileName}>Ravi Chaurasiya</Text>
             <View style={styles.profileTag}>
-              <View style={styles.profileTagIcon}>
-                <CheckIcon width={16} height={17} />
-              </View>
-              <Text style={styles.profileTagText}>Verified</Text>
+            <Text style={styles.profileName}>Status: </Text>
+              <Text style={styles.profileTagText}>Pending</Text>
             </View>
           </View>
           <Text style={styles.profileFounded}>Agent Id - 45</Text>
-          <Text style={styles.profileAboutHeading}>Details:</Text>
-          <View style={styles.details}>
-            <View style={styles.detailItem}>
-              <Text style={styles.profileFounded}>Service Range - 15 KM</Text>
-            </View>
-            <View style={styles.detailItem}>
-              <Text style={styles.profileFounded}>
-                Service Location- Noida, Sector 59,61, 62.{' '}
-              </Text>
-            </View>
-            <View style={styles.detailItem}>
-              <Text style={styles.profileFounded}>
-                Address- Kankhal, Haridwar
-              </Text>
-            </View>
-            <View style={styles.detailItem}>
-              <Text style={styles.profileFounded}>PinCode- 249408</Text>
-            </View>
-            <View style={styles.detailItem}>
-              <Text style={styles.profileFounded}>District- Haridwar</Text>
-            </View>
-            <View style={styles.detailItem}>
-              <Text style={styles.profileFounded}>State- Uttrakhand</Text>
-            </View>
-          </View>
-        </View>
-        <View style={styles.Profilefooter}>
-          <Text style={styles.profileUsername}>Contacts</Text>
-          <View style={styles.profileContacts}>
-            <View style={styles.profileContactsLink}>
-              <EmailIcon width={15} height={15} />
-              <Text style={styles.linkText}>ravi99@gmail.com</Text>
-            </View>
-            <View style={styles.profileContactsLink}>
-              <CompanyIcon width={15} height={15} />
-              <Text style={styles.linkText}>+91 7860965109</Text>
-              <Text style={styles.linkText}>+91 7355986157</Text>
-            </View>
+          <Text style={styles.profileFounded}>Business Id: 2342</Text>
+          <View style={styles.profileDescription}>
+            <Text>Your Verfication request is under process. Please wait for Verification. </Text>
           </View>
         </View>
       </View>
-      <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate('Home', {
-                     screen:'Assignments'
-                  })
-                }>
-                <Text style={{color: '#E74C43', textAlign: 'center'}}>Go to Home</Text>
-              </TouchableOpacity>
     </View>
   );
 };

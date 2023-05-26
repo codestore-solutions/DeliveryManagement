@@ -38,7 +38,7 @@ const StackNavigations = () => {
       />
        <RootStack.Screen
         component={ProfileScreen}
-        name="Profile"
+        name="VerifyStatus"
         options={{headerShown: true}}
       />
       <RootStack.Screen

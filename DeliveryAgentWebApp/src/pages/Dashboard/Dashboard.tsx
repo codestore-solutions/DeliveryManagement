@@ -12,50 +12,56 @@ import './style.scss';
 import { Routes, Route, } from 'react-router-dom';
 import DeliveryAgents from '../DeliveryAgents/DeliveryAgents';
 import { Navbar, Sidebar } from '../../components';
-import { AgentDetails, AssociatedAgents, Orders, Profile } from '..';
-
+import { AgentDetails, AssociatedAgents, Management, Orders, Profile } from '..';
+import {DashboardImg} from '../../assets'
 const { Header, Content } = Layout;
 
 
 
 const menuItems = [
   {
+    key: '1',
+    icon: <img src={DashboardImg} alt="" width={20} height={20} />,
+    label: 'Dashboard',
+    path: '/dashboard/management',
+  },
+  {
     key: 'Sub 1',
     icon: <DeliveredProcedureOutlined />,
     title: 'Agents',
     children:[
        {
-        key: '1',
+        key: '2',
         label: 'Available Agents',
         path: '/dashboard/agents',
        },
        {
-        key: '2',
+        key: '3',
         label: 'Agent Association',
         path: '/dashboard/associatedAgents',
        },
     ]
   },
   {
-    key: '3',
+    key: '4',
     icon: <UnorderedListOutlined />,
     label: 'Orders',
     path: '/dashboard/orders',
   },
   {
-    key: '4',
+    key: '5',
     icon: <UserAddOutlined />,
     label: 'Profile',
     path: '/dashboard/profile',
   },
   {
-    key: '5',
+    key: '6',
     icon: <SettingOutlined />,
     label: 'Settigns',
     path: '/settings',
   },
   {
-    key: '6',
+    key: '7',
     icon: <LogoutOutlined />,
     label: 'Logout',
 
@@ -75,6 +81,7 @@ const Dashboard: React.FC = () => {
           className='content'
         >
           <Routes>
+          <Route path='/management' element={<Management />} />
             <Route path='/agents' element={<DeliveryAgents />} />
             <Route path='/agent-details' element={<AgentDetails />} />
             <Route path='/associatedAgents' element={<AssociatedAgents />} />

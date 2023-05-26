@@ -9,7 +9,7 @@ export type RootStackParamList = {
     Login: undefined;
     Signup: undefined;
     Verify: undefined;
-    Profile: undefined;
+    VerifyStatus: undefined;
     Home: NavigatorScreenParams<TabParamList>;
     VerifyAgent: undefined | {userId: {}};
   };
