@@ -7,6 +7,7 @@ namespace EntityLayer.Models
         [Key]
         [Required]
         public int Id { get; set; }
+        public long BusinessId { get; set; }
         public int DeliveryAgentId  { get; set; }
         public string? DeliveryAgentName { get; set; }
         public string? DeliveryAgentAddress { get; set; }
@@ -19,8 +20,7 @@ namespace EntityLayer.Models
             Availale=1,
             NotAvailable=0,
         }
-
-       public enum OrderAssignedStatus
+        public enum OrderAssignedStatus
         {
             Assigned=1,
             NotAssigned=0
@@ -31,7 +31,6 @@ namespace EntityLayer.Models
             NotVerified=0,
             VerificationInProgress=2
         }   
-
         public OrderAssignedStatus OrderAssignStatus { get; set; }    
         public DeliveryAgentStatus AgentStatus { get; set; }    
         public VerificationStatus VerStatus { get; set; }  

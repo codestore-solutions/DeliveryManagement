@@ -4,6 +4,7 @@ using DataAccessLayer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(DeliveryDbContext))]
-    partial class DeliveryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230522033010_adding col into service location table")]
+    partial class addingcolintoservicelocationtable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,28 +24,6 @@ namespace DataAccessLayer.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("EntityLayer.Models.AgentAssign", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<long>("BuisnessId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("DeliveryAgentId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("orderAssigns");
-                });
 
             modelBuilder.Entity("EntityLayer.Models.AgentAssociation", b =>
                 {
@@ -77,9 +58,6 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<int>("AgentStatus")
                         .HasColumnType("int");
-
-                    b.Property<long>("BusinessId")
-                        .HasColumnType("bigint");
 
                     b.Property<string>("DeliveryAgentAddress")
                         .HasColumnType("nvarchar(max)");
@@ -161,37 +139,6 @@ namespace DataAccessLayer.Migrations
                         });
                 });
 
-            modelBuilder.Entity("EntityLayer.Models.Image", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("FileDescription")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FileExtension")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FilePath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("FileSizeInBytes")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Images");
-                });
-
             modelBuilder.Entity("EntityLayer.Models.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -209,12 +156,6 @@ namespace DataAccessLayer.Migrations
                     b.Property<string>("ShippingAddress")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("deliveryType")
-                        .HasColumnType("int");
-
-                    b.Property<int>("isOrderAssigned")
-                        .HasColumnType("int");
-
                     b.Property<int>("paymentType")
                         .HasColumnType("int");
 
@@ -230,8 +171,6 @@ namespace DataAccessLayer.Migrations
                             Id = 21,
                             OrderAmount = 2799.0,
                             ShippingAddress = "Noida Sector 59",
-                            deliveryType = 0,
-                            isOrderAssigned = 0,
                             paymentType = 2
                         },
                         new
@@ -239,8 +178,6 @@ namespace DataAccessLayer.Migrations
                             Id = 22,
                             OrderAmount = 9799.0,
                             ShippingAddress = "Noida Sector 6",
-                            deliveryType = 0,
-                            isOrderAssigned = 0,
                             paymentType = 1
                         },
                         new
@@ -248,8 +185,6 @@ namespace DataAccessLayer.Migrations
                             Id = 23,
                             OrderAmount = 18799.0,
                             ShippingAddress = "Noida Electronic City",
-                            deliveryType = 0,
-                            isOrderAssigned = 0,
                             paymentType = 2
                         },
                         new
@@ -257,8 +192,6 @@ namespace DataAccessLayer.Migrations
                             Id = 24,
                             OrderAmount = 799.0,
                             ShippingAddress = "Dwarka Sector 21",
-                            deliveryType = 0,
-                            isOrderAssigned = 0,
                             paymentType = 1
                         },
                         new
@@ -266,8 +199,6 @@ namespace DataAccessLayer.Migrations
                             Id = 25,
                             OrderAmount = 18299.0,
                             ShippingAddress = "Malviya Nagar Delhi",
-                            deliveryType = 0,
-                            isOrderAssigned = 0,
                             paymentType = 2
                         },
                         new
@@ -275,10 +206,27 @@ namespace DataAccessLayer.Migrations
                             Id = 26,
                             OrderAmount = 24799.0,
                             ShippingAddress = "Noida Sector 62",
-                            deliveryType = 0,
-                            isOrderAssigned = 0,
                             paymentType = 2
                         });
+                });
+
+            modelBuilder.Entity("EntityLayer.Models.OrderAssign", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DeliveryAgentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("orderAssigns");
                 });
 
             modelBuilder.Entity("EntityLayer.Models.ServiceLocation", b =>

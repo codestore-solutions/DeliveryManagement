@@ -3,18 +3,21 @@ using EntityLayer.Models;
 
 namespace DataAccessLayer.Data
 {
+   
+    #pragma warning disable 1591
     public class DeliveryDbContext: DbContext
     {
-        public DeliveryDbContext(DbContextOptions dbContextOptions): base(dbContextOptions)
+        public DeliveryDbContext(DbContextOptions<DeliveryDbContext> dbContextOptions): base(dbContextOptions)
         {
 
         }
         public DbSet<AgentAssociation> AgentAssociations { get; set; }
-        public DbSet<OrderAssign> orderAssigns { get; set; }
+        public DbSet<AgentAssign> orderAssigns { get; set; }
         public DbSet<DeliveryAgent> deliveryAgents { get; set; }
         public DbSet<BusinessAdmin> buisnessAdmin { get; set; }
         public DbSet<ServiceLocation> serviceLocations { get; set; }
-        public DbSet<Order> orders { get; set; }    
+        public DbSet<Order> orders { get; set; }   
+        public DbSet<Image> Images { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -85,21 +88,7 @@ namespace DataAccessLayer.Data
                 },
             };
 
-            var addAdminAgent = new List<BusinessAdmin>
-            {
-                new BusinessAdmin
-                {
-                    Id=1001,
-                    DeliveryAgentId = 1
-                },
-                new BusinessAdmin
-                {
-                    Id=1002,
-                    DeliveryAgentId=2
-                }
-            };
-
-            var addServiceLocstions = new List<ServiceLocation>
+            var addServiceLocations = new List<ServiceLocation>
             {
                 new ServiceLocation
                 {
@@ -129,11 +118,11 @@ namespace DataAccessLayer.Data
             };
 
             modelBuilder.Entity<Order>().HasData(addingorders);
-            modelBuilder.Entity<ServiceLocation>().HasData(addServiceLocstions);
-           /* modelBuilder.Entity<BusinessAdmin>().HasData(addAdminAgent);*/
+            modelBuilder.Entity<ServiceLocation>().HasData(addServiceLocations);
             modelBuilder.Entity<DeliveryAgent>().HasData(addingDeliveryAgents);
         }
 
     }
+    #pragma warning restore CS1591
 }
 

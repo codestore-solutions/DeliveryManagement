@@ -1,11 +1,7 @@
 ﻿using BusinessLogicLayer.IServices;
 using DataAccessLayer.IRepository;
 using EntityLayer.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static EntityLayer.Models.Order;
 
 namespace BusinessLogicLayer.Services
 {
@@ -17,9 +13,12 @@ namespace BusinessLogicLayer.Services
             this.unitOfWork = unitOfWork;
         }
 
-        public async Task<IEnumerable<Order>> GetAllOrdersAsync()
+        public async Task<IEnumerable<Order>> GetAllOrdersAsync(DeliveryType? deliveryType, IsOrderAssigned? isOrderAssigned)
         {
-            return await unitOfWork.OrderRepository.GetAllAsync();
+            var allItems = await unitOfWork.OrderRepository.AsQueryableAsync();
+            allItems = allItems.Where(item => deliveryType == null || item.deliveryType == deliveryType);
+            allItems= allItems.Where(item=> isOrderAssigned==null || item.isOrderAssigned==isOrderAssigned);
+            return allItems;
         }
     }
 }

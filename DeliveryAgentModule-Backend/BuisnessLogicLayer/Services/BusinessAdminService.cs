@@ -20,13 +20,13 @@ namespace BuisnessLogicLayer.Services
             this.mapper = mapper;
         }
 
-        public async Task<CreateBusinessAdminDto> AddNewDeliveryAgentAsync(CreateBusinessAdminDto buisnessAdminDto)
+        public async Task<VerifyAgentRequestDto> VerifyNewDeliveryAgentRequest(VerifyAgentRequestDto verifyAgentRequest)
         {
-            var domainModel= mapper.Map<BusinessAdmin>(buisnessAdminDto);
+            var domainModel= mapper.Map<BusinessAdmin>(verifyAgentRequest);
             await unitOfWork.BusinessAdminRepository.AddAsync(domainModel);
             await unitOfWork.SaveAsync();
-            var buisnessDto=mapper.Map<CreateBusinessAdminDto>(domainModel);
-            return buisnessDto;
+            var responseDto=mapper.Map<VerifyAgentRequestDto>(domainModel);
+            return responseDto;
         }
 
         public async Task<BusinessAdmin> DeleteDeliveryAgentAsync(int id)
@@ -34,16 +34,31 @@ namespace BuisnessLogicLayer.Services
             return await unitOfWork.BusinessAdminRepository.DeleteAsync(id);
         }
 
-        public async Task<IEnumerable> GetDeliveryAgentAsync(OrderAssignedStatus? orderAssignedStatus,DeliveryAgentStatus? status,int pageNumber = 1, int limit = 1000)
+        public async Task<IEnumerable> GetDeliveryAgentAsync(long id, OrderAssignedStatus orderAssignedStatus,DeliveryAgentStatus status, VerificationStatus verStatus, int pageNumber = 1, int limit = 1000)
         {
-            var allItems= unitOfWork.BusinessAdminRepository.AsQueryable();
-            allItems = allItems.Where(item => status == null || item.AgentStatus == status || item.OrderAssignStatus == orderAssignedStatus);
+            var allItems = await unitOfWork.BusinessAdminRepository.AsQueryableAsync();
+            allItems     = allItems.Where(x => x.BusinessId == id);   
+            allItems     = allItems.Where(item => item.AgentStatus == status);
+            allItems     = allItems.Where(item => item.VerStatus == verStatus);
+            allItems     = allItems.Where(item => item.OrderAssignStatus == orderAssignedStatus);
+
             return await allItems.Skip((pageNumber - 1) * limit).Take(limit).ToListAsync(); 
         }
         
         public Task<UpdateBusinessAdminDto> UpdateDeliveryAgentAsync(int id, UpdateBusinessAdminDto updateBuisnessAdminDto)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<BusinessAdmin> UpdateVerificationSatus(long id, VerificationStatus status)
+        {
+           var agent= unitOfWork.BusinessAdminRepository.FindInList(ids=>ids.DeliveryAgentId==id);
+            if (agent != null)
+            {
+                agent.VerStatus = status;
+            }        
+           await unitOfWork.SaveAsync();
+           return agent;
         }
     }
 }

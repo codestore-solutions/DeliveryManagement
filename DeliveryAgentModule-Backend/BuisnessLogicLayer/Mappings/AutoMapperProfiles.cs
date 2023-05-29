@@ -14,9 +14,9 @@ namespace BuisnessLogicLayer.Mappings
     {
         public AutoMapperProfiles()
         {
-           CreateMap<CreateBusinessAdminDto, BusinessAdmin>().ReverseMap();
-           CreateMap<OrderAssignRequestDto, OrderAssign>().ReverseMap();
-           CreateMap<UpdateOrderAssignDto, OrderAssign>().ReverseMap();
+           CreateMap<VerifyAgentRequestDto, BusinessAdmin>().ReverseMap();
+           CreateMap<AgentAssignRequestDto, AgentAssign>().ReverseMap();
+           CreateMap<UpdateOrderAssignDto, AgentAssign>().ReverseMap();
         }
     }
 }

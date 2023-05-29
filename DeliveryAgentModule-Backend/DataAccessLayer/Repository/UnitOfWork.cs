@@ -9,12 +9,13 @@ namespace DataAccessLayer.Repository
         public UnitOfWork(DeliveryDbContext dbContext)
         {
             this.dbContext = dbContext;
-            OrderAssignRepository = new OrderAssignRepository(this.dbContext);
+            OrderAssignRepository = new AssignDeliveryAgentRepository(this.dbContext);
             ServiceLocationRepository = new ServiceLocationRepository(this.dbContext);
             BusinessAdminRepository=new BusinessAdminRepository(this.dbContext);
             OrderRepository= new OrderRepository(this.dbContext);   
+            ImageRepository= new ImageRepository(this.dbContext);
         }
-        public IOrderAssignRepository OrderAssignRepository
+        public IAssignDeliveryAgentRepository OrderAssignRepository
         {
             get;
             private set;
@@ -24,6 +25,8 @@ namespace DataAccessLayer.Repository
         public IBusinessAdminRepository BusinessAdminRepository { get; private set; }
 
         public IOrderRepository OrderRepository { get; private set; }
+
+        public IImageRepository ImageRepository { get; private set; }
 
         public void Dispose()
         {
