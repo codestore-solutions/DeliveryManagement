@@ -1,9 +1,7 @@
 import {useNavigation} from '@react-navigation/native';
-import {apiConstant} from '../constant/ApiConstant';
+import {ApiConstant} from '../constant/ApiConstant';
 import {constant} from '../constant/GenralConstant'
-import axios from 'axios';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../navigations/types';
+import axios from '../utils/intercepters/axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Api base structure
@@ -13,38 +11,26 @@ export default async function API(
   apiMethod: string,
   cancelToken?: any,
 ) {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const auth = await AsyncStorage.getItem('token').then((res: any) => {
-    if (res) {
-      let token = JSON.parse(res);
-      return token.access_token;
-    } else {
-      return 'false';
-    }
-  });
-  // console.debug('Bearer ' + auth);
+  console.debug('Bearer CALLED');
   let init: Object = {};
   switch (apiMethod) {
     case 'GET':
       init = {
         method: 'GET',
-        url: `${apiConstant.baseUrl}${endpoint}`,
+        url: `${ApiConstant.baseUrl}${endpoint}`,
         headers: {
           'Content-Type': 'application/json',
-          Authorization: auth ? 'Bearer ' + auth : '',
         },
-        cancelToken: cancelToken,
+        // cancelToken: cancelToken,
       };
       break;
 
     case 'DELETE':
       init = {
         method: 'DELETE',
-        url: `${apiConstant.baseUrl}${endpoint}`,
+        url: `${ApiConstant.baseUrl}${endpoint}`,
         headers: {
           'Content-Type': 'application/json',
-          Authorization: auth ? 'Bearer ' + auth : '',
         },
       };
       break;
@@ -52,10 +38,9 @@ export default async function API(
     case 'PUT':
       init = {
         method: 'PUT',
-        url: `${apiConstant.baseUrl}${endpoint}`,
+        url: `${ApiConstant.baseUrl}${endpoint}`,
         headers: {
           'Content-Type': 'application/json',
-          Authorization: auth ? 'Bearer ' + auth : '',
           Accept: 'application/json',
         },
         data: JSON.stringify(payload),
@@ -63,31 +48,18 @@ export default async function API(
       break;
 
     case 'POST':
-      if (endpoint === apiConstant.loginEndpoint) {
         init = {
           method: apiMethod,
-          url: `${apiConstant.baseUrl}${endpoint}`,
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            Accept: 'application/json',
-          },
-          data: JSON.stringify(payload),
-        };
-      } else {
-        init = {
-          method: apiMethod,
-          url: `${apiConstant.baseUrl}${endpoint}`,
+          url: `${ApiConstant.baseUrl}${endpoint}`,
           headers: {
             'Content-Type': 'application/json',
-            Authorization: auth ? 'Bearer ' + auth : '',
-            Accept: 'application/json',
+             Accept: 'application/json',
           },
           data: JSON.stringify(payload),
         };
-      }
       break;
   }
-  console.info('Api URL ::', `${apiConstant.baseUrl}${endpoint}`);
+  console.info('Api URL ::', `${ApiConstant.baseUrl}${endpoint}`);
   return axios(init)
     .then(res => {
       return res;
@@ -102,9 +74,8 @@ export default async function API(
           status: error.response.status,
           data: error.response.data,
         };
-        if (error.response?.status === apiConstant.unAuthorizedCode) {
+        if (error.response?.status === ApiConstant.unAuthorizedCode) {
           unAuthorized();
-          navigation.navigate('Login');
         }
         return apiData;
       } else if (error.request) {

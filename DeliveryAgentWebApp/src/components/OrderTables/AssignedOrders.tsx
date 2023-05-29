@@ -1,7 +1,7 @@
 import React from "react";
 import "./style.scss";
 import '../../pages/DeliveryAgents/style.scss'
-import { Button, Space, Table } from "antd";
+import { Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import dummyData from "../../../dummyData";
 

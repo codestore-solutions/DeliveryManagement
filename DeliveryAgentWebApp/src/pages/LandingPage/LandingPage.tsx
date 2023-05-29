@@ -23,7 +23,6 @@ const LandingPage: FC<LandingPageProps> = () => {
 
   const handleSubmit = (event: any) => {
     event.preventDefault();
-    
     navigation(`/dashboard/admin`);
   };
   return (

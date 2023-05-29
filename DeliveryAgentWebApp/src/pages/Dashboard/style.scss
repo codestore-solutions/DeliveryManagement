@@ -1,6 +1,5 @@
 @import "../../App.scss";
 
-
 #dashboard {
   background-color: $background_color;
   .header {
@@ -10,10 +9,41 @@
     background-color: $buttonText_color;
     margin-left: 1rem;
   }
-  .content{
+  .content {
     height: 85vh;
     margin: 1rem 0 0 1rem;
     overflow-y: scroll;
   }
-    
+}
+
+#management-dashboard {
+  .header {
+    background-color: #f5f5f5;
+    .heading {
+      font-size: 25px;
+      letter-spacing: 0.03em;
+      font-weight: 700;
+      margin: 1rem 0;
+      color: $heading_color;
+    }
+  }
+
+  .content {
+    .container {
+      padding: 0.5rem 1rem;
+      height: 40vh;
+      background: #ffffff;
+      border: 1px solid #eaeaea;
+      border-radius: 10px;
+      box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.05);
+      h3{
+        font-weight: 500;
+        font-size: 20px;
+        line-height: 38px;
+        color: $heading_color;
+        border-bottom:  1px solid #EAEAEA;
+        ;
+      }
+    }
+  }
 }

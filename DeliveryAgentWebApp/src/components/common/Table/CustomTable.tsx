@@ -4,6 +4,7 @@ import { FC } from "react";
 import "./style.scss";
 
 interface customTableProps {
+  rowSelection?:any;
   columns: Array<any>;
   data: Array<any>;
   pagination: {};
@@ -17,9 +18,11 @@ const CustomTable: FC<customTableProps> = ({
   pagination,
   handleTableChange,
   loading,
+  rowSelection
 }) => {
   return (
     <Table
+    rowSelection={rowSelection}
       columns={columns}
       dataSource={data}
       pagination={pagination}

@@ -14,3 +14,16 @@
   font-weight: 400;
   font-size: 15px;
 }
+
+#available-list{
+    display: flex;
+    flex-direction: column;
+
+    .available-list-header{
+       display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 1rem 0;
+    }
+    
+}

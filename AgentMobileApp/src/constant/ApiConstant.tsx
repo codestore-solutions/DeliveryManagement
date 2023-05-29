@@ -1,5 +1,5 @@
-export const apiConstant = {
-    baseUrl : 'https://dummyjson.com',
+export const ApiConstant = {
+    baseUrl : 'https://app-deliveragent-dev.azurewebsites.net/api/',
     //API response codes
     successCode: 200,
     successEndRange: 299,
@@ -12,6 +12,10 @@ export const apiConstant = {
     
     //Authentiction endpoint
     loginEndpoint:  'login',
-    signupEndpoint:  'signup'
+    signupEndpoint:  'signup',
     
+   // Agents EndPoints
+   verifyAgent:'businessAdmin/verify-new-agent-request',
+  
+
   };

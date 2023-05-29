@@ -152,6 +152,32 @@ const dummyData = {
       assigned_agent:"Ram Manohar",
     
     },
+  ],
+  assignedAgents:[
+       
+        {
+          key: "1",
+          deliveryAgentId:"77",
+          orderId: "23",
+          deliveryAgentName:"Ram Manohar",
+          orderStatus:"Deliverd"
+        
+        },
+        {
+          key: "2",
+          deliveryAgentId:"55",
+          orderId: "23",
+          deliveryAgentName:"Mukesh",
+          orderStatus:"Not Pickuped"
+        
+        },
+        {
+          key: "3",
+          deliveryAgentId:"76",
+          orderId: "23",
+          deliveryAgentName:"Deepak Chaurasiya",
+          orderStatus: 'Ongoing'
+        },
   ]
 }
 
