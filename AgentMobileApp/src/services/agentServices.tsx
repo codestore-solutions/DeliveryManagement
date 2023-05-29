@@ -1,10 +1,10 @@
-import {apiConstant} from '../constant/ApiConstant';
-import axiosHttpsServices from './httpsServices';
-
+import {ApiConstant} from '../constant/ApiConstant';
+import API from './apiBase';
+import { Alert } from 'react-native';
+import Toast from 'react-native-toast-message';
 let userInstance: agentServices;
 
 class agentServices {
-  private axiosInstance = axiosHttpsServices.getAxiosInstance();
   static getInstance() {
     if (userInstance instanceof agentServices) {
       return userInstance;
@@ -12,13 +12,21 @@ class agentServices {
       return new agentServices();
     }
   }
-  createAgentProfile = async (payload: any) => {
-    let url = apiConstant.createAgentProfile;
-    let result = await this.axiosInstance.postRequest(url, payload);
-    return result;
+
+  // Verify gent Service
+  verifyAgent = async (payload: any) => {
+    let url = ApiConstant.verifyAgent;
+    console.log("Url", url);
+    let res = await API(payload,url, 'POST');
+    if(res?.status === ApiConstant.successCode){
+      Toast.show({
+        type: 'success',
+        text2: 'Request Sent Sucessfully.'
+      }); 
+    }
+    return;
   };
-  getAgentProfile = async () => {};
-  updateAgentProfile = async (payload: any) => {};
+  
 }
 
 export default agentServices;

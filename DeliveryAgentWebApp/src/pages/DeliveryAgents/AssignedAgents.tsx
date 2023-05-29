@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { ColumnsType } from "antd/es/table";
+import { v4 as uuidv4 } from "uuid";
 import "./style.scss";
 import dummyData from "../../../dummyData";
 import { CustomTable } from "../../components";
 import { Space } from "antd";
 import { Link } from "react-router-dom";
+import AgentServices from "../../services/AgentServices";
 
 export interface DataType {
   key: React.Key;
@@ -13,9 +15,9 @@ export interface DataType {
   orderId: string;
 }
 
-const AssociatedAgents: React.FC = () => {
+const AssignedAgents: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [data, setData] = useState<Array<any>>(dummyData.assignedAgents);
+  const [data, setData] = useState<Array<any>>([]);
   const [pagination, setPagination] = useState({
     pageNumber: 1,
     limit: 8,
@@ -37,8 +39,8 @@ const AssociatedAgents: React.FC = () => {
     },
     {
       title: "Order ID",
-      dataIndex: "orderId",
-      key: "orderId",
+      dataIndex: "id",
+      key: "id",
       render: (text) => <p className="tableId">{text}</p>,
     },
     {
@@ -63,9 +65,32 @@ const AssociatedAgents: React.FC = () => {
         ),
       },
   ];
+
+  // Get All Assigned Delivery Agnets List
+  const getAssignedAgnets = async () =>{
+    let instance = AgentServices.getInstance();
+    setLoading(true);
+    instance
+      .getAgentsList(pagination.pageNumber, pagination.pageSize)
+      .then((res) => {
+        const formattedData = res?.map((item: any) => ({
+          ...item,
+          key: uuidv4(),
+          orderStatus: 'Pending',
+        }));
+        setData(formattedData);
+        setLoading(false);
+      });
+    // console.log("dat", data);
+  }
+  
+  useEffect(() =>{
+       getAssignedAgnets();
+  }, [])
+
   return (
     <div id="delivery-agent">
-      <h3 className="heading">Associated Agent List</h3>
+      <h3 className="heading">Assigned Agents</h3>
       <CustomTable
         columns={columns}
         data={data}
@@ -77,4 +102,4 @@ const AssociatedAgents: React.FC = () => {
   );
 };
 
-export default AssociatedAgents;
+export default AssignedAgents;

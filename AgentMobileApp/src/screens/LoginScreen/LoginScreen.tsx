@@ -16,24 +16,26 @@ import {Formik} from 'formik';
 import {LogoImg, ShowPasswordIcon, HidePasswordIcon} from '../../assets';
 import {loginValidationSchema} from '../../utils/validations/authValidation';
 import data from '../../dummyData.json';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Userheplers } from '../../utils/helpers/user';
 const LoginScreen = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const loginHandler = (values: any) => {
+  const loginHandler =  (values: any) => {
      data?.user?.map((ele:any) =>{
           if(ele.email === values.email && ele.password === values.password){
+              Userheplers.storeUser(ele);
                if(ele.status=== 1){
                   navigation.navigate('Home',{ 
                     screen:'Assignments'
                   })
                   return;
                }else if(ele.status === 2){
-                  navigation.navigate('VerifyAgent');
+                  navigation.navigate('Verify');
                   return;
                }else{
-                navigation.navigate('Profile');
+                navigation.navigate('VerifyStatus');
                 return;
                }
           }

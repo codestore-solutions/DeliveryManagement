@@ -7,9 +7,7 @@ type TabParamList = {
 export type RootStackParamList = {
     Landing: undefined;
     Login: undefined;
-    Signup: undefined;
     Verify: undefined;
     VerifyStatus: undefined;
     Home: NavigatorScreenParams<TabParamList>;
-    VerifyAgent: undefined | {userId: {}};
   };
