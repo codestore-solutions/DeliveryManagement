@@ -14,18 +14,18 @@ namespace BuisnessLogicLayer.Services
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
 
-        public BusinessAdminService(IUnitOfWork unitOfWork, IMapper mapper )
-        { 
+        public BusinessAdminService(IUnitOfWork unitOfWork, IMapper mapper)
+        {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
         }
 
         public async Task<VerifyAgentRequestDto> VerifyNewDeliveryAgentRequest(VerifyAgentRequestDto verifyAgentRequest)
         {
-            var domainModel= mapper.Map<BusinessAdmin>(verifyAgentRequest);
+            var domainModel = mapper.Map<BusinessAdmin>(verifyAgentRequest);
             await unitOfWork.BusinessAdminRepository.AddAsync(domainModel);
             await unitOfWork.SaveAsync();
-            var responseDto=mapper.Map<VerifyAgentRequestDto>(domainModel);
+            var responseDto = mapper.Map<VerifyAgentRequestDto>(domainModel);
             return responseDto;
         }
 
@@ -34,31 +34,43 @@ namespace BuisnessLogicLayer.Services
             return await unitOfWork.BusinessAdminRepository.DeleteAsync(id);
         }
 
-        public async Task<IEnumerable> GetDeliveryAgentAsync(long id, OrderAssignedStatus orderAssignedStatus,DeliveryAgentStatus status, VerificationStatus verStatus, int pageNumber = 1, int limit = 1000)
+        public async Task<IEnumerable> GetDeliveryAgentAsync(long id, OrderAssignedStatus? orderAssignedStatus, DeliveryAgentStatus? status,
+            VerificationStatus? verificationStatus, int pageNumber = 1, int limit = 100)
         {
             var allItems = await unitOfWork.BusinessAdminRepository.AsQueryableAsync();
-            allItems     = allItems.Where(x => x.BusinessId == id);   
-            allItems     = allItems.Where(item => item.AgentStatus == status);
-            allItems     = allItems.Where(item => item.VerStatus == verStatus);
-            allItems     = allItems.Where(item => item.OrderAssignStatus == orderAssignedStatus);
+          /*  allItems = allItems.Where(x => x.BusinessId == id);
+            allItems = allItems.Where(item => status == null || item.AgentStatus == status);
+            allItems = allItems.Where(item => verificationStatus == null || item.VerStatus == verificationStatus);
+            allItems = allItems.Where(item => orderAssignedStatus == null || item.OrderAssignStatus == orderAssignedStatus) ;
+            return await allItems.Skip((pageNumber - 1) * limit).Take(limit).ToListAsync();*/
 
-            return await allItems.Skip((pageNumber - 1) * limit).Take(limit).ToListAsync(); 
-        }
-        
-        public Task<UpdateBusinessAdminDto> UpdateDeliveryAgentAsync(int id, UpdateBusinessAdminDto updateBuisnessAdminDto)
-        {
-            throw new NotImplementedException();
+            return await allItems
+            .Where(x => x.BusinessId == id && (status == null ||  x.AgentStatus == status)
+            && (verificationStatus == null || x.VerStatus == verificationStatus) 
+            && (orderAssignedStatus == null || x.OrderAssignStatus == orderAssignedStatus))
+            .Skip((pageNumber - 1) * limit).Take(limit).ToListAsync();
         }
 
-        public async Task<BusinessAdmin> UpdateVerificationSatus(long id, VerificationStatus status)
+        public async Task<ResponseDto> UpdateVerificationSatus(long agentId, VerificationStatus status)
         {
-           var agent= unitOfWork.BusinessAdminRepository.FindInList(ids=>ids.DeliveryAgentId==id);
-            if (agent != null)
+            var response = new ResponseDto();
+
+            var agent = unitOfWork.BusinessAdminRepository.FindInList(id => id.DeliveryAgentId == agentId);
+            if (agent == null)
             {
-                agent.VerStatus = status;
-            }        
-           await unitOfWork.SaveAsync();
-           return agent;
+                response.StatusCode = 404;
+                response.Success    = false;
+                response.Message    = "agentId can't be found";
+                return response;
+            }
+            agent.VerStatus = status;
+            await unitOfWork.SaveAsync();
+            response.StatusCode = 200;
+            response.Success     = true;
+            response.Data        = agent;
+            response.Message     = "Status Updated Successfully";
+            return response;          
         }
+
     }
 }

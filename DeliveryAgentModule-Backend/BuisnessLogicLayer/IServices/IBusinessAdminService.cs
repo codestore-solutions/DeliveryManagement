@@ -7,10 +7,9 @@ namespace BuisnessLogicLayer.IServices
 {
     public interface IBusinessAdminService
     {
-        Task<IEnumerable> GetDeliveryAgentAsync(long id, OrderAssignedStatus orderAssignedStatus,DeliveryAgentStatus status, VerificationStatus verStatus, int pageNumber = 1, int limit = 1000);
+        Task<IEnumerable> GetDeliveryAgentAsync(long id, OrderAssignedStatus? orderAssignedStatus,DeliveryAgentStatus? status, VerificationStatus? verificationStatus, int pageNumber = 1, int limit = 1000);
         Task<VerifyAgentRequestDto> VerifyNewDeliveryAgentRequest(VerifyAgentRequestDto verifyAgentRequest);
-        Task<UpdateBusinessAdminDto> UpdateDeliveryAgentAsync(int id, UpdateBusinessAdminDto updateBuisnessAdminDto);
         Task<BusinessAdmin> DeleteDeliveryAgentAsync(int id);
-        Task<BusinessAdmin> UpdateVerificationSatus(long id, VerificationStatus status);
+        Task<ResponseDto> UpdateVerificationSatus(long agentId, VerificationStatus status);
     }
 }

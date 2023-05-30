@@ -20,7 +20,7 @@ namespace DeliveryAgentModule.Controllers
         /// <summary>
         /// Get all assigned agent list with orderId
         /// </summary>
-        [HttpGet("GetAll")]
+        [HttpGet("get-all")]
         public async Task<IEnumerable> GetAllAssignedAgent([FromQuery] int pageNumber=1, [FromQuery] int limit=1000)
         {
             return await orderAssignService.GetAllAsync(pageNumber,limit);

@@ -7,7 +7,11 @@ namespace EntityLayer.Models
         [Key]
         [Required]
         public int Id { get; set; }
+
+        [Required]
         public long BusinessId { get; set; }
+
+        [Required]
         public int DeliveryAgentId  { get; set; }
         public string? DeliveryAgentName { get; set; }
         public string? DeliveryAgentAddress { get; set; }

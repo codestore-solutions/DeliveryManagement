@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace DeliveryAgentModule
 {
@@ -34,9 +35,19 @@ namespace DeliveryAgentModule
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddApiVersioning(options=>{
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
+                options.ReportApiVersions = true;
+            });
+            builder.Services.AddVersionedApiExplorer(options =>
+            {
+                options.GroupNameFormat = "'v'VVV";
+                options.SubstituteApiVersionInUrl = true;
+            });
             builder.Services.AddSwaggerGen(options =>
             {
-                options.SwaggerDoc("v1", new OpenApiInfo { Title = "Delivery Agent API", Version = "v1" });
+               // options.SwaggerDoc("v1", new OpenApiInfo { Title = "Delivery Agent API", Version = "v1" });
                 options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme,new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
@@ -90,41 +101,52 @@ namespace DeliveryAgentModule
                 });
             });
 
-          /*  builder.Services.AddIdentityCore<IdentityUser>()
-                .AddRoles<IdentityRole>()
-                .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("DeliveryAgent")
-                .AddEntityFrameworkStores<DeliveryAuthDbContext>()
-                .AddDefaultTokenProviders();
+            /*  builder.Services.AddIdentityCore<IdentityUser>()
+                  .AddRoles<IdentityRole>()
+                  .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("DeliveryAgent")
+                  .AddEntityFrameworkStores<DeliveryAuthDbContext>()
+                  .AddDefaultTokenProviders();
 
-            builder.Services.Configure<IdentityOptions>(options =>
-            {
-                options.Password.RequireDigit = false;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequiredLength = 6;
-                options.Password.RequiredUniqueChars = 1;
-                options.Password.RequireUppercase= false;
+              builder.Services.Configure<IdentityOptions>(options =>
+              {
+                  options.Password.RequireDigit = false;
+                  options.Password.RequireNonAlphanumeric = false;
+                  options.Password.RequiredLength = 6;
+                  options.Password.RequiredUniqueChars = 1;
+                  options.Password.RequireUppercase= false;
 
-            });*/
+              });*/
 
-/*
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer= true,
-                    ValidateAudience= true,
-                    ValidateLifetime= true,
-                    ValidateIssuerSigningKey= true,
-                    ValidIssuer=builder.Configuration["JWT:Issuer"],
-                    ValidAudience = builder.Configuration["JWT:Audience"],
-                    IssuerSigningKey=new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
-                });*/
+            /*
+                        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                            .AddJwtBearer(options =>
+                            options.TokenValidationParameters = new TokenValidationParameters
+                            {
+                                ValidateIssuer= true,
+                                ValidateAudience= true,
+                                ValidateLifetime= true,
+                                ValidateIssuerSigningKey= true,
+                                ValidIssuer=builder.Configuration["JWT:Issuer"],
+                                ValidAudience = builder.Configuration["JWT:Audience"],
+                                IssuerSigningKey=new SymmetricSecurityKey(
+                                    Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
+                            });*/
+
+            builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
             var app = builder.Build();
 
+            var versionDescriptionProvider = 
+                app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
 
             app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseSwaggerUI(options =>
+            {
+                foreach(var description in versionDescriptionProvider.ApiVersionDescriptions)
+                {
+                    options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
+                        description.GroupName.ToUpperInvariant());
+                }
+            });
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
