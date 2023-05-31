@@ -9,6 +9,14 @@
     font-weight: 500;
     letter-spacing: .03em;
 }
+.tableTxtNot{
+    font-weight: 500;
+    letter-spacing: .03em;
+    color: red;
+}
+.tableTxtAv{
+     color: $base_color;
+}
 
 #delivery-agent{
     .heading{
@@ -17,6 +25,9 @@
         font-size: 25px;
         line-height: 38px;
         color: #141C38;
+        margin: 1rem 0;
+    }
+    .filter{
         margin: 1rem 0;
     }
   

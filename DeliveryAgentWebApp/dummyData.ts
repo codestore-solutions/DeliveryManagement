@@ -126,7 +126,8 @@ const dummyData = {
   assignedOrderData: [
     {
       key: "1",
-      order_id:"23",
+      serialNo:'1',
+      storename:"23",
       payment_type: "UPI",
       assigned_agent:"Ram Manohar",
     
@@ -157,26 +158,41 @@ const dummyData = {
        
         {
           key: "1",
-          deliveryAgentId:"77",
-          orderId: "23",
+          serialNo:'1',
+          storename:"Momos King",
           deliveryAgentName:"Ram Manohar",
           orderStatus:"Deliverd"
         
         },
         {
           key: "2",
-          deliveryAgentId:"55",
-          orderId: "23",
+           serialNo:'2',
+          storename:"Momos King",
           deliveryAgentName:"Mukesh",
           orderStatus:"Not Pickuped"
         
         },
         {
           key: "3",
-          deliveryAgentId:"76",
-          orderId: "23",
+           serialNo:'3',
+          storename:"Momos King",
           deliveryAgentName:"Deepak Chaurasiya",
           orderStatus: 'Ongoing'
+        },
+        {
+          key: "4",
+          serialNo:'3',
+          storename:"Terence Cafe",
+          deliveryAgentName:"Deepak Chaurasiya",
+          orderStatus: 'Ongoing'
+        },
+        {
+          key: "5",
+           serialNo:'2',
+          storename:"Momos King",
+          deliveryAgentName:"Mukesh",
+          orderStatus:"Not Pickuped"
+        
         },
   ]
 }

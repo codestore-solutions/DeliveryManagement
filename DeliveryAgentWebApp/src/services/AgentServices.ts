@@ -13,13 +13,18 @@ class AgentServices {
       return new AgentServices();
     }
   }
-  getAgentsList = async (pageNumber: Number, limit: Number) => {
+  getAgentsList = async (
+    pageNumber?: Number,
+    limit?: Number,
+    status?: number
+  ) => {
     let id = 1224;
-    let url = `${ApiContants.getAgentList}/${id}?verStatus=2&pageNumber=${pageNumber}&limit=${limit}`;
+   
+    let url = `${ApiContants.getAgentList}/${id}?pageNumber=${pageNumber}&limit=${limit}`;
     let response = await this.HttpsIntance.getRequest(url);
     return response?.data;
   };
-  
+
   assignOrderToAgent = async (payload: any) => {
     const url = ApiContants.assignOrder;
     let response = await this.HttpsIntance.postRequest(url, payload);
@@ -37,18 +42,21 @@ class AgentServices {
     return response;
   };
 
-  getAssignedAgents = async(pageNumber?: Number, limit?: Number) =>{
-       let id = 1224;
-       const url = `${ApiContants.getAssignedAgent}?pageNumber=${pageNumber}&limit=${limit}`;
-       let response = await this.HttpsIntance.getRequest(url);
-       console.log("datadsgrgrdgfd", response?.data);
-      return response?.data;
-  }
-
-  verifyAgent = async(id: any) =>{
-      
-  }
-
+  getAssignedAgents = async (pageNumber?: Number, limit?: Number) => {
+    let id = 1224;
+    const url = `${ApiContants.getAssignedAgent}?pageNumber=${pageNumber}&limit=${limit}`;
+    let response = await this.HttpsIntance.getRequest(url);
+    return response?.data;
+  };
+  
+  verifyAgent = async (id: any, status?: number) => {
+    const url = `${ApiContants.modifyAgentStatus}?id=${id}&verificationStatus=${status}`;
+    let response = await this.HttpsIntance.putRequest(url, {});
+    if (response?.status === ApiContants.successCode) {
+      message.success("Agents Verified Sucessfully.");
+    }
+    return response;
+  };
 }
 
 export default AgentServices;
