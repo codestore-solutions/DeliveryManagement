@@ -16,6 +16,7 @@ namespace DataAccessLayer.IRepository
         public Task AddAsync(T entity);    
         Task<T> DeleteAsync(int id);
         IEnumerable<T> Find(Expression<Func<T, bool>> expression);
-        IQueryable<T> AsQueryable();
+        Task<IQueryable<T>> AsQueryableAsync();
+        public T FindInList(Func<T, bool> expression);
     }
 }

@@ -6,15 +6,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataAccessLayer.Repository
 {
-    public class OrderAssignRepository : GenericRepository<OrderAssign>, IOrderAssignRepository
+    public class AssignDeliveryAgentRepository : GenericRepository<AgentAssign>, IAssignDeliveryAgentRepository
     {
         private readonly DeliveryDbContext dbContext;
-
-        public OrderAssignRepository(DeliveryDbContext dbContext): base(dbContext)
+        public AssignDeliveryAgentRepository(DeliveryDbContext dbContext): base(dbContext)
         {
             this.dbContext = dbContext;
         }
-
 
     }
 }

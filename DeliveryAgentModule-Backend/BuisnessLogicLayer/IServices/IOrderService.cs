@@ -1,14 +1,10 @@
 ﻿using EntityLayer.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static EntityLayer.Models.Order;
 
 namespace BusinessLogicLayer.IServices
 {
     public interface IOrderService
     {
-        Task<IEnumerable<Order>> GetAllOrdersAsync();
+        Task<IEnumerable<Order>> GetAllOrdersAsync(DeliveryType? deliveryType,IsOrderAssigned? isOrderAssigned);
     }
 }

@@ -4,6 +4,7 @@ using DataAccessLayer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(DeliveryDbContext))]
-    partial class DeliveryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230526050818_Adding New Column in BusinessAdmin table")]
+    partial class AddingNewColumninBusinessAdmintable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,28 +24,6 @@ namespace DataAccessLayer.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("EntityLayer.Models.AgentAssign", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<long>("BuisnessId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("DeliveryAgentId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("orderAssigns");
-                });
 
             modelBuilder.Entity("EntityLayer.Models.AgentAssociation", b =>
                 {
@@ -78,7 +59,7 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("AgentStatus")
                         .HasColumnType("int");
 
-                    b.Property<long>("BusinessId")
+                    b.Property<long?>("BusinessId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("DeliveryAgentAddress")
@@ -279,6 +260,25 @@ namespace DataAccessLayer.Migrations
                             isOrderAssigned = 0,
                             paymentType = 2
                         });
+                });
+
+            modelBuilder.Entity("EntityLayer.Models.OrderAssign", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DeliveryAgentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("orderAssigns");
                 });
 
             modelBuilder.Entity("EntityLayer.Models.ServiceLocation", b =>

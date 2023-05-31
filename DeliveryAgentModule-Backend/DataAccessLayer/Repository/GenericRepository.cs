@@ -49,9 +49,14 @@ namespace DataAccessLayer.Repository
             return entity;
         }
 
-        public IQueryable<T> AsQueryable()
+        public async Task<IQueryable<T>> AsQueryableAsync()
         {
-            return _dbSet.AsQueryable();
+            return await Task.FromResult(_dbSet.AsQueryable());
+        }
+
+        public T FindInList(Func<T, bool> expression)
+        {
+            return _dbSet.FirstOrDefault(expression);
         }
     }
 }

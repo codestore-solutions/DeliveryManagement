@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace EntityLayer.Dtos
 {
-    public class OrderAssignRequestDto
+    public class LoginResponseDto
     {
-       // public int DeliveryAgentId { get; set; }
-        public int OrderId { get; set; }
+        public string JwtToken { get; set; }
     }
 }
