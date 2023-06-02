@@ -16,7 +16,7 @@ export interface DataType {
 }
 const pageSizeOptions = ["6", "14", "21", "28"];
 
-const AssignedOrders = () => {
+const CompletedOrders = () => {
   const navigate = useNavigate();
   const handleClick = (state: any) => {
     navigate(`/dashboard/order-details/${state.id}`, { state });
@@ -40,7 +40,12 @@ const AssignedOrders = () => {
       key: "payment",
       render: (text: any) => <p className="tableTxt">{text}</p>,
     },
-
+    {
+        title: "Order Staus",
+        dataIndex: "status",
+        key: "status",
+        render: (text: any) => <p className="tableTxt">{text}</p>,
+      },
     {
       title: "Agent",
       dataIndex: "assigned_agent",
@@ -61,7 +66,7 @@ const AssignedOrders = () => {
   return (
     <Table
       columns={columns}
-      dataSource={dummyData.assignedOrderData}
+      dataSource={dummyData.completedOrderData}
       pagination={{
         pageSizeOptions,
         showQuickJumper: true,
@@ -74,4 +79,4 @@ const AssignedOrders = () => {
   );
 };
 
-export default AssignedOrders;
+export default CompletedOrders;

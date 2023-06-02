@@ -105,7 +105,6 @@ const AssignedAgents: React.FC = () => {
 
   return (
     <div id="delivery-agent">
-      <h3 className="heading">Assigned Agents</h3>
       <CustomTable
         columns={columns}
         data={dummyData.assignedAgents}

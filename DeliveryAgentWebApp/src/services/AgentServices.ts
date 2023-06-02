@@ -19,7 +19,7 @@ class AgentServices {
     status?: number
   ) => {
     let id = 1224;
-   
+
     let url = `${ApiContants.getAgentList}/${id}?pageNumber=${pageNumber}&limit=${limit}`;
     let response = await this.HttpsIntance.getRequest(url);
     return response?.data;
@@ -48,7 +48,7 @@ class AgentServices {
     let response = await this.HttpsIntance.getRequest(url);
     return response?.data;
   };
-  
+
   verifyAgent = async (id: any, status?: number) => {
     const url = `${ApiContants.modifyAgentStatus}?id=${id}&verificationStatus=${status}`;
     let response = await this.HttpsIntance.putRequest(url, {});

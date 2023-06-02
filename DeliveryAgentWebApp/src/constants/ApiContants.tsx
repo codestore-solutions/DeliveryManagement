@@ -22,5 +22,8 @@ export const ApiContants = {
      getAssignedAgent:'agent/GetAll',
      modifyAgentStatus:'business-admin',
      //Orders endpoint
-     getOrders: 'order/availableOrderList'
+     getOrders:'order/getAvailableOrderList',
+     getAvailableOrders: 'order/available-orders',
+     getAssinedOrders: 'order/assigned-orders',
+     getCompletedOrders: 'order/completed-orders',
 }

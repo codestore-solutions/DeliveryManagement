@@ -177,7 +177,7 @@ const DeliveryAgents: React.FC = () => {
 
   return (
     <div id="delivery-agent">
-      <h3 className="heading">Agents List</h3>
+      {/* <h3 className="heading">Agents List</h3>
       <div className="filter">
       <span>Sort: </span>
           <Select
@@ -187,7 +187,7 @@ const DeliveryAgents: React.FC = () => {
             options={options}
             style={{ width: "30vw" }}
           />
-      </div>
+      </div> */}
       <CustomTable
         columns={columns}
         data={agentsList}

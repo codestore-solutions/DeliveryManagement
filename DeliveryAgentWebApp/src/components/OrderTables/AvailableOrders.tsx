@@ -46,7 +46,7 @@ const AvailableOrders = () => {
 
   const navigate = useNavigate();
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [deliveryType, setDeliveryType] = useState<any>(1);
+  const [deliveryType, setDeliveryType] = useState<any>(0);
   const [selectedOrders, setSelectedOrders] = useState<Array<any>>();
   const [loading, setLoading] = useState<boolean>(false);
   const [bulkloading, setBulkLoading] = useState<boolean>(false);
@@ -228,14 +228,14 @@ const AvailableOrders = () => {
       <div className="available-list-header">
         <div className="filter">
           {/* <Search placeholder="Search here.." allowClear onSearch={onSearch} style={{ width: "30vw", padding:"5px 10px", outline:"none" }} /> */}
-          <span>Filter: </span>
+          {/* <span>Filter: </span>
           <Select
             size={"large"}
             defaultValue={"Fast Delivery"}
             onChange={handleChange}
             options={options}
             style={{ width: "30vw" }}
-          />
+          /> */}
         </div>
 
         <div className="action">

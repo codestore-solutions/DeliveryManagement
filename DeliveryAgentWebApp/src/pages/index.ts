@@ -8,3 +8,4 @@ export {default as AssignedAgents} from './DeliveryAgents/AssignedAgents';
 export {default as AgentDetails}  from './AgentDetails/AgentDetails';
 export {default as Management}  from './Dashboard/Management';
 export {default as OrderDetails} from './OrderDetails/OrderDetails';
+export {default as Agents} from './DeliveryAgents/Agent'

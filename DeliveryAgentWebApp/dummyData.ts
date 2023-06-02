@@ -126,8 +126,8 @@ const dummyData = {
   assignedOrderData: [
     {
       key: "1",
-      serialNo:'1',
       storename:"23",
+      order_id:'23',
       payment_type: "UPI",
       assigned_agent:"Ram Manohar",
     
@@ -151,7 +151,40 @@ const dummyData = {
       order_id:"03",
       payment_type: "COD",
       assigned_agent:"Ram Manohar",
+    },
+  ],
+  completedOrderData: [
+    {
+      key: "1",
+      storename:"23",
+      status:"Delivered",
+      order_id:'23',
+      payment_type: "UPI",
+      assigned_agent:"Ram Manohar",
     
+    },
+    {
+      key: "2",
+      order_id:"93",
+      status:"Delivered",
+      payment_type: "Online Banking",
+      assigned_agent:"Ram Manohar",
+    
+    },
+    {
+      key: "3",
+      order_id:"99",
+      status:"Delivered",
+      payment_type: "Credit Card",
+      assigned_agent:"Ram Manohar",
+    
+    },
+    {
+      key: "4",
+      order_id:"03",
+      status:"Delivered",
+      payment_type: "COD",
+      assigned_agent:"Ram Manohar",
     },
   ],
   assignedAgents:[
