@@ -1,0 +1,29 @@
+{
+    "user":[
+        {
+           "id": 1,
+           "name":"Rahul Chaudhary",
+           "email": "198rahulchaudhary@gmail.com",
+           "password":"Smmck@123",
+           "status":1,
+           "contact":"7860965109"
+        },
+        {
+            "id": 2,
+            "name":"Pawan Kumar",
+            "email": "pawan@codestoresolutions.com",
+            "status":0,
+            "password":"Smmck@123",
+            "contact":"7860965109"
+         },
+         {
+            "id": 3,
+            "name":"Ravi Kunwar",
+            "email": "198rahulchaudhary@gmail.com",
+            "password":"Smmck@123!",
+            "status":2,
+            "contact":"7860965109"
+         }
+    ]
+      
+}
