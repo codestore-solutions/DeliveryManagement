@@ -77,7 +77,7 @@ const AssignedAgents: React.FC = () => {
         key: "action",
         render: (_, record) => (
           <Space size="middle">
-               <Button type='primary' onClick={() =>trackOrder(record)}>Track</Button>
+               <Button type='primary'>Track</Button>
           </Space>
         ),
       },
