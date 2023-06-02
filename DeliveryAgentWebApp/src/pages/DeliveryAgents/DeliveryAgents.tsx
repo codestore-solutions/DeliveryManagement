@@ -1,4 +1,4 @@
-import { Space } from "antd";
+import { Select, SelectProps, Space } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { v4 as uuidv4 } from "uuid";
 import "./style.scss";
@@ -17,11 +17,27 @@ export interface DataType {
   agentStatus: number;
   verStatus: number;
 }
+
+const options: SelectProps["options"] = [
+  {
+    value: "0",
+    label: "Not Available",
+  },
+  {
+    value: "1",
+    label: "Available",
+  },
+];
 // const pageSizeOptions = ["6", "14", "21", "28"];
 const statusFilters = [
   { text: "Verified", value: 1 },
   { text: "NotVerified", value: 0 },
   { text: "Pending", value: 2 },
+];
+const availibilityFilters = [
+  { text: "Available", value: 1 },
+  { text: "Not Available", value: 0 },
+  
 ];
 // const addressFilters = [
 //   {
@@ -51,17 +67,17 @@ const DeliveryAgents: React.FC = () => {
   });
 
   const handleClick = (state: any) => {
-    navigate(`/dashboard/agent-details/${state.id}`, { state });
+    navigate(`/dashboard/agent-details/${state.deliveryAgentId}`, { state });
   };
   const columns: ColumnsType<DataType> = [
     {
-      title: "Agent ID",
-      dataIndex: "deliveryAgentId",
-      key: "deliveryAgentId",
+      title: "Sr No.",
+      dataIndex: "serialNo",
+      key: "serialNo",
       render: (text) => <p className="tableId">{text}</p>,
     },
     {
-      title: "Name",
+      title: "Agent Name",
       dataIndex: "deliveryAgentName",
       key: "deliveryAgentName",
       render: (text) => <p className="tableTxt">{text}</p>,
@@ -71,29 +87,29 @@ const DeliveryAgents: React.FC = () => {
       title: "Address",
       dataIndex: "deliveryAgentAddress",
       key: "deliveryAgentAddress",
-      // filters: addressFilters,
+
       render: (text) => <p className="tableTxt">{text}</p>,
-      // onFilter: (value: any, record: any) =>
-      //   record.address.toString().toLowerCase().startsWith(value.toLowerCase()),
-      // filterSearch: true,
-      // width: "40%",
+     
     },
     {
       title: "Availibility",
       key: "agentStatus",
       dataIndex: "agentStatus",
+      filters:availibilityFilters,
       render: (_, { agentStatus }) => (
         <>
           <span>
             {" "}
             {agentStatus === 1 ? (
-              <p className="tableTxt">Available</p>
+              <p className="tableTxtAv">Available</p>
             ) : (
-              <p className="tableTxt">Not Available</p>
+              <p className="tableTxtNot">Not Available</p>
             )}{" "}
           </span>
         </>
       ),
+      onFilter: (value: any, record: any) =>
+      record.agentStatus === value,
     },
     {
       title: "Status",
@@ -105,9 +121,10 @@ const DeliveryAgents: React.FC = () => {
           <span>
             {verStatus === 1 ? (
               <p className="verified">Verified</p>
-            ) : (
+            ) :  verStatus=== 2 ? (
+
               <p className="codStatus">Pending</p>
-            )}{" "}
+            ) :   <p className="codStatus">Not Verified</p>}{" "}
           </span>
         </>
       ),
@@ -127,33 +144,50 @@ const DeliveryAgents: React.FC = () => {
   ];
 
   const handleTableChange = (pagination: any, filters: any, sorter: any) => {
-    console.log("Page", pagination);
+    console.log("Page", filters, );
     const { current, pageSize } = pagination;
     setPagination({ ...pagination, pageNumber: current, limit: pageSize });
+    getAgents(filters.verStatus[0]);
   };
 
+
+  const getAgents = (status?:any) => {
+    let instance = AgentServices.getInstance();
+    setLoading(true);
+    let count = 1;
+    instance
+      .getAgentsList(pagination.pageNumber, pagination.pageSize, status)
+      .then((res) => {
+        const formattedData = res?.map((item: any) => ({
+          ...item,
+          key: uuidv4(),
+          serialNo: count++,
+        }));
+        setAgentsList(formattedData);
+        setLoading(false);
+      });
+    // console.log("datal", agentsList);
+  };
+
+  const handleChange = (values: any) =>{};
+
   useEffect(() => {
-    const getAgents = () => {
-      let instance = AgentServices.getInstance();
-      setLoading(true);
-      instance
-        .getAgentsList(pagination.pageNumber, pagination.pageSize)
-        .then((res) => {
-          const formattedData = res?.map((item: any) => ({
-            ...item,
-            key: uuidv4(),
-          }));
-          setAgentsList(formattedData);
-          setLoading(false);
-        });
-      // console.log("datal", agentsList);
-    };
-    getAgents();
+    getAgents(2);
   }, [pagination.pageNumber]);
 
   return (
     <div id="delivery-agent">
-      <h3 className="heading">Agents List</h3>
+      {/* <h3 className="heading">Agents List</h3>
+      <div className="filter">
+      <span>Sort: </span>
+          <Select
+            size={"large"}
+            defaultValue={"Select"}
+            onChange={handleChange}
+            options={options}
+            style={{ width: "30vw" }}
+          />
+      </div> */}
       <CustomTable
         columns={columns}
         data={agentsList}

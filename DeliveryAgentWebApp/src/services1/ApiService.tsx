@@ -3,7 +3,13 @@ import { GenralContants } from '../constants/GenralConstant';
 import axios from '../utils/Interceptors/axios';
 
 
-// Api base structure
+/**
+ * @param payload Request Body
+ * @param endpoint  End Point Url for Target Api 
+ * @param apiMethod Http Method Type
+ * @param cancelToken  Token require for Remove data Api Validation
+ * @returns Genric http methods response 
+ */
 export default async function API(
   payload: Object,
   endpoint: string,
@@ -69,35 +75,39 @@ export default async function API(
     })
     .catch(function (error) {
       console.log(error)
-      // if (error.response) {
-      //   // Request made and server responded
-      //   console.log(error.response.data);
-      //   console.log(error.response.status);
-      //   console.log(error.response.headers);
-      //   const apiData = {
-      //     status: error.response.status,
-      //     data: error.response.data,
-      //   };
-      //   if (error.response?.status === ApiContants.unAuthorizedCode) {
-      //     unAuthorized();
+      if (error.response) {
+        // Request made and server responded
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+        const apiData = {
+          status: error.response.status,
+          data: error.response.data,
+        };
+        if (error.response?.status === ApiContants.unAuthorizedCode) {
+          unAuthorized();
         
-      //   //   navigate('Login'); to Login Page
-      //   }
-      //   return apiData;
-      // } else if (error.request) {
-      //   console.info(
-      //     'The request was made but no response was received ',
-      //     error.request,
-      //   );
-      // } else {
-      //   console.log(
-      //     'Something happened in setting up the request that triggered an Error ',
-      //     error.message,
-      //   );
-      // }
+        //   navigate('Login'); to Login Page
+        }
+        return apiData;
+      } else if (error.request) {
+        console.info(
+          'The request was made but no response was received ',
+          error.request,
+        );
+      } else {
+        console.log(
+          'Something happened in setting up the request that triggered an Error ',
+          error.message,
+        );
+      }
     });
 }
 
+
+/**
+ * Remove All Credential from Local Storage
+ */
 export const unAuthorized = () => {
     localStorage.removeItem(GenralContants.token);
     localStorage.removeItem(GenralContants.loginUserDetail);

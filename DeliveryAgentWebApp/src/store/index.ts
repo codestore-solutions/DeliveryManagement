@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit'
 import OrdersReducer from './features/Orders/ordersSlice'
-
+import AgentReducer from './features/Agents/agentSlice'
 export const store = configureStore({
   reducer: {
     orders: OrdersReducer,
-   
+    agents:  AgentReducer
   },
 })
 

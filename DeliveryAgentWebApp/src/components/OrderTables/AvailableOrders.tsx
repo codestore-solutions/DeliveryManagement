@@ -11,7 +11,7 @@ import { ApiContants } from "../../constants/ApiContants";
 import { useEffect } from "react";
 import OrderServices from "../../services/OrderServices";
 import { DetailsIcon } from "../../assets";
-import { useSelector, useDispatch } from "react-redux";
+import { useNavigate} from "react-router-dom";
 
 const { Search } = Input;
 
@@ -43,9 +43,10 @@ let paymentFilter = [
 ];
 
 const AvailableOrders = () => {
-  // const [isMultiSelect, setMultiSelect] = useState<boolean>(false);
+
+  const navigate = useNavigate();
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [deliveryType, setDeliveryType] = useState<any>(1);
+  const [deliveryType, setDeliveryType] = useState<any>(0);
   const [selectedOrders, setSelectedOrders] = useState<Array<any>>();
   const [loading, setLoading] = useState<boolean>(false);
   const [bulkloading, setBulkLoading] = useState<boolean>(false);
@@ -57,6 +58,10 @@ const AvailableOrders = () => {
     showTotal: (total: any, range: any) =>
       `${range[0]}-${range[1]} of ${total} items`,
   });
+  
+  const handleClick = (state: any) => {
+    navigate(`/dashboard/order-details/${state.id}`, { state });
+  };
 
   // Handle Chnage for Table
   const handleTableChange = (pagination: any) => {
@@ -67,10 +72,16 @@ const AvailableOrders = () => {
 
   const columns: ColumnsType<DataType> = [
     {
-      title: "Order ID",
-      dataIndex: "id",
-      key: "id",
+      title: "Sr No.",
+      dataIndex: "serialNo",
+      key: "serialNo",
       render: (text: any) => <p className="tableId">{text}</p>,
+    },
+    {
+      title: "Store Name",
+      dataIndex: "storename",
+      key: "storename",
+      render: (text: any) => <p className="tableTxt">{text}</p>,
     },
     {
       title: "Payment Mode",
@@ -101,10 +112,10 @@ const AvailableOrders = () => {
       render: (text: any) => <p className="tableTxt">{text}</p>,
     },
     {
-      title: "Details",
+      title: "Order Details",
       key: "details",
-      render: () => (
-        <Space size="middle">
+      render: (_, record) => (
+        <Space size="middle" onClick={() => handleClick(record)}>
           <img src={DetailsIcon} alt="" />
         </Space>
       ),
@@ -158,12 +169,15 @@ const AvailableOrders = () => {
   const fetchOrders = async (deliveryType: any) => {
     let instance = OrderServices.getInstance();
     setLoading(true);
+    let count = 1;
     const res = await instance.getOrderList(deliveryType, 0);
     if (res?.data) {
       const formattedData = res?.data.map((item: any) => ({
         ...item,
         key: uuidv4(),
         loading: false,
+        serialNo: count++,
+        storename: "Momos King"
       }));
       setData(formattedData);
       setLoading(false);
@@ -214,14 +228,14 @@ const AvailableOrders = () => {
       <div className="available-list-header">
         <div className="filter">
           {/* <Search placeholder="Search here.." allowClear onSearch={onSearch} style={{ width: "30vw", padding:"5px 10px", outline:"none" }} /> */}
-          <span>Filter: </span>
+          {/* <span>Filter: </span>
           <Select
             size={"large"}
             defaultValue={"Fast Delivery"}
             onChange={handleChange}
             options={options}
             style={{ width: "30vw" }}
-          />
+          /> */}
         </div>
 
         <div className="action">

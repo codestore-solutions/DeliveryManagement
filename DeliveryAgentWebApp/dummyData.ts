@@ -126,7 +126,8 @@ const dummyData = {
   assignedOrderData: [
     {
       key: "1",
-      order_id:"23",
+      storename:"23",
+      order_id:'23',
       payment_type: "UPI",
       assigned_agent:"Ram Manohar",
     
@@ -150,33 +151,81 @@ const dummyData = {
       order_id:"03",
       payment_type: "COD",
       assigned_agent:"Ram Manohar",
+    },
+  ],
+  completedOrderData: [
+    {
+      key: "1",
+      storename:"23",
+      status:"Delivered",
+      order_id:'23',
+      payment_type: "UPI",
+      assigned_agent:"Ram Manohar",
     
+    },
+    {
+      key: "2",
+      order_id:"93",
+      status:"Delivered",
+      payment_type: "Online Banking",
+      assigned_agent:"Ram Manohar",
+    
+    },
+    {
+      key: "3",
+      order_id:"99",
+      status:"Delivered",
+      payment_type: "Credit Card",
+      assigned_agent:"Ram Manohar",
+    
+    },
+    {
+      key: "4",
+      order_id:"03",
+      status:"Delivered",
+      payment_type: "COD",
+      assigned_agent:"Ram Manohar",
     },
   ],
   assignedAgents:[
        
         {
           key: "1",
-          deliveryAgentId:"77",
-          orderId: "23",
+          serialNo:'1',
+          storename:"Momos King",
           deliveryAgentName:"Ram Manohar",
           orderStatus:"Deliverd"
         
         },
         {
           key: "2",
-          deliveryAgentId:"55",
-          orderId: "23",
+           serialNo:'2',
+          storename:"Momos King",
           deliveryAgentName:"Mukesh",
           orderStatus:"Not Pickuped"
         
         },
         {
           key: "3",
-          deliveryAgentId:"76",
-          orderId: "23",
+           serialNo:'3',
+          storename:"Momos King",
           deliveryAgentName:"Deepak Chaurasiya",
           orderStatus: 'Ongoing'
+        },
+        {
+          key: "4",
+          serialNo:'3',
+          storename:"Terence Cafe",
+          deliveryAgentName:"Deepak Chaurasiya",
+          orderStatus: 'Ongoing'
+        },
+        {
+          key: "5",
+           serialNo:'2',
+          storename:"Momos King",
+          deliveryAgentName:"Mukesh",
+          orderStatus:"Not Pickuped"
+        
         },
   ]
 }
