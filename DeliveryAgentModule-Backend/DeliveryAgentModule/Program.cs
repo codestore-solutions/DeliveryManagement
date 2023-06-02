@@ -56,23 +56,23 @@ namespace DeliveryAgentModule
                     Scheme = JwtBearerDefaults.AuthenticationScheme
                 });
 
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
- {
-         {
-             new OpenApiSecurityScheme
-             {
-                 Reference = new OpenApiReference
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
                  {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = JwtBearerDefaults.AuthenticationScheme,
+                  new OpenApiSecurityScheme
+                  {
+                     Reference = new OpenApiReference
+                     {
+                         Type = ReferenceType.SecurityScheme,
+                         Id = JwtBearerDefaults.AuthenticationScheme,
+                     },
+                     Scheme = "oauth2",
+                     Name = JwtBearerDefaults.AuthenticationScheme,
+                     In = ParameterLocation.Header,
                  },
-                  Scheme = "oauth2",
-                  Name = JwtBearerDefaults.AuthenticationScheme,
-                  In = ParameterLocation.Header,
-             },
                 new List<string>()
-         }
- });
+                 }
+            });
                 var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
