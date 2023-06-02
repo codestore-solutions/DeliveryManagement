@@ -1,0 +1,146 @@
+@import "../../App.scss";
+
+#order-details {
+  .header {
+    display: inline-flex;
+    align-items: center;
+    background-color: #f5f5f5;
+    img {
+      width: 20px;
+      height: 20px;
+      object-fit: cover;
+    }
+    h3 {
+      font-size: 25px;
+      letter-spacing: 0.03em;
+      font-weight: 700;
+      margin: 1rem 0;
+      color: #141c38;
+      padding: 0 10px;
+    }
+  }
+  .order-content {
+    .container {
+      padding: 0.5rem 1rem;
+      background: #ffffff;
+      height: 35vh;
+      border: 1px solid #eaeaea;
+      border-radius: 10px;
+      scrollbar-width: none;
+      /* For Firefox */
+      -ms-overflow-style: none;
+      box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.05);
+      h3 {
+        font-weight: 500;
+        font-size: 22px;
+        line-height: 33px;
+        color: $heading_color;
+        border-bottom: 1px solid #eaeaea;
+      }
+      .container-content {
+        padding: 0.5rem 0rem;
+        .container-row {
+          padding: 1rem 0;
+          display: flex;
+          justify-content: space-between;
+          .container-col {
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 24px;
+            color: #7e8299;
+            letter-spacing: 0.02em;
+          }
+          .sm {
+            font-size: 14px;
+            line-height: 20px;
+          }
+          .dark {
+            color: #7e8299;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+    .order-items {
+      margin: 1rem 0;
+      height: 50vh;
+      background: #ffffff;
+      border: 1px solid #eaeaea;
+      box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.05);
+      border-radius: 10px;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      h3 {
+        font-weight: 500;
+        font-size: 22px;
+        line-height: 33px;
+        /* identical to box height */
+        padding: 0.5rem;
+        color: #141c38;
+      }
+      .items-container {
+        padding: 1rem 0.3rem;
+        .item-table {
+          thead {
+            width: 100%;
+            th {
+              color: #7e8299;
+              font-size: 16px;
+              letter-spacing: 0.01em;
+              font-weight: 500;
+              width: 10vw;
+            }
+            .product-heading {
+              width: 40vw;
+              color: #7e8299;
+              text-align: left;
+            }
+          }
+          tbody {
+            tr {
+              margin: 0.5rem 0;
+              td {
+                width: 10vw;
+                text-align: center;
+                      font-weight: 400;
+                      font-size: 14px;
+                      line-height: 21px;
+                      color: #7e8299;
+              }
+              .table-product {
+                width: 40vw;
+                .item-card {
+                  display: flex;
+                  align-items: center;
+                  img {
+                    width: 100px;
+                    height: 100px;
+                    object-fit: cover;
+                  }
+                  .desc {
+                    display: flex;
+                    flex-direction: column;
+                    padding: 1rem 0.5rem;
+                    h4 {
+                      text-align: left;
+                      font-weight: 600;
+                      font-size: 18px;
+                      color: #7e8299;
+                    }
+                    span {
+                      text-align: left;
+                      font-weight: 400;
+                      font-size: 14px;
+                      line-height: 21px;
+                      color: #7e8299;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

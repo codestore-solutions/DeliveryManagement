@@ -1,0 +1,12 @@
+export  {default as DeliveryImg} from './images/deliverySvg.webp';
+export {default as LogoImg} from './svgs/logo.svg';
+export {default as HidePasswordIcon} from './svgs/EyeClose.svg';
+export {default as ShowPasswordIcon} from './svgs/EyeOpen.svg';
+export {default as DeliveryIcon} from './svgs/delivery-icon.png'
+export {default as DashboardIcon} from './svgs/dashmenu.svg'
+export {default as NotificationIcon} from './svgs/Notification.svg'
+export {default as DetailsIcon} from './svgs/DetailsIcon.svg'
+export {default as DashboardImg} from './svgs/Dashboard.svg'
+export {default as LeftArrowIcon} from './svgs/leftArrow.svg'
+export {default as Item1} from './svgs/item1.svg'
+export {default as Item2} from './svgs/item2.svg'

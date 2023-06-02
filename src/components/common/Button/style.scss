@@ -1,0 +1,9 @@
+@import '../../../App.scss';
+
+.custom-button{
+    background-color: $buttonText_color;
+    color: $base_color;
+    border: 1px solid $base_color;
+    padding: 5px 15px;
+    margin: 0 10px;
+}

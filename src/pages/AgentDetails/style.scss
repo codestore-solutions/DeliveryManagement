@@ -1,0 +1,72 @@
+@import '../../App.scss';
+
+.btn{
+    background-color: $base_color;
+    color: #fff;
+    margin: 0 10px;
+}
+
+#agent-details{
+    .header {
+        display: inline-flex;
+        align-items: center;
+        background-color: #f5f5f5;
+        img {
+          width: 20px;
+          height: 20px;
+          object-fit: cover;
+        }
+        h3 {
+          font-size: 25px;
+          letter-spacing: 0.03em;
+          font-weight: 700;
+          margin: 1rem 0;
+          color: #141c38;
+          padding: 0 10px;
+        }
+      }
+    .content{
+        display: flex;
+        flex-direction: column;
+        margin: 1rem 0;
+        height: 70vh;
+        background: #ffffff;
+        border: 1px solid #eaeaea;
+        box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.05);
+        border-radius: 10px;
+         .content-row{
+            display: flex;
+             .col-item{
+                 flex: 5;
+                 padding: 0 1rem;
+                 .tags{
+                     display: flex;
+                     justify-content: space-between;
+                     padding:1rem;
+                     .label{
+                        font-weight: 400;
+                        font-size: 16px;
+                        line-height: 20px;
+                        color: $heading_color;
+                        letter-spacing: 0.02em;
+                     }
+                     .value{
+                        font-size: 16px;
+                        font-weight: 500;
+                        color: grey;
+                      
+                     }
+                     
+                 }
+             }
+         }  
+
+         .btns{
+             width: 40vw;
+             display: flex;
+             padding: 0 1rem;
+         }
+    }
+}
+
+
