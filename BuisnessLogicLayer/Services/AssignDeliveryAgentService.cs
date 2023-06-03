@@ -18,10 +18,9 @@ namespace BusinessLogicLayer.Services
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
         }
-
         public async Task<IEnumerable<AgentAssign>> GetAllAsync(int pageNumber=1, int limit=1000)
         {
-            var allItems = await unitOfWork.OrderAssignRepository.AsQueryableAsync();
+            var allItems = await unitOfWork.AssignDeliveryAgentRepository.AsQueryableAsync();
             // Pagination
             var paginatedItems = allItems.Skip((pageNumber - 1) * limit).Take(limit);
             return paginatedItems;
@@ -48,24 +47,24 @@ namespace BusinessLogicLayer.Services
             {
                 i.OrderAssignStatus = (ServiceLocation.OrderAssignedStatus)1;
             }
-            await unitOfWork.OrderAssignRepository.AddAsync(orderAssigned);
+            await unitOfWork.AssignDeliveryAgentRepository.AddAsync(orderAssigned);
             await unitOfWork.SaveAsync();
             return orderAssigned;
         }     
         public async Task<AgentAssign> RemoveOrderAssignedAsync(int id)
         { 
-           var deletedTask= await unitOfWork.OrderAssignRepository.DeleteAsync(id);
+           var deletedTask= await unitOfWork.AssignDeliveryAgentRepository.DeleteAsync(id);
            await unitOfWork.SaveAsync();
            return deletedTask;
         }
         public async Task<AgentAssign> UpdateAsync(int id, UpdateOrderAssignDto orderAssignDto)
         {
-            var OrderAssignDomain = await unitOfWork.OrderAssignRepository.GetByIdAsync(id);
+            var OrderAssignDomain = await unitOfWork.AssignDeliveryAgentRepository.GetByIdAsync(id);
             if (OrderAssignDomain != null)
             {
                 OrderAssignDomain.OrderId = orderAssignDto.OrderId;
                 OrderAssignDomain.DeliveryAgentId = orderAssignDto.DeliveryAgentId;
-                await unitOfWork.OrderAssignRepository.AddAsync(OrderAssignDomain);
+                await unitOfWork.AssignDeliveryAgentRepository.AddAsync(OrderAssignDomain);
                 await unitOfWork.SaveAsync();
             }
             return OrderAssignDomain;
@@ -140,14 +139,12 @@ namespace BusinessLogicLayer.Services
 
             foreach(AgentAssign addOrder in orderAssignedList)
             {
-                await unitOfWork.OrderAssignRepository.AddAsync(addOrder);
+                await unitOfWork.AssignDeliveryAgentRepository.AddAsync(addOrder);
                 await unitOfWork.SaveAsync();
             }
 
             return orderAssignedList;
         }
-
-
 
     }
 }

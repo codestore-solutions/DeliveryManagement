@@ -9,13 +9,13 @@ namespace DataAccessLayer.Repository
         public UnitOfWork(DeliveryDbContext dbContext)
         {
             this.dbContext = dbContext;
-            OrderAssignRepository = new AssignDeliveryAgentRepository(this.dbContext);
+            AssignDeliveryAgentRepository = new AssignDeliveryAgentRepository(this.dbContext);
             ServiceLocationRepository = new ServiceLocationRepository(this.dbContext);
             BusinessAdminRepository=new BusinessAdminRepository(this.dbContext);
             OrderRepository= new OrderRepository(this.dbContext);   
             ImageRepository= new ImageRepository(this.dbContext);
         }
-        public IAssignDeliveryAgentRepository OrderAssignRepository
+        public IAssignDeliveryAgentRepository AssignDeliveryAgentRepository
         {
             get;
             private set;

@@ -7,7 +7,7 @@ namespace DataAccessLayer.IRepository
         public IOrderRepository OrderRepository { get; }
         public IBusinessAdminRepository BusinessAdminRepository { get; }
         public IServiceLocationRepository ServiceLocationRepository { get; }
-        public IAssignDeliveryAgentRepository OrderAssignRepository { get; }
+        public IAssignDeliveryAgentRepository AssignDeliveryAgentRepository { get; }
         public void Save();
         public Task SaveAsync();
     }

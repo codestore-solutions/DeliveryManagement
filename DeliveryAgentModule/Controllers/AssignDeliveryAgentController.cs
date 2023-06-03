@@ -6,8 +6,10 @@ using System.Collections;
 
 namespace DeliveryAgentModule.Controllers
 {
-    [Route("api/agent")]
+    [Route("api/v{version:apiVersion}/agent")]
     [ApiController]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     public class AssignDeliveryAgentController : ControllerBase
     {
         private readonly IAssignDeliveryAgentService orderAssignService;
@@ -21,6 +23,7 @@ namespace DeliveryAgentModule.Controllers
         /// Get all assigned agent list with orderId
         /// </summary>
         [HttpGet("get-all")]
+        [MapToApiVersion("1.0")]
         public async Task<IEnumerable> GetAllAssignedAgent([FromQuery] int pageNumber=1, [FromQuery] int limit=1000)
         {
             return await orderAssignService.GetAllAsync(pageNumber,limit);
@@ -38,6 +41,7 @@ namespace DeliveryAgentModule.Controllers
         /// </remarks>
         [HttpPost("assign-agent")]
         [ValidateModel]
+        [MapToApiVersion("1.0")]
         public async Task<IActionResult> AddAssignDeliveryAgent([FromBody] AgentAssignRequestDto agentAssignRequestDto)
         {
             return Ok(await orderAssignService.AddNearsetDeliveryAgentAsync(agentAssignRequestDto));
@@ -48,24 +52,27 @@ namespace DeliveryAgentModule.Controllers
         /// Assign Delivery Agent for multiple order Ids
         /// </summary>
         [HttpPost("assign-agent-bulk")]
+        [MapToApiVersion("1.0")]
         public async Task<IActionResult> AddAssignDekliveryAgentInBulk(OrderAssingInBulkRequestDto orderAssingInBulkRequestDto)
         {
             return Ok(await orderAssignService.AddOrderAssignInBulk(orderAssingInBulkRequestDto));
         }
 
         /// <summary>
-        /// Remove Delivery Agent by agent Id
+        /// Remove assigned order to agent by agent Id
         /// </summary>
         [HttpDelete("{id}")]
+        [MapToApiVersion("1.0")]
         public async Task<ActionResult> RemoveOrderAssigned([FromRoute] int id)
         {
             return Ok(await orderAssignService.RemoveOrderAssignedAsync(id));
         }
 
         /// <summary>
-        /// Update Delivery Agent or Order Id provide agent Id as parameter
+        /// Reassign new delivery agent Update agentId or orderId
         /// </summary>
         [HttpPut("{id}")]
+        [MapToApiVersion("1.0")]
         public async Task<IActionResult> UpdateAgentOrOrderId([FromRoute] int id,[FromBody] UpdateOrderAssignDto updateOrderAssignDto)
         {
             var updatedOrder = await orderAssignService.UpdateAsync(id, updateOrderAssignDto);

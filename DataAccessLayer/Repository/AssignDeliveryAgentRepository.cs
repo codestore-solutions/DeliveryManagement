@@ -13,7 +13,6 @@ namespace DataAccessLayer.Repository
         {
             this.dbContext = dbContext;
         }
-
     }
 }
 

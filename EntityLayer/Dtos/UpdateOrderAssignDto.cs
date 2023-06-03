@@ -10,10 +10,5 @@ namespace EntityLayer.Dtos
     {
         public int DeliveryAgentId { get; set; }
         public int OrderId { get; set; }
-
-        enum OrderDelivered{
-            Yes,
-            No
-        }
     }
 }

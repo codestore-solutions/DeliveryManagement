@@ -37,7 +37,7 @@ namespace DeliveryAgentModule.Controllers
         [HttpGet("get-agents/{businessId}")]
         [MapToApiVersion("1.0")]
         public async Task<IEnumerable> GetAllDeliveryAgent([FromRoute] long businessId, [FromQuery] OrderAssignedStatus? orderAssignedStatus, 
-            [FromQuery] DeliveryAgentStatus? agentStatus, [FromQuery] VerificationStatus? verStatus,[FromQuery] int pageNumber = 1, [FromQuery] int limit = 1000)
+            [FromQuery] DeliveryAgentStatus? agentStatus, [FromQuery] VerificationStatus? verStatus,[FromQuery] int pageNumber = 1, [FromQuery] int limit = 10)
         {
             return await businessAdminService.GetDeliveryAgentAsync(businessId, orderAssignedStatus, agentStatus, verStatus, pageNumber, limit);
         }
