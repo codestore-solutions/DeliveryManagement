@@ -16,7 +16,7 @@ class AgentServices {
   getAgentsList = async (
     pageNumber?: Number,
     limit?: Number,
-    status?: number
+  
   ) => {
     let id = 1224;
 
@@ -43,7 +43,7 @@ class AgentServices {
   };
 
   getAssignedAgents = async (pageNumber?: Number, limit?: Number) => {
-    let id = 1224;
+    // let id = 1224;
     const url = `${ApiContants.getAssignedAgent}?pageNumber=${pageNumber}&limit=${limit}`;
     let response = await this.HttpsIntance.getRequest(url);
     return response?.data;

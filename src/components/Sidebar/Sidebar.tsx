@@ -2,7 +2,7 @@ import { FC } from "react";
 import "./style.scss";
 import { Layout, Menu } from "antd";
 const { Sider } = Layout;
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { LogoImg } from "../../assets";
 import SubMenu from "antd/es/menu/SubMenu";
 
@@ -13,7 +13,7 @@ interface SidebarProps {
 }
 
 const Sidebar: FC<SidebarProps> = ({ menuItems, collapsed, setCollapsed }) => {
-  const location = useLocation();
+  // const location = useLocation();
   const renderMenuItems = (menuItems: any) => {
     return menuItems.map((item: any) => {
       if (item.children) {

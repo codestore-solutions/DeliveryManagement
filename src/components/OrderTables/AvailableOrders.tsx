@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import "./style.scss";
 import "../../pages/DeliveryAgents/style.scss";
-import { Button, Input, Select, SelectProps, Space, Spin } from "antd";
+import { Button, Space, Spin } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { CustomTable } from "../index";
 import { LoadingOutlined } from "@ant-design/icons";
@@ -11,9 +11,7 @@ import { ApiContants } from "../../constants/ApiContants";
 import { useEffect } from "react";
 import OrderServices from "../../services/OrderServices";
 import { DetailsIcon } from "../../assets";
-import { useNavigate} from "react-router-dom";
-
-const { Search } = Input;
+import { useNavigate } from "react-router-dom";
 
 export interface DataType {
   key: React.Key;
@@ -25,17 +23,6 @@ export interface DataType {
 }
 const antIcon = <LoadingOutlined style={{ color: "#fff" }} spin />;
 
-const options: SelectProps["options"] = [
-  {
-    value: 1,
-    label: "Fast Delivery",
-  },
-  {
-    value: 0,
-    label: "Normal Delivery",
-  },
-];
-
 // Payment filter
 let paymentFilter = [
   { text: "COD", value: 1 },
@@ -43,10 +30,9 @@ let paymentFilter = [
 ];
 
 const AvailableOrders = () => {
-
   const navigate = useNavigate();
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [deliveryType, setDeliveryType] = useState<any>(0);
+  const deliveryType = 0;
   const [selectedOrders, setSelectedOrders] = useState<Array<any>>();
   const [loading, setLoading] = useState<boolean>(false);
   const [bulkloading, setBulkLoading] = useState<boolean>(false);
@@ -54,11 +40,11 @@ const AvailableOrders = () => {
   const [pagination, setPagination] = useState({
     pageNumber: 1,
     total: 6,
-    pageSize: 5,
+    pageSize: 6,
     showTotal: (total: any, range: any) =>
       `${range[0]}-${range[1]} of ${total} items`,
   });
-  
+
   const handleClick = (state: any) => {
     navigate(`/dashboard/order-details/${state.id}`, { state });
   };
@@ -177,7 +163,7 @@ const AvailableOrders = () => {
         key: uuidv4(),
         loading: false,
         serialNo: count++,
-        storename: "Momos King"
+        storename: "Momos King",
       }));
       setData(formattedData);
       setLoading(false);
@@ -213,11 +199,11 @@ const AvailableOrders = () => {
   };
 
   // Handle FilterChange
-  const handleChange = (value: string | string[]) => {
-    console.log(`Selected: ${value}`);
-    setDeliveryType(value);
-    fetchOrders(value);
-  };
+  // const handleChange = (value: string | string[]) => {
+  //   console.log(`Selected: ${value}`);
+  //   setDeliveryType(value);
+  //   fetchOrders(value);
+  // };
 
   useEffect(() => {
     fetchOrders(deliveryType);
@@ -226,17 +212,7 @@ const AvailableOrders = () => {
   return (
     <div id="available-list">
       <div className="available-list-header">
-        <div className="filter">
-          {/* <Search placeholder="Search here.." allowClear onSearch={onSearch} style={{ width: "30vw", padding:"5px 10px", outline:"none" }} /> */}
-          {/* <span>Filter: </span>
-          <Select
-            size={"large"}
-            defaultValue={"Fast Delivery"}
-            onChange={handleChange}
-            options={options}
-            style={{ width: "30vw" }}
-          /> */}
-        </div>
+        <div className="filter"></div>
 
         <div className="action">
           <Button

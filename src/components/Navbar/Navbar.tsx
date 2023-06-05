@@ -1,19 +1,9 @@
 import { FC } from "react";
 import "./style.scss";
 import { DownOutlined } from "@ant-design/icons";
-import { Avatar, Dropdown, MenuProps, Select, SelectProps, Space } from "antd";
+import { Avatar, Dropdown, MenuProps, Space } from "antd";
 import { NotificationIcon } from "../../assets";
 interface NavbarProps {}
-const options: SelectProps["options"] = [
-  {
-    value: "Verified",
-    label: "Verified",
-  },
-  {
-    value: "Available",
-    label: "Available",
-  },
-];
 
 const items: MenuProps["items"] = [
   {
@@ -30,9 +20,9 @@ const items: MenuProps["items"] = [
   },
 ];
 const Navbar: FC<NavbarProps> = () => {
-  const handleChange = (value: string | string[]) => {
-    console.log(`Selected: ${value}`);
-  };
+  // const handleChange = (value: string | string[]) => {
+  //   console.log(`Selected: ${value}`);
+  // };
   return (
     <nav id="navbar">
       <div className="nav-left">

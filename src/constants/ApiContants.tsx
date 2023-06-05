@@ -1,5 +1,5 @@
 export const ApiContants = {
-     baseUrl: 'https://app-deliveragent-dev.azurewebsites.net/api/',
+     baseUrl: 'https://app-deliveryagent-dev.azurewebsites.net/api/v1/',
 
      // API Response Codes
      successCode: 200,

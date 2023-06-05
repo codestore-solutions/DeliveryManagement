@@ -1,16 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import type { ColumnsType } from "antd/es/table";
-import { v4 as uuidv4 } from "uuid";
 import "./style.scss";
 import dummyData from "../../../dummyData";
-import { CustomTable } from "../../components";
+import { CustomTable, DateRangePicker } from "../../components";
 import { Space, Button } from "antd";
-import { Link, useNavigate } from "react-router-dom";
-import AgentServices from "../../services/AgentServices";
+import { useNavigate } from "react-router-dom";
 import { DetailsIcon } from "../../assets";
 
 export interface DataType {
   key: React.Key;
+  date: string;
   deliveryAgentId: string;
   deliveryAgentName: string;
   orderId: string;
@@ -18,8 +17,8 @@ export interface DataType {
 
 const AssignedAgents: React.FC = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState<boolean>(false);
-  const [data, setData] = useState<Array<any>>([]);
+  const loading = false;
+  const [selectedDateRange, setSelectedDateRange] = useState<any>(null);
   const [pagination, setPagination] = useState({
     pageNumber: 1,
     limit: 8,
@@ -28,7 +27,7 @@ const AssignedAgents: React.FC = () => {
     showTotal: (total: any, range: any) =>
       `${range[0]}-${range[1]} of ${total} items`,
   });
-  const handleTableChange = (pagination: any, filters: any, sorter: any) => {
+  const handleTableChange = (pagination: any) => {
     const { current, pageSize } = pagination;
     setPagination({ ...pagination, pageNumber: current, limit: pageSize });
   };
@@ -36,7 +35,7 @@ const AssignedAgents: React.FC = () => {
     navigate(`/dashboard/order-details/${state.id}`, { state });
   };
   const trackOrder = (state: any) => {
-    navigate(`/dashboard/track-order/${state.id}`, { state });
+    navigate(`/dashboard/track-order/${state.key}`, { state });
   };
   const columns: ColumnsType<DataType> = [
     {
@@ -45,6 +44,23 @@ const AssignedAgents: React.FC = () => {
       key: "serialNo",
       render: (text) => <p className="tableId">{text}</p>,
     },
+    {
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
+      render: (text: any) => <p className="tableTxt">{text}</p>,
+      filterDropdown: () => (
+        <DateRangePicker setSelectedDateRange={setSelectedDateRange} />
+      ),
+
+      onFilterDropdownVisibleChange: (visible: boolean) => {
+        if (visible) {
+          // Reset the selected date when the filter dropdown is opened
+          selectedDateRange(null);
+        }
+      },
+    },
+
     {
       title: "Store Name",
       dataIndex: "storename",
@@ -58,53 +74,32 @@ const AssignedAgents: React.FC = () => {
       render: (text) => <p className="tableTxt">{text}</p>,
     },
     {
-        title: "Order Status",
-        dataIndex: "orderStatus",
-        key: "orderStatus",
-        render: (text) => <p className="tableTxt">{text}</p>,
-      },
-      {
-        title: "Order Details",
-        key: "action",
-        render: (_, record) => (
-          <Space size="middle" onClick={() => handleClick(record)}>
-            <img src={DetailsIcon} alt="" />
-          </Space>
-        ),
-      },
-      {
-        title: "Track Order",
-        key: "action",
-        render: (_, record) => (
-          <Space size="middle">
-               <Button type='primary'>Track</Button>
-          </Space>
-        ),
-      },
+      title: "Order Status",
+      dataIndex: "orderStatus",
+      key: "orderStatus",
+      render: (text) => <p className="tableTxt">{text}</p>,
+    },
+    {
+      title: "Order Details",
+      key: "action",
+      render: (_, record) => (
+        <Space size="middle" onClick={() => handleClick(record)}>
+          <img src={DetailsIcon} alt="" />
+        </Space>
+      ),
+    },
+    {
+      title: "Track Order",
+      key: "action",
+      render: (_, record) => (
+        <Space size="middle">
+          <Button type="primary" onClick={() => trackOrder(record)}>
+            Track
+          </Button>
+        </Space>
+      ),
+    },
   ];
-
-  // Get All Assigned Delivery Agnets List
-  const getAssignedAgnets = async () =>{
-    let instance = AgentServices.getInstance();
-    setLoading(true);
-    instance
-      .getAssignedAgents(pagination.pageNumber, pagination.pageSize)
-      .then((res) => {
-        const formattedData = res?.map((item: any) => ({
-          ...item,
-          key: uuidv4(),
-          orderStatus: 'Pending',
-          deliveryAgentName: 'Deepak Kumar'
-        }));
-        setData(formattedData);
-        setLoading(false);
-      });
-    // console.log("dat", data);
-  }
-  
-  // useEffect(() =>{
-  //      getAssignedAgnets();
-  // }, [])
 
   return (
     <div id="delivery-agent">

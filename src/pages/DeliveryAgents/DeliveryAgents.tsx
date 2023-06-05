@@ -1,4 +1,4 @@
-import { Select, SelectProps, Space } from "antd";
+import { Space } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { v4 as uuidv4 } from "uuid";
 import "./style.scss";
@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import AgentServices from "../../services/AgentServices";
 import { CustomTable } from "../../components";
 import { DetailsIcon } from "../../assets";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export interface DataType {
   key: React.Key;
@@ -18,16 +18,6 @@ export interface DataType {
   verStatus: number;
 }
 
-const options: SelectProps["options"] = [
-  {
-    value: "0",
-    label: "Not Available",
-  },
-  {
-    value: "1",
-    label: "Available",
-  },
-];
 // const pageSizeOptions = ["6", "14", "21", "28"];
 const statusFilters = [
   { text: "Verified", value: 1 },
@@ -37,7 +27,6 @@ const statusFilters = [
 const availibilityFilters = [
   { text: "Available", value: 1 },
   { text: "Not Available", value: 0 },
-  
 ];
 // const addressFilters = [
 //   {
@@ -89,13 +78,12 @@ const DeliveryAgents: React.FC = () => {
       key: "deliveryAgentAddress",
 
       render: (text) => <p className="tableTxt">{text}</p>,
-     
     },
     {
       title: "Availibility",
       key: "agentStatus",
       dataIndex: "agentStatus",
-      filters:availibilityFilters,
+      filters: availibilityFilters,
       render: (_, { agentStatus }) => (
         <>
           <span>
@@ -108,29 +96,27 @@ const DeliveryAgents: React.FC = () => {
           </span>
         </>
       ),
-      onFilter: (value: any, record: any) =>
-      record.agentStatus === value,
+      onFilter: (value: any, record: any) => record.agentStatus === value,
     },
     {
       title: "Status",
       key: "verStatus",
       dataIndex: "verStatus",
-       filters: statusFilters,
+      filters: statusFilters,
       render: (_, { verStatus }) => (
         <>
           <span>
             {verStatus === 1 ? (
               <p className="verified">Verified</p>
-            ) :  verStatus=== 2 ? (
-
+            ) : verStatus === 2 ? (
               <p className="codStatus">Pending</p>
-            ) :   <p className="codStatus">Not Verified</p>}{" "}
+            ) : (
+              <p className="codStatus">Not Verified</p>
+            )}{" "}
           </span>
         </>
       ),
-      onFilter: (value: any, record: any) =>
-      record.verStatus === value,
-     
+      onFilter: (value: any, record: any) => record.verStatus === value,
     },
     {
       title: "Details",
@@ -143,20 +129,19 @@ const DeliveryAgents: React.FC = () => {
     },
   ];
 
-  const handleTableChange = (pagination: any, filters: any, sorter: any) => {
-    console.log("Page", filters, );
+  const handleTableChange = (pagination: any, filters: any) => {
+    console.log("Page", filters);
     const { current, pageSize } = pagination;
     setPagination({ ...pagination, pageNumber: current, limit: pageSize });
-    getAgents(filters.verStatus[0]);
+    getAgents();
   };
 
-
-  const getAgents = (status?:any) => {
+  const getAgents = () => {
     let instance = AgentServices.getInstance();
     setLoading(true);
     let count = 1;
     instance
-      .getAgentsList(pagination.pageNumber, pagination.pageSize, status)
+      .getAgentsList(pagination.pageNumber, pagination.pageSize)
       .then((res) => {
         const formattedData = res?.map((item: any) => ({
           ...item,
@@ -169,10 +154,8 @@ const DeliveryAgents: React.FC = () => {
     // console.log("datal", agentsList);
   };
 
-  const handleChange = (values: any) =>{};
-
   useEffect(() => {
-    getAgents(2);
+    getAgents();
   }, [pagination.pageNumber]);
 
   return (

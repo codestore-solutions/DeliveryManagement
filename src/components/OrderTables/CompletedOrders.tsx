@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import "./style.scss";
 import "../../pages/DeliveryAgents/style.scss";
-import { Space, Table, Button, DatePicker } from "antd";
+import { Space, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import dummyData from "../../../dummyData";
 import { DetailsIcon } from "../../assets";
 import { useNavigate } from "react-router-dom";
-import { SearchOutlined } from "@ant-design/icons";
+import { DateRangePicker } from "..";
 
 export interface DataType {
   key: React.Key;
@@ -18,21 +18,10 @@ const pageSizeOptions = ["6", "14", "21", "28"];
 
 const CompletedOrders = () => {
   const navigate = useNavigate();
-  const [selectedDate, setSelectedDate] = useState<null>(null);
-  const [tableData, setTableData] = useState(dummyData.completedOrderData);
+   const [selectedDateRange, setSelectedDateRange] = useState<any>(null);
+   const [tableData, setTableData] = useState(dummyData.completedOrderData);
 
-  const handleDateFilter = (date: any) => {
-    setSelectedDate(date);
-    const formattedDate = date ? date.format("YYYY-MM-DD") : "";
-    const filteredData = tableData.filter((item) => {
-      console.log("d", item.date, formattedDate);
-      if (item.date === formattedDate) {
-        return item;
-      }
-    });
-    console.log("fil", filteredData);
-    setTableData(filteredData);
-  };
+ 
 
   const handleClick = (state: any) => {
     navigate(`/dashboard/order-details/${state.id}`, { state });
@@ -50,33 +39,13 @@ const CompletedOrders = () => {
       key: "date",
       render: (text: any) => <p className="tableTxt">{text}</p>,
       filterDropdown: () => (
-        <div style={{ padding: 8 }}>
-          <DatePicker
-            value={selectedDate}
-            format="DD/MM/YYYY"
-            onChange={handleDateFilter}
-            style={{ marginBottom: 8, display: "block" }}
-          />
-          <div style={{ textAlign: "right" }}>
-            <Button
-              onClick={() => {
-                setSelectedDate(null);
-                setTableData(dummyData.completedOrderData);
-              }}
-              size="small"
-            >
-              Reset
-            </Button>
-          </div>
-        </div>
+              <DateRangePicker setSelectedDateRange={setSelectedDateRange} />
       ),
-      filterIcon: (filtered: boolean) => (
-        <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
-      ),
+      
       onFilterDropdownVisibleChange: (visible: boolean) => {
         if (visible) {
           // Reset the selected date when the filter dropdown is opened
-          setSelectedDate(null);
+          selectedDateRange(null);
         }
       },
     },

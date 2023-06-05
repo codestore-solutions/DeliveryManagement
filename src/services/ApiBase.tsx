@@ -8,9 +8,9 @@ export default async function API(
   payload: Object,
   endpoint: string,
   apiMethod: string,
-  cancelToken?: any,
+  // cancelToken?: any,
 ) {
-  let auth = ""; // Token form Local Storage
+  // let auth = ""; // Token form Local Storage
   let init: Object = {};
   switch (apiMethod) {
     case 'GET':
