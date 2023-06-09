@@ -1,17 +1,17 @@
-@import '../../../App.scss';
+@import "../../../App.scss";
 
-#custom-table{
-    table{
-        background: #FFFFFF;
-        border: 1px solid #EAEAEA;
-        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
-        border-radius: 20px;
-    }
-     thead > tr > th{
-         background: #F1F3F6;
-         color: #141C38;
-         font-size: 15px;
-         letter-spacing: 0.03em;
-     }
-     
+#custom-table {
+  table {
+    // background: #FFFFFF;
+    background: #ffffff;
+    border: 1px solid #eaeaea;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+  }
+  thead > tr > th {
+    background: #f1f3f6;
+    color: #141c38;
+    font-size: 15px;
+    letter-spacing: 0.03em;
+  }
 }

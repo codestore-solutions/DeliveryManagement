@@ -1,23 +1,40 @@
 import React from "react";
 import "./style.scss";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Item1, Item2, LeftArrowIcon } from "../../assets";
-import { Col, Row } from "antd";
+import { useLocation } from "react-router-dom";
+import { LeftArrowIcon } from "../../assets";
+import { Button, Col, Row } from "antd";
+import { CustomTimeline } from "../../components";
 
 const OrderDetails: React.FC = () => {
   const location = useLocation();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const state = location.state;
   console.log("Dey", state);
   return (
     <div id="order-details">
-      <div className="header">
-        <img src={LeftArrowIcon} alt="" onClick={() => navigate("/dashboard/orders")} />
-        <h3>Details</h3>
+      <div className="order-header">
+        <div className="left">
+          <img src={LeftArrowIcon} alt="" />
+          <h3>Order Details </h3>
+        </div>
+        <div className="right">
+          <Button
+            type="primary"
+            style={{
+              height: "45px",
+              backgroundColor: "#545BFC",
+              padding: "10px 25px",
+              fontWeight: "600",
+              borderRadius: "15px",
+            }}
+          >
+            Assign Agent
+          </Button>
+        </div>
       </div>
-      <div className="order-content">
+      <div className="order-details-content">
         <Row gutter={[16, 16]}>
-          <Col xs={24} sm={8} md={8} lg={8} xl={8}>
+          <Col xs={24} sm={24} md={12} lg={8} xl={8}>
             <div className="container">
               <h3>Order Details</h3>
               <div className="container-content">
@@ -36,7 +53,7 @@ const OrderDetails: React.FC = () => {
               </div>
             </div>
           </Col>
-          <Col xs={24} sm={8} md={8} lg={8} xl={8}>
+          <Col xs={24} sm={24} md={12} lg={8} xl={8}>
             <div className="container">
               <h3>Customer Details</h3>
               <div className="container-content">
@@ -55,7 +72,7 @@ const OrderDetails: React.FC = () => {
               </div>
             </div>
           </Col>
-          <Col xs={24} sm={8} md={8} lg={8} xl={8}>
+          <Col xs={24} sm={24} md={12} lg={8} xl={8}>
             <div className="container">
               <h3>Address</h3>
               <div className="container-content">
@@ -76,52 +93,29 @@ const OrderDetails: React.FC = () => {
             </div>
           </Col>
         </Row>
-        <div className="order-items">
-          <h3 className="heading">Orders</h3>
-          <div className="items-container">
-            <table className="item-table">
-              <thead className="table-header">
-                <th className="product-heading">Product</th>
-                <th>SKU</th>
-                <th>QTY</th>
-                <th>UNIT PRICE</th>
-                <th>TOTAL</th>
-              </thead>
-              <tbody className="table-body">
-                <tr className="table-row">
-                  <td className="table-product">
-                    <div className="item-card">
-                      <img src={Item1} alt="" />
-                      <div className="desc">
-                        <h4>Footwear</h4>
-                        <span >Delivery Date: 19/05/2023</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td>02494006</td>
-                  <td>4</td>
-                  <td>123 $</td>
-                  <td>555 $</td>
-                </tr>
-                <tr className="table-row">
-                  <td className="table-product">
-                    <div className="item-card">
-                      <img src={Item2} alt="" />
-                      <div className="desc">
-                        <h4>Smart Watch</h4>
-                        <span >Delivery Date: 19/05/2023</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td>02494006</td>
-                  <td>4</td>
-                  <td>123 $</td>
-                  <td>555 $</td>
-                </tr>
-
-              </tbody>
-            </table>
+      </div>
+      <div className="order-tracking">
+        <div className="order-header">
+          <div className="left">
+            <h3>Status </h3>
           </div>
+          <div className="right">
+            <Button
+              type="primary"
+              style={{
+                height: "45px",
+                backgroundColor: "#545BFC",
+                padding: "10px 25px",
+                fontWeight: "600",
+                borderRadius: "15px",
+              }}
+            >
+              Live Track
+            </Button>
+          </div>
+        </div>
+        <div className="timeline">
+          <CustomTimeline />
         </div>
       </div>
     </div>

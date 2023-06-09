@@ -26,13 +26,7 @@ const Navbar: FC<NavbarProps> = () => {
   return (
     <nav id="navbar">
       <div className="nav-left">
-        {/* <span>Sort:</span>
-        <Select
-          size={"large"}
-          defaultValue={"Status"}
-          onChange={handleChange}
-          options={options}
-        /> */}
+        <p>Delivery Partner Management</p>
       </div>
       <div className="nav-right">
         <div className="nav-items">

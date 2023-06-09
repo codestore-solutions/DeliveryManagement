@@ -2,14 +2,13 @@
 
 /* Customize the sidebar container */
 .sidebar {
-  .ant-menu-item-group{
-     color: $buttonText_color;
+  .ant-menu-item-group {
+    color: $buttonText_color;
   }
   .ant-layout-sider {
     background-color: $base_color;
-    border-top-right-radius: 20px;
-    border-bottom-right-radius: 20px;
-  
+    box-shadow: 20px 10px 100px rgba(84, 91, 252, 0.4);
+    border-radius: 0px 50px 50px 0px;
   }
   /* Customize the sidebar menu */
   .ant-menu {
@@ -29,7 +28,7 @@
     color: #fff;
   }
   .ant-menu-item-selected {
-    border-left: 3px solid $buttonText_color;
+    border: 3px solid $buttonText_color;
     color: red;
   }
   .container {
@@ -43,9 +42,9 @@
       justify-content: center;
       cursor: pointer;
       .img {
-        width: 35px;
-        height: 35px;
-        object-fit: fill;
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
       }
       .logo-tag {
         color: $buttonText_color;

@@ -6,7 +6,7 @@ import "./style.scss";
 import { useEffect, useState } from "react";
 import AgentServices from "../../services/AgentServices";
 import { CustomTable } from "../../components";
-import { DetailsIcon } from "../../assets";
+import { BusyIcon, DeleteIcon, DetailsIcon } from "../../assets";
 import { useNavigate } from "react-router-dom";
 
 export interface DataType {
@@ -18,30 +18,6 @@ export interface DataType {
   verStatus: number;
 }
 
-// const pageSizeOptions = ["6", "14", "21", "28"];
-const statusFilters = [
-  { text: "Verified", value: 1 },
-  { text: "NotVerified", value: 0 },
-  { text: "Pending", value: 2 },
-];
-const availibilityFilters = [
-  { text: "Available", value: 1 },
-  { text: "Not Available", value: 0 },
-];
-// const addressFilters = [
-//   {
-//     text: "Delhi",
-//     value: "Delhi",
-//   },
-//   {
-//     text: "Lucknow",
-//     value: "Lucknow",
-//   },
-//   {
-//     text: "Noida Sector 59",
-//     value: "Noida Sector 59",
-//   },
-// ];
 const DeliveryAgents: React.FC = () => {
   const navigate = useNavigate();
   const [agentsList, setAgentsList] = useState<any>();
@@ -58,72 +34,88 @@ const DeliveryAgents: React.FC = () => {
   const handleClick = (state: any) => {
     navigate(`/dashboard/agent-details/${state.deliveryAgentId}`, { state });
   };
+
+  /**
+   * Columns For The Table
+   */
   const columns: ColumnsType<DataType> = [
     {
-      title: "Sr No.",
-      dataIndex: "serialNo",
-      key: "serialNo",
-      render: (text) => <p className="tableId">{text}</p>,
-    },
-    {
-      title: "Agent Name",
+      title: "Name",
       dataIndex: "deliveryAgentName",
       key: "deliveryAgentName",
-      render: (text) => <p className="tableTxt">{text}</p>,
-    },
-
-    {
-      title: "Address",
-      dataIndex: "deliveryAgentAddress",
-      key: "deliveryAgentAddress",
-
-      render: (text) => <p className="tableTxt">{text}</p>,
+      render: (text) => <p className="highlighted-col-text">{text}</p>,
     },
     {
-      title: "Availibility",
-      key: "agentStatus",
-      dataIndex: "agentStatus",
-      filters: availibilityFilters,
-      render: (_, { agentStatus }) => (
-        <>
-          <span>
-            {" "}
-            {agentStatus === 1 ? (
-              <p className="tableTxtAv">Available</p>
-            ) : (
-              <p className="tableTxtNot">Not Available</p>
-            )}{" "}
-          </span>
-        </>
-      ),
-      onFilter: (value: any, record: any) => record.agentStatus === value,
+      title: "User Id",
+      dataIndex: "serialNo",
+      key: "serialNo",
+      render: (text) => <p className="col-text">{text}</p>,
     },
+    {
+      title: "Mobile Number",
+      dataIndex: "serialNo",
+      key: "serialNo",
+      render: (text) => <p className="col-text">{text}</p>,
+    },
+    // {
+    //   title: "Status",
+    //   key: "agentStatus",
+    //   dataIndex: "agentStatus",
+    //   filters: availibilityFilters,
+    //   render: (_, { agentStatus }) => (
+    //     <>
+    //       <span>
+    //         {" "}
+    //         {agentStatus === 1 ? (
+    //           <p className="tableTxtAv">Available</p>
+    //         ) : (
+    //           <p className="tableTxtNot">Not Available</p>
+    //         )}{" "}
+    //       </span>
+    //     </>
+    //   ),
+    //   onFilter: (value: any, record: any) => record.agentStatus === value,
+    // },
     {
       title: "Status",
       key: "verStatus",
       dataIndex: "verStatus",
-      filters: statusFilters,
       render: (_, { verStatus }) => (
         <>
           <span>
             {verStatus === 1 ? (
-              <p className="verified">Verified</p>
+              <p className="available">Available</p>
             ) : verStatus === 2 ? (
-              <p className="codStatus">Pending</p>
+              <p className="busy">Pending</p>
             ) : (
-              <p className="codStatus">Not Verified</p>
+              <p className="offline">offline</p>
             )}{" "}
           </span>
         </>
       ),
-      onFilter: (value: any, record: any) => record.verStatus === value,
     },
     {
-      title: "Details",
+      title: "Region",
+      dataIndex: "deliveryAgentAddress",
+      key: "deliveryAgentAddress",
+
+      render: (text) => <p className="col-text">{text}</p>,
+    },
+    {
+      title: "Date",
+      dataIndex: "deliveryAgentAddress",
+      key: "deliveryAgentAddress",
+
+      render: (text) => <p className="col-text">{text}</p>,
+    },
+    {
+      title: "Action",
       key: "action",
       render: (_, record: any) => (
         <Space size="middle" onClick={() => handleClick(record)}>
           <img src={DetailsIcon} alt="" />
+          <img src={BusyIcon} alt="" />
+          <img src={DeleteIcon} alt="" />
         </Space>
       ),
     },
@@ -160,17 +152,6 @@ const DeliveryAgents: React.FC = () => {
 
   return (
     <div id="delivery-agent">
-      {/* <h3 className="heading">Agents List</h3>
-      <div className="filter">
-      <span>Sort: </span>
-          <Select
-            size={"large"}
-            defaultValue={"Select"}
-            onChange={handleChange}
-            options={options}
-            style={{ width: "30vw" }}
-          />
-      </div> */}
       <CustomTable
         columns={columns}
         data={agentsList}

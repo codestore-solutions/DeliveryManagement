@@ -2,6 +2,7 @@ import { FC, useState } from "react";
 import { Tabs } from "antd";
 import "./style.scss";
 import { AssignedOrders, AvailableOrders, CompletedOrders } from "../../components";
+import { FilterIcon } from "../../assets";
 
 const { TabPane } = Tabs;
 
@@ -14,8 +15,20 @@ const Orders: FC<OrderProps> = () => {
     setActiveTab(tabKey);
   };
   return (
-    <div id="orders">
-      <h3 className="heading">Orders List</h3>
+    <div id="available-list">
+       <div className="agent-header">
+         <div className="header-left">
+         <h3>Delivery Request Management</h3>
+         </div>
+         <div className="header-right">
+             <div className="search-box">
+                 <input type="text" placeholder='Search' />
+             </div>
+             <div className="filter-btn">
+             <img src={FilterIcon}  alt=''/>
+             </div>
+         </div>
+      </div>
       <div className="content">
         <Tabs activeKey={activeTab} onChange={handleTabChange}>
           <TabPane tab="Available Orders" key="0">

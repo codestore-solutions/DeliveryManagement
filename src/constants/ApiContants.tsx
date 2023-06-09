@@ -10,10 +10,13 @@ export const ApiContants = {
      forbidden: 403,
      internalServerError: 500,
      notFound: 404,
+  
+     
+     //Local Storage Constants
+     user: "user",
 
      // API Endpints Constants
-     loginEndpoint:  'login',
-     signupEndpoint:  'signup',
+     loginEndpoint:  'testing/login',
 
      // Agents Endpoints
      getAgentList: 'business-admin/get-agents',
