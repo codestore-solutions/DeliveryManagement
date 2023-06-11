@@ -8,15 +8,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BuisnessLogicLayer.Mappings
+namespace BusinessLogicLayer.Mappings
 {
-    public class AutoMapperProfiles: Profile
+    public class AutoMapperProfiles : Profile
     {
         public AutoMapperProfiles()
         {
-           CreateMap<VerifyAgentRequestDto, BusinessAdmin>().ReverseMap();
-           CreateMap<AgentAssignRequestDto, AgentAssign>().ReverseMap();
-           CreateMap<UpdateOrderAssignDto, AgentAssign>().ReverseMap();
+            CreateMap<VerifyAgentRequestDto, BusinessAdmin>().ReverseMap();
+            CreateMap<AgentAssignRequestDto, AssignDeliveryAgent>().ReverseMap();
+            CreateMap<UpdateAgentRequestDto, AssignDeliveryAgent>().ReverseMap();
+            CreateMap<AssignManuallyDto, AssignDeliveryAgent>().ReverseMap();
         }
     }
 }

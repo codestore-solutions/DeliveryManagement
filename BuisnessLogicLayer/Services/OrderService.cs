@@ -1,6 +1,7 @@
 ﻿using BusinessLogicLayer.IServices;
 using DataAccessLayer.IRepository;
 using EntityLayer.Models;
+using Microsoft.EntityFrameworkCore;
 using static EntityLayer.Models.Order;
 
 namespace BusinessLogicLayer.Services
@@ -15,9 +16,8 @@ namespace BusinessLogicLayer.Services
 
         public async Task<IEnumerable<Order>> GetAllOrdersAsync(DeliveryType? deliveryType, IsOrderAssigned? isOrderAssigned)
         {
-            var allItems = await unitOfWork.OrderRepository.AsQueryableAsync();
-            allItems = allItems.Where(item => deliveryType == null || item.deliveryType == deliveryType);
-            allItems= allItems.Where(item=> isOrderAssigned==null || item.isOrderAssigned==isOrderAssigned);
+            var allItems = await unitOfWork.OrderRepository.GetAll().Where(item => (deliveryType == null || item.deliveryType == deliveryType) 
+            && (isOrderAssigned == null || item.isOrderAssigned == isOrderAssigned)).ToListAsync();    
             return allItems;
         }
     }

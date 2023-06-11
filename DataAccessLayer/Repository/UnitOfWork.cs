@@ -38,9 +38,10 @@ namespace DataAccessLayer.Repository
             dbContext.SaveChanges();
         }
 
-        public async Task SaveAsync()
+        public async Task<bool> SaveAsync()
         {
-             await dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
+            return true;
         }
 
     }

@@ -5,12 +5,12 @@ namespace BusinessLogicLayer.IServices
 {
     public interface IAssignDeliveryAgentService
     {
-       Task<IEnumerable<AgentAssign>> AddOrderAssignInBulk(OrderAssingInBulkRequestDto orderAssingInBulkRequestDto);
-       Task<IEnumerable<AgentAssign>> GetAllAsync(int pageNumber=1, int limit=1000);
-      // Task<OrderAssignRequestDto> CreateOrderAsync(OrderAssignRequestDto orderAssignRequestDto);
-       Task<AgentAssign> RemoveOrderAssignedAsync(int id);
-       Task<AgentAssign> UpdateAsync(int id, UpdateOrderAssignDto orderAssignDto);
-       Task<AgentAssign> AddNearsetDeliveryAgentAsync(AgentAssignRequestDto agentAssignRequestDto);
+       Task<IEnumerable<AssignDeliveryAgent>> AddOrderAssignInBulk(OrderAssingInBulkRequestDto orderAssingInBulkRequestDto);
+       Task<IEnumerable<AssignDeliveryAgent>> GetAllAsync(int pageNumber=1, int limit=1000);
+       Task<ResponseDto> assignAgentManuallyAsync(AssignManuallyDto assignManuallyDto);
+       Task RemoveOrderAssignedAsync(long id);
+       Task<ResponseDto> UpdateAsync(long id, UpdateAgentRequestDto orderAssignDto);
+       Task<ResponseDto> AddNearsetDeliveryAgentAsync(AgentAssignRequestDto agentAssignRequestDto);
 
     }
 }

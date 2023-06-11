@@ -3,17 +3,17 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EntityLayer.Models
 {
-    public class AgentAssign
+    public class AssignDeliveryAgent
     {
         [Key]
         [Required]      
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         [Required]
-        public int DeliveryAgentId { get; set; }
+        public long DeliveryAgentId { get; set; }
 
         [Required]
-        public int OrderId { get; set; }
+        public long OrderId { get; set; }
 
         [Required]
         public long BuisnessId { get; set; }

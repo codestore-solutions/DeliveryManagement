@@ -11,8 +11,8 @@ namespace EntityLayer.Dtos
     {
         [Key]
         [Required]
-        public int Id { get; set; }
-        public int DeliveryAgentId { get; set; }
+        public long Id { get; set; }
+        public long DeliveryAgentId { get; set; }
         enum DeliveryAgentStatus
         {
             Availale,

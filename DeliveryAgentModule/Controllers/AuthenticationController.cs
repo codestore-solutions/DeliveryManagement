@@ -1,11 +1,18 @@
-﻿using DataAccessLayer.IRepository;
+﻿using Azure;
+using DataAccessLayer.IRepository;
 using EntityLayer.Dtos;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
+using System.Security.Claims;
+using System.Text;
 
 namespace DeliveryAgentModule.Controllers
 {
-    [Route("api/authentication")]
+   /* [Route("api/v{version:apiVersion}/authentication")]
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
@@ -15,8 +22,9 @@ namespace DeliveryAgentModule.Controllers
         public AuthenticationController(UserManager<IdentityUser> userManager,ITokenRepository tokenRepository)
         {           
             this.userManager = userManager;
-            this.tokenRepository = tokenRepository;
+            this.tokenRepository = tokenRepository;;
         }
+
         //Post: /api/authentication/register
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequestDto registerRequestDto)
@@ -45,7 +53,7 @@ namespace DeliveryAgentModule.Controllers
         //POST: /api/authentication/login
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequestDto loginRequestDto)
-        {
+        {       
             var user = await userManager.FindByEmailAsync(loginRequestDto.Username);
 
             if (user != null)
@@ -75,5 +83,5 @@ namespace DeliveryAgentModule.Controllers
             return BadRequest("Username or Password Incorrect");
         }
 
-    }
+    }*/
 }

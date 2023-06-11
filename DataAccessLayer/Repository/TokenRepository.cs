@@ -34,7 +34,7 @@ namespace DataAccessLayer.Repository
                 configuration["JWT:Issuer"],
                 configuration["JWT:Audience"],
                 claims,
-                expires: DateTime.Now.AddMinutes(10),
+                expires: DateTime.Now.AddDays(30),
                 signingCredentials: credentials) ;
             
            return new JwtSecurityTokenHandler().WriteToken(token) ;

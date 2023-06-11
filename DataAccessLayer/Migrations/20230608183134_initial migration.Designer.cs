@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(DeliveryDbContext))]
-    [Migration("20230525173802_Adding Image Table")]
-    partial class AddingImageTable
+    [Migration("20230608183134_initial migration")]
+    partial class initialmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,43 +27,64 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("EntityLayer.Models.AgentAssociation", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<int>("BuisnessAdminId")
-                        .HasColumnType("int");
+                    b.Property<long>("BuisnessAdminId")
+                        .HasColumnType("bigint");
 
-                    b.Property<int>("DeliveryAgentId")
-                        .HasColumnType("int");
+                    b.Property<long>("DeliveryAgentId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BuisnessAdminId");
-
-                    b.HasIndex("DeliveryAgentId");
 
                     b.ToTable("AgentAssociations");
                 });
 
+            modelBuilder.Entity("EntityLayer.Models.AssignDeliveryAgent", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("BuisnessId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("DeliveryAgentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("OrderId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("orderAssigns");
+                });
+
             modelBuilder.Entity("EntityLayer.Models.BusinessAdmin", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<int>("AgentStatus")
                         .HasColumnType("int");
 
+                    b.Property<long>("BusinessId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("DeliveryAgentAddress")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("DeliveryAgentId")
-                        .HasColumnType("int");
+                    b.Property<long>("DeliveryAgentId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("DeliveryAgentName")
                         .HasColumnType("nvarchar(max)");
@@ -77,8 +98,8 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("OrderAssignStatus")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ServiceLocationId")
-                        .HasColumnType("int");
+                    b.Property<long?>("ServiceLocationId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("ShippingAddress")
                         .HasColumnType("nvarchar(max)");
@@ -88,24 +109,26 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ServiceLocationId");
-
                     b.ToTable("buisnessAdmin");
                 });
 
             modelBuilder.Entity("EntityLayer.Models.DeliveryAgent", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ContactNo")
+                    b.Property<string>("ContactNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -113,30 +136,16 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ServiceLocationId")
-                        .HasColumnType("int");
+                    b.Property<string>("Region")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("ServiceLocationId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ServiceLocationId");
-
                     b.ToTable("deliveryAgents");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Address = "XYZ",
-                            ContactNo = "9034906248",
-                            Name = "Sipin"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Address = "Yvx",
-                            ContactNo = "9034454348",
-                            Name = "Kumar"
-                        });
                 });
 
             modelBuilder.Entity("EntityLayer.Models.Image", b =>
@@ -172,14 +181,11 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("EntityLayer.Models.Order", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("BusinessAdminId")
-                        .HasColumnType("int");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<double?>("OrderAmount")
                         .HasColumnType("float");
@@ -198,14 +204,12 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BusinessAdminId");
-
                     b.ToTable("orders");
 
                     b.HasData(
                         new
                         {
-                            Id = 21,
+                            Id = 21L,
                             OrderAmount = 2799.0,
                             ShippingAddress = "Noida Sector 59",
                             deliveryType = 0,
@@ -214,7 +218,7 @@ namespace DataAccessLayer.Migrations
                         },
                         new
                         {
-                            Id = 22,
+                            Id = 22L,
                             OrderAmount = 9799.0,
                             ShippingAddress = "Noida Sector 6",
                             deliveryType = 0,
@@ -223,7 +227,7 @@ namespace DataAccessLayer.Migrations
                         },
                         new
                         {
-                            Id = 23,
+                            Id = 23L,
                             OrderAmount = 18799.0,
                             ShippingAddress = "Noida Electronic City",
                             deliveryType = 0,
@@ -232,7 +236,7 @@ namespace DataAccessLayer.Migrations
                         },
                         new
                         {
-                            Id = 24,
+                            Id = 24L,
                             OrderAmount = 799.0,
                             ShippingAddress = "Dwarka Sector 21",
                             deliveryType = 0,
@@ -241,7 +245,7 @@ namespace DataAccessLayer.Migrations
                         },
                         new
                         {
-                            Id = 25,
+                            Id = 25L,
                             OrderAmount = 18299.0,
                             ShippingAddress = "Malviya Nagar Delhi",
                             deliveryType = 0,
@@ -250,7 +254,7 @@ namespace DataAccessLayer.Migrations
                         },
                         new
                         {
-                            Id = 26,
+                            Id = 26L,
                             OrderAmount = 24799.0,
                             ShippingAddress = "Noida Sector 62",
                             deliveryType = 0,
@@ -259,38 +263,19 @@ namespace DataAccessLayer.Migrations
                         });
                 });
 
-            modelBuilder.Entity("EntityLayer.Models.OrderAssign", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("DeliveryAgentId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("orderAssigns");
-                });
-
             modelBuilder.Entity("EntityLayer.Models.ServiceLocation", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<int>("AgentStatus")
                         .HasColumnType("int");
 
-                    b.Property<int>("DeliveryAgentId")
-                        .HasColumnType("int");
+                    b.Property<long>("DeliveryAgentId")
+                        .HasColumnType("bigint");
 
                     b.Property<double>("Latitude")
                         .HasColumnType("float");
@@ -307,89 +292,6 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("serviceLocations");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AgentStatus = 0,
-                            DeliveryAgentId = 1,
-                            Latitude = 29.416590500000002,
-                            Longitude = 76.668152500000005,
-                            MaxDistance = 10,
-                            OrderAssignStatus = 0
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AgentStatus = 0,
-                            DeliveryAgentId = 2,
-                            Latitude = 29.4295905,
-                            Longitude = 76.998152500000003,
-                            MaxDistance = 10,
-                            OrderAssignStatus = 0
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AgentStatus = 0,
-                            DeliveryAgentId = 3,
-                            Latitude = 29.4065905,
-                            Longitude = 76.268152499999999,
-                            MaxDistance = 10,
-                            OrderAssignStatus = 0
-                        });
-                });
-
-            modelBuilder.Entity("EntityLayer.Models.AgentAssociation", b =>
-                {
-                    b.HasOne("EntityLayer.Models.BusinessAdmin", "BuisnessAdmin")
-                        .WithMany()
-                        .HasForeignKey("BuisnessAdminId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EntityLayer.Models.DeliveryAgent", "DeliveryAgent")
-                        .WithMany()
-                        .HasForeignKey("DeliveryAgentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("BuisnessAdmin");
-
-                    b.Navigation("DeliveryAgent");
-                });
-
-            modelBuilder.Entity("EntityLayer.Models.BusinessAdmin", b =>
-                {
-                    b.HasOne("EntityLayer.Models.ServiceLocation", "ServiceLocation")
-                        .WithMany()
-                        .HasForeignKey("ServiceLocationId");
-
-                    b.Navigation("ServiceLocation");
-                });
-
-            modelBuilder.Entity("EntityLayer.Models.DeliveryAgent", b =>
-                {
-                    b.HasOne("EntityLayer.Models.ServiceLocation", "ServiceLocation")
-                        .WithMany("DeliveryAgents")
-                        .HasForeignKey("ServiceLocationId");
-
-                    b.Navigation("ServiceLocation");
-                });
-
-            modelBuilder.Entity("EntityLayer.Models.Order", b =>
-                {
-                    b.HasOne("EntityLayer.Models.BusinessAdmin", "BusinessAdmin")
-                        .WithMany()
-                        .HasForeignKey("BusinessAdminId");
-
-                    b.Navigation("BusinessAdmin");
-                });
-
-            modelBuilder.Entity("EntityLayer.Models.ServiceLocation", b =>
-                {
-                    b.Navigation("DeliveryAgents");
                 });
 #pragma warning restore 612, 618
         }

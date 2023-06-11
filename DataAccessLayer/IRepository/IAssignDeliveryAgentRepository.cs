@@ -4,7 +4,7 @@ using System.Collections;
 
 namespace DataAccessLayer.IRepository
 {
-    public interface IAssignDeliveryAgentRepository: IGenericRepository<AgentAssign>
+    public interface IAssignDeliveryAgentRepository: IGenericRepository<AssignDeliveryAgent>
     {
    
     }

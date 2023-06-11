@@ -8,8 +8,8 @@ namespace EntityLayer.Models
 {
     public class ServiceLocation
     {
-        public int Id { get; set; }
-        public int DeliveryAgentId { get; set; }
+        public long Id { get; set; }
+        public long DeliveryAgentId { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         enum ServiceArea
@@ -32,9 +32,5 @@ namespace EntityLayer.Models
         public OrderAssignedStatus OrderAssignStatus { get; set; }
         public DeliveryAgentStatus AgentStatus { get; set; }
         public int MaxDistance { get; set; }
-        public List<DeliveryAgent>? DeliveryAgents { get; set; } 
-
-
-
     }
 }

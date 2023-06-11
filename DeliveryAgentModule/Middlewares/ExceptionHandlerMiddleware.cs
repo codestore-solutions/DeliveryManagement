@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System.Net;
 
-namespace BuisnessLogicLayer.MiddleWares
+namespace DeliveryAgentModule.Middlewares
 {
     public class ExceptionHandlerMiddleware
     {
@@ -24,10 +24,10 @@ namespace BuisnessLogicLayer.MiddleWares
             catch (Exception ex)
             {
                 var errorId = Guid.NewGuid();
-                logger.LogError(ex,$"{errorId}: {ex.Message}");
+                logger.LogError(ex, $"{errorId}: {ex.Message}");
 
-                httpContext.Response.StatusCode=(int)HttpStatusCode.InternalServerError;
-                httpContext.Response.ContentType="application/json";
+                httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                httpContext.Response.ContentType = "application/json";
 
                 /*var error = new
                 {
@@ -64,11 +64,10 @@ namespace BuisnessLogicLayer.MiddleWares
 
 
 
-  /*  logger.LogInformation("Logging starts");
-              logger.LogWarning("Waring");
-              logger.LogError("Error Coming");
-             logger.LogError(ex, ex.Message);
-  */
-            //logger.LogInformation($"Adding data :{JsonSerializer.Serialize(allProductsInsideOrderLine)}");
+/*  logger.LogInformation("Logging starts");
+            logger.LogWarning("Waring");
+            logger.LogError("Error Coming");
+           logger.LogError(ex, ex.Message);
+*/
+//logger.LogInformation($"Adding data :{JsonSerializer.Serialize(allProductsInsideOrderLine)}");
 
-        

@@ -16,12 +16,24 @@ namespace DataAccessLayer.Repository
             _dbSet = dbContext.Set<T>();
         }
 
+        public IQueryable<T> GetAll()
+        {
+            return _dbSet.AsQueryable();
+        }
+        public async Task<T> GetByIdAsync(long id)
+        {
+            var entity = await _dbSet.FindAsync(id);
+            if (entity == null)
+            {
+                return null;
+            }
+            return entity;
+        }
         public async Task AddAsync(T entity) 
         {
           await _dbSet.AddAsync(entity);   
         }
-
-        public async Task<T> DeleteAsync(int id)
+        public async Task<T> DeleteAsync(long id)
         {
             var entity = await _dbSet.FindAsync(id);
             if(entity == null) 
@@ -31,32 +43,10 @@ namespace DataAccessLayer.Repository
             _dbSet.Remove(entity);
             return entity;
         }
-
-        public IEnumerable<T> Find(Expression<Func<T, bool>> expression)
+        public void Delete(T entity)
         {
-            return _dbSet.Where(expression);
+            _dbSet.Remove(entity);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync()
-        {
-            return await _dbSet.AsNoTracking().ToListAsync();
-            return await _dbSet.AsNoTracking().ToListAsync();
-        }
-
-        public async Task<T> GetByIdAsync(int id)
-        {
-            var entity = await _dbSet.FindAsync(id);
-            return entity;
-        }
-
-        public async Task<IQueryable<T>> AsQueryableAsync()
-        {
-            return await Task.FromResult(_dbSet.AsQueryable());
-        }
-
-        public T FindInList(Func<T, bool> expression)
-        {
-            return _dbSet.FirstOrDefault(expression);
-        }
     }
 }

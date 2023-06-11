@@ -1,0 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EntityLayer.Dtos
+{
+    public class AssignManuallyDto
+    {
+        [DataType(DataType.Text)]
+        [RegularExpression("^[0-9]+$", ErrorMessage = "The property must be a valid long number.")]
+        public long DeliveryAgentId { get; set; }
+        public long OrderId { get; set; }
+        public long BuisnessId { get; set; }
+    }
+}

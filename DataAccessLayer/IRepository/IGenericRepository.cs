@@ -10,13 +10,11 @@ using System.Threading.Tasks;
 namespace DataAccessLayer.IRepository
 {
     public interface IGenericRepository<T> where T: class
-    { 
-        public Task<IEnumerable<T>> GetAllAsync();
-        Task<T> GetByIdAsync(int id); 
+    {
+        IQueryable<T> GetAll();
+        Task<T> GetByIdAsync(long id); 
         public Task AddAsync(T entity);    
-        Task<T> DeleteAsync(int id);
-        IEnumerable<T> Find(Expression<Func<T, bool>> expression);
-        Task<IQueryable<T>> AsQueryableAsync();
-        public T FindInList(Func<T, bool> expression);
+        Task<T> DeleteAsync(long id);
+        public void Delete(T entity);
     }
 }

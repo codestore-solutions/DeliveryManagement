@@ -1,7 +1,10 @@
 ﻿using BusinessLogicLayer.IServices;
+using DeliveryAgentModule.CustomActionFilter;
+using EntityLayer.Common;
 using EntityLayer.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OrderingBookingModule.CustomActionFilter;
+using DeliveryAgentModule.CustomActionFilter;
 using System.Collections;
 
 namespace DeliveryAgentModule.Controllers
@@ -10,6 +13,7 @@ namespace DeliveryAgentModule.Controllers
     [ApiController]
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
+    [Authorize]
     public class AssignDeliveryAgentController : ControllerBase
     {
         private readonly IAssignDeliveryAgentService orderAssignService;
@@ -29,9 +33,33 @@ namespace DeliveryAgentModule.Controllers
             return await orderAssignService.GetAllAsync(pageNumber,limit);
         }
 
+        // POST: /api/v1/agent/assign-manually
+        /// <summary>
+        /// Assign agent manually
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///      POST: /api/v1/agent/assign-manually
+        ///     {
+        ///        "deliveryAgentId"    : long,
+        ///        "orderId"            : long,
+        ///        "buisnessId"         : long,
+        ///     }
+        /// </remarks>
+        /// <param name="assignManuallyDto"></param>
+        /// <returns></returns>
+        [HttpPost("assign-manually")]
+        [MapToApiVersion("1.0")]
+        [ValidateModel]
+        public async Task<IActionResult> assignAgentManuallyAsync(AssignManuallyDto assignManuallyDto)
+        {
+            return Ok(await orderAssignService.assignAgentManuallyAsync(assignManuallyDto));
+        }      
+
         // Post: /api/agent/assign-agent
         /// <summary>
-        /// Assign Delivery Agent for a individual order Id
+        /// Assign delivery agent nearest to Business/Seller location for a individual order Id
         /// </summary>
         /// <remarks>
         /// Sample Request:
@@ -49,7 +77,7 @@ namespace DeliveryAgentModule.Controllers
 
         //Post: /api/agent/assign-agent-bulk
         /// <summary>
-        /// Assign Delivery Agent for multiple order Ids
+        /// Assign delivery agents nearest to seller/Business location for multiple order Ids
         /// </summary>
         [HttpPost("assign-agent-bulk")]
         [MapToApiVersion("1.0")]
@@ -58,28 +86,30 @@ namespace DeliveryAgentModule.Controllers
             return Ok(await orderAssignService.AddOrderAssignInBulk(orderAssingInBulkRequestDto));
         }
 
+        // DELETE: /api/delete
         /// <summary>
         /// Remove assigned order to agent by agent Id
         /// </summary>
-        [HttpDelete("{id}")]
+        [HttpDelete("delete")]
         [MapToApiVersion("1.0")]
-        public async Task<ActionResult> RemoveOrderAssigned([FromRoute] int id)
+        public async Task<ActionResult> RemoveOrderAssigned([FromQuery] int agentId)
         {
-            return Ok(await orderAssignService.RemoveOrderAssignedAsync(id));
+            await orderAssignService.RemoveOrderAssignedAsync(agentId);
+            return Ok(StringConstant.SuccessMessage);
         }
 
         /// <summary>
-        /// Reassign new delivery agent Update agentId or orderId
+        /// Reassign new delivery agent : Update agentId or orderId
         /// </summary>
         [HttpPut("{id}")]
         [MapToApiVersion("1.0")]
-        public async Task<IActionResult> UpdateAgentOrOrderId([FromRoute] int id,[FromBody] UpdateOrderAssignDto updateOrderAssignDto)
+        public async Task<IActionResult> UpdateAgentOrOrderId([FromRoute] int id,[FromBody] UpdateAgentRequestDto updateOrderAssignDto)
         {
             var updatedOrder = await orderAssignService.UpdateAsync(id, updateOrderAssignDto);
 
             if(updatedOrder == null)
             {
-                return NotFound();
+                return NotFound(StringConstant.InvalidInputError);
             }
             return Ok(updatedOrder);
         }

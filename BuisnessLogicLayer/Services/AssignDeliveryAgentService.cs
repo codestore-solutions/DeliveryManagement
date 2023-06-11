@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BusinessLogicLayer.IServices;
 using DataAccessLayer.IRepository;
+using EntityLayer.Common;
 using EntityLayer.Dtos;
 using EntityLayer.Models;
 using Microsoft.EntityFrameworkCore;
@@ -18,73 +19,136 @@ namespace BusinessLogicLayer.Services
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
         }
-        public async Task<IEnumerable<AgentAssign>> GetAllAsync(int pageNumber=1, int limit=1000)
+
+        public async Task<IEnumerable<AssignDeliveryAgent>> GetAllAsync(int pageNumber=1, int limit=1000)
         {
-            var allItems = await unitOfWork.AssignDeliveryAgentRepository.AsQueryableAsync();
-            // Pagination
-            var paginatedItems = allItems.Skip((pageNumber - 1) * limit).Take(limit);
-            return paginatedItems;
+            var allItems = await unitOfWork.AssignDeliveryAgentRepository.GetAll().Skip((pageNumber - 1) * limit).Take(limit).ToListAsync();    
+            return allItems;
         }
-        public async Task<AgentAssign> AddNearsetDeliveryAgentAsync(AgentAssignRequestDto agentAssignRequestDto)
+        public async Task<ResponseDto> assignAgentManuallyAsync(AssignManuallyDto assignManuallyDto)
         {
-            double restaurantLatitude = 29.3993233;
-            double restaurantLongitude = 76.6561982;
-            var nearestDeliveryAgentId = await GetDeliveryAgentsWithinDistance(restaurantLatitude, restaurantLongitude, 10);
-            var orderList = await unitOfWork.OrderRepository.AsQueryableAsync();
-            orderList = orderList.Where(order => order.Id == agentAssignRequestDto.OrderId);
+            var assignNewAgent = mapper.Map<AssignDeliveryAgent>(assignManuallyDto);
+            await unitOfWork.AssignDeliveryAgentRepository.AddAsync(assignNewAgent);
+            bool res = await unitOfWork.SaveAsync();
+            var response = new ResponseDto()
+            {
+                StatusCode = res?200:500,
+                Success    = res,
+                Data       = res?assignNewAgent:StringConstant.ErrorMessage,
+                Message    = res?StringConstant.SuccessMessage:StringConstant.ErrorMessage
+            };
+            return response;
+        } 
+        public async Task<ResponseDto> AddNearsetDeliveryAgentAsync(AgentAssignRequestDto agentAssignRequestDto)
+        {
+            double adminLatitude = 29.3993233;
+            double adminLongitude = 76.6561982;
+            var nearestDeliveryAgentId = await GetDeliveryAgentsWithinDistance(adminLatitude, adminLongitude, 10);
+            var orderList = await unitOfWork.OrderRepository.GetAll().Where(order => order.Id == agentAssignRequestDto.OrderId).ToListAsync();
             foreach (var order in orderList)
             {
                 order.isOrderAssigned = (Order.IsOrderAssigned)1;
             }
             
-            var orderAssigned = new AgentAssign
+            var assignedAgent = new AssignDeliveryAgent
             {
+                BuisnessId      = agentAssignRequestDto.BusinessId,
                 DeliveryAgentId = nearestDeliveryAgentId,
-                OrderId = agentAssignRequestDto.OrderId
+                OrderId         = agentAssignRequestDto.OrderId
             };
-            var agent = unitOfWork.ServiceLocationRepository.Find(order => order.DeliveryAgentId == nearestDeliveryAgentId);
+            var agent = unitOfWork.ServiceLocationRepository.GetAll().Where(o => o.DeliveryAgentId == nearestDeliveryAgentId);
             foreach (var i in agent)
             {
                 i.OrderAssignStatus = (ServiceLocation.OrderAssignedStatus)1;
             }
-            await unitOfWork.AssignDeliveryAgentRepository.AddAsync(orderAssigned);
+            await unitOfWork.AssignDeliveryAgentRepository.AddAsync(assignedAgent);
             await unitOfWork.SaveAsync();
-            return orderAssigned;
-        }     
-        public async Task<AgentAssign> RemoveOrderAssignedAsync(int id)
-        { 
-           var deletedTask= await unitOfWork.AssignDeliveryAgentRepository.DeleteAsync(id);
-           await unitOfWork.SaveAsync();
-           return deletedTask;
-        }
-        public async Task<AgentAssign> UpdateAsync(int id, UpdateOrderAssignDto orderAssignDto)
-        {
-            var OrderAssignDomain = await unitOfWork.AssignDeliveryAgentRepository.GetByIdAsync(id);
-            if (OrderAssignDomain != null)
+
+            var response = new ResponseDto()
             {
-                OrderAssignDomain.OrderId = orderAssignDto.OrderId;
-                OrderAssignDomain.DeliveryAgentId = orderAssignDto.DeliveryAgentId;
-                await unitOfWork.AssignDeliveryAgentRepository.AddAsync(OrderAssignDomain);
+                StatusCode = 200,
+                Success = true,
+                Data = assignedAgent,
+                Message = "agent assigned successfully"
+            };
+            return response;
+        }
+        public async Task<IEnumerable<AssignDeliveryAgent>> AddOrderAssignInBulk(OrderAssingInBulkRequestDto orderAssingInBulkRequestDto)
+        {
+            double restaurantLatitude = 29.3993233;
+            double restaurantLongitude = 76.6561982;
+            List<AssignDeliveryAgent> orderAssignedList = new List<AssignDeliveryAgent>();
+            foreach (var orderId in orderAssingInBulkRequestDto.OrderId)
+            {
+                var nearestDeliveryAgentId = await GetDeliveryAgentsWithinDistance(restaurantLatitude, restaurantLongitude, 10);
+                var orderList = await unitOfWork.OrderRepository.GetAll().Where(order => order.Id == orderId).ToListAsync();
+                foreach (var order in orderList)
+                {
+                    order.isOrderAssigned = (Order.IsOrderAssigned)1;
+                }
+                var orderAssigned = new AssignDeliveryAgent
+                {
+                    DeliveryAgentId = nearestDeliveryAgentId,
+                    OrderId = orderId,
+                };
+                orderAssignedList.Add(orderAssigned);
+
+                var agent = unitOfWork.BusinessAdminRepository.GetAll().Where(agent => agent.DeliveryAgentId == nearestDeliveryAgentId);
+                foreach (var i in agent)
+                {
+                    i.OrderAssignStatus = (BusinessAdmin.OrderAssignedStatus)1;
+                }
+            }
+
+            foreach (AssignDeliveryAgent addOrder in orderAssignedList)
+            {
+                await unitOfWork.AssignDeliveryAgentRepository.AddAsync(addOrder);
                 await unitOfWork.SaveAsync();
             }
-            return OrderAssignDomain;
+            return orderAssignedList;
         }
-        public async Task<int> GetDeliveryAgentsWithinDistance(double latitude, double longitude, double maxDistance)
+        public async Task<ResponseDto> UpdateAsync(long id, UpdateAgentRequestDto updateAgentRequestDto)
+        {
+            var agentNeedsToBeUpdated = await unitOfWork.AssignDeliveryAgentRepository.GetAll().FirstOrDefaultAsync(id => id.DeliveryAgentId == updateAgentRequestDto.DeliveryAgentId);
+            bool res = false;
+            if (agentNeedsToBeUpdated != null)
+            {
+                agentNeedsToBeUpdated.OrderId = updateAgentRequestDto.OrderId;
+                agentNeedsToBeUpdated.DeliveryAgentId = updateAgentRequestDto.DeliveryAgentId;
+                await unitOfWork.AssignDeliveryAgentRepository.AddAsync(agentNeedsToBeUpdated);
+                res = await unitOfWork.SaveAsync();
+            }
+            
+            var response = new ResponseDto()
+            {
+                StatusCode = res ? 200 : 500,
+                Success = res,
+                Data = res ? agentNeedsToBeUpdated : StringConstant.ErrorMessage,
+                Message = res ? StringConstant.SuccessMessage : StringConstant.ErrorMessage
+            };
+            return response;
+        }
+        public async Task RemoveOrderAssignedAsync(long agentId)
+        {
+            var unassignAgent = await unitOfWork.AssignDeliveryAgentRepository.GetAll().FirstOrDefaultAsync(id=>id.DeliveryAgentId== agentId);
+            await unitOfWork.AssignDeliveryAgentRepository.DeleteAsync(unassignAgent.Id);
+            await unitOfWork.SaveAsync();
+        }
+        public async Task<long> GetDeliveryAgentsWithinDistance(double latitude, double longitude, double maxDistance)
         {
             if (maxDistance > 10)
             {
                 // Notify User that Delivery Agent is not available Nearby: Push Notification
             }
 
-            var serviceLocation = (List<ServiceLocation>) await unitOfWork.ServiceLocationRepository.GetAllAsync();
-
-            var nearsestDeliveryAgentId = 0;
+            var serviceLocation = await unitOfWork.ServiceLocationRepository.GetAll().ToListAsync();
+            long nearsestDeliveryAgentId = 0;
             double minDistance = 10000000;
             foreach (var i in serviceLocation)
             {
                 double distanceBetweenCoordinates = CalculateDistance(latitude, longitude, i.Latitude, i.Longitude);
 
-                if ((distanceBetweenCoordinates <= maxDistance) && (minDistance > distanceBetweenCoordinates) && i.OrderAssignStatus== ServiceLocation.OrderAssignedStatus.NotAssigned && i.AgentStatus==ServiceLocation.DeliveryAgentStatus.Availale)
+                if ((distanceBetweenCoordinates <= maxDistance) && (minDistance > distanceBetweenCoordinates) && i.OrderAssignStatus == ServiceLocation.OrderAssignedStatus.NotAssigned && i.AgentStatus == ServiceLocation.DeliveryAgentStatus.Availale)
                 {
                     minDistance = distanceBetweenCoordinates;
                     nearsestDeliveryAgentId = i.DeliveryAgentId;
@@ -108,42 +172,6 @@ namespace BusinessLogicLayer.Services
         static double ToRadians(double degrees)
         {
             return degrees * (Math.PI / 180);
-        }
-        public async Task<IEnumerable<AgentAssign>> AddOrderAssignInBulk(OrderAssingInBulkRequestDto orderAssingInBulkRequestDto)
-        {
-            double restaurantLatitude = 29.3993233;
-            double restaurantLongitude = 76.6561982;
-            List<AgentAssign> orderAssignedList = new List<AgentAssign>();
-            foreach (var orderId in orderAssingInBulkRequestDto.OrderId)
-            {
-                var nearestDeliveryAgentId = await GetDeliveryAgentsWithinDistance(restaurantLatitude, restaurantLongitude, 10);
-                var orderList = await unitOfWork.OrderRepository.AsQueryableAsync();
-                orderList = orderList.Where(order => order.Id == orderId);
-                foreach (var order in orderList)
-                {
-                    order.isOrderAssigned = (Order.IsOrderAssigned)1;
-                }
-                var orderAssigned = new AgentAssign
-                {
-                    DeliveryAgentId = nearestDeliveryAgentId,
-                    OrderId = orderId,
-                };
-                orderAssignedList.Add(orderAssigned);
-              
-                var agent = unitOfWork.BusinessAdminRepository.Find(agent => agent.DeliveryAgentId == nearestDeliveryAgentId);
-                foreach (var i in agent)
-                {
-                    i.OrderAssignStatus = (BusinessAdmin.OrderAssignedStatus)1;
-                }               
-            }
-
-            foreach(AgentAssign addOrder in orderAssignedList)
-            {
-                await unitOfWork.AssignDeliveryAgentRepository.AddAsync(addOrder);
-                await unitOfWork.SaveAsync();
-            }
-
-            return orderAssignedList;
         }
 
     }

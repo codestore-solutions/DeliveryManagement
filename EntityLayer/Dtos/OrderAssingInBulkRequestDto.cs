@@ -3,6 +3,6 @@ namespace EntityLayer.Dtos
 {
     public class OrderAssingInBulkRequestDto
     {
-        public List<int> OrderId { get; set; } = null!;
+        public List<long> OrderId { get; set; } = null!;
     }
 }

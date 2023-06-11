@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace EntityLayer.Dtos
 {
-    public class VerifyAgentRequestDto
-    { 
+    public class UpdateAgentRequestDto
+    {
         public long DeliveryAgentId { get; set; }
+        public long OrderId { get; set; }
         public long BusinessId { get; set; }
     }
 }

@@ -11,7 +11,7 @@ namespace DataAccessLayer.Data
 {
     public class DeliveryAuthDbContext : IdentityDbContext
     {
-        public DeliveryAuthDbContext(DbContextOptions<DeliveryAuthDbContext> options) : base(options)
+        public DeliveryAuthDbContext(DbContextOptions options) : base(options)
         {
         }
 
@@ -20,7 +20,7 @@ namespace DataAccessLayer.Data
             base.OnModelCreating(builder);
 
             var userId = "1234";
-            var admin = "7890";
+            var adminId = "7890";
 
             var roles = new List<IdentityRole>
             {
@@ -33,8 +33,8 @@ namespace DataAccessLayer.Data
                 },
                 new IdentityRole()
                 {
-                    Id = admin,
-                    ConcurrencyStamp=admin,
+                    Id = adminId,
+                    ConcurrencyStamp=adminId,
                     Name= "Admin",
                     NormalizedName= "Admin".ToUpper(),
                 }

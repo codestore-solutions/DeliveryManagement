@@ -9,6 +9,6 @@ namespace DataAccessLayer.IRepository
         public IServiceLocationRepository ServiceLocationRepository { get; }
         public IAssignDeliveryAgentRepository AssignDeliveryAgentRepository { get; }
         public void Save();
-        public Task SaveAsync();
+        public Task<bool> SaveAsync();
     }
 }

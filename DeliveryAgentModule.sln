@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeliveryAgentModule", "DeliveryAgentModule\DeliveryAgentModule.csproj", "{1CBF7F6E-7CC9-43C2-A0F3-F18BE0BA8E8E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeliveryAgent.API", "DeliveryAgentModule\DeliveryAgent.API.csproj", "{1CBF7F6E-7CC9-43C2-A0F3-F18BE0BA8E8E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityLayer", "EntityLayer\EntityLayer.csproj", "{3B29ADA1-AB81-447C-AA04-78FB5D2C6091}"
 EndProject

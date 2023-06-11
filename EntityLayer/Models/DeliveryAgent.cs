@@ -7,11 +7,21 @@ namespace EntityLayer.Models
     {
         [Key]
         [Required]
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string Name { get; set; } = null!;
         public string Address { get; set; }= null!;
-        public string ContactNo { get; set; } = null!;
-        public int? ServiceLocationId { get; set; }  
-        public ServiceLocation? ServiceLocation { get; set; } 
+        public string ContactNumber { get; set; } = null!;
+        public string Region { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public enum AvailabilityStatus
+        {
+            Available = 1,
+            Offline = 2,
+            Busy = 3
+        }
+
+        public AvailabilityStatus AvailabeStatus { get; set; }
+        public long? ServiceLocationId { get; set; }  
+
     }
 }
