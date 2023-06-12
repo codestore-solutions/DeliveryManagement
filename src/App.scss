@@ -12,6 +12,14 @@ $verified_color: #50cd89;
 $notVerified: #f1416c;
 $heading_color: #141c38;
 $busy_color: #ffb526;
+
+// Word Wrap for text
+.overflow-text {
+  width:  250px; 
+  word-wrap: break-word; 
+}
+
+
 // Button Design
 .available {
   padding: 2px 3px;

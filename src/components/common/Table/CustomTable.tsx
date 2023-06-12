@@ -6,7 +6,7 @@ import "./style.scss";
 interface customTableProps {
   rowSelection?: any;
   columns: Array<any>;
-  data: Array<any>;
+  data: any;
   pagination: {};
   handleTableChange: any;
   loading: boolean;

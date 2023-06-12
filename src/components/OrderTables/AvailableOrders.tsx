@@ -8,8 +8,11 @@ import { CustomTable } from "../index";
 
 import { DeliveryUserIcon, DetailsIcon } from "../../assets";
 import { useNavigate } from "react-router-dom";
-import dummyData from "../../../dummyData";
-
+import { useAppDispatch, useAppSelector } from "../../store/hooks/app";
+import { OrderStateInerface, getAvailableOrders, orderSelector } from "../../store/features/Orders/ordersSlice";
+import { pagination } from "../../utils/types";
+import { useEffect } from 'react';
+import CustomizeData from "../../utils/helpers/CustomizeData";
 export interface DataType {
   key: React.Key;
   id: string;
@@ -20,19 +23,22 @@ export interface DataType {
 }
 // const antIcon = <LoadingOutlined style={{ color: "#fff" }} spin />;
 
-const AvailableOrders = () => {
+const AvailableOrders:React.FC = () => {
   const navigate = useNavigate();
-  const data =dummyData.availableOrderData;
-  const [pagination, setPagination] = useState({
+  const dispatch = useAppDispatch();
+  const {loading, orderslist}  = useAppSelector(orderSelector)  as OrderStateInerface;
+  const data =  CustomizeData.AvilableOrderData(orderslist);
+  const [pagination, setPagination] = useState<pagination>({
     pageNumber: 1,
-    total: 0,
+    total: 15,
     pageSize: 5,
     showTotal: (total: any, range: any) =>
       `${range[0]}-${range[1]} of ${total} items`,
   });
 
   const handleClick = (state: any) => {
-    navigate(`/dashboard/order-details/${state.id}`, { state });
+    let data = orderslist.find((ele:any) => ele.id === state.orderId);
+    navigate(`/dashboard/order-details/${data.id}`, { state: { data } });
   };
 
   // Handle Chnage for Table
@@ -41,7 +47,7 @@ const AvailableOrders = () => {
     const { current, pageSize } = pagination;
     setPagination({ ...pagination, pageNumber: current, limit: pageSize });
   };
-
+ 
   const columns: ColumnsType<DataType> = [
     {
       title: "OrderId",
@@ -101,10 +107,14 @@ const AvailableOrders = () => {
   //   setDeliveryType(value);
   //   fetchOrders(value);
   // };
+   const fetchOrders = () =>{
+    let payload = pagination;
+    dispatch(getAvailableOrders({payload}));
+   }
 
-  // useEffect(() => {
-  //   fetchOrders(deliveryType);
-  // }, [pagination.pageNumber]);
+  useEffect(() => {
+      fetchOrders();
+  }, [dispatch, pagination.pageNumber]);
 
   return (
     <div id="available-list">
@@ -113,7 +123,7 @@ const AvailableOrders = () => {
         data={data}
         pagination={pagination}
         handleTableChange={handleTableChange}
-        loading={false}
+        loading={loading}
       />
     </div>
   );

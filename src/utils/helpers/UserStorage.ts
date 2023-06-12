@@ -7,7 +7,7 @@ const setUser =  (userData: any) => {
 const getUser =  () => {
   const data = localStorage.getItem(ApiContants.user);
   console.log("data",data)
-  return data ? JSON.parse(data)?.jwtToken : null;
+  return data ? JSON.parse(data)?.jwtToken : "";
 };
 
 function logout() {

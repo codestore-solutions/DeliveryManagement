@@ -1,14 +1,20 @@
 import API from "./ApiService";
 import { ApiContants } from "../constants/ApiContants";
+import { storesIds } from "../../dummyData";
 
 /**
- * @param pagination 
+ * @param pagination
  * @returns array of available orders
  */
 const getAvailableOrdersList = async (pagination: any) => {
-  const { pageNumber, limit } = pagination;
-  let url = `${ApiContants.getAvailableOrders}?pageNumber=${pageNumber}&limit=${limit}`;
-  let res = await API({}, url, "GET");
+  const { pageNumber, pageSize } = pagination;
+  let params = {
+    storeIds: storesIds,
+    page: pageNumber,
+    pageSize: pageSize,
+  };
+  let url = `${ApiContants.orderProcessingbaseUrl}${ApiContants.getAvailableOrders}`;
+  let res = await API({}, url, "GET", params);
   return res?.data;
 };
 

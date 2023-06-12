@@ -1,4 +1,3 @@
-import { ApiContants } from "../constants/ApiContants";
 import axios from "../utils/Interceptors/axios";
 import UserStorage from "../utils/helpers/UserStorage";
 
@@ -12,8 +11,8 @@ import UserStorage from "../utils/helpers/UserStorage";
 export default async function API(
   payload: Object,
   endpoint: string,
-  apiMethod: string
-  // cancelToken?: any,
+  apiMethod: string,
+  params?: any
 ) {
   let auth = UserStorage.getUser();
   let init: Object = {};
@@ -21,19 +20,19 @@ export default async function API(
     case "GET":
       init = {
         method: "GET",
-        url: `${ApiContants.baseUrl}${endpoint}`,
+        url: `${endpoint}`,
         headers: {
           "Content-Type": "application/json",
           Authorization: auth ? "Bearer " + auth : "",
         },
-        // cancelToken: cancelToken,
+        params: params,
       };
       break;
 
     case "DELETE":
       init = {
         method: "DELETE",
-        url: `${ApiContants.baseUrl}${endpoint}`,
+        url: `${endpoint}`,
         headers: {
           "Content-Type": "application/json",
           Authorization: auth ? "Bearer " + auth : "",
@@ -44,7 +43,7 @@ export default async function API(
     case "PUT":
       init = {
         method: "PUT",
-        url: `${ApiContants.baseUrl}${endpoint}`,
+        url: `${endpoint}`,
         headers: {
           "Content-Type": "application/json",
           Authorization: auth ? "Bearer " + auth : "",
@@ -57,7 +56,7 @@ export default async function API(
     case "POST":
       init = {
         method: apiMethod,
-        url: `${ApiContants.baseUrl}${endpoint}`,
+        url: `${endpoint}`,
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
@@ -66,21 +65,13 @@ export default async function API(
       };
       break;
   }
-  console.log("Api URL ::", auth, `${ApiContants.baseUrl}${endpoint}`);
+  console.log("Api URL ::", `${endpoint}`);
 
   return axios(init)
     .then((res) => {
-      console.log("Response", res);
       return res;
     })
     .catch(function (error) {
       throw error;
     });
 }
-
-/**
- * Remove All Credential from Local Storage
- */
-export const unAuthorized = () => {
-  localStorage.removeItem(ApiContants.user);
-};

@@ -9,7 +9,7 @@ import UserStorage from "../utils/helpers/UserStorage";
  */
 
 const loginUser = async (payload: any) => {
-  let url = `${ApiContants.loginEndpoint}`;
+  let url = `${ApiContants.baseUrl}${ApiContants.loginEndpoint}`;
   const res = await API(payload, url, "POST");
   console.log("res", res);
   if (res?.status === ApiContants.successCode) {

@@ -3,7 +3,7 @@ import {useState} from 'react'
 import DeliveryAgents from './DeliveryAgents';
 import { AssignedAgents } from '..';
 import './style.scss'
-import { AddIcon, FilterIcon } from '../../assets';
+import {  FilterIcon } from '../../assets';
 const { TabPane } = Tabs;
 const Agent = () => {
     const [activeTab, setActiveTab] = useState("0");
@@ -20,9 +20,9 @@ const Agent = () => {
              <div className="search-box">
                  <input type="text" placeholder='Search' />
              </div>
-             <div className="add-btn">
+             {/* <div className="add-btn">
                 <img src={AddIcon}  alt=''/>
-             </div>
+             </div> */}
              <div className="filter-btn">
              <img src={FilterIcon}  alt=''/>
              </div>

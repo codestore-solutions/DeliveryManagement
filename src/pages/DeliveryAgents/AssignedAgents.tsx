@@ -45,6 +45,25 @@ const AssignedAgents: React.FC = () => {
       render: (text) => <p className="tableId">{text}</p>,
     },
     {
+      title: "Agent Name",
+      dataIndex: "deliveryAgentName",
+      key: "deliveryAgentName",
+      render: (text) => <p className="tableTxt">{text}</p>,
+    },
+    {
+      title: "Store Name",
+      dataIndex: "storename",
+      key: "storename",
+      render: (text) => <p className="tableId">{text}</p>,
+    },
+    
+    {
+      title: "Order Status",
+      dataIndex: "orderStatus",
+      key: "orderStatus",
+      render: (text) => <p className="tableTxt">{text}</p>,
+    },
+    {
       title: "Date",
       dataIndex: "date",
       key: "date",
@@ -59,25 +78,6 @@ const AssignedAgents: React.FC = () => {
           selectedDateRange(null);
         }
       },
-    },
-
-    {
-      title: "Store Name",
-      dataIndex: "storename",
-      key: "storename",
-      render: (text) => <p className="tableId">{text}</p>,
-    },
-    {
-      title: "Agent Name",
-      dataIndex: "deliveryAgentName",
-      key: "deliveryAgentName",
-      render: (text) => <p className="tableTxt">{text}</p>,
-    },
-    {
-      title: "Order Status",
-      dataIndex: "orderStatus",
-      key: "orderStatus",
-      render: (text) => <p className="tableTxt">{text}</p>,
     },
     {
       title: "Order Details",

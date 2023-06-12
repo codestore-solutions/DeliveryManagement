@@ -1,23 +1,33 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import OrderService from "../../../services1/OrderService";
+import { pagination } from '../../../utils/types';
+import { RootState } from "../..";
 
-interface orderStateInerface{
+export interface OrderStateInerface{
   loading: boolean,
   isSuccess: boolean,
   error: any,
   orderslist: any,
 }
 
-const initialState: orderStateInerface = {
+const initialState: OrderStateInerface = {
   loading: false,
   isSuccess: false,
   error: null,
-  orderslist: null || undefined,
+  orderslist: [] || undefined,
 };
 
 // Get Orders List
 export const getAvailableOrders = createAsyncThunk(
   "orders/avialableOrders",
-  async () => {}
+  async ({payload}:{payload:pagination}, thunkAPI) => {
+    try {
+      const res = await OrderService.getAvailableOrdersList(payload);
+      return res;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
 );
 
 // Get Orders List
@@ -57,10 +67,11 @@ const ordersSlice: any = createSlice({
          state.loading = false,
          state.isSuccess= false,
          state.error = action.payload,
-         state.orderslist = null
+         state.orderslist = []
      })
   },
 });
 
 export const { reset } = ordersSlice.actions;
+export const orderSelector = (state: RootState) => state.orders;
 export default ordersSlice.reducer;

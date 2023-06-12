@@ -1,6 +1,6 @@
 export const ApiContants = {
      baseUrl: 'https://app-deliveryagent-dev.azurewebsites.net/api/v1/',
-
+     orderProcessingbaseUrl: "https://order-processing-dev.azurewebsites.net/api/v1/",
      // API Response Codes
      successCode: 200,
      successEndRange: 299,
@@ -24,9 +24,10 @@ export const ApiContants = {
      assignOrderInBulk:'agent/assign-agent-bulk',
      getAssignedAgent:'agent/GetAll',
      modifyAgentStatus:'business-admin',
-     //Orders endpoint
-     getOrders:'order/availableOrderList',
-     getAvailableOrders: 'order/available-orders',
+
+     //Orders Processing endpoint
+     getOrders:'business/getOrdersByStoresId',
+     getAvailableOrders: 'business/getOrdersByStoresId',
      getAssinedOrders: 'order/assigned-orders',
      getCompletedOrders: 'order/completed-orders',
 }

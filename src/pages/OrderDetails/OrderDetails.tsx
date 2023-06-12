@@ -4,12 +4,13 @@ import { useLocation } from "react-router-dom";
 import { LeftArrowIcon } from "../../assets";
 import { Button, Col, Row } from "antd";
 import { CustomTimeline } from "../../components";
-
+import date from '../../utils/helpers/CustomizeDate'
 const OrderDetails: React.FC = () => {
   const location = useLocation();
   // const navigate = useNavigate();
-  const state = location.state;
-  console.log("Dey", state);
+ const {id, customer,paymentMode, createdAt} = location.state?.data;
+ 
+ 
   return (
     <div id="order-details">
       <div className="order-header">
@@ -40,15 +41,15 @@ const OrderDetails: React.FC = () => {
               <div className="container-content">
                 <div className="container-row">
                   <span className="container-col">OrderId</span>
-                  <span className="container-col dark">#nkjanbcksc</span>
+                  <p className="container-col dark overflow-text">{id}</p>
                 </div>
                 <div className="container-row">
                   <span className="container-col">Date Added</span>
-                  <span className="container-col dark">19/05/2023</span>
+                  <span className="container-col dark">{date.getDate(createdAt)}</span>
                 </div>
                 <div className="container-row">
                   <span className="container-col">Payment Method</span>
-                  <span className="container-col dark">Online</span>
+                  <span className="container-col dark">{paymentMode}</span>
                 </div>
               </div>
             </div>
@@ -59,15 +60,15 @@ const OrderDetails: React.FC = () => {
               <div className="container-content">
                 <div className="container-row">
                   <span className="container-col">Name</span>
-                  <span className="container-col dark">Dan Wilsoi</span>
+                  <span className="container-col dark">{customer?.name}</span>
                 </div>
                 <div className="container-row">
                   <span className="container-col">Email</span>
-                  <span className="container-col dark">dan@consulting.com</span>
+                  <span className="container-col dark">{customer.email}</span>
                 </div>
                 <div className="container-row">
                   <span className="container-col">Contacts</span>
-                  <span className="container-col dark">+6141 234 567</span>
+                  <span className="container-col dark">{customer.contacts[0]} , {customer.contacts[1]}</span>
                 </div>
               </div>
             </div>
@@ -100,18 +101,6 @@ const OrderDetails: React.FC = () => {
             <h3>Status </h3>
           </div>
           <div className="right">
-            <Button
-              type="primary"
-              style={{
-                height: "45px",
-                backgroundColor: "#545BFC",
-                padding: "10px 25px",
-                fontWeight: "600",
-                borderRadius: "15px",
-              }}
-            >
-              Live Track
-            </Button>
           </div>
         </div>
         <div className="timeline">
