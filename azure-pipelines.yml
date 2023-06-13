@@ -63,7 +63,7 @@ steps:
 
       testResultsFiles: '**/TEST-*.xml'
 
-      tasks: 'assembleRelease'
+      tasks: 'assemblerelease'
 
       # tasks: 'assembleDevelopmentRelease'
 
