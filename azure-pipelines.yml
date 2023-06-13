@@ -1,1 +1,133 @@
-command for test
+trigger: none
+
+
+
+
+pool:
+
+  vmImage: 'macOS-11'
+
+
+
+
+    
+
+steps:
+
+  - task: NodeTool@0
+
+    displayName: 'Install Node'
+
+    inputs:
+
+      versionSpec: '12.16.1'
+
+      
+
+  - task: JavaToolInstaller@0
+
+    displayName: 'Install Java'
+
+    inputs:
+
+      versionSpec: '11'
+
+      jdkSourceOption: PreInstalled
+
+      jdkArchitectureOption: x64
+
+
+
+
+  - script: npm install 
+
+    # workingDirectory: src
+
+    displayName: 'Install node dependencies'
+
+    
+
+  
+
+  - task: Gradle@2
+
+    inputs:
+
+      workingDirectory: 'android'
+
+      gradleWrapperFile: 'android/gradlew'
+
+      gradleOptions: '-Xmx3072m'
+
+      publishJUnitResults: false
+
+      testResultsFiles: '**/TEST-*.xml'
+
+      tasks: 'assembleRelease'
+
+      # tasks: 'assembleDevelopmentRelease'
+
+ 
+
+#   - task: AndroidSigning@3
+
+#     inputs:
+
+#       apkFiles: '**/*.apk'
+
+#     # Signing Options
+
+#       #apksign: true # boolean. Sign the APK. Default: true.
+
+#       apksignerKeystoreFile: 'travelite-keystore.jks' 
+
+#       apksignerKeystorePassword: 'Code@123' 
+
+#       apksignerKeystoreAlias: 'travelite' 
+
+#       apksignerKeyPassword: 'Code@123' 
+
+     
+
+#   - script: mv android/app/build/outputs/apk/$(environment)/release/app-$(environment)-release.apk Travelite$(Build.BuildNumber)-$(environment).apk
+
+#     displayName: 'Rename apk'
+
+
+
+
+#   - task: PublishBuildArtifacts@1
+
+#     inputs:
+
+#       pathtoPublish: Travelite$(Build.BuildNumber)-$(environment).apk
+
+#       artifactName: drop
+
+#       publishLocation: 'container'
+
+      
+
+#   - task: AppCenterDistribute@3
+
+#     displayName: 'Create a release on App Center'
+
+#     # condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+
+#     inputs:
+
+#       serverEndpoint: 'travelite-appCenter'
+
+#       appSlug: 'priyanshu.s-codestoresolutions.com/Travelite'
+
+#       appFile: 'Travelite$(Build.BuildNumber)-$(environment).apk'
+
+#       releaseNotesOption: 'input'
+
+#       releaseNotesInput: |
+
+#         Environment: '$(environment)'      
+
+#         $(Build.SourceVersionMessage)
+
+#         Latest source: '$(Build.SourceVersion)'
