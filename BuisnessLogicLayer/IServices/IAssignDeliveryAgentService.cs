@@ -1,16 +1,19 @@
-﻿using EntityLayer.Dtos;
+﻿using BusinessLogicLayer.Services;
+using EntityLayer.Common;
+using EntityLayer.Dtos;
 using EntityLayer.Models;
 
 namespace BusinessLogicLayer.IServices
 {
     public interface IAssignDeliveryAgentService
     {
-       Task<IEnumerable<AssignDeliveryAgent>> AddOrderAssignInBulk(OrderAssingInBulkRequestDto orderAssingInBulkRequestDto);
-       Task<IEnumerable<AssignDeliveryAgent>> GetAllAsync(int pageNumber=1, int limit=1000);
-       Task<ResponseDto> assignAgentManuallyAsync(AssignManuallyDto assignManuallyDto);
+       Task<ResponseDto> AddOrderAssignInBulk(OrderAssingInBulkRequestDto orderAssingInBulkRequestDto);
+       Task<IEnumerable<AssignDeliveryAgent>> GetAllAsync(int pageNumber=1, int limit=10);
+       Task<ResponseDto> AssignAgentManuallyAsync(AssignManuallyDto assignManuallyDto);
        Task RemoveOrderAssignedAsync(long id);
        Task<ResponseDto> UpdateAsync(long id, UpdateAgentRequestDto orderAssignDto);
-       Task<ResponseDto> AddNearsetDeliveryAgentAsync(AgentAssignRequestDto agentAssignRequestDto);
+       Task<ResponseDto> AddNearsetDeliveryAgentAsync(AssignAgentAutomaticallyDto automaticallyDto);
+       public Task<ResponseDto> BulkAgentAssignManuallyAsync(BulkAssignManuallyDto bulkAssignManuallyDto);
 
     }
 }

@@ -69,9 +69,8 @@ namespace DeliveryAgentModule.Controllers
             return false;
         }
         private string GenerateJwtToken(string email, string role)
-        {
-         
-            // Set the secret key used to sign the JWT token (keep this secure!)
+        {    
+            // Set the secret key used to sign the JWT token 
             var secretKey = "safmdknfsdDKFKN122sdnmkfnsJDKNF23234Sssds";
             var keyBytes = Encoding.UTF8.GetBytes(secretKey);
             var signingKey = new SymmetricSecurityKey(keyBytes);
@@ -79,14 +78,14 @@ namespace DeliveryAgentModule.Controllers
             // Create the claims for the token
             var claims = new[]
             {
-                new Claim(ClaimTypes.Email, email),
-                new Claim(ClaimTypes.Role, role)
+                new Claim("email", email),
+                new Claim("role", role)
             };
 
             // Create the JWT token
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.UtcNow.AddMonths(2), // Set the token expiration time
+                expires: DateTime.UtcNow.AddMonths(2),                 // Set the token expiration time
                 signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
             );
 

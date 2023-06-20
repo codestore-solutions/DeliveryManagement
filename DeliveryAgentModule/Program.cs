@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Text;
 using BusinessLogicLayer.Mappings;
 using DeliveryAgentModule.Middlewares;
+using System.Text.Json.Serialization;
 
 namespace DeliveryAgentModule
 {
@@ -34,6 +35,11 @@ namespace DeliveryAgentModule
             builder.Logging.AddSerilog(logger);
 
             builder.Services.AddControllers();
+            builder.Services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                options.JsonSerializerOptions.WriteIndented = true;
+            });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
 
@@ -85,7 +91,6 @@ namespace DeliveryAgentModule
             builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IAssignDeliveryAgentService, AssignDeliveryAgentService>();
             builder.Services.AddScoped<IImageService, ImageService>();
-            builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
             builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 

@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 using BusinessLogicLayer.IServices;
+using DeliveryAgent.API;
 using EntityLayer.Common;
 using EntityLayer.Dtos;
+using EntityLayer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Collections;
 using static EntityLayer.Models.BusinessAdmin;
 
@@ -18,11 +21,12 @@ namespace DeliveryAgentModule.Controllers
     public class BusinessAdminController : ControllerBase
     {
         private readonly IBusinessAdminService businessAdminService;
-        private readonly IMapper mapper;
-        public BusinessAdminController(IBusinessAdminService businessAdminService, IMapper mapper)
+        private readonly HttpClient httpClient;
+
+        public BusinessAdminController(IBusinessAdminService businessAdminService, HttpClient httpClient)
         {
             this.businessAdminService = businessAdminService;
-            this.mapper = mapper;
+            this.httpClient = httpClient;
         }
       
         /// <summary>
@@ -38,10 +42,10 @@ namespace DeliveryAgentModule.Controllers
         //GET: /api/business-admin/get-agents/1224?orderAssignedStatus=1&agentStatus=1&verStatus=0&pageNumber=1&limit=10
         [HttpGet("get-agents/{businessId}")]
         [MapToApiVersion("1.0")]
-        public async Task<IEnumerable> GetAllDeliveryAgentAsync([FromRoute] long businessId, [FromQuery] OrderAssignedStatus? orderAssignedStatus, 
-            [FromQuery] DeliveryAgentStatus? agentStatus, [FromQuery] VerificationStatus? verStatus,[FromQuery] int pageNumber = 1, [FromQuery] int limit = 10)
+        public async Task<IActionResult> GetAllDeliveryAgentAsync([FromRoute] long businessId, [FromQuery] OrderAssignedStatus? orderAssignedStatus, 
+            [FromQuery] DeliveryAgentStatus? agentStatus,[FromQuery] int pageNumber = 1, [FromQuery] int limit = 10)
         {
-            return await businessAdminService.GetAllDeliveryAgentAsync(businessId, orderAssignedStatus, agentStatus, verStatus, pageNumber, limit);
+            return Ok(await businessAdminService.GetAllDeliveryAgentAsync(businessId, orderAssignedStatus, agentStatus, pageNumber, limit));
         }
       
         // DELETE: /api/delete/{agentId}
@@ -66,10 +70,11 @@ namespace DeliveryAgentModule.Controllers
         /// <returns></returns>
         [HttpPut("update-verification-status")]
         [MapToApiVersion("1.0")]
-        public async Task<ResponseDto> UpdateVerificationStatusAsync(long agentId,[FromQuery] VerificationStatus verificationStatus)
+/*        public async Task<ResponseDto> UpdateVerificationStatusAsync(long agentId,[FromQuery] VerificationStatus verificationStatus)
         {
            return await businessAdminService.UpdateVerificationSatus(agentId, verificationStatus);
         }
+*/
 
         /// <summary>
         /// Verify new Delivery Agent , requested from mobile app
@@ -105,12 +110,26 @@ namespace DeliveryAgentModule.Controllers
         //GET: /api/business-admin/get-agents/1224?orderAssignedStatus=1&agentStatus=1&verStatus=0&pageNumber=1&limit=10
         [HttpGet("get-agents/{businessId}")]
         [MapToApiVersion("2.0")]
-        public async Task<IEnumerable> GetAllDeliveryAgentUpdatedAsync([FromRoute] long businessId, [FromQuery] OrderAssignedStatus? orderAssignedStatus,
-            [FromQuery] DeliveryAgentStatus? agentStatus, [FromQuery] VerificationStatus? verStatus, [FromQuery] int pageNumber = 1, [FromQuery] int limit = 1000)
+        public async Task<IActionResult> GetAllDeliveryAgentUpdatedAsync([FromRoute] long businessId, [FromQuery] OrderAssignedStatus? orderAssignedStatus,
+            [FromQuery] DeliveryAgentStatus? agentStatus, [FromQuery] int pageNumber = 1, [FromQuery] int limit = 1000)
         {
-            return await businessAdminService.GetAllDeliveryAgentAsync(businessId, orderAssignedStatus, agentStatus, verStatus, pageNumber, limit);
+            return Ok(await businessAdminService.GetAllDeliveryAgentAsync(businessId, orderAssignedStatus, agentStatus, pageNumber, limit));
         }
 
+
+        // GET
+        [HttpGet("get-agents-list")]
+        public async Task<IActionResult> GetAgentList()
+        {
+            var microserviceResponse = await httpClient.GetAsync("https://order-processing-dev.azurewebsites.net/api/v1/users/getUsersByRole?role=delivery-agent");
+            if (microserviceResponse == null)
+            {
+                return BadRequest(StringConstant.ErrorMessage);
+            }
+            var content = await microserviceResponse.Content.ReadAsStringAsync();
+            var data = JsonConvert.DeserializeObject<List<DeliveryAgentList>>(content);        
+            return Ok(data);
+        }
 
     }
 }

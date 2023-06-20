@@ -4,6 +4,7 @@ using DataAccessLayer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(DeliveryDbContext))]
-    partial class DeliveryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230611081654_changes in models")]
+    partial class changesinmodels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,26 +33,14 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<int>("AvailabeStatus")
+                        .HasColumnType("int");
+
                     b.Property<long>("BusinessId")
                         .HasColumnType("bigint");
 
-                    b.Property<double>("DeliveryAddressLatitude")
-                        .HasColumnType("float");
-
-                    b.Property<double>("DeliveryAddressLongitude")
-                        .HasColumnType("float");
-
                     b.Property<long>("DeliveryAgentId")
                         .HasColumnType("bigint");
-
-                    b.Property<int>("OrdersCount")
-                        .HasColumnType("int");
-
-                    b.Property<double>("PickupLatitude")
-                        .HasColumnType("float");
-
-                    b.Property<double>("PickupLongitude")
-                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -77,12 +68,6 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<double>("AgentLatitude")
-                        .HasColumnType("float");
-
-                    b.Property<double>("AgentLongitude")
-                        .HasColumnType("float");
-
                     b.Property<int>("AgentStatus")
                         .HasColumnType("int");
 
@@ -90,20 +75,30 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("DeliveryAgentAddress")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("DeliveryAgentId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("DeliveryAgentName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("MaxDistance")
-                        .HasColumnType("int");
+                    b.Property<double>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("float");
 
                     b.Property<int>("OrderAssignStatus")
+                        .HasColumnType("int");
+
+                    b.Property<long?>("ServiceLocationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("ShippingAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VerStatus")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -120,6 +115,7 @@ namespace DataAccessLayer.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Address")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ContactNumber")
@@ -188,9 +184,6 @@ namespace DataAccessLayer.Migrations
                     b.Property<long>("AssignDeliveryAgentId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("OrderId")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("ShippingAddress")
                         .HasColumnType("nvarchar(max)");
 
@@ -235,7 +228,7 @@ namespace DataAccessLayer.Migrations
             modelBuilder.Entity("EntityLayer.Models.Order", b =>
                 {
                     b.HasOne("EntityLayer.Models.AssignDeliveryAgent", "AssignDeliveryAgent")
-                        .WithMany("Orders")
+                        .WithMany("OrderIds")
                         .HasForeignKey("AssignDeliveryAgentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -245,7 +238,7 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("EntityLayer.Models.AssignDeliveryAgent", b =>
                 {
-                    b.Navigation("Orders");
+                    b.Navigation("OrderIds");
                 });
 #pragma warning restore 612, 618
         }

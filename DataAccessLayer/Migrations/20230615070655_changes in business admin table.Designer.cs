@@ -4,6 +4,7 @@ using DataAccessLayer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(DeliveryDbContext))]
-    partial class DeliveryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230615070655_changes in business admin table")]
+    partial class changesinbusinessadmintable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,6 +33,9 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<int>("AvailabeStatus")
+                        .HasColumnType("int");
+
                     b.Property<long>("BusinessId")
                         .HasColumnType("bigint");
 
@@ -41,9 +47,6 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<long>("DeliveryAgentId")
                         .HasColumnType("bigint");
-
-                    b.Property<int>("OrdersCount")
-                        .HasColumnType("int");
 
                     b.Property<double>("PickupLatitude")
                         .HasColumnType("float");
@@ -235,7 +238,7 @@ namespace DataAccessLayer.Migrations
             modelBuilder.Entity("EntityLayer.Models.Order", b =>
                 {
                     b.HasOne("EntityLayer.Models.AssignDeliveryAgent", "AssignDeliveryAgent")
-                        .WithMany("Orders")
+                        .WithMany("OrderIds")
                         .HasForeignKey("AssignDeliveryAgentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -245,7 +248,7 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("EntityLayer.Models.AssignDeliveryAgent", b =>
                 {
-                    b.Navigation("Orders");
+                    b.Navigation("OrderIds");
                 });
 #pragma warning restore 612, 618
         }

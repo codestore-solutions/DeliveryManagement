@@ -35,7 +35,7 @@ namespace DeliveryAgentModule.Middlewares
                     Message = "Something Went Wrong, We are looking resolving Soon"
                 };*/
 
-                string error = errorId + "Something Went Wrong, We are looking resolving Soon";
+                string error = errorId + " :Something Went Wrong, We are looking resolving Soon";
                 await httpContext.Response.WriteAsync(error);
             }
         }

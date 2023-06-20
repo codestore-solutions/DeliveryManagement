@@ -1,11 +1,14 @@
 ﻿using BusinessLogicLayer.IServices;
+using BusinessLogicLayer.Services;
 using DeliveryAgentModule.CustomActionFilter;
 using EntityLayer.Common;
 using EntityLayer.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using DeliveryAgentModule.CustomActionFilter;
 using System.Collections;
+using static System.Net.Mime.MediaTypeNames;
+using System.Text;
+using System.Text.Json;
 
 namespace DeliveryAgentModule.Controllers
 {
@@ -16,10 +19,13 @@ namespace DeliveryAgentModule.Controllers
     [Authorize]
     public class AssignDeliveryAgentController : ControllerBase
     {
-        private readonly IAssignDeliveryAgentService orderAssignService;
-        public AssignDeliveryAgentController(IAssignDeliveryAgentService orderAssignService)
+        private readonly IAssignDeliveryAgentService deliveryAgentService;
+        private readonly HttpClient httpClient;
+
+        public AssignDeliveryAgentController(IAssignDeliveryAgentService deliveryAgentService, HttpClient httpClient)
         {
-            this.orderAssignService = orderAssignService;
+            this.deliveryAgentService = deliveryAgentService;
+            this.httpClient = httpClient;
         }
 
         // GET: /api/agent/GetAllAgents?pageNumber=1&limit=10
@@ -28,9 +34,9 @@ namespace DeliveryAgentModule.Controllers
         /// </summary>
         [HttpGet("get-all")]
         [MapToApiVersion("1.0")]
-        public async Task<IEnumerable> GetAllAssignedAgent([FromQuery] int pageNumber=1, [FromQuery] int limit=1000)
+        public async Task<IEnumerable> GetAllAssignedAgent([FromQuery] int pageNumber=1, [FromQuery] int limit=10)
         {
-            return await orderAssignService.GetAllAsync(pageNumber,limit);
+            return await deliveryAgentService.GetAllAsync(pageNumber,limit);
         }
 
         // POST: /api/v1/agent/assign-manually
@@ -42,9 +48,14 @@ namespace DeliveryAgentModule.Controllers
         ///
         ///      POST: /api/v1/agent/assign-manually
         ///     {
-        ///        "deliveryAgentId"    : long,
-        ///        "orderId"            : long,
-        ///        "buisnessId"         : long,
+        ///        "deliveryAgentId"     : long,
+        ///        "orderIds"            : [long,long,long..],
+        ///        "buisnessId"          : long,
+        ///        "PickupLat"           : double
+        ///        "PickupLong"          : double
+        ///        "DeliveryAddressLa"   : double
+        ///        "DeliveryAddressLong" : double
+        ///        "BuisnessId"          : double
         ///     }
         /// </remarks>
         /// <param name="assignManuallyDto"></param>
@@ -52,10 +63,39 @@ namespace DeliveryAgentModule.Controllers
         [HttpPost("assign-manually")]
         [MapToApiVersion("1.0")]
         [ValidateModel]
-        public async Task<IActionResult> assignAgentManuallyAsync(AssignManuallyDto assignManuallyDto)
+        public async Task<IActionResult> AssignAgentManuallyAsync(AssignManuallyDto assignManuallyDto)
         {
-            return Ok(await orderAssignService.assignAgentManuallyAsync(assignManuallyDto));
-        }      
+            return Ok(await deliveryAgentService.AssignAgentManuallyAsync(assignManuallyDto));
+         /*   var requestBody = new
+            {
+                AgentId = "John Doe",
+                Status = "agent_Assigned",
+                Order = new
+                {
+                    OrderId = "1",
+                   Timestamp = DateTime.Now.ToString(),
+                }      
+            };
+            var todoItemJson = new StringContent(
+                 JsonSerializer.Serialize(requestBody),
+                 Encoding.UTF8,
+                 Application.Json);
+            var microserviceResponse = await httpClient.PutAsync("https://order-processing-dev.azurewebsites.net/api/order/updateOrder", todoItemJson);*/
+        }
+
+        // POST: 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bulkAssignManuallyDto"></param>
+        /// <returns></returns>
+        [HttpPost("bulk-assign-manually")]
+        [MapToApiVersion("1.0")]
+        [ValidateModel]
+        public async Task<IActionResult> BulkAgentAssignManuallyAsync(BulkAssignManuallyDto bulkAssignManuallyDto)
+        {
+            return Ok(await deliveryAgentService.BulkAgentAssignManuallyAsync(bulkAssignManuallyDto));
+        }
 
         // Post: /api/agent/assign-agent
         /// <summary>
@@ -68,11 +108,11 @@ namespace DeliveryAgentModule.Controllers
         /// }
         /// </remarks>
         [HttpPost("assign-agent")]
-        [ValidateModel]
+        //[ValidateModel]
         [MapToApiVersion("1.0")]
-        public async Task<IActionResult> AddAssignDeliveryAgent([FromBody] AgentAssignRequestDto agentAssignRequestDto)
+        public async Task<IActionResult> AddAssignDeliveryAgent([FromBody] AssignAgentAutomaticallyDto automaticallyDto)
         {
-            return Ok(await orderAssignService.AddNearsetDeliveryAgentAsync(agentAssignRequestDto));
+            return Ok(await deliveryAgentService.AddNearsetDeliveryAgentAsync(automaticallyDto));
         }
 
         //Post: /api/agent/assign-agent-bulk
@@ -83,7 +123,7 @@ namespace DeliveryAgentModule.Controllers
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> AddAssignDekliveryAgentInBulk(OrderAssingInBulkRequestDto orderAssingInBulkRequestDto)
         {
-            return Ok(await orderAssignService.AddOrderAssignInBulk(orderAssingInBulkRequestDto));
+            return Ok(await deliveryAgentService.AddOrderAssignInBulk(orderAssingInBulkRequestDto));
         }
 
         // DELETE: /api/delete
@@ -94,7 +134,7 @@ namespace DeliveryAgentModule.Controllers
         [MapToApiVersion("1.0")]
         public async Task<ActionResult> RemoveOrderAssigned([FromQuery] int agentId)
         {
-            await orderAssignService.RemoveOrderAssignedAsync(agentId);
+            await deliveryAgentService.RemoveOrderAssignedAsync(agentId);
             return Ok(StringConstant.SuccessMessage);
         }
 
@@ -105,14 +145,19 @@ namespace DeliveryAgentModule.Controllers
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> UpdateAgentOrOrderId([FromRoute] int id,[FromBody] UpdateAgentRequestDto updateOrderAssignDto)
         {
-            var updatedOrder = await orderAssignService.UpdateAsync(id, updateOrderAssignDto);
-
+            var updatedOrder = await deliveryAgentService.UpdateAsync(id, updateOrderAssignDto);
             if(updatedOrder == null)
             {
                 return NotFound(StringConstant.InvalidInputError);
             }
             return Ok(updatedOrder);
         }
+
+       /* [HttpPost]
+        public async Task<IActionResult> assignMultipleOrderToOneAgentAsync(AssignMultipleOrderDto dto)
+        {
+            return Ok(await deliveryAgentService.);
+        }*/
 
     }    
     

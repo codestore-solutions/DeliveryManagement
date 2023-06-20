@@ -11,8 +11,7 @@ namespace DataAccessLayer.Repository
             this.dbContext = dbContext;
             AssignDeliveryAgentRepository = new AssignDeliveryAgentRepository(this.dbContext);
             ServiceLocationRepository = new ServiceLocationRepository(this.dbContext);
-            BusinessAdminRepository=new BusinessAdminRepository(this.dbContext);
-            OrderRepository= new OrderRepository(this.dbContext);   
+            BusinessAdminRepository=new BusinessAdminRepository(this.dbContext);  
             ImageRepository= new ImageRepository(this.dbContext);
         }
         public IAssignDeliveryAgentRepository AssignDeliveryAgentRepository
@@ -23,8 +22,6 @@ namespace DataAccessLayer.Repository
         public IServiceLocationRepository ServiceLocationRepository { get; private set; }
 
         public IBusinessAdminRepository BusinessAdminRepository { get; private set; }
-
-        public IOrderRepository OrderRepository { get; private set; }
 
         public IImageRepository ImageRepository { get; private set; }
 

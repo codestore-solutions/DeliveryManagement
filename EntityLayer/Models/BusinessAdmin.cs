@@ -13,16 +13,15 @@ namespace EntityLayer.Models
 
         [Required]
         public long DeliveryAgentId  { get; set; }
-        public string? DeliveryAgentName { get; set; }
-        public string? DeliveryAgentAddress { get; set; }
-        public string? ShippingAddress { get; set; }                    // Shipping Address against orderId
-        public long? ServiceLocationId { get; set; }                    // DeliveryAgent Live-Location: Latitude /Longitude                                                                  // Latitude & Longitude are applicable only for Instant Food Delivery Business
-        public double Latitude { get; set; }                            // Admin Latitude/order-pickup latitude/ restaurant latitude 
-        public double Longitude { get; set; }   
+        public string DeliveryAgentName { get; set; } = null!;
+        public string DeliveryAgentAddress { get; set; } = null!;
+        public double AgentLatitude { get; set; }                            
+        public double AgentLongitude { get; set; }
+        public int MaxDistance { get; set; }
         public enum DeliveryAgentStatus
         {
-            Availale=1,
-            Offline=0,
+            Offline = 0,
+            Availale =1,
             Busy =2,
         }
         public enum OrderAssignedStatus
@@ -30,14 +29,16 @@ namespace EntityLayer.Models
             Assigned=1,
             NotAssigned=0
         }
-        public enum VerificationStatus
-        {
-            Verified = 1,
-            NotVerified=0,
-            Pending=2
-        }   
         public OrderAssignedStatus OrderAssignStatus { get; set; }    
-        public DeliveryAgentStatus AgentStatus { get; set; }    
-        public VerificationStatus VerStatus { get; set; }  
+        public DeliveryAgentStatus AgentStatus { get; set; }
+
+        /*    public enum VerificationStatus
+      {
+          Verified = 1,
+          NotVerified=0,
+          Pending=2
+      }   */
+        // public VerificationStatus? VerStatus { get; set; }  
+
     }
 }

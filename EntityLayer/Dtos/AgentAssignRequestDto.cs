@@ -8,7 +8,8 @@ namespace EntityLayer.Dtos
 {
     public class AgentAssignRequestDto
     {
-        public long OrderId { get; set; }
+        public long OrderId { get; set; } 
         public long BusinessId { get; set; }
+      
     }
 }

@@ -12,18 +12,12 @@ namespace EntityLayer.Models
         public long DeliveryAgentId { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
-        enum ServiceArea
-        {
-            Circular,
-            Square,
-            Hexagon
-        }
+       
         public enum DeliveryAgentStatus
         {
             Availale = 1,
             NotAvailable = 0,
         }
-
         public enum OrderAssignedStatus
         {
             Assigned = 1,
