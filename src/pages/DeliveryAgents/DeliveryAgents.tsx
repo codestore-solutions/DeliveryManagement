@@ -1,13 +1,17 @@
 import { Space } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { v4 as uuidv4 } from "uuid";
+// import { v4 as uuidv4 } from "uuid";
 import "./style.scss";
 // import dummyData from "../../../dummyData";
-import { useEffect, useState } from "react";
-import AgentServices from "../../services/AgentServices";
+import {  useState, useEffect } from "react";
+// import AgentServices from "../../services/AgentServices";
 import { CustomTable } from "../../components";
 import { BusyIcon, DeleteIcon, DetailsIcon } from "../../assets";
 import { useNavigate } from "react-router-dom";
+// import dummyData from "../../../dummyData";
+import { useAppDispatch, useAppSelector } from "../../store/hooks/app";
+import { AgentStateInerface, agentSelector, getAllAgents } from "../../store/features/Agents/agentSlice";
+import CustomizeText from "../../utils/helpers/CustomizeText";
 
 export interface DataType {
   key: React.Key;
@@ -20,8 +24,10 @@ export interface DataType {
 
 const DeliveryAgents: React.FC = () => {
   const navigate = useNavigate();
-  const [agentsList, setAgentsList] = useState<any>();
-  const [loading, setLoading] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
+  const {loading, agentList}  = useAppSelector(agentSelector)  as AgentStateInerface;
+  // const agentsList = dummyData.data;
+  // const [loading, setLoading] = useState<boolean>(false);
 
   const [pagination, setPagination] = useState({
     pageNumber: 1,
@@ -32,7 +38,7 @@ const DeliveryAgents: React.FC = () => {
   });
 
   const handleClick = (state: any) => {
-    navigate(`/dashboard/agent-details/${state.deliveryAgentId}`, { state });
+    navigate(`/dashboard/agent-details/${state?.id}`, { state });
   };
 
   /**
@@ -40,22 +46,22 @@ const DeliveryAgents: React.FC = () => {
    */
   const columns: ColumnsType<DataType> = [
     {
+      title: "Agent Id",
+      dataIndex: "id",
+      key: "id",
+      render: (text) => <p className="col-text">{text}</p>,
+    },
+    {
       title: "Name",
       dataIndex: "deliveryAgentName",
       key: "deliveryAgentName",
       render: (text) => <p className="highlighted-col-text">{text}</p>,
     },
     {
-      title: "User Id",
-      dataIndex: "serialNo",
-      key: "serialNo",
-      render: (text) => <p className="col-text">{text}</p>,
-    },
-    {
       title: "Mobile Number",
-      dataIndex: "serialNo",
-      key: "serialNo",
-      render: (text) => <p className="col-text">{text}</p>,
+      dataIndex: "contacts",
+      key: "contacts",
+      render: () => <p className="col-text">7860965109</p>,
     },
     // {
     //   title: "Status",
@@ -78,15 +84,15 @@ const DeliveryAgents: React.FC = () => {
     // },
     {
       title: "Status",
-      key: "verStatus",
-      dataIndex: "verStatus",
-      render: (_, { verStatus }) => (
+      key: "agentStatus",
+      dataIndex: "agentStatus",
+      render: (_, { agentStatus }) => (
         <>
           <span>
-            {verStatus === 1 ? (
+            {agentStatus === 1 ? (
               <p className="available">Available</p>
-            ) : verStatus === 2 ? (
-              <p className="busy">Pending</p>
+            ) : agentStatus === 2 ? (
+              <p className="busy">Busy</p>
             ) : (
               <p className="offline">offline</p>
             )}{" "}
@@ -98,15 +104,14 @@ const DeliveryAgents: React.FC = () => {
       title: "Region",
       dataIndex: "deliveryAgentAddress",
       key: "deliveryAgentAddress",
-
-      render: (text) => <p className="col-text">{text}</p>,
+      render: (text) => CustomizeText(text),
     },
     {
       title: "Date",
-      dataIndex: "deliveryAgentAddress",
-      key: "deliveryAgentAddress",
+      dataIndex: "date",
+      key: "date",
 
-      render: (text) => <p className="col-text">{text}</p>,
+      render: () => <p className="col-text">10/01/2022</p>,
     },
     {
       title: "Action",
@@ -125,36 +130,23 @@ const DeliveryAgents: React.FC = () => {
     console.log("Page", filters);
     const { current, pageSize } = pagination;
     setPagination({ ...pagination, pageNumber: current, limit: pageSize });
-    getAgents();
+    
   };
 
-  const getAgents = () => {
-    let instance = AgentServices.getInstance();
-    setLoading(true);
-    let count = 1;
-    instance
-      .getAgentsList(pagination.pageNumber, pagination.pageSize)
-      .then((res) => {
-        const formattedData = res?.map((item: any) => ({
-          ...item,
-          key: uuidv4(),
-          serialNo: count++,
-        }));
-        setAgentsList(formattedData);
-        setLoading(false);
-      });
-    // console.log("datal", agentsList);
-  };
+  const fetchAgents = () =>{
+    let payload = pagination;
+    dispatch(getAllAgents({payload}));
+   }
 
   useEffect(() => {
-    getAgents();
-  }, [pagination.pageNumber]);
+      fetchAgents();
+  }, [dispatch, pagination.pageNumber]);
 
   return (
     <div id="delivery-agent">
       <CustomTable
         columns={columns}
-        data={agentsList}
+        data={agentList}
         pagination={pagination}
         handleTableChange={handleTableChange}
         loading={loading}

@@ -13,7 +13,7 @@ const CustomTimeline: React.FC = () => {
     <Steps
      className='custom-steps'
      progressDot={ customDot }
-      current={2}
+      current={1}
       items={[
         {
           title: 'On the way to pick parcel',

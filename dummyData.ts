@@ -5,64 +5,72 @@ const dummyData = {
       deliveryAgentId: "23",
       deliveryAgentName: "Rajesh Kumar",
       deliveryAgentAddress: "Noida sector 59 Metro Station",
-      agentStatus: 1,
+      contact: "7860965109",
       verStatus: 0,
+      date:"10/12/2022"
     },
     {
       key: "2",
       deliveryAgentId: "23",
       deliveryAgentName: "Rajesh Kumar",
       deliveryAgentAddress: "Noida sector 59 Metro Station",
-      agentStatus: 1,
+      contact: "7860965109",
       verStatus: 0,
+      date:"10/12/2022"
     },
     {
       key: "3",
       deliveryAgentId: "23",
       deliveryAgentName: "Rajesh Kumar",
       deliveryAgentAddress: "Noida sector 59 Metro Station",
-      agentStatus: 1,
+      contact: "7860965109",
       verStatus: 0,
+      date:"10/12/2022"
     },
     {
       key: "4",
       deliveryAgentId: "23",
       deliveryAgentName: "Rajesh Kumar",
       deliveryAgentAddress: "Noida sector 59 Metro Station",
-      agentStatus: 1,
+      contact: "7860965109",
       verStatus: 0,
+      date:"10/12/2022"
     },
     {
       key: "5",
       deliveryAgentId: "23",
       deliveryAgentName: "Rajesh Kumar",
       deliveryAgentAddress: "Noida sector 59 Metro Station",
-      agentStatus: 1,
+      contact: "7860965109",
       verStatus: 0,
+      date:"10/12/2022"
     },
     {
       key: "6",
       deliveryAgentId: "23",
       deliveryAgentName: "Rajesh Kumar",
       deliveryAgentAddress: "Noida sector 59 Metro Station",
-      agentStatus: 1,
+      contact: "7860965109",
       verStatus: 0,
+      date:"10/12/2022"
     },
     {
       key: "7",
       deliveryAgentId: "23",
       deliveryAgentName: "Rajesh Kumar",
       deliveryAgentAddress: "Noida sector 59 Metro Station",
-      agentStatus: 1,
+      contact: "7860965109",
       verStatus: 0,
+      date:"10/12/2022"
     },
     {
       key: "8",
       deliveryAgentId: "23",
       deliveryAgentName: "Rajesh Kumar",
       deliveryAgentAddress: "Noida sector 59 Metro Station",
-      agentStatus: 1,
+      contact: "7860965109",
       verStatus: 0,
+      date:"10/12/2022"
     },
   ],
   selectOptions: [
@@ -242,13 +250,13 @@ const dummyData = {
   ],
 };
 
-export const storesIds = ["5577cf1c-c23c-4f4f-a350-6f39ecd95ef3","2edd3841-c902-43c8-862d-5e98b599d9ce"];
+export const storesIds = [3,4];
 
 export const stores = [
 
   {
 
-      "id": '5577cf1c-c23c-4f4f-a350-6f39ecd95ef3',
+      "id": '3',
 
       "sellerId": '3',
 
@@ -278,7 +286,7 @@ export const stores = [
 
   {
 
-      "id": '2edd3841-c902-43c8-862d-5e98b599d9ce',
+      "id": '4',
 
       "sellerId": '3',
 
@@ -291,81 +299,17 @@ export const stores = [
       "address": {
 
           "street": "5678 Innovation Road",
-
           "city": "New Delhi",
-
           "state": "Delhi",
-
           "country": "India",
-
           "pincode": "110002",
-
           "landmark": "Near Karol Bagh Market"
-
       }
 
   },
-
-  {
-
-      "id": '3',
-
-      "sellerId": '3',
-
-      "businessId": '2',
-
-      "name": "Book Haven",
-
-      "description": "A bookstore with a vast collection of books across various genres.",
-
-      "address": {
-
-          "street": "789 Book Street",
-
-          "city": "New Delhi",
-
-          "state": "Delhi",
-
-          "country": "India",
-
-          "pincode": "110003",
-
-          "landmark": "Near Daryaganj"
-
-      }
-
-  },
-
-  {
-
-      "id": '4',
-
-      "sellerId": '1',
-
-      "businessId":'3',
-
-      "name": "Sports Zone",
-
-      "description": "A sports store catering to a wide range of athletic equipment and gear.",
-
-      "address": {
-
-          "street": "4567 Sports Avenue",
-
-          "city": "New Delhi",
-
-          "state": "Delhi",
-
-          "country": "India",
-
-          "pincode": "110004",
-
-          "landmark": "Near Jawaharlal Nehru Stadium"
-
-      }
-
-  }
 
 ]
 
+
 export default dummyData;
+

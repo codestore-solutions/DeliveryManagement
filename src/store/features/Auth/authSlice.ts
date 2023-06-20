@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import UserService from "../../../services1/UserService";
+import UserService from "../../../services/UserService";
 import { RootState } from "../..";
 import UserStorage from "../../../utils/helpers/UserStorage";
 

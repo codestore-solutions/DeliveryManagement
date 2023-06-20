@@ -5,7 +5,7 @@ const Management: React.FC = () => {
   return (
     <div id="management-dashboard">
       <div className="header">
-        <span className="heading">Business Management Dashborad</span>
+        <span className="heading">Business Management Dashboard</span>
       </div>
       <div className="content">
         <Row gutter={[16, 16]}>

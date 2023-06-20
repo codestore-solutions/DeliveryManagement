@@ -1,44 +1,80 @@
 import React, { useState } from "react";
 import "./style.scss";
 import "../../pages/DeliveryAgents/style.scss";
-import { Space } from "antd";
+import { Space, Tooltip } from "antd";
 import { ColumnsType } from "antd/es/table";
-import { CustomTable } from "../index";
+import { AssignAgent, CustomModal, CustomTable } from "../index";
 // import { LoadingOutlined } from "@ant-design/icons";
-
-import { DeliveryUserIcon, DetailsIcon } from "../../assets";
+import { AutomaticUser, DeliveryUserIcon, DetailsIcon } from "../../assets";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks/app";
-import { OrderStateInerface, getAvailableOrders, orderSelector } from "../../store/features/Orders/ordersSlice";
+import {
+  OrderStateInerface,
+  getAvailableOrders,
+  orderSelector,
+} from "../../store/features/Orders/ordersSlice";
 import { pagination } from "../../utils/types";
-import { useEffect } from 'react';
+import { useEffect } from "react";
+import date from "../../utils/helpers/CustomizeDate";
+import CutomizeText from "../../utils/helpers/CustomizeText";
 import CustomizeData from "../../utils/helpers/CustomizeData";
+import AgentService from "../../services/AgentService";
+import { ApiContants } from "../../constants/ApiContants";
+import CustomizeDate from "../../utils/helpers/CustomizeDate";
+import OrderService from "../../services/OrderService";
+// import dummyData from "../../../dummyData";
+
 export interface DataType {
   key: React.Key;
-  id: string;
-  paymentType: number;
+  orderId: string;
+  storename: number;
   shippingAddress: string;
-  orderAmount: number;
-  loading: boolean;
+  paymentType: number;
+  date: string;
+}
+
+interface Props {
+  selectedRowKeys: any;
+  setSelectedRowKeys: any;
+  setSelectedRowData: any;
+  startMultiSelect: any;
+  fetch: any;
 }
 // const antIcon = <LoadingOutlined style={{ color: "#fff" }} spin />;
 
-const AvailableOrders:React.FC = () => {
+const AvailableOrders: React.FC<Props> = ({
+  selectedRowKeys,
+  setSelectedRowKeys,
+  setSelectedRowData,
+  startMultiSelect,
+  fetch,
+}) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const {loading, orderslist}  = useAppSelector(orderSelector)  as OrderStateInerface;
-  const data =  CustomizeData.AvilableOrderData(orderslist);
+  const [selectedRow, setSelectedRow] = useState<any>(null);
+  const { loading, orderslist } = useAppSelector(
+    orderSelector
+  ) as OrderStateInerface;
+  let data = CustomizeData.AvilableOrderData(orderslist?.list);
   const [pagination, setPagination] = useState<pagination>({
     pageNumber: 1,
-    total: 15,
-    pageSize: 5,
+    total: orderslist?.total,
+    pageSize: 10,
     showTotal: (total: any, range: any) =>
       `${range[0]}-${range[1]} of ${total} items`,
   });
+  const [isOpen, setIsOpen] = useState(false);
+  const [isApiCall, setIsApiCall] = useState(false);
+  const handleOpenModal = (record: any) => {
+    setSelectedRow(record);
+    setIsOpen(true);
+  };
 
+  const handleCloseModal = () => {
+    setIsOpen(false);
+  };
   const handleClick = (state: any) => {
-    let data = orderslist.find((ele:any) => ele.id === state.orderId);
-    navigate(`/dashboard/order-details/${data.id}`, { state: { data } });
+    navigate(`/dashboard/order-details/${state?.id}`);
   };
 
   // Handle Chnage for Table
@@ -47,19 +83,19 @@ const AvailableOrders:React.FC = () => {
     const { current, pageSize } = pagination;
     setPagination({ ...pagination, pageNumber: current, limit: pageSize });
   };
- 
+
   const columns: ColumnsType<DataType> = [
     {
       title: "OrderId",
-      dataIndex: "orderId",
-      key: "orderid",
-      render: (text: any) => <p className="tableId">{text}</p>,
+      dataIndex: "id",
+      key: "id",
+      render: (text: any) => CutomizeText(text),
     },
     {
       title: "Vender Name",
-      dataIndex: "storename",
-      key: "storename",
-      render: (text: any) => <p className="tableTxt">{text}</p>,
+      dataIndex: "storeDetails",
+      key: "storeDetails",
+      render: (storeDetails: any) => CutomizeText(storeDetails?.storname),
     },
     {
       title: "Payment Mode",
@@ -77,53 +113,140 @@ const AvailableOrders:React.FC = () => {
     },
     {
       title: "Delivery Region",
-      dataIndex: "shippingAddress",
-      key: "shippingAddress",
-      render: (text: any) => <p className="tableTxt">{text}</p>,
+      dataIndex: "shippingAddressDetails",
+      key: "shippingAddressDetails",
+      render: (shippingAddressDetails: any) =>
+        CutomizeText(shippingAddressDetails.address),
     },
     {
       title: "Date",
       key: "date",
       dataIndex: "date",
-      render: (text: any) => <p className="tableTxt">{text}</p>,
+      render: (text: any) => <p className="tableTxt">{date.getDate(text)}</p>,
     },
     {
       title: "Action",
       key: "action",
       render: (_, record) => (
         <Space size="middle">
-          <img src={DeliveryUserIcon} alt="" />
+          <Tooltip placement="right" title={"Manual Agent Assign"}>
+            <img
+              src={DeliveryUserIcon}
+              alt=""
+              onClick={() => handleOpenModal(record)}
+            />
+          </Tooltip>
+
           <div onClick={() => handleClick(record)}>
             <img src={DetailsIcon} alt="" />
           </div>
+          <Tooltip
+            placement="right"
+            title={isApiCall ? "Assigning.." : "Assign Agent"}
+          >
+            <img
+              src={AutomaticUser}
+              alt=""
+              className="icon-style"
+              onClick={() => !isApiCall && autoAssignAgent(record)}
+            />
+          </Tooltip>
         </Space>
       ),
     },
   ];
 
-  // Handle FilterChange
-  // const handleChange = (value: string | string[]) => {
-  //   console.log(`Selected: ${value}`);
-  //   setDeliveryType(value);
-  //   fetchOrders(value);
-  // };
-   const fetchOrders = () =>{
+  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+    // console.log('selectedRowKeys changed: ', newSelectedRowKeys);
+    const selectedRowData = data.filter((row: any) =>
+      newSelectedRowKeys.includes(row?.key)
+    );
+    // console.log('Selected row data:', selectedRowData);
+    setSelectedRowData(selectedRowData);
+    setSelectedRowKeys(newSelectedRowKeys);
+  };
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
+
+  const fetchOrders = () => {
     let payload = pagination;
-    dispatch(getAvailableOrders({payload}));
-   }
+    dispatch(getAvailableOrders({ payload }));
+  };
+
+  // Automatic Assign Agent to Single Order
+  const autoAssignAgent = (values: any) => {
+    let payload = {
+      orderId: values?.id,
+      pickupLat: values.storeDetails.pickupLatitudes,
+      pickupLong: values.storeDetails?.pickupLongitudes,
+      deliveryAddressLat:
+        values?.shippingAddressDetails?.deliveryAddressLatitudes,
+      deliveryAddressLong:
+        values?.shippingAddressDetails?.deliveryAddressLongitudes,
+      businessId: 2,
+    };
+    AgentService.assignAgentAutomaticallyToOrder(payload)
+      .then((res) => {
+        setIsApiCall(true);
+        if (res?.statusCode === ApiContants.successCode) {
+          let orderPayload = {
+            agentId: [res?.data.agentId],
+            status: res?.data.status,
+            timestamp: CustomizeDate.getCurrentTimestamp(),
+            orders: [res?.data.orderId],
+          };
+          OrderService.updateOrder(orderPayload).then((res: any) => {
+            if (res?.status === ApiContants.successCode) {
+              fetchOrders();
+            }
+          });
+        }
+      })
+      .catch((err) => {
+        console.log("Assign Agent Auto Error ", err);
+      })
+      .finally(() => {
+        setIsApiCall(false);
+      });
+  };
 
   useEffect(() => {
-      fetchOrders();
-  }, [dispatch, pagination.pageNumber]);
+    if (selectedRowKeys.length > 1) {
+      startMultiSelect(true);
+    } else {
+      startMultiSelect(false);
+    }
+  }, [selectedRowKeys]);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [dispatch, pagination.pageNumber, isOpen, fetch]);
 
   return (
     <div id="available-list">
       <CustomTable
+        rowSelection={rowSelection}
         columns={columns}
         data={data}
         pagination={pagination}
         handleTableChange={handleTableChange}
         loading={loading}
+      />
+      <CustomModal
+        isOpen={isOpen}
+        onClose={handleCloseModal}
+        component={
+          <AssignAgent
+            type={0}
+            selectedOrderData={selectedRow}
+            onClose={handleCloseModal}
+        
+          />
+        }
+        width={600}
       />
     </div>
   );

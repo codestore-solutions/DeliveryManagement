@@ -1,0 +1,31 @@
+@import '../../App.scss';
+
+
+.cancel-btn{
+    width: 25px;
+    height: 15px;
+    object-fit: contain;
+    cursor: pointer;
+}
+
+#automatic-assign{
+    display: flex;
+    flex-direction: column;
+    padding:0.2 0.1rem;
+
+    .automatic-assign-header{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.3rem;
+         h3{
+            font-weight: 500;
+            padding: 0.2rem 0;
+         }
+    }
+    .agent-conform-btn{
+        margin-top: 0.8rem ;
+        display: flex;
+        justify-content: flex-end;
+    }
+}

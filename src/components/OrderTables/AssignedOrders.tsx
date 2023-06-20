@@ -1,13 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./style.scss";
 import "../../pages/DeliveryAgents/style.scss";
 import { Space } from "antd";
 import { ColumnsType } from "antd/es/table";
-import dummyData from "../../../dummyData";
 import { DetailsIcon } from "../../assets";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { CustomTable } from "..";
+import OrderService from "../../services/OrderService";
+import { ApiContants } from "../../constants/ApiContants";
+import CustomizeDate from "../../utils/helpers/CustomizeDate";
 // import moment from "moment";
 
 export interface DataType {
@@ -17,11 +19,17 @@ export interface DataType {
   assigned_agent: string;
 }
 
-const AssignedOrders = () => {
+interface Props{
+  activeTab:any
+}
+
+const AssignedOrders: React.FC<Props> = ({activeTab}) => {
   const navigate = useNavigate();
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const [pagination, setPagination] = useState({
     pageNumber: 1,
-    total: 0,
+    total: data?.total,
     pageSize: 5,
     showTotal: (total: any, range: any) =>
       `${range[0]}-${range[1]} of ${total} items`,
@@ -37,14 +45,14 @@ const AssignedOrders = () => {
   const columns: ColumnsType<DataType> = [
     {
       title: "OrderId",
-      dataIndex: "key",
-      key: "key",
+      dataIndex: "id",
+      key: "id",
       render: (text: any) => <p className="tableId">{text}</p>,
     },
     {
       title: "Agent Name",
-      dataIndex: "assigned_agent",
-      key: "assigned_agent",
+      dataIndex: "deliveryId",
+      key: "deliveryId",
       render: (text: any) => (
         <p
           className="tableTxt"
@@ -56,21 +64,17 @@ const AssignedOrders = () => {
     },
     {
       title: "Vender Name",
-      dataIndex: "storename",
-      key: "storename",
+      dataIndex: "storeId",
+      key: "storeId",
       render: (text: any) => <p className="tableTxt">{text}</p>,
     },
     {
       title: "Payment Mode",
-      dataIndex: "payment_type",
-      key: "payment",
-      render: (_, record: any) => (
+      dataIndex: "paymentMode",
+      key: "paymentMode",
+      render: (text) => (
         <Space size="middle">
-          {record?.payment_type === 2 ? (
-            <p className="offline">COD</p>
-          ) : (
-            <p className="available">Online</p>
-          )}
+            <p className="available">{text}</p>
         </Space>
       ),
     },
@@ -78,13 +82,13 @@ const AssignedOrders = () => {
       title: "Order Status",
       dataIndex: "status",
       key: "status",
-      render: (text: any) => <p className="tableTxt">{text}</p>,
+      render: () => <p className="tableTxt">Assigned</p>,
     },
     {
       title: "Date",
-      dataIndex: "date",
-      key: "date",
-      render: (text: any) => <p className="tableId">{text}</p>,
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (text: any) => <p className="tableId">{CustomizeDate.getDate(text)}</p>,
     },
     {
       title: "Order Details",
@@ -96,13 +100,33 @@ const AssignedOrders = () => {
       ),
     },
   ];
+
+  const fetchOrder = () => {
+    setLoading(true);
+    OrderService.getAssignedOrdersList(pagination, 'agent_assigned')
+      .then((res: any) => {
+        if (res?.status === ApiContants.successCode) {
+          setData(res?.data);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.log("Assignd Order Fetching Error", err);
+        setLoading(false);
+      });
+  };
+
+  useEffect(() =>{
+      fetchOrder();
+  }, [activeTab,pagination.pageNumber])
+
   return (
     <CustomTable
       columns={columns}
-      data={dummyData.assignedOrderData}
+      data={data?.list}
       pagination={pagination}
       handleTableChange={handleTableChange}
-      loading={false}
+      loading={loading}
     />
   );
 };

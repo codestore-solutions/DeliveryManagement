@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import OrderService from "../../../services1/OrderService";
+import OrderService from "../../../services/OrderService";
 import { pagination } from '../../../utils/types';
 import { RootState } from "../..";
 
@@ -14,7 +14,7 @@ const initialState: OrderStateInerface = {
   loading: false,
   isSuccess: false,
   error: null,
-  orderslist: [] || undefined,
+  orderslist: null ,
 };
 
 // Get Orders List

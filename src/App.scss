@@ -1,9 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Poppins:wght@100;200;300;400;500;600&display=swap");
-
-* {
-  font-family: "Open Sans", sans-serif;
-  font-family: "Poppins", sans-serif;
-}
 // Varible Declearation
 $base_color: #545bfc;
 $buttonText_color: #fff;
@@ -20,7 +14,18 @@ $busy_color: #ffb526;
 }
 
 
-// Button Design
+// icon style
+.icon-style{
+   width: 25px;
+   height: 25px;
+   cursor: pointer;
+}
+//dark text table
+.dark{
+   font-weight: 500;
+}
+
+// Table Tags Design
 .available {
   padding: 2px 3px;
   font-family: "Poppins";

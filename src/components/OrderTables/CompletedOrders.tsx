@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./style.scss";
 import "../../pages/DeliveryAgents/style.scss";
 import { Space } from "antd";
 import { ColumnsType } from "antd/es/table";
-import dummyData from "../../../dummyData";
 import { DetailsIcon } from "../../assets";
 import { useNavigate } from "react-router-dom";
 import { CustomTable } from "..";
+import OrderService from "../../services/OrderService";
+import { ApiContants } from "../../constants/ApiContants";
+import CustomizeDate from "../../utils/helpers/CustomizeDate";
 
 export interface DataType {
   key: React.Key;
@@ -15,17 +17,22 @@ export interface DataType {
   assigned_agent: string;
 }
 
-const CompletedOrders = () => {
+interface Props {
+  activeTab: string;
+}
+
+const CompletedOrders: React.FC<Props> = ({ activeTab }) => {
   const navigate = useNavigate();
+  const [data, setData] = useState<any>();
+  const [loading, setLoading] = useState<boolean>(false);
   const [pagination, setPagination] = useState({
     pageNumber: 1,
-    total: 0,
+    total: data?.total,
     pageSize: 5,
     showTotal: (total: any, range: any) =>
       `${range[0]}-${range[1]} of ${total} items`,
   });
   const handleTableChange = (pagination: any) => {
-    console.log("pag", pagination);
     const { current, pageSize } = pagination;
     setPagination({ ...pagination, pageNumber: current, limit: pageSize });
   };
@@ -36,40 +43,29 @@ const CompletedOrders = () => {
   const columns: ColumnsType<DataType> = [
     {
       title: "OrderId",
-      dataIndex: "orderId",
-      key: "orderId",
+      dataIndex: "id",
+      key: "id",
       render: (text: any) => <p className="tableId">{text}</p>,
     },
     {
       title: "Agent",
-      dataIndex: "assigned_agent",
-      key: "assigned_agent",
-      render: (text: any) => (
-        <p
-          className="tableTxt"
-          onClick={() => navigate("/dashboard/agent-details")}
-        >
-          {text}
-        </p>
-      ),
+      dataIndex: "deliveryId",
+      key: "deliveryId",
+      render: (text: any) => <p className="tableTxt">{text}</p>,
     },
     {
       title: "Vender Name",
-      dataIndex: "storename",
-      key: "storename",
+      dataIndex: "storeId",
+      key: "storeId",
       render: (text: any) => <p className="tableTxt">{text}</p>,
     },
     {
       title: "Payment Mode",
-      dataIndex: "payment_type",
-      key: "payment",
-      render: (_, record: any) => (
+      dataIndex: "paymentMode",
+      key: "paymentMode",
+      render: (text) => (
         <Space size="middle">
-          {record?.payment_type === 2 ? (
-            <p className="offline">COD</p>
-          ) : (
-            <p className="available">Online</p>
-          )}
+          <p className="available">{text}</p>
         </Space>
       ),
     },
@@ -77,14 +73,14 @@ const CompletedOrders = () => {
       title: "Order Status",
       dataIndex: "status",
       key: "status",
-      render: (text: any) => <p className="tableTxt">{text}</p>,
+      render: () => <p className="tableTxt">{"Delivered"}</p>,
     },
-   
+
     {
       title: "Date",
-      dataIndex: "date",
-      key: "date",
-      render: (text: any) => <p className="tableId">{text}</p>,
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (text: any) => <p className="tableId">{ CustomizeDate.getDate(text)}</p>,
     },
     {
       title: "Order Details",
@@ -96,13 +92,32 @@ const CompletedOrders = () => {
       ),
     },
   ];
+
+  const fetchOrder = () => {
+    setLoading(true);
+    OrderService.getAssignedOrdersList(pagination, "delivered")
+      .then((res: any) => {
+        if (res?.status === ApiContants.successCode) {
+          setData(res?.data);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.log("Assignd Order Fetching Error", err);
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    fetchOrder();
+  }, [activeTab, pagination.pageNumber]);
   return (
     <CustomTable
       columns={columns}
-      data={dummyData.completedOrderData}
+      data={data?.list}
       pagination={pagination}
       handleTableChange={handleTableChange}
-      loading={false}
+      loading={loading}
     />
   );
 };

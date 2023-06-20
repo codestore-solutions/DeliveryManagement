@@ -6,8 +6,8 @@ const setUser =  (userData: any) => {
 
 const getUser =  () => {
   const data = localStorage.getItem(ApiContants.user);
-  console.log("data",data)
-  return data ? JSON.parse(data)?.jwtToken : "";
+  // console.log("data",data)
+  return data ? JSON.parse(data)?.jwtToken : null;
 };
 
 function logout() {
@@ -15,7 +15,7 @@ function logout() {
     localStorage.removeItem(ApiContants.user);
     return true;
   } catch (error) {
-    console.error('Error removing user from localStorage:', error);
+    // console.error('Error removing user from localStorage:', error);
     return false;
   }
 }

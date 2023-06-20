@@ -10,6 +10,7 @@ interface customTableProps {
   pagination: {};
   handleTableChange: any;
   loading: boolean;
+  scroll?: any
 }
 
 const CustomTable: FC<customTableProps> = ({
@@ -19,6 +20,7 @@ const CustomTable: FC<customTableProps> = ({
   handleTableChange,
   loading,
   rowSelection,
+  scroll
 }) => {
   return (
     <Table
@@ -28,6 +30,7 @@ const CustomTable: FC<customTableProps> = ({
       pagination={pagination}
       onChange={handleTableChange}
       loading={loading}
+      scroll={scroll}
       id="custom-table"
     />
   );

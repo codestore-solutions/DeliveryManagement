@@ -1,46 +1,11 @@
-@import '../../App.scss';
+@import "../../App.scss";
 
-
-#landingPage{
-    height: 100vh;
-     .container{
-        max-width: 30%;
-        margin: 10rem auto;
-        display: flex;
-        flex-direction: column;
-        #login-form{
-            border: 1px solid #eee;
-            padding: 1.5rem 0.5rem;
-            .form-element{
-               display: flex;
-               flex-direction: column;
-               margin: 1rem 0;
-               label{
-                 font-weight: 600;
-                 letter-spacing: 0.03em;
-                 padding: 10px 0;
-                 color: black;
-               }
-               input{
-                  border: 1px solid teal;
-                  border-radius: 5px;
-                  padding: 10px 15px;
-                  color: grey;
-                  outline: none;
-               }
-            }
-            button{
-                 border: none;
-                 outline: none;
-                 padding: 10px 15px;
-                 background-color: teal;
-                 color: #fff;
-                 letter-spacing: 0.03em;
-                 font-weight: 600;
-                 border-radius: 5px;
-                 cursor: pointer;
-            }
-            
-        }
-     }
+#landingPage {
+  height: 100vh;
+  .container {
+    max-width: 30%;
+    margin: 10rem auto;
+    border: 1px solid #eee;
+    padding: 1.5rem 0.5rem;
+  }
 }

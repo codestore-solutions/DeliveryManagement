@@ -46,8 +46,7 @@ export default async function API(
         url: `${endpoint}`,
         headers: {
           "Content-Type": "application/json",
-          Authorization: auth ? "Bearer " + auth : "",
-          Accept: "application/json",
+           Authorization: auth ? "Bearer " + auth : "",
         },
         data: JSON.stringify(payload),
       };
@@ -59,13 +58,13 @@ export default async function API(
         url: `${endpoint}`,
         headers: {
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Authorization: auth ? "Bearer " + auth : "",
         },
         data: JSON.stringify(payload),
       };
       break;
   }
-  console.log("Api URL ::", `${endpoint}`);
+  console.log("Api URL ::" , `${endpoint}`);
 
   return axios(init)
     .then((res) => {

@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, lazy } from "react";
 import {
   DeliveredProcedureOutlined,
-  SettingOutlined,
   UserAddOutlined,
   UnorderedListOutlined,
   LogoutOutlined,
@@ -11,23 +10,23 @@ import { Layout } from "antd";
 import "./style.scss";
 import { Routes, Route } from "react-router-dom";
 import { Navbar, Sidebar } from "../../components";
-import {
-  AgentDetails,
-  Agents,
-  AssignedAgents,
-  Management,
-  OrderDetails,
-  Orders,
-  Profile,
-  TrackOrder,
-} from "..";
-import { DashboardImg } from "../../assets";
-const { Header, Content } = Layout;
 
+const AgentDetails = lazy(() => import("../AgentDetails/AgentDetails"));
+const Agents = lazy(() => import("../DeliveryAgents/Agent"));
+const Management = lazy(() => import("../Dashboard/Management"));
+const AssignedAgents = lazy(() => import("../DeliveryAgents/AssignedAgents"));
+const Orders = lazy(() => import("../Orders/Orders"));
+const Profile = lazy(() => import("../Profile/Profile"));
+const TrackOrder = lazy(() => import("../TrackOrder/TrackOrder"));
+const OrderDetails = lazy(() => import("../OrderDetails/OrderDetails"));
+
+import { DashboardImg } from "../../assets";
+
+const { Header, Content } = Layout;
 
 const Dashboard: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
-  
+
   const menuItems = [
     {
       key: "1",
@@ -46,7 +45,6 @@ const Dashboard: React.FC = () => {
       icon: <UnorderedListOutlined />,
       label: "Orders",
       path: "/dashboard/orders",
-      
     },
     {
       key: "4",
@@ -54,20 +52,19 @@ const Dashboard: React.FC = () => {
       label: "Profile",
       path: "/dashboard/profile",
     },
-    {
-      key: "5",
-      icon: <SettingOutlined />,
-      label: "Settings",
-      path: "/settings",
-    },
+    // {
+    //   key: "5",
+    //   icon: <SettingOutlined />,
+    //   label: "Settings",
+    //   path: "/settings",
+    // },
     {
       key: "6",
-      icon: <LogoutOutlined  />,
+      icon: <LogoutOutlined />,
       label: "Logout",
-      
     },
   ];
-  
+
   return (
     <Layout id="dashboard">
       <Sidebar
