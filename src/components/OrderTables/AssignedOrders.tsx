@@ -29,8 +29,8 @@ const AssignedOrders: React.FC<Props> = ({activeTab}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [pagination, setPagination] = useState({
     pageNumber: 1,
-    total: data?.total,
-    pageSize: 5,
+    total: 20,
+    pageSize: 7,
     showTotal: (total: any, range: any) =>
       `${range[0]}-${range[1]} of ${total} items`,
   });

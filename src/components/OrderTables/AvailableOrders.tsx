@@ -39,6 +39,7 @@ interface Props {
   setSelectedRowData: any;
   startMultiSelect: any;
   fetch: any;
+  isOpen: any
 }
 // const antIcon = <LoadingOutlined style={{ color: "#fff" }} spin />;
 
@@ -243,7 +244,7 @@ const AvailableOrders: React.FC<Props> = ({
             type={0}
             selectedOrderData={selectedRow}
             onClose={handleCloseModal}
-        
+            isOpen={isOpen}
           />
         }
         width={600}

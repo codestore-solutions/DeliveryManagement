@@ -46,17 +46,49 @@ const AvilableOrderData = (data: any) => {
       loading: false,
     };
   });
-  //   console.log("Order Dtaa", newData);
+    console.log("Order Dtaa", newData);
   return newData;
 };
 
-const getOrdersArray = (data: any) => {
+const getOrdersArray = (data: any, id:any) => {
   let Orderids = Array<number>();
   let pickupLatitudes = Array<number>();
   let pickupLongitudes = Array<number>();
   let deliveryAddressLatitudes = Array<number>();
   let deliveryAddressLongitude = Array<number>();
+  let deliveryAgentId = Array<number>();
+  data.forEach((item: any) => {
+    deliveryAgentId.push(id);
+    Orderids.push(item.id);
+    pickupLatitudes.push(item.storeDetails?.pickupLatitudes);
+    pickupLongitudes.push(item.storeDetails?.pickupLongitudes);
+    deliveryAddressLatitudes.push(
+      item?.shippingAddressDetails?.deliveryAddressLatitudes
+    );
+    deliveryAddressLongitude.push(
+      item?.shippingAddressDetails?.deliveryAddressLongitudes
+    );
+  });
+  let finalResult = Array<Array<any>>([
+    deliveryAgentId,
+    Orderids,
+    pickupLatitudes,
+    pickupLongitudes,
+    deliveryAddressLatitudes,
+    deliveryAddressLongitude,
+  ]);
 
+  console.log("OrdersIds", finalResult);
+  return finalResult;
+};
+
+// Orders
+const getOrdersArrayBulk = (data: any) => {
+  let Orderids = Array<number>();
+  let pickupLatitudes = Array<number>();
+  let pickupLongitudes = Array<number>();
+  let deliveryAddressLatitudes = Array<number>();
+  let deliveryAddressLongitude = Array<number>();
   data.forEach((item: any) => {
     Orderids.push(item.id);
     pickupLatitudes.push(item.storeDetails?.pickupLatitudes);
@@ -88,7 +120,7 @@ const previewData = (data: any) => {
       agentId: data.agentId[i],
       orderId: data.orders[i],
       deliveryAgentName: data.agentName[i],
-      deliveryAddress: 2,
+      deliveryAddress: "C Block, Phase 2, Industrial Area, Sector 62, Noida,",
     };
     resData.push(obj);
   }
@@ -110,8 +142,8 @@ const assignAgentAutoData = (previewData: any, orderData: any) => {
 
   orderIds.forEach((ele) => {
     let order = orderData.find((item: any) => item.id === ele);
-    pickupLatitudes.push(order.storeDetails?.pickupLatitudes);
-    pickupLongitudes.push(order.storeDetails?.pickupLongitudes);
+    pickupLatitudes.push(order?.storeDetails?.pickupLatitudes);
+    pickupLongitudes.push(order?.storeDetails?.pickupLongitudes);
     deliveryAddressLatitudes.push(
       order?.shippingAddressDetails?.deliveryAddressLatitudes
     );
@@ -138,4 +170,5 @@ export default {
   getOrdersArray,
   previewData,
   assignAgentAutoData,
+  getOrdersArrayBulk
 };

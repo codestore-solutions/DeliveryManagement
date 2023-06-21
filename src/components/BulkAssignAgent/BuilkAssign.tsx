@@ -24,7 +24,8 @@ interface Props {
   orders: any;
   onClose: () => void;
   fetch: any;
- 
+  isOpen:any
+  handleResetSelectionForOrder: () => void;
 }
 
 // Bulk Automatic Assign Component
@@ -32,11 +33,12 @@ const AutomaticAssign: React.FC<Props> = ({
   orders,
   onClose,
   fetch,
+  handleResetSelectionForOrder
 }) => {
   const [previewData, setPreviewData] = useState<Array<any>>();
   const [loading, setLoading] = useState<boolean>(false);
   const [preview, setPreView] = useState<boolean>(false);
-  let customizeOrders = CustomizeData.getOrdersArray(orders);
+  let customizeOrders = CustomizeData.getOrdersArrayBulk(orders);
 
   const removePreviewAgent = (values: any) => {
     let filterData = previewData?.filter(
@@ -98,16 +100,6 @@ const AutomaticAssign: React.FC<Props> = ({
             let data = CustomizeData.previewData(res?.data);
             setPreviewData(data);
             setLoading(false);
-            // let orderPayload = {
-            //   agentId: res?.data?.agentId,
-            //   status: res?.data?.status,
-            //   timestamp: res?.data.timestamp,
-            //   orders: res?.data?.orders,
-            // };
-            // console.log("Pay", orderPayload);
-            // OrderService.updateOrder(orderPayload);
-
-            // onClose();
           }
         }
       );
@@ -131,6 +123,7 @@ const AutomaticAssign: React.FC<Props> = ({
       previewData,
       orders
     );
+    // console.log("data", getConformAssignData, orders);
     AgentService.assignAgentManuallyToOrderInBulk(getConformAssignData)
       .then((res: any) => {
         if (res.statusCode === ApiContants.successCode) {
@@ -144,6 +137,7 @@ const AutomaticAssign: React.FC<Props> = ({
           OrderService.updateOrder(orderPayload).then((res) => {
             if (res?.status === ApiContants.successCode) {
               setLoading(false);
+              handleResetSelectionForOrder();
               fetch();
               onClose();
             }
@@ -200,7 +194,7 @@ const AutomaticAssign: React.FC<Props> = ({
   );
 };
 
-const BuilkAssign: React.FC<Props> = ({ orders, onClose, fetch }) => {
+const BuilkAssign: React.FC<Props> = ({ orders, onClose, fetch, isOpen, handleResetSelectionForOrder }) => {
   const [key, setKey] = useState<any>();
   const onChange = (key: string) => {
     setKey(key);
@@ -214,12 +208,14 @@ const BuilkAssign: React.FC<Props> = ({ orders, onClose, fetch }) => {
           orders={orders}
           onClose={onClose}
           fetch={fetch}
+          isOpen={isOpen}
+          handleResetSelectionForOrder={handleResetSelectionForOrder}
         />
       ),
     },
     {
       key: "2",
-      label: `Mannul Assign`,
+      label: `Mannual Assign`,
       children: (
         <AssignAgent
           key={key}
@@ -227,6 +223,8 @@ const BuilkAssign: React.FC<Props> = ({ orders, onClose, fetch }) => {
           selectedOrderData={orders}
           onClose={onClose}
           fetch={fetch}
+          isOpen={isOpen}
+          handleResetSelectionForOrder={handleResetSelectionForOrder}
         />
       ),
     },

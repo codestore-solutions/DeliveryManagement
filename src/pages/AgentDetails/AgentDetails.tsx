@@ -69,7 +69,7 @@ const AgentDetails: React.FC = () => {
               </div>
             </div>
           </Col>
-          <Col xs={24} sm={24} md={8} lg={8} xl={8}>
+          <Col xs={24} sm={24} md={12} lg={8} xl={8}>
             {/* Content for column 2 */}
             <div className="card-container">
               <h3>Joining Details</h3>
@@ -89,22 +89,28 @@ const AgentDetails: React.FC = () => {
               </div>
             </div>
           </Col>
-          <Col xs={24} sm={24} md={8} lg={8} xl={8}>
+          <Col xs={24} sm={24} md={12} lg={8} xl={8}>
             {/* Content for column 3 */}
             <div className="card-container">
-              <h3>Personal Details</h3>
+              <h3>Bank Details</h3>
               <div className="container-content">
                 <div className="container-row">
-                  <span className="container-col">Name</span>
-                  <span className="container-col dark">Raju Kumar</span>
+                  <span className="container-col">IFSC</span>
+                  <span className="container-col dark">SBIN0002583</span>
                 </div>
                 <div className="container-row">
-                  <span className="container-col">Email Id</span>
-                  <span className="container-col dark">198raju@gmail.com</span>
+                  <span className="container-col">A/C Number</span>
+                  <span className="container-col dark">761223440817203842</span>
                 </div>
                 <div className="container-row">
-                  <span className="container-col">Mobile Number</span>
-                  <span className="container-col dark">+1 12345-09876</span>
+                  <span className="container-col">Branch</span>
+                  <span className="container-col dark">Sector 62,Noida</span>
+                </div>
+                <div className="container-row">
+                  <span className="container-col">Res. Address</span>
+                  <span className="container-col dark">
+                    Unit 1/23 Hastings Road, Melbourne 3000,Victoria, Australia.
+                  </span>
                 </div>
               </div>
             </div>

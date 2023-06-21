@@ -12,7 +12,6 @@ const OrderDetails: React.FC = () => {
   const { id } = useParams();
   const [data, setData] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
-  // console.log("data", data);
   const getDetails = async (id: string | undefined) => {
     try {
       setLoading(true);
@@ -63,7 +62,7 @@ const OrderDetails: React.FC = () => {
                 <div className="container-content">
                   <div className="container-row">
                     <span className="container-col">OrderId</span>
-                    <p className="container-col dark overflow-text">
+                    <p className="container-col dark">
                       {data?.id ?? "#SDW123"}
                     </p>
                   </div>
@@ -108,17 +107,18 @@ const OrderDetails: React.FC = () => {
                 <h3>Address</h3>
                 <div className="container-content">
                   <div className="container-row">
-                    <span className="container-col">Billing Address</span>
+                    <span className="container-col">User Address</span>
                     <p className="container-col sm dark">
-                      {data?.shippingAddressId ??
-                        "#Unit 1/23 Hastings Road, Melbourne 3000,Victoria"}
+                      {/* {data?.shippingAddressId ?? */}
+                      #Unit 1/23 Hastings Road, Melbourne 3000,Victoria
                     </p>
                   </div>
                   <div className="container-row">
-                    <span className="container-col">Shipping Address</span>
+                    <span className="container-col">Vendor Address</span>
                     <p className="container-col sm dark">
-                      {data?.shippingAddressId ??
-                        "#Unit 1/23 Hastings Road, Melbourne 3000,Victoria"}
+                      {/* {data?.shippingAddressId ?? */}
+                      Unit 1/23 Hastings Road, Melbourne 3000,Victoria,
+                      Australia.
                     </p>
                   </div>
                 </div>

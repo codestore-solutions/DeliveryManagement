@@ -81,7 +81,7 @@ $busy_color: #ffb526;
 
 // Card Container Css
 .card-container {
-  height: 15rem;
+  min-height: 15rem;
   padding: 10px 15px;
   background: #ffffff;
   border: 1px solid #eaeaea;
@@ -99,7 +99,7 @@ $busy_color: #ffb526;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1rem 0;
+      padding: 0.4rem 0;
       .container-col {
         font-weight: 300;
         font-size: 16px;

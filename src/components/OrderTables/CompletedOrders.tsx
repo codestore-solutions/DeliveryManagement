@@ -48,7 +48,7 @@ const CompletedOrders: React.FC<Props> = ({ activeTab }) => {
       render: (text: any) => <p className="tableId">{text}</p>,
     },
     {
-      title: "Agent",
+      title: "Agent Name",
       dataIndex: "deliveryId",
       key: "deliveryId",
       render: (text: any) => <p className="tableTxt">{text}</p>,

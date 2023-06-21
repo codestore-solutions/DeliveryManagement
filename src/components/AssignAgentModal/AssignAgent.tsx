@@ -2,12 +2,6 @@ import { ColumnsType } from "antd/es/table";
 import { Button, Space, Table } from "antd";
 import React, { useEffect, useState } from "react";
 import "./style.scss";
-import { useAppDispatch, useAppSelector } from "../../store/hooks/app";
-import {
-  AgentStateInerface,
-  agentSelector,
-  getAvailableAgent,
-} from "../../store/features/Agents/agentSlice";
 import date from "../../utils/helpers/CustomizeDate";
 import CustomizeData from "../../utils/helpers/CustomizeData";
 import AgentService from "../../services/AgentService";
@@ -28,17 +22,23 @@ interface Props {
   type: number;
   selectedOrderData: any;
   onClose: () => void;
-  key?:any
+  key?: any;
   fetch?: any;
-  
+  isOpen?: any;
+  handleResetSelectionForOrder?: any
 }
 
-const AssignAgent: React.FC<Props> = ({ type, selectedOrderData, onClose, key, fetch }) => {
-  const dispatch = useAppDispatch();
-  const { loading, availableAgent } = useAppSelector(
-    agentSelector
-  ) as AgentStateInerface;
-  const [data, setData] = useState<any>(availableAgent);
+const AssignAgent: React.FC<Props> = ({
+  type,
+  selectedOrderData,
+  onClose,
+  key,
+  fetch,
+  isOpen,
+  handleResetSelectionForOrder
+}) => {
+  const [data, setData] = useState<any>();
+  const [loading, setLoading] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [selectedRowData, setSelectedRowData] = useState<any>();
 
@@ -94,45 +94,47 @@ const AssignAgent: React.FC<Props> = ({ type, selectedOrderData, onClose, key, f
         AgentService.assignAgentManuallyToOrder(payload).then((res: any) => {
           if (res.status === ApiContants.successCode) {
             OrderService.updateOrder(orderPayload);
+            onClose();
             fetchAgents();
           }
         });
       } else {
-        let customizeOrders = CustomizeData.getOrdersArray(selectedOrderData);
+        let customizeOrders = CustomizeData.getOrdersArray(selectedOrderData, values?.deliveryAgentId);
         let payload = {
-          deliveryAgentId:[values?.deliveryAgentId],
-          orderIds: customizeOrders[0][0],
-          pickupLatitudes: customizeOrders[0][1],
-          pickupLongitudes: customizeOrders[0][2],
-          deliveryAddressLatitudes: customizeOrders[0][3],
-          deliveryAddressLongitudes: customizeOrders[0][4],
+          deliveryAgentId: customizeOrders[0][0],
+          orderIds: customizeOrders[0][1],
+          pickupLatitudes: customizeOrders[0][2],
+          pickupLongitudes: customizeOrders[0][3],
+          deliveryAddressLatitudes: customizeOrders[0][4],
+          deliveryAddressLongitudes: customizeOrders[0][5],
           businessId: 2,
         };
-        // console.log("Manual Automatic Values", customizeOrders[0][4], payload);
+        console.log("Manual Automatic Values", customizeOrders[0][4], payload);
         AgentService.assignAgentManuallyToOrderInBulk(payload)
-        .then((res: any) => {
-          if (res.statusCode === ApiContants.successCode) {
-            let orderPayload = {
-              agentId: res?.data?.agentId,
-              status: res?.data?.status,
-              timestamp: CustomizeDate.getCurrentTimestamp(),
-              orders: res?.data?.orders,
-            };
-            OrderService.updateOrder(orderPayload).then((res) => {
-              if (res?.status === ApiContants.successCode) {
-                fetch();
-                onClose();
-              }
-            });
-          }
-        })
-        .catch((err) => {
-          console.log("Bulk Manual Assign Error", err);
-        });
+          .then((res: any) => {
+            if (res.statusCode === ApiContants.successCode) {
+              let orderPayload = {
+                agentId: res?.data?.agentId,
+                status: res?.data?.status,
+                timestamp: CustomizeDate.getCurrentTimestamp(),
+                orders: res?.data?.orders,
+              };
+              OrderService.updateOrder(orderPayload).then((res) => {
+                if (res?.status === ApiContants.successCode) {
+                  fetch();
+                  handleResetSelectionForOrder();
+                  onClose();
+                }
+              });
+            }
+          })
+          .catch((err) => {
+            console.log("Bulk Manual Assign Error", err);
+          });
       }
     } catch (error) {
       console.log("Assign Agent Error", error);
-    } 
+    }
   };
   const columns: ColumnsType<DataType> = [
     {
@@ -164,7 +166,16 @@ const AssignAgent: React.FC<Props> = ({ type, selectedOrderData, onClose, key, f
 
   const fetchAgents = () => {
     let payload = pagination;
-    dispatch(getAvailableAgent({ payload }));
+    setLoading(true);
+    AgentService.getAvialableAgents(payload)
+      .then((res) => {
+        setData(res);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log("Agents Fetching Err", err);
+        setLoading(false);
+      });
   };
 
   // Row Selection Object for Table
@@ -176,7 +187,7 @@ const AssignAgent: React.FC<Props> = ({ type, selectedOrderData, onClose, key, f
 
   useEffect(() => {
     fetchAgents();
-  }, [dispatch, pagination.pageNumber, key]);
+  }, [isOpen, pagination.pageNumber, key]);
 
   return (
     <div id="assign-agent">

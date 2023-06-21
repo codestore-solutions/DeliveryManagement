@@ -21,7 +21,11 @@ const Orders: FC<OrderProps> = () => {
   const [fetchOrders, setFetchOrders] = useState(false);
   const [isMultiSelect, setIsMultiSelect] = useState(false);
   const [isOpenfilter, setIsOpenFilter] = useState(false);
-
+ 
+  const handleResetSelectionForOrder = () => {
+    setSelectedRowKeys([]);
+    setSelectedRowData([]);
+  };
 
   const fetch = () => {
     setFetchOrders(!fetchOrders);
@@ -58,6 +62,7 @@ const Orders: FC<OrderProps> = () => {
           selectedRowKeys={selectedRowKeys}
           setSelectedRowKeys={setSelectedRowKeys}
           setSelectedRowData={setSelectedRowData}
+          isOpen={isOpen}
         />
       ),
     },
@@ -115,6 +120,8 @@ const Orders: FC<OrderProps> = () => {
             orders={selectedRowData}
             onClose={handleCloseModal}
             fetch={fetch}
+            isOpen={isOpen}
+            handleResetSelectionForOrder = {handleResetSelectionForOrder}
           />
         }
         width={600}

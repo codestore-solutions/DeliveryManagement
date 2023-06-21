@@ -108,7 +108,12 @@ const updateOrder = async (payload: any) => {
   if(res?.status === ApiContants.successCode){
     message.success("Agent Assigned Sucessfully");
   }
-  return res;
+  let response = {
+     status: res.status,
+     data: res.data
+  }
+  console.log("Res", res);
+  return response;
 };
 
 
