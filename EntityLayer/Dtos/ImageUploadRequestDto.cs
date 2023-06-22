@@ -11,10 +11,9 @@ namespace EntityLayer.Dtos
     public class ImageUploadRequestDto
     {
         [Required]
-        public IFormFile File { get; set; }
+        public IFormFile File { get; set; } = null!;
 
-        [Required]
-        public string FileName { get; set; }
+        [Required] public string FileName { get; set; } = null!;
         public string? FileDescription { get; set; }
     }
 }

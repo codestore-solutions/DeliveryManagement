@@ -21,16 +21,6 @@ namespace EntityLayer.Models
         public double DeliveryAddressLongitude { get; set; }
         public long BusinessId { get; set; }
 
-        // public Business Business { get; set; } = null!;                                    // Navigation property 
-
-        /*    public enum AvailabilityStatus
-        {
-            Available = 1,
-            Offline = 2,
-            Busy = 3
-        }
-        public AvailabilityStatus AvailabeStatus { get; set; }*/
-
-
     }
 }
+

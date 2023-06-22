@@ -32,13 +32,5 @@ namespace EntityLayer.Models
         public OrderAssignedStatus OrderAssignStatus { get; set; }    
         public DeliveryAgentStatus AgentStatus { get; set; }
 
-        /*    public enum VerificationStatus
-      {
-          Verified = 1,
-          NotVerified=0,
-          Pending=2
-      }   */
-        // public VerificationStatus? VerStatus { get; set; }  
-
     }
 }

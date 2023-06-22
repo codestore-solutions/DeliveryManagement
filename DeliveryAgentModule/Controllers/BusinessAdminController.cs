@@ -70,7 +70,7 @@ namespace DeliveryAgentModule.Controllers
         /// <returns></returns>
         [HttpPut("update-verification-status")]
         [MapToApiVersion("1.0")]
-/*        public async Task<ResponseDto> UpdateVerificationStatusAsync(long agentId,[FromQuery] VerificationStatus verificationStatus)
+        /*        public async Task<ResponseDto> UpdateVerificationStatusAsync(long agentId,[FromQuery] VerificationStatus verificationStatus)
         {
            return await businessAdminService.UpdateVerificationSatus(agentId, verificationStatus);
         }

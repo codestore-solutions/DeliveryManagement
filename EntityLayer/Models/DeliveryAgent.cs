@@ -13,7 +13,6 @@ namespace EntityLayer.Models
         public string ContactNumber { get; set; } = null!;
         public string Region { get; set; } = null!;
         public string Email { get; set; } = null!; 
-
         public long? ServiceLocationId { get; set; }  
     }
 }

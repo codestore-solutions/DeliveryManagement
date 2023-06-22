@@ -1,14 +1,10 @@
 ﻿using BusinessLogicLayer.IServices;
-using BusinessLogicLayer.Services;
 using DeliveryAgentModule.CustomActionFilter;
 using EntityLayer.Common;
 using EntityLayer.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
-using static System.Net.Mime.MediaTypeNames;
-using System.Text;
-using System.Text.Json;
 
 namespace DeliveryAgentModule.Controllers
 {
@@ -34,9 +30,9 @@ namespace DeliveryAgentModule.Controllers
         /// </summary>
         [HttpGet("get-all")]
         [MapToApiVersion("1.0")]
-        public async Task<IEnumerable> GetAllAssignedAgent([FromQuery] int pageNumber=1, [FromQuery] int limit=10)
+        public async Task<IActionResult> GetAllAssignedAgent([FromQuery] int pageNumber=1, [FromQuery] int limit=10)
         {
-            return await deliveryAgentService.GetAllAsync(pageNumber,limit);
+            return Ok(await deliveryAgentService.GetAllAsync(pageNumber,limit));
         }
 
         // POST: /api/v1/agent/assign-manually
@@ -112,18 +108,18 @@ namespace DeliveryAgentModule.Controllers
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> AddAssignDeliveryAgent([FromBody] AssignAgentAutomaticallyDto automaticallyDto)
         {
-            return Ok(await deliveryAgentService.AddNearsetDeliveryAgentAsync(automaticallyDto));
+            return Ok(await deliveryAgentService.SingleAgentAssignAutomaticallyAsync(automaticallyDto));
         }
 
         //Post: /api/agent/assign-agent-bulk
         /// <summary>
-        /// Assign delivery agents nearest to seller/Business location for multiple order Ids
+        /// Assign delivery agents nearest to seller/Business location for multiple orders
         /// </summary>
         [HttpPost("assign-agent-bulk")]
         [MapToApiVersion("1.0")]
-        public async Task<IActionResult> AddAssignDekliveryAgentInBulk(OrderAssingInBulkRequestDto orderAssingInBulkRequestDto)
+        public async Task<IActionResult> BulkAgentAssignAutomaticallyAsync(OrderAssingInBulkRequestDto orderAssingInBulkRequestDto)
         {
-            return Ok(await deliveryAgentService.AddOrderAssignInBulk(orderAssingInBulkRequestDto));
+            return Ok(await deliveryAgentService.BulkAgentAssignAutomaticallyAsync(orderAssingInBulkRequestDto));
         }
 
         // DELETE: /api/delete
@@ -152,12 +148,6 @@ namespace DeliveryAgentModule.Controllers
             }
             return Ok(updatedOrder);
         }
-
-       /* [HttpPost]
-        public async Task<IActionResult> assignMultipleOrderToOneAgentAsync(AssignMultipleOrderDto dto)
-        {
-            return Ok(await deliveryAgentService.);
-        }*/
 
     }    
     

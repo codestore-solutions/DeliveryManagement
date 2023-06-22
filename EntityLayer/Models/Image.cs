@@ -13,11 +13,11 @@ namespace EntityLayer.Models
         public long Id { get; set; }
 
         [NotMapped]
-        public IFormFile File { get; set; }
-        public string FileName { get; set; }
+        public IFormFile File { get; set; } = null!;
+        public string FileName { get; set; } = null!;
         public string? FileDescription { get; set; }
-        public string FileExtension { get; set; }
-        public string FilePath { get; set; }
+        public string FileExtension { get; set; } = null!;
+        public string FilePath { get; set; } = null!;
         public long FileSizeInBytes { get; set; }
     }
 }

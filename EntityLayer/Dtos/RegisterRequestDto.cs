@@ -11,12 +11,12 @@ namespace EntityLayer.Dtos
     {
         [Required]
         [DataType(DataType.EmailAddress)]
-        public string Username { get; set; }
+        public string Username { get; set; } = null!;
 
         [Required]
         [DataType(DataType.Password)]
-        public string Password { get; set; }
-        public string[] Roles { get; set; }
+        public string Password { get; set; }= null!;
+        public string[] Roles { get; set; } = null!;
     }
 
 }

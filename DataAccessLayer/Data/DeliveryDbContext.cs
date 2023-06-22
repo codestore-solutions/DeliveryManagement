@@ -20,36 +20,6 @@ namespace DataAccessLayer.Data
         {
             base.OnModelCreating(modelBuilder);
 
-         
-            var addServiceLocations = new List<ServiceLocation>
-            {
-                new ServiceLocation
-                {
-                    Id = 1,
-                    DeliveryAgentId=1,
-                    Latitude=29.4165905,
-                    Longitude=76.6681525,
-                    MaxDistance=10
-                },
-                 new ServiceLocation
-                {
-                     Id = 2,
-                    DeliveryAgentId=2,
-                    Latitude=29.4295905,
-                    Longitude=76.9981525,
-                    MaxDistance=10,
-                },
-                new ServiceLocation
-                {
-                    Id = 3,
-                    DeliveryAgentId=3,
-                    Latitude=29.4065905,
-                    Longitude=76.2681525,
-                    MaxDistance=10
-                },
-
-            };
-
            
         }
 
