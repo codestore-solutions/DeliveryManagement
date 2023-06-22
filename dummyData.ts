@@ -84,9 +84,9 @@ const dummyData = {
     {
       key: "1",
       orderId: "23",
-      storename: "Burger King",
+      storedetaila: "Burger King",
       payment_type: 0,
-      shippingAddress: "Sector 59 Noida",
+      shippingAddressDetails: "Sector 59 Noida",
       date: "10/02/2023",
     },
     {
@@ -171,12 +171,12 @@ const dummyData = {
   completedOrderData: [
     {
       key: "1",
-      storename: "23",
+      storeDetails: "23",
       status: "Delivered",
       date: "30-05-2023",
       orderId: "26",
       payment_type: 1,
-      assigned_agent: "Ram Manohar",
+      assigned_agent_details: "Ram Manohar",
     },
     {
       key: "2",
@@ -309,6 +309,8 @@ export const stores = [
   },
 
 ]
+
+
 
 
 export default dummyData;

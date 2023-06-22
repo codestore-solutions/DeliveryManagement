@@ -19,11 +19,12 @@ const getAvailableOrdersList = async (pagination: any) => {
 
   let res = await API({}, url, "GET", params);
   let count = 1;
-  let fromattedList = res?.data?.list?.map((item:any) =>{
+  
+  let fromattedList = res?.data?.data?.list?.map((item:any) =>{
         return {...item, key: count++}
   });
   const response = {
-      total: res?.data.total,
+      total: res?.data?.data?.total,
       list: fromattedList
   }
   return response;
@@ -45,48 +46,21 @@ const getAssignedOrdersList = async (pagination: any, status:any) => {
 
   let res = await API({}, url, "GET", params);
   let count = 1;
-  let fromattedList = res?.data?.list?.map((item:any) =>{
+  console.log("React", res?.data);
+  let fromattedList = res?.data?.data?.list?.map((item:any) =>{
         return {...item, key: count++}
   });
+
   const response = {
       status: res?.status,
       data:{
-        total: res?.data.total,
+        total: res?.data?.data?.total,
         list: fromattedList
       }
   }
   return response;
 };
 
-/**
- * @param pagination
- * @returns array of completed orders
- */
-
-const getCompletedOrdersList = async (pagination: any) => {
-  const { pageNumber, pageSize } = pagination;
-  let params = {
-    storeIds: storesIds,
-    page: pageNumber,
-    pageSize: pageSize,
-    orderStatus:['delivered']
-  };
-  let url = `${ApiContants.orderProcessingbaseUrl}${ApiContants.getAvailableOrders}`;
-
-  let res = await API({}, url, "GET", params);
-  let count = 1;
-  let fromattedList = res?.data?.list?.map((item:any) =>{
-        return {...item, key: count++}
-  });
-  const response = {
-      status: res?.status,
-      data:{
-        total: res?.data.total,
-        list: fromattedList
-      }
-  }
-  return response;
-};
 
 /** 
  * @param id OrderId For getting details of given order
@@ -122,7 +96,6 @@ const updateOrder = async (payload: any) => {
 const OrderService = {
   getAvailableOrdersList,
   getAssignedOrdersList,
-  getCompletedOrdersList,
   getOrderDetailsById,
   updateOrder
 };

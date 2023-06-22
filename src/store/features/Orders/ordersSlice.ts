@@ -67,7 +67,7 @@ const ordersSlice: any = createSlice({
          state.loading = false,
          state.isSuccess= false,
          state.error = action.payload,
-         state.orderslist = []
+         state.orderslist = null;
      })
   },
 });

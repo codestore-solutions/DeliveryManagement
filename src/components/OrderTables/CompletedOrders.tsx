@@ -28,7 +28,7 @@ const CompletedOrders: React.FC<Props> = ({ activeTab }) => {
   const [pagination, setPagination] = useState({
     pageNumber: 1,
     total: data?.total,
-    pageSize: 5,
+    pageSize: 7,
     showTotal: (total: any, range: any) =>
       `${range[0]}-${range[1]} of ${total} items`,
   });
@@ -111,6 +111,9 @@ const CompletedOrders: React.FC<Props> = ({ activeTab }) => {
   useEffect(() => {
     fetchOrder();
   }, [activeTab, pagination.pageNumber]);
+  useEffect(() =>{
+    setPagination({...pagination, total: data?.total});
+  }, [data])
   return (
     <CustomTable
       columns={columns}

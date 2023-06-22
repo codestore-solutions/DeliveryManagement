@@ -46,7 +46,6 @@ const AvilableOrderData = (data: any) => {
       loading: false,
     };
   });
-    console.log("Order Dtaa", newData);
   return newData;
 };
 
@@ -78,7 +77,6 @@ const getOrdersArray = (data: any, id:any) => {
     deliveryAddressLongitude,
   ]);
 
-  console.log("OrdersIds", finalResult);
   return finalResult;
 };
 
@@ -108,7 +106,6 @@ const getOrdersArrayBulk = (data: any) => {
     deliveryAddressLongitude,
   ]);
 
-  console.log("OrdersIds", finalResult);
   return finalResult;
 };
 

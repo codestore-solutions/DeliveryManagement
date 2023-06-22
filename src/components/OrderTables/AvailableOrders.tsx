@@ -56,11 +56,11 @@ const AvailableOrders: React.FC<Props> = ({
   const { loading, orderslist } = useAppSelector(
     orderSelector
   ) as OrderStateInerface;
-  let data = CustomizeData.AvilableOrderData(orderslist?.list);
+  const data = CustomizeData.AvilableOrderData(orderslist?.list);
   const [pagination, setPagination] = useState<pagination>({
     pageNumber: 1,
     total: orderslist?.total,
-    pageSize: 10,
+    pageSize: 7,
     showTotal: (total: any, range: any) =>
       `${range[0]}-${range[1]} of ${total} items`,
   });
@@ -174,7 +174,9 @@ const AvailableOrders: React.FC<Props> = ({
 
   const fetchOrders = () => {
     let payload = pagination;
+   
     dispatch(getAvailableOrders({ payload }));
+   
   };
 
   // Automatic Assign Agent to Single Order
@@ -215,6 +217,10 @@ const AvailableOrders: React.FC<Props> = ({
   };
 
   useEffect(() => {
+    fetchOrders();
+  }, [dispatch, pagination.pageNumber, isOpen, fetch]);
+
+  useEffect(() => {
     if (selectedRowKeys.length > 1) {
       startMultiSelect(true);
     } else {
@@ -222,9 +228,9 @@ const AvailableOrders: React.FC<Props> = ({
     }
   }, [selectedRowKeys]);
 
-  useEffect(() => {
-    fetchOrders();
-  }, [dispatch, pagination.pageNumber, isOpen, fetch]);
+  useEffect(() =>{
+    setPagination({...pagination, total: orderslist?.total});
+  }, [dispatch])
 
   return (
     <div id="available-list">

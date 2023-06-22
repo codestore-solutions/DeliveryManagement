@@ -2,7 +2,6 @@ import API from "./ApiService";
 import { ApiContants } from '../constants/ApiContants';
 
 /**
- *
  * @param pagination
  * @returns List of All Agents
  */
@@ -75,18 +74,6 @@ const assignAgentAutomaticallyToOrder = async (payload: any) => {
   return res?.data;
 };
 
-
-/**
- * @param payload Object which contain array of OrderId, pickup cordinate, delivery cordinates and BusinessId
- * @returns response message
- */
-// const assignAgentManuallyToBulkOrder = async (payload: any) => {
-//   let url = `${ApiContants.baseUrl}${ApiContants.assignAgentManual}`;
-//   const res = await API(payload, url, "POST");
-//   return res;
-// };
-
-
 /**
  * @param payload Array of Object which contain OrderId and BusinessId
  * @returns response message
@@ -97,7 +84,6 @@ const assignAgentToOrderInBulkAutomatically = async (payload: any) => {
   console.log("res", res);
   return res?.data;
 };
-
 
 const getAddressDetails = async (id:any) =>{
     let param = {

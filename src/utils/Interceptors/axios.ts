@@ -51,7 +51,7 @@ instance.interceptors.response.use(
         error.message
       );
     }
-    console.log("Api dtaa", apiData);
+    // console.log("Api dtaa", apiData);
     message.error(apiData?.data);
     return Promise.reject(apiData);
   }
