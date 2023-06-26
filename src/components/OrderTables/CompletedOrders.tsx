@@ -9,6 +9,7 @@ import { CustomTable } from "..";
 import OrderService from "../../services/OrderService";
 import { ApiContants } from "../../constants/ApiContants";
 import CustomizeDate from "../../utils/helpers/CustomizeDate";
+import { pagination } from "../../utils/types";
 
 export interface DataType {
   key: React.Key;
@@ -25,7 +26,8 @@ const CompletedOrders: React.FC<Props> = ({ activeTab }) => {
   const navigate = useNavigate();
   const [data, setData] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
-  const [pagination, setPagination] = useState({
+  const [pagination, setPagination] = useState<pagination>({
+    simple: true,
     pageNumber: 1,
     total: data?.total,
     pageSize: 7,

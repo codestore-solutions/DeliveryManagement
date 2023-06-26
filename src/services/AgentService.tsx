@@ -5,12 +5,15 @@ import { ApiContants } from '../constants/ApiContants';
  * @param pagination
  * @returns List of All Agents
  */
-const getAllAgents = async (pagination: any) => {
+const getAllAgents = async (pagination: any, filters:any, searchInput:any) => {
   let id = 2;
   const { pageNumber, pageSize } = pagination;
   let params = {
     pageNumber: pageNumber,
     limit: pageSize,
+    agentStatus: filters?.status,
+    filterOn:  searchInput ? 'email' : undefined,
+    filterQuery: searchInput
   };
   let url = `${ApiContants.baseUrl}${ApiContants.getAgentList}/${id}`;
   const res = await API({}, url, "GET", params);

@@ -24,7 +24,7 @@ const Navbar: FC<NavbarProps> = () => {
   //   console.log(`Selected: ${value}`);
   // };
   return (
-    <nav id="navbar">
+    <div id="navbar">
       <div className="nav-left">
         <p>Delivery Partner Management</p>
       </div>
@@ -50,9 +50,10 @@ const Navbar: FC<NavbarProps> = () => {
                   />
                 }
               />
+                {/* <p className="tag">olivia@gmail.com</p> */}
               <Dropdown menu={{ items }} className="dropdown">
                 <a onClick={(e) => e.preventDefault()}>
-                  <Space style={{ height: "35px" }}>
+                  <Space style={{ height: "35px"}} >
                     <p className="tag">olivia@gmail.com</p>
                   </Space>
                   <DownOutlined className="icon" />
@@ -62,7 +63,7 @@ const Navbar: FC<NavbarProps> = () => {
           </div>
         </div>
       </div>
-    </nav>
+    </div>
   );
 };
 

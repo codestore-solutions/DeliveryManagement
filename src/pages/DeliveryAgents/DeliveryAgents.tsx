@@ -12,6 +12,8 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks/app";
 import { AgentStateInerface, agentSelector, getAllAgents } from "../../store/features/Agents/agentSlice";
 import CustomizeText from "../../utils/helpers/CustomizeText";
+import { pagination } from "../../utils/types";
+// import {RightOutlined, LeftOutlined} from "@ant-design/icons";
 
 export interface DataType {
   key: React.Key;
@@ -22,19 +24,26 @@ export interface DataType {
   verStatus: number;
 }
 
-const DeliveryAgents: React.FC = () => {
+
+interface Props{
+  searchInput?: string;
+  filters?: any;
+}
+
+const DeliveryAgents: React.FC<Props> = ({searchInput, filters}) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const {loading, agentList}  = useAppSelector(agentSelector)  as AgentStateInerface;
-  // const agentsList = dummyData.data;
-  // const [loading, setLoading] = useState<boolean>(false);
-
-  const [pagination, setPagination] = useState({
+  const [pagination, setPagination] = useState<pagination>({
+    // simple: true,
     pageNumber: 1,
     total: 8,
     pageSize: 6,
     showTotal: (total: any, range: any) =>
       `${range[0]}-${range[1]} of ${total} items`,
+      // nextIcon: <RightOutlined style={{ color: '#545bfc', padding:'3px',  border:'1px solid #545bfc',fontSize: '15px', borderRadius:"5px" }} />,
+      // prevIcon: <LeftOutlined style={{color: '#545bfc' , padding:'3px', border:'1px solid #545bfc',fontSize: '15px', borderRadius:"5px"  }} />,
+   
   });
 
   const handleClick = (state: any) => {
@@ -46,9 +55,9 @@ const DeliveryAgents: React.FC = () => {
    */
   const columns: ColumnsType<DataType> = [
     {
-      title: "Agent Id",
-      dataIndex: "id",
-      key: "id",
+      title: "Email Id",
+      dataIndex: "agentEmailId",
+      key: "agentEmailId",
       render: (text) => <p className="col-text">{text}</p>,
     },
     {
@@ -135,12 +144,13 @@ const DeliveryAgents: React.FC = () => {
 
   const fetchAgents = () =>{
     let payload = pagination;
-    dispatch(getAllAgents({payload}));
+    
+    dispatch(getAllAgents({payload, filters, searchInput}));
    }
 
   useEffect(() => {
       fetchAgents();
-  }, [dispatch, pagination.pageNumber]);
+  }, [dispatch, pagination.pageNumber, filters, searchInput]);
 
   return (
     <div id="delivery-agent">

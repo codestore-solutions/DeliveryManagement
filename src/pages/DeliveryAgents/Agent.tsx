@@ -4,11 +4,34 @@ import DeliveryAgents from "./DeliveryAgents";
 import { AssignedAgents } from "..";
 import "./style.scss";
 import { FilterIcon } from "../../assets";
+import { AgentListFilter, CustomModal } from "../../components";
 const { TabPane } = Tabs;
 const Agent = () => {
+  const [filters, setFilters] = useState<any>();
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchInput, setSearchInput] = useState<string>();
   const [activeTab, setActiveTab] = useState("0");
   const handleTabChange = (tabKey: any) => {
     setActiveTab(tabKey);
+  };
+
+  const handleOpenModal = () => {
+    setIsOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsOpen(false);
+  };
+
+  const setFilterValue = (value: any) => {
+    setFilters(value);
+  };
+
+  const searchHandler = (e: any) => {
+    e.preventDefault();
+
+    console.log("Search Hnadler", searchInput);
+    setSearchInput(searchInput);
   };
   return (
     <div id="available-list">
@@ -17,13 +40,19 @@ const Agent = () => {
           <h3>Delivery Partner Management</h3>
         </div>
         <div className="header-right">
-          <div className="search-box">
-            <input type="text" placeholder="Search" />
-          </div>
+          <form className="search-box" onSubmit={searchHandler}>
+            <input
+              type="text"
+              name="search-input"
+              value={searchInput}
+              placeholder="Search"
+              onChange={(e) => setSearchInput(e.target.value)}
+            />
+          </form>
           {/* <div className="add-btn">
                 <img src={AddIcon}  alt=''/>
              </div> */}
-          <div className="filter-btn">
+          <div className="filter-btn" onClick={handleOpenModal}>
             <img src={FilterIcon} alt="" />
           </div>
         </div>
@@ -31,13 +60,25 @@ const Agent = () => {
       <div className="content">
         <Tabs activeKey={activeTab} onChange={handleTabChange}>
           <TabPane tab="All Agents" key="0">
-            <DeliveryAgents />
+            <DeliveryAgents searchInput={searchInput} filters={filters} />
           </TabPane>
           <TabPane tab="Assigned Agents" key="1">
             <AssignedAgents />
           </TabPane>
         </Tabs>
       </div>
+      <CustomModal
+        isOpen={isOpen}
+        onClose={handleCloseModal}
+        component={
+          <AgentListFilter
+            filters={filters}
+            handleCloseModal={handleCloseModal}
+            setFilters={setFilterValue}
+          />
+        }
+        width={300}
+      />
     </div>
   );
 };
