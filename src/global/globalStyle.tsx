@@ -2,7 +2,8 @@
 const globalStyle = {
      container:{
         paddingVertical: 15,
-        paddingHorizontal:10
+        paddingHorizontal:10,
+        
      },
      colors:{
        baseColor:'#7E72FF',
