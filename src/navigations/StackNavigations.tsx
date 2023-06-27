@@ -1,10 +1,9 @@
 import {View, Text} from 'react-native';
 import React from 'react';
-
 import {createStackNavigator} from '@react-navigation/stack';
 import {RootStackParamList} from './types';
-import {LandingScreen, LoginScreen, VerifyScreen, ProfileScreen} from '../screens';
-import TabNavigation from './TabNavigation';
+import {LandingScreen, LoginScreen, CreateProfileScreen} from '../screens';
+import DrawerNavigation from './DrawerNavigation';
 
 
 const RootStack = createStackNavigator<RootStackParamList>();
@@ -22,17 +21,12 @@ const StackNavigations = () => {
         options={{headerShown: false}}
       />
       <RootStack.Screen
-        component={VerifyScreen}
-        name="Verify"
-        options={{headerShown: true}}
-      />
-       <RootStack.Screen
-        component={ProfileScreen}
-        name="VerifyStatus"
+        component={CreateProfileScreen}
+        name="CreateProfile"
         options={{headerShown: true}}
       />
       <RootStack.Screen
-        component={TabNavigation}
+        component={DrawerNavigation}
         name="Home"
         options={{headerShown: false}}
       />

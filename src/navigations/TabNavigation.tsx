@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {
-  HomeScreen,
+  DashboardScreen,
   AssignmentScreen,
   SettignScreen,
   NotificationScreen,
@@ -37,7 +37,7 @@ const TabNavigation = () => {
       />
       <Tab.Screen
         name="Search"
-        component={HomeScreen}
+        component={DashboardScreen}
         options={{
           tabBarIcon: () => (
             <SearchIcon width={30} height={20} color={'#E74C43'} />

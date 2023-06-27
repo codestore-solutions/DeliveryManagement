@@ -1,5 +1,7 @@
 export var constant = {
   defaultLanguage: 'en',
+  appTitle:'App Title',
+  splashScreenTiltle:'Welcome to Agent App',
   loginSuccess: 'Logged in Successfully',
   loginFail: 'Incorrect username or password!',
   logout: 'Logout',
@@ -10,5 +12,12 @@ export var constant = {
   token: 'access_token',
   refreshToken: 'refreshToken',
   signout: 'Sign out',
-  loginUserDetail:'loginUserDetail'
+  loginUserDetail:'loginUserDetail',
+  navigationItems:{
+     item1:'Dashboard',
+     item2:'My Delivery Request',
+     item3:'Revenue',
+     item4:'Settigns',
+  }
+
 };

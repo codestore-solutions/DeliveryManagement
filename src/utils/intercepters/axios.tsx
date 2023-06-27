@@ -1,48 +1,66 @@
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
+import {ApiConstant} from '../../constant/ApiConstant';
+
 const instance = axios.create();
 
 instance.interceptors.request.use(
-  (config) => {
+  config => {
     // You can modify the request config here if needed
     return config;
   },
-  (error) => {
+  error => {
     // Handle request error here
     Toast.show({
       type: 'error',
-      text2: 'Request Error: Please check your request'
+      text1: 'Request Error: Please check your request',
     });
     return Promise.reject(error);
-  }
+  },
 );
 
 // Add a response interceptor
 instance.interceptors.response.use(
-  (response) => {
+  response => {
     // You can modify the response data here if needed
     return response;
   },
-  (error) => {
-    const { response } = error;
-    if (response) {
-      const { data } = response;
-      const errorMessage = data.error || 'An error occurred';
-      // Display error message
-      Toast.show({
-        type: 'error',
-        text2: errorMessage
-      });
+  error => {
+    let apiData = {
+      status: ApiConstant.errorCode,
+      data: 'Network Error',
+    };
+    if (error && error.response) {
+      // Request made and server responded
+      console.log(error.response.data);
+      console.log(error.response.status);
+      console.log(error.response.headers);
+      apiData = {
+        status: error.response.status,
+        data: error.response.data,
+      };
+      if (error.response?.status === ApiConstant.unAuthorizedCode) {
+        // unAuthorized();
+        // navigate('/');
+      }
+    } else if (error.request) {
+      console.info(
+        'The request was made but no response was received ',
+        error.request,
+      );
     } else {
-      // Network error
-      Toast.show({
-        type: 'error',
-        text2: 'Network Error'
-      });
+      console.log(
+        'Something happened in setting up the request that triggered an Error ',
+        error.message,
+      );
     }
-
-    return Promise.reject(error);
-  }
+    // Handle request error here
+    Toast.show({
+      type: 'error',
+      text1: apiData?.data,
+    });
+    return Promise.reject(apiData);
+  },
 );
 
 export default instance;

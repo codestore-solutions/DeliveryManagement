@@ -12,10 +12,8 @@ export const ApiConstant = {
     
     //Authentiction endpoint
     loginEndpoint:  'login',
-    signupEndpoint:  'signup',
-    
-   // Agents EndPoints
-   verifyAgent:'businessAdmin/verify-new-agent-request',
+    // Agents EndPoints
+    verifyAgent:'businessAdmin/verify-new-agent-request',
   
 
   };

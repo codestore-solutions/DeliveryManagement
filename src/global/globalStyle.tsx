@@ -1,5 +1,3 @@
-import { StyleSheet } from 'react-native';
-
 
 const globalStyle = {
      container:{
@@ -7,9 +5,12 @@ const globalStyle = {
         paddingHorizontal:10
      },
      colors:{
-       baseColor:'#E74C43',
+       baseColor:'#7E72FF',
        buttonTextColor:"#fff",
-       bacgroundColor:"#eee"
+       backgroundColor:"#FFFFFF",
+       titleColor:'#fff',
+       greenStatusColor:'#4CD964',
+       labelColor:'#000000'
      },
      inputBox: {
       borderColor: '#CCCCCC',

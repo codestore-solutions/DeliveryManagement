@@ -1,11 +1,11 @@
 import {View, Text, TouchableOpacity, Pressable, Image} from 'react-native';
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
-import {RootStackParamList} from '../../navigations/types';
+import {RootStackParamList, drawerParamList} from '../../navigations/types';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import styles from './TabHeaderStyles';
-import { LeftArrowIcon, NotificationIcon } from '../../assets';
-
+import {DrawerNavigationProp} from '@react-navigation/drawer';
+import styles from './HeaderStyles';
+import { MenuIcon, NotificationIcon } from '../../assets';
 interface TabHeaderProps{
      title: string;
 }
@@ -13,25 +13,20 @@ interface TabHeaderProps{
 const TabHeader:React.FC<TabHeaderProps> = ({title}) => {
     const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    const drawer = useNavigation<DrawerNavigationProp<drawerParamList>>();
   return (
     <View style={styles.container}>
-      <View style={styles.pageHeader}>
-      <Pressable
-        style={styles.avatar}>
-         <View style={styles.avatarDummy}>
-            <Text style={styles.avatarText}>rc</Text>
-          </View>
+      <Pressable style={styles.left} onPress={() => drawer.openDrawer()}>
+            <MenuIcon width={30} height={30} />
       </Pressable>
-        
-      </View>
       <Text style={styles.heading}>{title}</Text>
       <TouchableOpacity
-          style={styles.leftArrowIcon}
+          style={styles.bellIcon}
           onPress={() => navigation.navigate('Home', {
-             screen:"Assignments"
+             screen:"Notification"
           })}>
-          <NotificationIcon width={23} height={23} />
-          {/* <Text>Back</Text> */}
+          <NotificationIcon width={30} height={30} />
+          <Text style={styles.tag}>9</Text>
         </TouchableOpacity>
     </View>
   );

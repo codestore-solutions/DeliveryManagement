@@ -5,17 +5,15 @@ import globalStyle from '../../global/globalStyle';
 const styles = StyleSheet.create({
     landingContainer:{
       position:"relative",
-      backgroundColor:globalStyle.colors.bacgroundColor,
+      backgroundColor:globalStyle.colors.titleColor,
       marginTop:30,
       flex:1,
       flexDirection:'column'
     },
     landingImg:{
-        width:400,
-        height:300,
-        resizeMode:"contain",
-        marginVertical: 20,
-        alignContent:'center'
+        flex:1,
+        justifyContent:'center',
+        alignItems:'center'
     },
     welcomeText:{
         // marginVertical:20,  
