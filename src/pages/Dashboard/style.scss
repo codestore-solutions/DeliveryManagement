@@ -23,20 +23,18 @@
 }
 
 #management-dashboard {
+  padding-left: 1rem;
   .header {
     background-color: #f5f5f5;
-    box-shadow: 20px 10px 100px rgba(84, 91, 252, 0.4);
     .heading {
       font-weight: 600;
       font-size: 25px;
       line-height: 38px;
-      color: #141C38;
       color: $heading_color;
     }
   }
 
   .content {
-    padding-left: 1rem;
     .container {
       background: #ffffff;
       border: 1px solid #eaeaea;

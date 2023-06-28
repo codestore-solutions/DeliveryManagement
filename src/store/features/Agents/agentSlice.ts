@@ -21,9 +21,9 @@ const initialState: AgentStateInerface = {
 // Get All agents List
 export const getAllAgents = createAsyncThunk(
   "agents/getAll",
-  async ({ payload }: { payload: pagination }, thunkAPI) => {
+  async ({ payload, filters, searchInput }: { payload: pagination, filters: {}, searchInput:any }, thunkAPI) => {
     try {
-      const res = await AgentService.getAllAgents(payload);
+      const res = await AgentService.getAllAgents(payload, filters, searchInput);
       return res;
     } catch (error) {
       return thunkAPI.rejectWithValue(error);

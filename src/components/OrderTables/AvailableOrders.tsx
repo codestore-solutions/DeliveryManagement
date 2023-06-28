@@ -22,6 +22,7 @@ import AgentService from "../../services/AgentService";
 import { ApiContants } from "../../constants/ApiContants";
 import CustomizeDate from "../../utils/helpers/CustomizeDate";
 import OrderService from "../../services/OrderService";
+import {RightOutlined, LeftOutlined} from "@ant-design/icons";
 // import dummyData from "../../../dummyData";
 
 export interface DataType {
@@ -35,11 +36,11 @@ export interface DataType {
 
 interface Props {
   selectedRowKeys: any;
-  setSelectedRowKeys: any;
-  setSelectedRowData: any;
-  startMultiSelect: any;
+  setSelectedRowKeys: Function;
+  setSelectedRowData: Function;
+  startMultiSelect: Function;
   fetch: any;
-  isOpen: any
+  isOpen: boolean;
 }
 // const antIcon = <LoadingOutlined style={{ color: "#fff" }} spin />;
 
@@ -58,11 +59,16 @@ const AvailableOrders: React.FC<Props> = ({
   ) as OrderStateInerface;
   const data = CustomizeData.AvilableOrderData(orderslist?.list);
   const [pagination, setPagination] = useState<pagination>({
+    showLessItems: true,
+    hideOnSinglePage: true,
+    simple: true,
     pageNumber: 1,
     total: orderslist?.total,
     pageSize: 7,
     showTotal: (total: any, range: any) =>
       `${range[0]}-${range[1]} of ${total} items`,
+      nextIcon: <RightOutlined style={{ color: '#545bfc', padding:'3px',  border:'1px solid #545bfc',fontSize: '16px', borderRadius:"5px" }} />,
+    prevIcon: <LeftOutlined style={{color: '#545bfc' , padding:'3px', border:'1px solid #545bfc',fontSize: '16px', borderRadius:"5px"  }} />,
   });
   const [isOpen, setIsOpen] = useState(false);
   const [isApiCall, setIsApiCall] = useState(false);
@@ -158,11 +164,9 @@ const AvailableOrders: React.FC<Props> = ({
   ];
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    // console.log('selectedRowKeys changed: ', newSelectedRowKeys);
     const selectedRowData = data.filter((row: any) =>
       newSelectedRowKeys.includes(row?.key)
     );
-    // console.log('Selected row data:', selectedRowData);
     setSelectedRowData(selectedRowData);
     setSelectedRowKeys(newSelectedRowKeys);
   };
@@ -174,9 +178,7 @@ const AvailableOrders: React.FC<Props> = ({
 
   const fetchOrders = () => {
     let payload = pagination;
-   
     dispatch(getAvailableOrders({ payload }));
-   
   };
 
   // Automatic Assign Agent to Single Order
@@ -228,9 +230,9 @@ const AvailableOrders: React.FC<Props> = ({
     }
   }, [selectedRowKeys]);
 
-  useEffect(() =>{
-    setPagination({...pagination, total: orderslist?.total});
-  }, [dispatch])
+  useEffect(() => {
+    setPagination({ ...pagination, total: orderslist?.total });
+  }, [dispatch]);
 
   return (
     <div id="available-list">

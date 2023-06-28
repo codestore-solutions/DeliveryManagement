@@ -10,6 +10,8 @@ import { CustomTable } from "..";
 import OrderService from "../../services/OrderService";
 import { ApiContants } from "../../constants/ApiContants";
 import CustomizeDate from "../../utils/helpers/CustomizeDate";
+import { pagination } from "../../utils/types";
+import {RightOutlined, LeftOutlined} from "@ant-design/icons";
 // import moment from "moment";
 
 export interface DataType {
@@ -20,19 +22,24 @@ export interface DataType {
 }
 
 interface Props{
-  activeTab:any
+  activeTab:string
 }
 
 const AssignedOrders: React.FC<Props> = ({activeTab}) => {
   const navigate = useNavigate();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [pagination, setPagination] = useState({
+  const [pagination, setPagination] = useState<pagination>({
+    showLessItems: true,
+    hideOnSinglePage: true,
+    simple:true,
     pageNumber: 1,
     total: data?.total,
-    pageSize: 7,
+    pageSize: 6,
     showTotal: (total: any, range: any) =>
       `${range[0]}-${range[1]} of ${total} items`,
+    nextIcon: <RightOutlined style={{ color: '#545bfc', padding:'3px',  border:'1px solid #545bfc',fontSize: '16px', borderRadius:"5px" }} />,
+    prevIcon: <LeftOutlined style={{color: '#545bfc' , padding:'3px', border:'1px solid #545bfc',fontSize: '16px', borderRadius:"5px"  }} />,
   });
   const handleTableChange = (pagination: any) => {
     console.log("pag", pagination);
@@ -119,7 +126,9 @@ const AssignedOrders: React.FC<Props> = ({activeTab}) => {
   useEffect(() =>{
       fetchOrder();
   }, [activeTab,pagination.pageNumber])
-
+  useEffect(() => {
+    setPagination({ ...pagination, total: data?.total });
+  }, [data]);
   return (
     <CustomTable
       columns={columns}

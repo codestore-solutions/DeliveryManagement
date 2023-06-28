@@ -90,9 +90,6 @@ const updateOrder = async (payload: any) => {
   return response;
 };
 
-
-
-
 const OrderService = {
   getAvailableOrdersList,
   getAssignedOrdersList,
