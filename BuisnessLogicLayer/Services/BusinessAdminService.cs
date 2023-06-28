@@ -19,18 +19,36 @@ namespace BusinessLogicLayer.Services
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
         }
-        public async Task<ResponseDto> GetAllDeliveryAgentAsync(long businessId, OrderAssignedStatus? orderAssignedStatus, DeliveryAgentStatus? status,
+        public async Task<ResponseDto> GetAllDeliveryAgentAsync(long businessId, string? filterOn , string? filterQuery  , OrderAssignedStatus? orderAssignedStatus, DeliveryAgentStatus? status,
            int pageNumber = 1, int limit = 10)
         {
-            var allItems = await unitOfWork.BusinessAdminRepository.GetAll().Where(x => x.BusinessId == businessId && (status == null || x.AgentStatus == status)
-            && (orderAssignedStatus == null || x.OrderAssignStatus == orderAssignedStatus))
-            .Skip((pageNumber - 1) * limit).Take(limit).ToListAsync(); ;
+             var allItems = unitOfWork.BusinessAdminRepository.GetAll().Where(x => x.BusinessId == businessId);
+        
+             int agentCount = unitOfWork.BusinessAdminRepository.GetAll().Count();
+
+            if (string.IsNullOrWhiteSpace(filterOn)== false && string.IsNullOrWhiteSpace(filterQuery) == false)
+            {
+                if(filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
+                   allItems= allItems.Where(x => x.DeliveryAgentName.Contains(filterQuery));               
+                } 
+                else if (filterOn.Equals("Email", StringComparison.OrdinalIgnoreCase))
+                {
+                  allItems =  allItems.Where(x => x.AgentEmailId.Contains(filterQuery));
+                }
+            }
+            
+           var allitems = await allItems.Where(x=>
+                    (status == null || x.AgentStatus == status)
+                    && (orderAssignedStatus == null || x.OrderAssignStatus == orderAssignedStatus))
+                   .Skip((pageNumber - 1) * limit).Take(limit).ToListAsync();
+
 
             return new ResponseDto
             {
                 StatusCode = 200,
                 Success = true,
-                Data = allItems,
+                Data = allitems,
                 Message = StringConstant.SuccessMessage
             };
              
@@ -51,6 +69,35 @@ namespace BusinessLogicLayer.Services
             await unitOfWork.SaveAsync();
             var responseDto = mapper.Map<VerifyAgentRequestDto>(domainModel);
             return responseDto;
+        }
+
+        public async Task<ResponseDto> GetMultipleAgentsAsync(List<long> DeliveryAgentIds)
+        {
+            var agentList = new List<Object>();
+
+            foreach (var agentId in DeliveryAgentIds)
+            {
+                var agent = await unitOfWork.BusinessAdminRepository.GetAll().FirstOrDefaultAsync(u => u.DeliveryAgentId == agentId);
+                if (agent == null)
+                {
+                    return new ResponseDto
+                    {
+                        StatusCode = 400,
+                        Success = false,
+                        Data = StringConstant.InvalidInputError,
+                        Message = StringConstant.ErrorMessage
+                    };
+                }
+                agentList.Add(agent);
+            }
+
+            return new ResponseDto
+            {
+                Success = true,
+                StatusCode = 200,
+                Data = agentList,
+                Message = StringConstant.SuccessMessage
+            };
         }
 
 

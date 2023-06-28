@@ -39,10 +39,9 @@ namespace DeliveryAgentModule.Controllers
                 return BadRequest(StringConstant.ErrorMessage);
             }
             var content = await microserviceResponse.Content.ReadAsStringAsync();
-            var data = JsonConvert.DeserializeObject <List<MyDataClass>>(content);
+            var data = JsonConvert.DeserializeObject <MyDataClass>(content);
   
-  
-              foreach (var item in data)
+              foreach (var item in data.Data)
               {
                 Console.WriteLine(item.Email);
                 if (IsValidCredentials(item.Email, item.Password, loginRequestDto))

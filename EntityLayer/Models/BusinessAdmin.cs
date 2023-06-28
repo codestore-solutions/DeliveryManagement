@@ -18,6 +18,9 @@ namespace EntityLayer.Models
         public double AgentLatitude { get; set; }                            
         public double AgentLongitude { get; set; }
         public int MaxDistance { get; set; }
+
+        [DataType(DataType.EmailAddress)]
+        public string AgentEmailId { get; set; } = null!;
         public enum DeliveryAgentStatus
         {
             Offline = 0,

@@ -1,4 +1,6 @@
 ﻿using BusinessLogicLayer.IServices;
+using DeliveryAgentModule.CustomActionFilter;
+using EntityLayer.Common;
 using EntityLayer.Dtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,16 +22,14 @@ namespace DeliveryAgentModule.Controllers
 
         // POST: /api/images/upload
         [HttpPost("upload")]
+        [ValidateModel]
         public async Task<IActionResult> Upload([FromForm] ImageUploadRequestDto requestDto)
         {
             // Validate Extension & Size
             ValidateFileUpload(requestDto);
-            //var localFilePath = Path.Combine(webHostEnvironment.ContentRootPath,"Images",)
-            if(ModelState.IsValid)
-            {
-                await imageService.Upload(requestDto);
-            }
-            return BadRequest(ModelState);
+            //var localFilePath = Path.Combine(webHostEnvironment.ContentRootPath,"Images",)   
+            await imageService.Upload(requestDto);
+            return Ok(StringConstant.SuccessMessage);       
         }
 
         private void ValidateFileUpload(ImageUploadRequestDto requestDto)

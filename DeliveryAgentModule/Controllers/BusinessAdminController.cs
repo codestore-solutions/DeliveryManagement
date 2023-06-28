@@ -42,10 +42,10 @@ namespace DeliveryAgentModule.Controllers
         //GET: /api/business-admin/get-agents/1224?orderAssignedStatus=1&agentStatus=1&verStatus=0&pageNumber=1&limit=10
         [HttpGet("get-agents/{businessId}")]
         [MapToApiVersion("1.0")]
-        public async Task<IActionResult> GetAllDeliveryAgentAsync([FromRoute] long businessId, [FromQuery] OrderAssignedStatus? orderAssignedStatus, 
+        public async Task<IActionResult> GetAllDeliveryAgentAsync([FromRoute] long businessId, [FromQuery] string? filterOn, [FromQuery] string? filterQuery, [FromQuery] OrderAssignedStatus? orderAssignedStatus, 
             [FromQuery] DeliveryAgentStatus? agentStatus,[FromQuery] int pageNumber = 1, [FromQuery] int limit = 10)
         {
-            return Ok(await businessAdminService.GetAllDeliveryAgentAsync(businessId, orderAssignedStatus, agentStatus, pageNumber, limit));
+            return Ok(await businessAdminService.GetAllDeliveryAgentAsync(businessId, filterOn, filterQuery, orderAssignedStatus, agentStatus, pageNumber, limit));
         }
       
         // DELETE: /api/delete/{agentId}
@@ -110,12 +110,17 @@ namespace DeliveryAgentModule.Controllers
         //GET: /api/business-admin/get-agents/1224?orderAssignedStatus=1&agentStatus=1&verStatus=0&pageNumber=1&limit=10
         [HttpGet("get-agents/{businessId}")]
         [MapToApiVersion("2.0")]
-        public async Task<IActionResult> GetAllDeliveryAgentUpdatedAsync([FromRoute] long businessId, [FromQuery] OrderAssignedStatus? orderAssignedStatus,
+        public async Task<IActionResult> GetAllDeliveryAgentUpdatedAsync([FromRoute] long businessId, [FromQuery] string? filterOn, [FromQuery] string? filterQuery, [FromQuery] OrderAssignedStatus? orderAssignedStatus,
             [FromQuery] DeliveryAgentStatus? agentStatus, [FromQuery] int pageNumber = 1, [FromQuery] int limit = 1000)
         {
-            return Ok(await businessAdminService.GetAllDeliveryAgentAsync(businessId, orderAssignedStatus, agentStatus, pageNumber, limit));
+            return Ok(await businessAdminService.GetAllDeliveryAgentAsync(businessId, filterOn, filterQuery, orderAssignedStatus, agentStatus, pageNumber, limit));
         }
 
+        [HttpGet("getMultipleAgentList")]
+        public async Task<IActionResult> GetAgentListAsync([FromQuery] List<long> DeliveryAgentIds)
+        {
+            return Ok(await businessAdminService.GetMultipleAgentsAsync(DeliveryAgentIds));
+        }
 
         // GET
         [HttpGet("get-agents-list")]
