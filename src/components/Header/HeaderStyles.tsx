@@ -8,7 +8,8 @@ const styles = StyleSheet.create({
      flexDirection:'row',
      justifyContent:'space-between',
      backgroundColor:globalStyle.colors.baseColor,
-     paddingVertical:20,
+     paddingTop:20,
+     paddingBottom:5,
      paddingHorizontal:10
   },
   left:{},

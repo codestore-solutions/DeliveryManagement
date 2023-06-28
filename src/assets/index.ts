@@ -13,3 +13,8 @@ export {default as EmailIcon} from './svgs/emailIcon.svg';
 export {default as CompanyIcon} from './svgs/company.svg';
 export {default as CheckIcon} from './svgs/checkIcon.svg';
 export {default as MenuIcon} from './svgs/menu.svg';
+export {default as LocationIcon} from './svgs/location.svg';
+export {default as DeliveryTruckIcon} from './svgs/delivery-truck.svg'
+export {default as SimpleLineIcon} from './svgs/simple-line.svg'
+export {default as VericalMenuIcon} from './svgs/charm_menu-kebab.svg'
+export {default as CashIcon} from './svgs/ph_money-duotone.svg'

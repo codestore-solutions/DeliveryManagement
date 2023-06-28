@@ -13,11 +13,12 @@ export var constant = {
   refreshToken: 'refreshToken',
   signout: 'Sign out',
   loginUserDetail:'loginUserDetail',
-  navigationItems:{
+  drawernavItems:{
      item1:'Dashboard',
      item2:'My Delivery Request',
      item3:'Revenue',
-     item4:'Settigns',
+     item4:'Notification',
+     item5:'Settigns',
   }
 
 };

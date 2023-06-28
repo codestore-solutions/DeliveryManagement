@@ -4,6 +4,7 @@ import globalStyle from '../../global/globalStyle';
 
 const styles = StyleSheet.create({
     btnContainer:{
+           backgroundColor:'#fff',
            flex:1,
            justifyContent:'center',
            alignItems:'center',

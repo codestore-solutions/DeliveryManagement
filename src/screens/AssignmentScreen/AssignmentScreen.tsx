@@ -1,85 +1,68 @@
-import { View, Text, SafeAreaView, FlatList } from 'react-native'
-import React from 'react'
-import styles from './AssignmentStyle'
-import { OrderCard } from '../../components';
+import {View, Text, SafeAreaView, FlatList, ScrollView} from 'react-native';
+import React from 'react';
+import styles from './AssignmentStyle';
+import {VericalMenuIcon} from '../../assets';
+import renderItem from '../../components/common/ReqComponent/ReqComponent';
 
-const orderData = [
+const data = [
   {
-    id: 1,
-    AssignedBy: 'Masala Club Restorant',
-    description: 'Food Delivery',
-    deliveryAddres:'Ganga Agan, Flat No -8 , Haridwar',
-    pickupAddress:'Masala Club, Ranipur Mode, Haridwar',
-    payment:"COD"
+    key: 1,
+    requestId: '#HDYWFG28472CVSX',
+    pickup: '4653 Clearview Drive Englewood',
+    destination: '4653 Clearview Drive USA',
+    clientName: 'David Vese',
+    earning: ' $ 10',
   },
   {
-    id: 2,
-    AssignedBy: 'Masala Club Restorant',
-    description: 'Food Delivery',
-    deliveryAddres:'Ganga Agan, Flat No -8 , Haridwar',
-    pickupAddress:'Masala Club, Ranipur Mode, Haridwar',
-    payment:"Online"
+    key: 2,
+    requestId: '#HDYWFG28472CVSX',
+    pickup: '4653 Clearview Drive Englewood',
+    destination: '4653 Clearview Drive USA',
+    clientName: 'David Vese',
+    earning: ' $ 10',
   },
   {
-    id: 3,
-    AssignedBy: 'Momos King',
-    description: 'Food Delivery',
-    deliveryAddres:'Ganga Agan, Flat No -8 , Haridwar',
-    pickupAddress:'Masala Club, Ranipur Mode, Haridwar',
-    payment:"Card"
+    key: 3,
+    requestId: '#HDYWFG28472CVSX',
+    pickup: '4653 Clearview Drive Englewood',
+    destination: '4653 Clearview Drive USA',
+    clientName: 'David Vese',
+    earning: ' $ 10',
   },
   {
-    id: 4,
-    AssignedBy: 'Terence Cafe',
-    description: 'Food Delivery',
-    deliveryAddres:'Ganga Agan, Flat No -8 , Haridwar',
-    pickupAddress:'Masala Club, Ranipur Mode, Haridwar',
-    payment:"Online"
-  },
-  {
-    id: 5,
-    AssignedBy: 'Hosiyaar Puri',
-    description: 'Food Delivery',
-    deliveryAddres:'Ganga Agan, Flat No -8 , Haridwar',
-    pickupAddress:'Masala Club, Ranipur Mode, Haridwar',
-    payment:"Card"
-
-  },
-  {
-    id: 6,
-    AssignedBy: 'Terence Cafe',
-    description: 'Food Delivery',
-    deliveryAddres:'Ganga Agan, Flat No -8 , Haridwar',
-    pickupAddress:'Masala Club, Ranipur Mode, Haridwar',
-    payment:"Card"
+    key: 4,
+    requestId: '#HDYWFG28472CVSX',
+    pickup: '4653 Clearview Drive Englewood',
+    destination: '4653 Clearview Drive USA',
+    clientName: 'David Vese',
+    earning: ' $ 10',
   },
 ];
-
 
 const AssignmentScreen = () => {
   return (
     <SafeAreaView>
-      <View style={styles.container}>
-        <View style={styles.content}>
-          <Text style={styles.pageHeading}>Orders List</Text>
-          <FlatList
-            data={orderData}
-            renderItem={({item}) => (
-              <OrderCard
-                id={item.id}
-                description={item.description}
-                AssignedBy={item.AssignedBy}
-                pickupAddress={item.pickupAddress}
-                deliveryAddres={item.deliveryAddres}
-                payment={item.payment}
-              />
-            )}
-  
-          />
+      <ScrollView>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Text style={styles.pageHeading}>Post Request</Text>
+            <View style={styles.menuIcon}>
+              <VericalMenuIcon width={20} height={20} />
+            </View>
+          </View>
+          <View style={styles.content}>
+            <FlatList
+              data={data}
+              renderItem={renderItem}
+              scrollEnabled={true}
+              keyExtractor={(item: any) => item.key}
+              style={styles.content}
+            />
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
-  )
-}
+  );
+};
 
-export default AssignmentScreen
+export default AssignmentScreen;

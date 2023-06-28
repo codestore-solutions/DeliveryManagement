@@ -40,35 +40,35 @@ const DrawerNavigation = () => {
         name="Dashboard"
         component={DashboardScreen}
         options={{
-          drawerLabel: 'Dashboard'
+          drawerLabel: constant.drawernavItems.item1
         }}
       />
       <Drawer.Screen
         name="Assignments"
         component={AssignmentScreen}
         options={{
-          drawerLabel: 'My Delivery Request'
+          drawerLabel:constant.drawernavItems.item2
         }}
       />
       <Drawer.Screen
         name="Revenue"
         component={RevenueScreen}
         options={{
-          drawerLabel: 'Revenue'
+          drawerLabel: constant.drawernavItems.item3
         }}
       />
       <Drawer.Screen
         name="Notification"
         component={NotificationScreen}
         options={{
-          drawerLabel: 'Notification'
+          drawerLabel: constant.drawernavItems.item4
         }}
       />
       <Drawer.Screen
         name="Settigns"
         component={SettignScreen}
         options={{
-          drawerLabel: 'Settigns'
+          drawerLabel: constant.drawernavItems.item5
         }}
       />
       <Drawer.Screen
