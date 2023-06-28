@@ -10,7 +10,7 @@ import {
 import React, {useCallback, useState} from 'react';
 import styles from './DashboardStyle';
 import {DashboardCard, DropDownComponent} from '../../components';
-import {DeliveryTruckIcon} from '../../assets';
+import renderItem from '../../components/common/ReqComponent/ReqComponent';
 
 const data = [
   {
@@ -42,27 +42,10 @@ const data = [
 const HomeScreen = () => {
   const [isEnabled, setIsEnabled] = useState<boolean>(false);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
-  const renderItem = ({item}: any | null) => {
-    return (
-      <View key={item.key} style={styles.requstCard}>
-        <View style={styles.requstCardRow}>
-          <Text style={styles.requstColOne}>Request ID</Text>
-          <Text style={styles.requstColTow}>{item.requestId}</Text>
-        </View>
-        <View style={styles.requstCardRow}>
-          <Text style={styles.requstColOne}>Pickup</Text>
-          <Text style={styles.requstColTow}>{item.pickup}</Text>
-        </View>
-        <View style={styles.requstCardRow}>
-          <Text style={styles.requstColOne}>Destination ID</Text>
-          <Text style={styles.requstColTow}>{item.destination}</Text>
-        </View>
-      </View>
-    );
-  };
+  
   return (
-    <SafeAreaView>
-      <ScrollView style={[styles.dashboard]}>
+    <SafeAreaView style={[styles.dashboard]}>
+      <ScrollView >
         <View style={styles.header}>
           <View style={styles.dropdown}>
             <DropDownComponent />
@@ -125,6 +108,7 @@ const HomeScreen = () => {
             cardIconType={1}
             cardDesc={'Total Cash for Order Collected'}
             cardHeading={'$200'}
+            type={1}
           />
         </View>
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './DashboardStyle';
 import {Text, View} from 'react-native';
-import {DeliveryTruckIcon, SimpleLineIcon} from '../../../assets';
+import {CashIcon, DeliveryTruckIcon, SimpleLineIcon} from '../../../assets';
 
 interface CardProps {
   cardHeading: string;
@@ -9,6 +9,7 @@ interface CardProps {
   cardIconType: number;
   cardBackground: string;
   iconBackground: string;
+  type?:number;
 }
 
 const DashboardCard: React.FC<CardProps> = ({
@@ -17,6 +18,7 @@ const DashboardCard: React.FC<CardProps> = ({
   cardHeading,
   iconBackground,
   cardIconType,
+  type
 }) => {
   return (
     <View style={[styles.dashboardCard, {backgroundColor: cardBackground}]}>
@@ -24,7 +26,12 @@ const DashboardCard: React.FC<CardProps> = ({
         {cardIconType === 0 ? (
           <DeliveryTruckIcon height={150} width={150} />
         ) : (
-          <SimpleLineIcon height={150} width={185} />
+          type === 1 ? (
+            <CashIcon height={150} width={185} />
+          ):(
+
+            <SimpleLineIcon height={150} width={185} />
+          )
         )}
       </View>
       <View style={styles.cardContent}>
@@ -32,7 +39,11 @@ const DashboardCard: React.FC<CardProps> = ({
           {cardIconType === 0 ? (
             <DeliveryTruckIcon height={30} width={30} />
           ) : (
-            <SimpleLineIcon height={30} width={30} />
+            type === 1 ? (
+              <CashIcon height={30} width={30} />
+            ):(
+              <SimpleLineIcon height={30} width={30} />
+            )
           )}
         </View>
         <Text style={styles.cardHeading}>{cardHeading} </Text>

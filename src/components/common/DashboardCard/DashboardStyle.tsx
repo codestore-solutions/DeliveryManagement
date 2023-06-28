@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
     
     cardIconBack:{
          position:'absolute',
-         top:-50,
+         top:-42,
          right:-60,
          opacity:0.2
     },
