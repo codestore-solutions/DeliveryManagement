@@ -13,7 +13,8 @@ namespace EntityLayer.Dtos
         [Required]
         public IFormFile File { get; set; } = null!;
 
-        [Required] public string FileName { get; set; } = null!;
+        [Required] 
+        public string FileName { get; set; } = null!;
         public string? FileDescription { get; set; }
     }
 }

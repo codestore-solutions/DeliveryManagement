@@ -31,8 +31,6 @@ namespace BusinessLogicLayer.Services
                 FileSizeInBytes = requestDto.File.Length,
                 FileExtension = Path.GetExtension(requestDto.FileName)
             };
-
-
         }
 
        
