@@ -14,7 +14,7 @@ import globalStyle from '../../global/globalStyle';
 import styles from './LoginStyle';
 import {Formik} from 'formik';
 import {LogoImg, ShowPasswordIcon, HidePasswordIcon} from '../../assets';
-import {loginValidationSchema} from '../../utils/validations/authValidation';
+import {loginValidationSchema} from '../../utils/validations/userValidation';
 
 const LoginScreen = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -32,9 +32,7 @@ const LoginScreen = () => {
         <View style={styles.btnContainer}>
           <TouchableOpacity 
             onPress={() =>
-              navigation.navigate('Home', {
-                screen: 'Dashboard',
-              })
+              navigation.navigate('CreateProfile')
             }>
             <Text style={{ color:'red'}}>Login Page</Text>
           </TouchableOpacity>

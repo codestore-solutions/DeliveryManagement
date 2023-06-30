@@ -1,54 +1,86 @@
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  SafeAreaView,
-  ScrollView,
-  ActivityIndicator,
-} from 'react-native';
-import {Formik} from 'formik';
+import {View, Text} from 'react-native';
 import React, {useState} from 'react';
+import {TabView, TabBar} from 'react-native-tab-view';
 import styles from './CreateProfileStyle';
 import {useNavigation} from '@react-navigation/native';
 import {RootStackParamList} from '../../navigations/types';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {BankDetails, KycDetails, PersonalDetails, VechileDetails} from '../../components';
 
-interface PayloadInterface{
-  businessId: number,
-  id: number
-}
 const CreateProfile = () => {
-  const[loading, setLoading]  = useState<boolean>(false);
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const verifyAgentHandler =  (values: any) => {};
-    
-  return (
-    <Formik
-      initialValues={{
-        businessId: '',
-        panCardPath: '',
-        aadhaarCardPath: '',
-        otherDocumentPath: '',
-      }}
-      validationSchema=""
-      onSubmit={verifyAgentHandler}>
-      {({
-        handleChange,
-        handleBlur,
-        handleSubmit,
-        values,
-        errors,
-        setFieldValue,
-      }) => (
-        <SafeAreaView>
-          <ScrollView>
-            <Text style={styles.heading}>Details</Text>
-          </ScrollView>
-        </SafeAreaView>
+
+  const [index, setIndex] = useState(0);
+  const [routes] = useState([
+    {key: '1', title: 'Pesonal Details'},
+    {key: '2', title: 'KYC'},
+    {key: '3', title: 'Vechile Details'},
+    {key: '4', title: 'Bank Details'},
+  ]);
+
+  const renderScene = ({route}: any) => {
+    switch (route.key) {
+      case '1':
+        return (
+          <View style={styles.sceneContainer}>
+            <PersonalDetails />
+          </View>
+        );
+      case '2':
+        return (
+          <View style={styles.sceneContainer}>
+            <KycDetails />
+          </View>
+        );
+      case '3':
+        return (
+          <View style={styles.sceneContainer}>
+            <VechileDetails />
+          </View>
+        );
+        case '4':
+        return (
+          <View style={styles.sceneContainer}>
+            <BankDetails />
+          </View>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const renderTabBar = (props: any) => (
+    <TabBar
+      {...props}
+      style={styles.tabBar}
+      scrollEnabled
+      activeColor="#ffffff"
+      inactiveColor="#7E8299"
+      pressColor="#ffffff"
+      pressOpacity={1}
+      indicatorStyle={styles.indicator}
+      renderLabel={({route, focused, color}) => (
+        <View style={[styles.label, focused && styles.activeTabLabel]}>
+          <Text
+            style={[
+              styles.tabLabelText,
+              {color, fontWeight: focused ? 'bold' : 'normal'},
+            ]}>
+            {route.title}
+          </Text>
+        </View>
       )}
-    </Formik>
+    />
+  );
+
+  return (
+    <TabView
+      navigationState={{index, routes}}
+      renderScene={renderScene}
+      onIndexChange={setIndex}
+      renderTabBar={renderTabBar}
+    />
   );
 };
 
