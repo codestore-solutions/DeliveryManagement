@@ -5,6 +5,7 @@ using EntityLayer.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
+using System.ComponentModel.DataAnnotations;
 
 namespace DeliveryAgentModule.Controllers
 {
@@ -104,7 +105,7 @@ namespace DeliveryAgentModule.Controllers
         /// }
         /// </remarks>
         [HttpPost("assign-agent")]
-        //[ValidateModel]
+        [ValidateModel]
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> AddAssignDeliveryAgent([FromBody] AssignAgentAutomaticallyDto automaticallyDto)
         {
@@ -116,6 +117,7 @@ namespace DeliveryAgentModule.Controllers
         /// Assign delivery agents nearest to seller/Business location for multiple orders
         /// </summary>
         [HttpPost("assign-agent-bulk")]
+        [ValidateModel]
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> BulkAgentAssignAutomaticallyAsync(OrderAssingInBulkRequestDto orderAssingInBulkRequestDto)
         {
@@ -128,7 +130,7 @@ namespace DeliveryAgentModule.Controllers
         /// </summary>
         [HttpDelete("delete")]
         [MapToApiVersion("1.0")]
-        public async Task<ActionResult> RemoveOrderAssigned([FromQuery] int agentId)
+        public async Task<ActionResult> RemoveOrderAssigned([FromQuery][Required] int agentId)
         {
             await deliveryAgentService.RemoveOrderAssignedAsync(agentId);
             return Ok(StringConstant.SuccessMessage);
