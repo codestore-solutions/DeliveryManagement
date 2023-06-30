@@ -95,16 +95,6 @@ namespace DeliveryAgentModule.Controllers
         }
 
 
-
-    /*    [MapToApiVersion("1.0")]    
-    [HttpGet("orderList")]
-   // [Authorize]
-    public async Task<IActionResult> GetAllOrders([FromQuery] DeliveryType? deliveryType, [FromQuery] IsOrderAssigned? isOrderAssigned)
-    {
-        return Ok(await orderService.GetAllOrdersAsync(deliveryType, isOrderAssigned));
-    }*/
-
-
 }
 
 }
