@@ -2,15 +2,17 @@ import React, { useState, useEffect } from "react";
 import "./style.scss";
 import { LeftArrowIcon } from "../../assets";
 import { Button, Col, Row } from "antd";
-import { CustomTimeline } from "../../components";
+import { AgentFeedBack, CustomTimeline } from "../../components";
 import { useParams } from "react-router-dom";
 import OrderService from "../../services/OrderService";
 import Spinner from "../Spinner/Spinner";
 import date from "../../utils/helpers/CustomizeDate";
+import AgentService from "../../services/AgentService";
 
 const OrderDetails: React.FC = () => {
   const { id } = useParams();
   const [data, setData] = useState<any>();
+  const [feedbackdata, setFeedbackData] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
   const getDetails = async (id: string | undefined) => {
     try {
@@ -24,9 +26,22 @@ const OrderDetails: React.FC = () => {
       setLoading(false);
     }
   };
-
+  const getfeedbackDetails = async (id: number | undefined) => {
+    try {
+      setLoading(true);
+      const res = await AgentService.getFeedbackDetails(id);
+      setFeedbackData(res);
+      setLoading(false);
+    } catch (error) {
+      // Handle the error here, e.g., log it or display an error message
+      console.error("Error occurred while fetching order details:", error);
+      setLoading(false);
+    }
+  };
+  // console.log("data", feedbackdata);
   useEffect(() => {
     getDetails(id);
+    getfeedbackDetails(6);
   }, [id]);
 
   if (loading) {
@@ -135,6 +150,20 @@ const OrderDetails: React.FC = () => {
           </div>
           <div className="timeline">
             <CustomTimeline />
+          </div>
+          <div className="timeline">
+            <h2
+              style={{
+                padding: "15px 0",
+                fontSize: "20px",
+                letterSpacing: "0.02em",
+              }}
+            >
+              Feedback for Delivery Agent
+            </h2>
+            <div className="box">
+              {loading ? <Spinner /> : <AgentFeedBack rating={feedbackdata?.rating} comment={feedbackdata?.comment} />}
+            </div>
           </div>
         </div>
       </div>

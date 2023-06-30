@@ -1,6 +1,7 @@
 export const ApiContants = {
      baseUrl: process.env.REACT_APP_API_BASE_URL_DELIVERY_AGENT,
      orderProcessingbaseUrl:  process.env.REACT_APP_API_BASE_URL_ORDER_PROCESS,
+     feedbackbaseUrl:  process.env.REACT_APP_API_BASE_URL_FEEDBACK,
      // API Response Codes
      successCode: 200,
      successEndRange: 299,
@@ -31,5 +32,7 @@ export const ApiContants = {
      getOrderDetailsById:'business/getOrderDetailsByOrderId',
      getAssinedOrders: 'order/assigned-orders',
      getCompletedOrders: 'order/completed-orders',
-     updateOrder:'order/updateOrder'
+     updateOrder:'order/updateOrder',
+     //feedback endpoints
+     getAgentFeedback:'feedback/deliveryAgentFeedback/'
 }
