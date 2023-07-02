@@ -92,6 +92,7 @@ namespace DeliveryAgentModule
             builder.Services.AddScoped<IAssignDeliveryAgentService, AssignDeliveryAgentService>();
             builder.Services.AddScoped<IImageService, ImageService>();
             builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
+            builder.Services.AddScoped<IAgentDetailsService, AgentDetailsService>();
             builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 
             builder.Services.AddDbContext<DeliveryDbContext>(options =>

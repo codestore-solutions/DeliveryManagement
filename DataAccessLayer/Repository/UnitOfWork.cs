@@ -9,6 +9,7 @@ namespace DataAccessLayer.Repository
         public UnitOfWork(DeliveryDbContext dbContext)
         {
             this.dbContext = dbContext;
+            AgentDetailsRepository = new AgentDetailsRepository(this.dbContext);
             AssignDeliveryAgentRepository = new AssignDeliveryAgentRepository(this.dbContext);
             ServiceLocationRepository = new ServiceLocationRepository(this.dbContext);
             BusinessAdminRepository=new BusinessAdminRepository(this.dbContext);  
@@ -25,6 +26,8 @@ namespace DataAccessLayer.Repository
 
         public IImageRepository ImageRepository { get; private set; }
 
+        public IAgentDetailsRepository AgentDetailsRepository { get; private set; }
+
         public void Dispose()
         {
             dbContext.Dispose();
@@ -34,11 +37,14 @@ namespace DataAccessLayer.Repository
         {
             dbContext.SaveChanges();
         }
-
         public async Task<bool> SaveAsync()
         {
-            await dbContext.SaveChangesAsync();
-            return true;
+            int result = await dbContext.SaveChangesAsync();
+            if(result>0)
+            {
+                return true;
+            }
+            return false;
         }
 
     }
