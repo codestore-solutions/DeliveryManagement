@@ -1,3 +1,4 @@
+
 export {default as BuilkAssign} from './BulkAssignAgent/BuilkAssign';
 export {default as Navbar} from './Navbar/Navbar'
 export {default as Sidebar} from './Sidebar/Sidebar'
@@ -13,3 +14,4 @@ export {default as CustomModal}  from './common/Modal/CustomModal';
 export {default as AssignAgent}  from './AssignAgentModal/AssignAgent';
 export {default as StatusCard} from './common/StatusCard/StatusCard';
 export {default as AgentListFilter} from './FilterCompoenets/AgentListFilter'
+export {default as AgentFeedBack} from './AgentFeedBack/AgentFeedBack';

@@ -16,12 +16,14 @@ export default defineConfig(({ mode }) => {
   // Use the environment variables in your app
   const apiUrl = env.REACT_APP_API_BASE_URL_DELIVERY_AGENT;
   const apiUrl2 = env.REACT_APP_API_BASE_URL_ORDER_PROCESS;
+  const apiUrl3 = env.REACT_APP_API_BASE_URL_FEEDBACK;
   return {
     plugins: [react()],
     define: {
       'process.env': {
         REACT_APP_API_BASE_URL_DELIVERY_AGENT: apiUrl,
         REACT_APP_API_BASE_URL_ORDER_PROCESS: apiUrl2,
+        REACT_APP_API_BASE_URL_FEEDBACK: apiUrl3
       }
     },
     build: {

@@ -97,6 +97,14 @@ const getAddressDetails = async (id:any) =>{
     return res?.data;
 }
 
+
+const getFeedbackDetails = async (id: any) =>{
+  let url = `${ApiContants.feedbackbaseUrl}${ApiContants.getAgentFeedback}/${id}`;
+  const res = await API({}, url, "GET");
+  return res?.data;
+}
+
+
 const AgentService = {
   getAllAgents,
   getAvialableAgents,
@@ -104,7 +112,8 @@ const AgentService = {
   assignAgentToOrderInBulkAutomatically,
   getAddressDetails,
   assignAgentAutomaticallyToOrder,
-  assignAgentManuallyToOrderInBulk
+  assignAgentManuallyToOrderInBulk,
+  getFeedbackDetails
 };
 
 export default AgentService;

@@ -188,6 +188,15 @@ const AgentDetails: React.FC = () => {
                   </div>
                 </div>
               </Col>
+              <Col xs={24} sm={12} md={8} lg={8} xl={6}>
+                <div className="container">
+                  <img src={TimeTick} alt="" className="time-tick" />
+                  <div className="details">
+                    <h3>1500</h3>
+                    <span>Feedback Received</span>
+                  </div>
+                </div>
+              </Col>
             </Row>
           </div>
         </div>
