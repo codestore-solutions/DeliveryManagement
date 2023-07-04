@@ -4,6 +4,7 @@ using DataAccessLayer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(DeliveryDbContext))]
-    partial class DeliveryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230703082136_Added new columns in ServiceLocation Table")]
+    partial class AddednewcolumnsinServiceLocationTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -320,30 +323,9 @@ namespace DataAccessLayer.Migrations
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<long>("WorkingLocationId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("ServiceLocationId");
 
-                    b.HasIndex("WorkingLocationId");
-
                     b.ToTable("ServiceLocations");
-                });
-
-            modelBuilder.Entity("EntityLayer.Models.WorkingLocation", b =>
-                {
-                    b.Property<long>("WorkingLocationId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("WorkingLocationId"));
-
-                    b.Property<long>("DeliveryAgentId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("WorkingLocationId");
-
-                    b.ToTable("WorkingLocation");
                 });
 
             modelBuilder.Entity("EntityLayer.Models.Order", b =>
@@ -368,17 +350,6 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("ServiceLocation");
                 });
 
-            modelBuilder.Entity("EntityLayer.Models.ServiceLocation", b =>
-                {
-                    b.HasOne("EntityLayer.Models.WorkingLocation", "WorkingLocation")
-                        .WithMany("ServiceLocations")
-                        .HasForeignKey("WorkingLocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("WorkingLocation");
-                });
-
             modelBuilder.Entity("EntityLayer.Models.AssignDeliveryAgent", b =>
                 {
                     b.Navigation("Orders");
@@ -387,11 +358,6 @@ namespace DataAccessLayer.Migrations
             modelBuilder.Entity("EntityLayer.Models.ServiceLocation", b =>
                 {
                     b.Navigation("SelectedDays");
-                });
-
-            modelBuilder.Entity("EntityLayer.Models.WorkingLocation", b =>
-                {
-                    b.Navigation("ServiceLocations");
                 });
 #pragma warning restore 612, 618
         }

@@ -79,12 +79,11 @@ namespace EntityLayer.Models
 
         public string YourName { get; set; } = string.Empty;
 
-
         public string BankName { get; set; } = string.Empty;
 
         public string IFSCCode { get; set; } = string.Empty;
 
-       
+        [Required]
         public string AccountNumber { get; set; } = string.Empty;
     }
 }

@@ -13,7 +13,7 @@ namespace EntityLayer.Models
         public long DeliveryAgentId { get; set; }
 
         [Required]
-        public List<Order> Orders { get; set; }= new List<Order>();   
+        public List<Order> Orders { get; set; } = new List<Order>();   
         public int OrdersCount { get; set; }
         public double PickupLatitude { get; set; }
         public double PickupLongitude { get; set; }

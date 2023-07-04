@@ -91,6 +91,7 @@ namespace DeliveryAgentModule
             builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IAssignDeliveryAgentService, AssignDeliveryAgentService>();
             builder.Services.AddScoped<IImageService, ImageService>();
+            builder.Services.AddScoped<IWorkingLocationService, WorkingLocationService>();
             builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
             builder.Services.AddScoped<IAgentDetailsService, AgentDetailsService>();
             builder.Services.AddScoped<ITokenRepository, TokenRepository>();
@@ -170,11 +171,19 @@ namespace DeliveryAgentModule
                
             }
 
+            var webSocketOptions = new WebSocketOptions
+            {
+                KeepAliveInterval = TimeSpan.FromMinutes(2)
+            };
+
+           
             app.UseCors("AllowOrigin");
 
             app.UseHttpsRedirection();
 
             app.UseMiddleware<ExceptionHandlerMiddleware>();
+
+            app.UseWebSockets(webSocketOptions);
 
             app.UseAuthentication();
 
