@@ -5,13 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EntityLayer.Models
+namespace EntityLayer.Dtos
 {
-    public class ServiceLocation
+    public class AddNewWorkingLocationDto
     {
-        public long ServiceLocationId { get; set; }
-
-        [Required]
         public long DeliveryAgentId { get; set; }
         public string LocationName { get; set; } = null!;
         public string Address { get; set; } = null!;
@@ -24,8 +21,5 @@ namespace EntityLayer.Models
 
         [DataType(DataType.Time)]
         public DateTime EndTime { get; set; }
-        public long WorkingLocationId { get; set; }
-        public WorkingLocation WorkingLocation { get; set; } = null!;
-        public ICollection<SelectedDay> SelectedDays { get; set; } = new List<SelectedDay>(); 
     }
 }

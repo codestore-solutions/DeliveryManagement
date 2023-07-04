@@ -11,9 +11,10 @@ namespace DataAccessLayer.Data
         }
         public DbSet<AssignDeliveryAgent> AssignDeliveryAgents { get; set; }
         public DbSet<DeliveryAgentDetail> DeliveryAgentDetails { get; set; }
-        public DbSet<BusinessAdmin> buisnessAdmin { get; set; }
-        public DbSet<ServiceLocation> serviceLocations { get; set; }  
-        public DbSet<Image> Images { get; set; }
+        public DbSet<BusinessAdmin> BusinessAdmin { get; set; }
+        public DbSet<ServiceLocation> ServiceLocations { get; set; }  
+        public DbSet<Image> Images { get; set; }    
+        public DbSet<Order> Orders { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
