@@ -28,7 +28,7 @@ const LandingScreen = () => {
   return (
     <View style={[globalStyle.container, styles.landingContainer]}>
       <View style={styles.landingImg}>
-          <DeliveryImg   />
+          {constant.appLogo}
           <Text style={styles.text}>{constant.splashScreenTiltle}</Text>
       </View>
       {/* <View style={styles.btnContainer}>

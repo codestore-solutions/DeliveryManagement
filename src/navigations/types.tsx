@@ -4,7 +4,7 @@ export type drawerParamList = {
     Assignments: undefined;
     Dashboard: undefined;
     Settigns: undefined;
-    Revenue:undefined;
+    Location:undefined;
     Notification:undefined;
     HelpAndSupport: undefined
 }
@@ -15,4 +15,9 @@ export type RootStackParamList = {
     CreateProfile: undefined;
     VerifyStatus: undefined;
     Home: NavigatorScreenParams<drawerParamList>;
+    Faq: undefined;
+    TandC: undefined;
+    About: undefined;
+    Policy: undefined;
+    AssignmentDetail: undefined;
   };

@@ -1,6 +1,6 @@
 import {StyleSheet, Text, View, Pressable, Image} from 'react-native';
 import React, {useState} from 'react';
-import ImagePicker, {Image as CropImage} from 'react-native-image-crop-picker';
+import  {Image as CropImage} from 'react-native-image-crop-picker';
 import globalStyle from '../../../global/globalStyle';
 import {DetailEditIcon, UploadIcon} from '../../../assets';
 import CustomModal from '../CustomModal/CustomModal';
@@ -34,18 +34,18 @@ const SingleDetail: React.FC<Props> = ({label, value, type}) => {
               <Image
                 source={{uri: selectedImage?.path}}
                 style={{
-                  width: 70,
-                  height: 50,
-                  borderRadius: 15,
+                  width: 50,
+                  height: 30,
+                  borderRadius: 10,
                   marginHorizontal: 5,
                 }}
               />
             )}
             <Pressable onPress={openModal}>
               {selectedImage ? (
-                <DetailEditIcon width={35} height={35} />
+                <DetailEditIcon width={25} height={25} />
               ) : (
-                <UploadIcon width={35} height={35} />
+                <UploadIcon width={25} height={25} />
               )}
             </Pressable>
           </View>

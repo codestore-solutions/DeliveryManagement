@@ -1,8 +1,11 @@
-import {View, Text, SafeAreaView, FlatList, ScrollView} from 'react-native';
+import { View, Text, SafeAreaView, FlatList, ScrollView, TouchableOpacity } from 'react-native';
 import React from 'react';
+import {useNavigation} from '@react-navigation/native';
+import {RootStackParamList} from '../../navigations/types';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import styles from './AssignmentStyle';
 import {VericalMenuIcon} from '../../assets';
-import renderItem from '../../components/common/ReqComponent/ReqComponent';
+import ReqComponent from '../../components/common/ReqComponent/ReqComponent';
 
 const data = [
   {
@@ -40,28 +43,32 @@ const data = [
 ];
 
 const AssignmentScreen = () => {
+  const navigation =
+  useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigate = () =>{
+    navigation.navigate('AssignmentDetail');
+  }
+  const renderItem = ({item}:any) => (
+       <ReqComponent item={item} onPress={navigate} />
+  );
   return (
-    <SafeAreaView>
-      <ScrollView>
-        <View style={styles.container}>
-          <View style={styles.header}>
-            <Text style={styles.pageHeading}>Post Request</Text>
-            <View style={styles.menuIcon}>
-              <VericalMenuIcon width={20} height={20} />
-            </View>
-          </View>
-          <View style={styles.content}>
-            <FlatList
-              data={data}
-              renderItem={renderItem}
-              scrollEnabled={true}
-              keyExtractor={(item: any) => item.key}
-              style={styles.content}
-            />
-          </View>
+    <SafeAreaView style={{ flex: 1 }}>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.pageHeading}>Post Request</Text>
+        <View style={styles.menuIcon}>
+          <VericalMenuIcon width={20} height={20} />
         </View>
-      </ScrollView>
-    </SafeAreaView>
+      </View>
+        <FlatList
+          data={data}
+          showsVerticalScrollIndicator={false}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.key.toString()}
+          style={styles.content}
+        />
+    </View>
+  </SafeAreaView>
   );
 };
 

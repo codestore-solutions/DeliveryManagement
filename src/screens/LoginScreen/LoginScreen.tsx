@@ -13,8 +13,8 @@ import React, {useState} from 'react';
 import globalStyle from '../../global/globalStyle';
 import styles from './LoginStyle';
 import {Formik} from 'formik';
-import {LogoImg, ShowPasswordIcon, HidePasswordIcon} from '../../assets';
-import {loginValidationSchema} from '../../utils/validations/userValidation';
+import {LogoImg, ShowPasswordIcon, HidePasswordIcon, LeftArrowIcon} from '../../assets';
+// import {loginValidationSchema} from '../../utils/validations/userValidation';
 
 const LoginScreen = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -26,7 +26,7 @@ const LoginScreen = () => {
         email: '',
         password: '',
       }}
-      validationSchema={loginValidationSchema}
+      // validationSchema={loginValidationSchema}
       onSubmit={values => {}}>
       {({handleChange, handleBlur, handleSubmit, values, errors}) => (
         <View style={styles.btnContainer}>

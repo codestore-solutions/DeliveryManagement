@@ -1,10 +1,13 @@
-import {View, Text} from 'react-native';
+import {View, Text, Pressable} from 'react-native';
 import React from 'react';
 import styles from './ReqStyle';
-
-const renderItem = ({item}: any | null) => {
+interface Props{
+   item:any;
+   onPress: () => void ;
+}
+const ReqComponent: React.FC<Props> = ({item, onPress}) => {
   return (
-    <View key={item.key} style={styles.requstCard}>
+    <Pressable key={item.key} style={styles.requstCard}  onPress={onPress}>
       <View style={styles.requstCardRow}>
         <Text style={styles.requstColOne}>Request ID</Text>
         <Text style={styles.requstColTow}>{item?.requestId}</Text>
@@ -29,8 +32,8 @@ const renderItem = ({item}: any | null) => {
           <Text style={styles.requstColTow}>{item?.earning}</Text>
         </View>
       )}
-    </View>
+    </Pressable>
   );
 };
 
-export default renderItem;
+export default ReqComponent;
