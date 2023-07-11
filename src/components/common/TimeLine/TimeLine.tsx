@@ -1,7 +1,6 @@
 import React from 'react';
-import {View, StyleSheet, Text, FlatList, SafeAreaView} from 'react-native';
+import { View, StyleSheet, Text, FlatList, SafeAreaView } from 'react-native';
 import Svg, {Line, Circle} from 'react-native-svg';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import {CheckTimeIcon, UploadIcon} from '../../../assets';
 import globalStyle from '../../../global/globalStyle';
 

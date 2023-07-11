@@ -7,14 +7,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
  * @param payload Request Body
  * @param endpoint  End Point Url for Target Api
  * @param apiMethod Http Method Type
- * @param cancelToken  Token require for Remove data Api Validation
+ * @param params  Toksen require for Remove data Api Validation
  * @returns Genric http methods response
  */
 export default async function API(
   payload: Object,
   endpoint: string,
   apiMethod: string,
-  params?: any
+  params?: Object
 ) {
   let auth = '';
   let init: Object = {};
@@ -60,7 +60,7 @@ export default async function API(
         url: `${endpoint}`,
         headers: {
           "Content-Type": "application/json",
-          Authorization: auth ? "Bearer " + auth : "",
+          // Authorization: auth ? "Bearer " + auth : "",
         },
         data: JSON.stringify(payload),
       };

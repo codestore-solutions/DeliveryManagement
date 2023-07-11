@@ -4,11 +4,17 @@ import {useNavigation} from '@react-navigation/native';
 import {RootStackParamList} from '../../navigations/types';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import globalStyle from '../../global/globalStyle';
+import { useAppDispatch } from '../../store/hooks';
+import { reset } from '../../store/features/authSlice';
 
 
 const Settings = () => {
+  const dispatch = useAppDispatch();
   const navigation =
   useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const logoutHandler = () =>{
+      dispatch(reset());
+  }
   return (
     <View style={styles.conatiner}>
       <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('Faq')}>
@@ -23,7 +29,7 @@ const Settings = () => {
       <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('Policy')}>
         <Text style={styles.btnText}>Privacy Policy</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={[styles.btn, styles.logout]}>
+      <TouchableOpacity style={[styles.btn, styles.logout]} onPress={logoutHandler}>
         <Text style={[styles.btnText, styles.baseText]}>logout</Text>
       </TouchableOpacity>
     </View>

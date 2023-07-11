@@ -1,6 +1,14 @@
-import React,{useState} from 'react';
-import { StyleSheet, Text, View, Pressable, TouchableOpacity, ScrollView } from 'react-native';
-import { AddIcon, CheckedRadioIcon, ReadioIcon } from '../../assets';
+import React, {useState} from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Pressable,
+  TouchableOpacity,
+  ScrollView,
+  SafeAreaView,
+} from 'react-native';
+import {AddIcon, CheckedRadioIcon, ReadioIcon} from '../../assets';
 import globalStyle from '../../global/globalStyle';
 import SelectTimeScreen from '../DayandTime/SelectTimeScreen';
 import AddNewAddress from '../AddNewAddress/AddNewAddress';
@@ -8,13 +16,13 @@ import AddNewAddress from '../AddNewAddress/AddNewAddress';
 const AddAddress = () => {
   const [selectedIndex, setIndex] = React.useState(0);
   const [edit, setEdit] = useState<boolean>(false);
-  const isEdit = () =>{
+  const isEdit = () => {
     setEdit(true);
-}
-const isEditCancel = () =>{
-  setEdit(false);
-}
-  const renderItem = (item:any) => {
+  };
+  const isEditCancel = () => {
+    setEdit(false);
+  };
+  const renderItem = (item: any) => {
     return (
       <View style={styles.card} key={item.id}>
         <View style={styles.cardLeft}>
@@ -63,11 +71,11 @@ const isEditCancel = () =>{
       checked: false,
     },
   ];
-  if(edit){
+  if (edit) {
     return (
         <AddNewAddress onCancel={isEditCancel} />
-    )
-  }else{
+    );
+  } else {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
@@ -78,7 +86,7 @@ const isEditCancel = () =>{
         </View>
         <View style={styles.content}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            {data.map((item) => renderItem(item))}
+            {data.map(item => renderItem(item))}
           </ScrollView>
         </View>
       </View>

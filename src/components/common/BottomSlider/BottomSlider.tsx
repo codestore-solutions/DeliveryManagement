@@ -13,7 +13,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 const {height: SCREEN_HEIGHT} = Dimensions.get('window');
-const MAX_SLIDE_DISTANCE = 500;
+const MAX_SLIDE_DISTANCE = 600;
 
 interface bottomSheetProps {
   element: JSX.Element;

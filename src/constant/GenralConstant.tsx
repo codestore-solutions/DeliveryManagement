@@ -10,7 +10,7 @@ export var constant = {
      item2:'My Delivery Request',
      item3:'My Location',
      item4:'Notification',
-     item5:'Settigns',
+     item5:'Settings',
   },
   loginSuccess: 'Logged in Successfully',
   loginFail: 'Incorrect username or password!',

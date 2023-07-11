@@ -5,34 +5,61 @@ import globalStyle from '../../global/globalStyle';
 import CustomTextInput from '../common/CustomInput/CustomTextInput';
 import DateInput from '../common/CustomDateInput/DateInput';
 import CustomButton from '../common/CustomButton/CustomButton';
-import { personaDetailsValidation } from '../../utils/validations/userValidation';
+import {personaDetailsValidation} from '../../utils/validations/userValidation';
+import {personalDetailInterface} from '../../utils/types/UserTypes';
+import AgentServices from '../../services/AgentServices';
+import moment from 'moment';
 
 interface Props {
   onCancel: () => void;
+  personalDetails: any;
+  updateDetails: (data: any) => void;
+  data?: any;
 }
 
-const PersonalDetailForm: React.FC<Props> = ({onCancel}) => {
+const PersonalDetailForm: React.FC<Props> = ({
+  onCancel,
+  personalDetails,
+  updateDetails,
+  data,
+}) => {
   const handleDateChange = (handleChange: any, date: any) => {
-    // Custom logic for handling date changes
-    console.log('Selected date:', date);
     handleChange('dob')(date);
-    // Update the state or perform any other necessary operations
   };
 
-  const submitHandler = (values: any) => {
-    console.log('values', values);
+  const submitHandler = async (values: any) => {
+    let payload: personalDetailInterface = {
+      deliveryAgentId: Number(data?.id),
+      fullName: values?.name,
+      phoneNumber: values?.mobileNo,
+      email: values?.email,
+      gender: values?.gender,
+      dateOfBirth: values?.dob,
+    };
+    if (personalDetails) {
+      const {data} = await AgentServices.updatePersonalDetail(
+        payload,
+        personalDetails?.id,
+      );
+      updateDetails(data);
+    } else {
+      const {data} = await AgentServices.addPersonalDetail(payload);
+      updateDetails(data);
+    }
   };
   return (
     <Formik
       initialValues={{
-        name: '',
-        email: '',
-        mobileNo: '',
-        dob: '',
-        gender: '',
+        name: personalDetails ? personalDetails?.fullName : '',
+        email: data ? data?.email : '',
+        mobileNo: personalDetails ? personalDetails?.phoneNumber : '',
+        dob: personalDetails
+          ? moment(personalDetails?.dateOfBirth).format('YYYY-MM-DD')
+          : '',
+        gender: personalDetails ? personalDetails?.gender : '',
       }}
       validationSchema={personaDetailsValidation}
-      onSubmit={(values) => submitHandler(values)}>
+      onSubmit={values => submitHandler(values)}>
       {({handleChange, handleBlur, handleSubmit, values, errors}) => (
         <View style={[globalStyle.container, styles.formContainer]}>
           <CustomTextInput
@@ -59,6 +86,14 @@ const PersonalDetailForm: React.FC<Props> = ({onCancel}) => {
             onChangeText={text => handleChange('mobileNo')(text)}
             errors={errors}
           />
+          <CustomTextInput
+            placeholder={'Eg: Male, Female, Other'}
+            label={'Gender'}
+            name={'gender'}
+            value={values.gender}
+            onChangeText={text => handleChange('gender')(text)}
+            errors={errors}
+          />
           <DateInput
             label={'D.O.B'}
             value={values.dob}
@@ -68,7 +103,7 @@ const PersonalDetailForm: React.FC<Props> = ({onCancel}) => {
           <View style={styles.lower}>
             <View style={styles.btnConatiner}>
               <View style={{width: '50%'}}>
-                <CustomButton title={'Add Details'}  onPress={handleSubmit}/>
+                <CustomButton title={'Add Details'} onPress={handleSubmit} />
               </View>
               <View style={{width: '50%'}}>
                 <CustomButton

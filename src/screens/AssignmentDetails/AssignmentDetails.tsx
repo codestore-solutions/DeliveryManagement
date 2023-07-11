@@ -5,15 +5,33 @@ import {
   SafeAreaView,
   Image,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import styles from './AssignmentStyle';
 import {CallSharpIcon, QrCodeIcon, SendIcon} from '../../assets';
 import {CustomButton, Timeline} from '../../components';
+import CustomModal from '../../components/common/CustomModal/CustomModal';
+import ModalMessage from '../../components/common/ModalMessage/ModalMessage';
+import OtpForm from '../../components/OtpForm/OtpForm';
+
 
 
 const AssignmentDetails = () => {
+  const [visible, setVisible] = useState<boolean>(false);
+  const [otpvisible, otpsetVisible] = useState<boolean>(false);
+  const openModal = () => {
+    setVisible(true);
+  };
+  const closeModal = () => {
+    setVisible(false);
+  };
+  const otpopenModal = () => {
+    otpsetVisible(true);
+  };
+  const otpcloseModal = () => {
+    otpsetVisible(false);
+  };
   const data = [
     {
       id: 0,
@@ -91,20 +109,36 @@ const AssignmentDetails = () => {
             <Text style={styles.labeltxt}> $10</Text>
           </View>
         </View>
-        <Timeline data={data} currentIndex={1} /> 
+        <Timeline data={data} currentIndex={3} />
         <View style={styles.qrContainer}>
-             <TouchableOpacity>
-                 <Text style={styles.btntxt}>Submit OTP</Text>
-               </TouchableOpacity>
-               <View style={styles.qr}>
-                 <QrCodeIcon width={80} height={80} />
-               </View>
-               <View style={styles.btnContainer}>
-
-               <CustomButton title={'Cash Collected'} />
-               </View>
+          <TouchableOpacity onPress={otpopenModal}>
+            <Text style={styles.btntxt}>Submit OTP</Text>
+          </TouchableOpacity>
+          <View style={styles.qr}>
+            <QrCodeIcon width={80} height={80} />
+          </View>
+          <View style={styles.btnContainer}>
+            <CustomButton title={'Cash Collected'} onPress={openModal} />
+          </View>
         </View>
       </SafeAreaView>
+      <CustomModal
+        visible={visible}
+        closeModal={closeModal}
+        element={
+          <ModalMessage
+            type={1}
+            message={'Are you sure cash has been collected by you?'}
+          />
+        }
+      />
+      <CustomModal
+        visible={otpvisible}
+        closeModal={otpcloseModal}
+        element={
+          <OtpForm/>
+        }
+      />
     </ScrollView>
   );
 };

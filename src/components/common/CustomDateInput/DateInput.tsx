@@ -32,7 +32,7 @@ const DateInput: React.FC<Props> = ({label, value, onChange, handleChange, type}
   };
 
   const handleConfirm = (date: any) => {
-    let data = moment(date).format('DD/MM/YYYY');
+    let data = moment(date).format('YYYY-MM-DD');
     const [dayValue, monthValue, yearValue] = data.split('/');
     if(type===1){
       setSelectedDate(yearValue);

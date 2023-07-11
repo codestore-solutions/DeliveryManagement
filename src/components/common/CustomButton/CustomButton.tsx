@@ -5,7 +5,7 @@ import globalStyle from '../../../global/globalStyle';
 
 interface Props{
     title:string;
-    onPress?: () => void;
+    onPress: () => void;
     outline?: boolean;
 }
 

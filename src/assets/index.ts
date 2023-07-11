@@ -3,11 +3,13 @@ export {default as CheckedRadioIcon} from './svgs/selected-radio.svg';
 export {default as ReadioIcon} from './svgs/inselected.svg';
 export {default as DeliveryImg} from './svgs/landing-img.svg';
 export {default as LogoImg} from './svgs/logo.jpg';
+export {default as LogoDark} from './svgs/logodark.svg';
 export {default as HidePasswordIcon} from './svgs/EyeClose.svg';
 export {default as ShowPasswordIcon} from './svgs/EyeOpen.svg';
 export {default as CalenderIcon} from './svgs/cal-icon.svg';
 export {default as SearchIcon} from './svgs/search-icon.svg';
 export {default as LeftArrowIcon} from './svgs/arrow-right.svg'
+export {default as LeftArrowIconHeader} from './svgs/back-arrow.svg'
 export {default as NotificationIcon} from './svgs/bell.svg'
 export {default as ChatIcon} from './svgs/chat-icon.svg'
 export {default as EditIcon} from './svgs/editicon.svg';
@@ -33,3 +35,6 @@ export {default as SendIcon} from './svgs/bi_send-fill.svg'
 export {default as CallSharpIcon} from './svgs/call-sharp-green.svg'
 export {default as CheckTimeIcon} from './svgs/material-symbols_check.svg'
 export {default as QrCodeIcon} from './svgs/qr.svg'
+export {default as DangerIcon} from './svgs/danger.svg'
+export {default as InputEmailIcon} from './svgs/mail.svg'
+export {default as InputEyeOffIcon} from './svgs/eye-off.svg'

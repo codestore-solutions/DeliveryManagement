@@ -5,15 +5,28 @@ import globalStyle from '../../global/globalStyle';
 import CustomTextInput from '../common/CustomInput/CustomTextInput';
 import DateInput from '../common/CustomDateInput/DateInput';
 import CustomButton from '../common/CustomButton/CustomButton';
-import {personaDetailsValidation, vechileDetailvalidationSchema} from '../../utils/validations/userValidation';
+import {
+  personaDetailsValidation,
+  vechileDetailvalidationSchema,
+} from '../../utils/validations/userValidation';
 import styles from './VechileStyle';
 import {UploadIcon} from '../../assets';
+import {vechleDteailInterface} from '../../utils/types/UserTypes';
+import AgentServices from '../../services/AgentServices';
 
 interface Props {
   onCancel: () => void;
+  data: any;
+  vechileDetails: any;
+  updateDetails: (data: any) => void;
 }
 
-const VechileDetailsForm: React.FC<Props> = ({onCancel}) => {
+const VechileDetailsForm: React.FC<Props> = ({
+  onCancel,
+  data,
+  vechileDetails,
+  updateDetails,
+}) => {
   const handleDateChange = (handleChange: any, date: any) => {
     // Custom logic for handling date changes
     console.log('Selected date:', date);
@@ -21,24 +34,48 @@ const VechileDetailsForm: React.FC<Props> = ({onCancel}) => {
     // Update the state or perform any other necessary operations
   };
 
-  const submitHandler = (values: any) => {
-    console.log('values', values);
+  const submitHandler = async (values: any) => {
+    let payload: vechleDteailInterface = {
+      deliveryAgentId: Number(data?.id),
+      vehicleType: values?.vechileType,
+      model: values?.model,
+      companyName: values?.company,
+      numberPlate: values?.numberPlate,
+      vehicleImageUrl: 'https://unsplash.com/s/photos/bike',
+      registrationNumber: values?.registrationNumber,
+    };
+    console.log('payload', payload);
+    try {
+      if (vechileDetails) {
+        const {data} = await AgentServices.updateVechileDetail(
+          payload,
+          vechileDetails?.id,
+        );
+        updateDetails(data);
+      } else {
+        const {data} = await AgentServices.addVechileDetails(payload);
+        console.log("Add Vec", data);
+        updateDetails(data);
+      }
+    } catch (err) {
+      console.log('Add Vechile Detail Error', err);
+    }
   };
   return (
     <Formik
       initialValues={{
-        vechileType: '',
-        company: '',
-        model: '',
-        numberPlate: '',
-        dob: '',
-        image: '',
+        vechileType: vechileDetails ? vechileDetails?.vehicleType: '',
+        company:vechileDetails ? vechileDetails?.companyName: '',
+        model:vechileDetails ? vechileDetails?.model: '',
+        numberPlate:vechileDetails ? vechileDetails?.numberPlate: '',
+        registrationNumber:vechileDetails ? vechileDetails?.registrationNumber : '',
+        image: vechileDetails ? vechileDetails?.vehicleImageUrl: 'https://unsplash.com/s/photos/bike',
       }}
       validationSchema={vechileDetailvalidationSchema}
       onSubmit={values => submitHandler(values)}>
       {({handleChange, handleBlur, handleSubmit, values, errors}) => (
         <View style={[globalStyle.container, styles.formContainer]}>
-          <ScrollView style={{marginBottom:60}}>
+          <ScrollView style={{marginBottom: 60}}>
             <CustomTextInput
               placeholder={'ComboBox'}
               label={'Vehicle Type'}
@@ -65,18 +102,19 @@ const VechileDetailsForm: React.FC<Props> = ({onCancel}) => {
             />
             <CustomTextInput
               placeholder={'Eg: 123sddsd'}
-              label={'Registration Number'}
+              label={'Number Plate'}
               name={'numberPlate'}
               value={values.numberPlate}
               onChangeText={text => handleChange('numberPlate')(text)}
               errors={errors}
             />
-            <DateInput
-              label={'D.O.B'}
-              value={values.dob}
-              handleChange={handleChange}
-              onChange={handleDateChange}
-              
+            <CustomTextInput
+              placeholder={'Eg: 123sddsd'}
+              label={'Registration Number'}
+              name={'registrationNumber'}
+              value={values.registrationNumber}
+              onChangeText={text => handleChange('registrationNumber')(text)}
+              errors={errors}
             />
             <View style={styles.image}>
               <Text style={styles.label}>Vehicle Image</Text>

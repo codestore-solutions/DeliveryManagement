@@ -1,16 +1,15 @@
 import {View, Text} from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {TabView, TabBar} from 'react-native-tab-view';
 import styles from './CreateProfileStyle';
-import {useNavigation} from '@react-navigation/native';
-import {RootStackParamList} from '../../navigations/types';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {BankDetails, KycDetails, PersonalDetails, VechileDetails} from '../../components';
+import UserService from '../../services/UserService';
+import { useAppSelector } from '../../store/hooks';
+import { RootState } from '../../store';
+import {AuthStateInterface} from '../../store/features/authSlice'
 
 const CreateProfile = () => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-
+  const {data} = useAppSelector((state:RootState) => state.auth) as  AuthStateInterface
   const [index, setIndex] = useState(0);
   const [routes] = useState([
     {key: '1', title: 'Pesonal Details'},
@@ -24,19 +23,19 @@ const CreateProfile = () => {
       case '1':
         return (
           <View style={styles.sceneContainer}>
-            <PersonalDetails />
+            <PersonalDetails data={data}  />
           </View>
         );
       case '2':
         return (
           <View style={styles.sceneContainer}>
-            <KycDetails />
+            <KycDetails data={data} />
           </View>
         );
       case '3':
         return (
           <View style={styles.sceneContainer}>
-            <VechileDetails />
+            <VechileDetails data={data} />
           </View>
         );
         case '4':
@@ -73,6 +72,7 @@ const CreateProfile = () => {
       )}
     />
   );
+  
 
   return (
     <TabView

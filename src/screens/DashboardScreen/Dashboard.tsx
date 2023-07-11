@@ -7,10 +7,13 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {RootStackParamList} from '../../navigations/types';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {useCallback, useState} from 'react';
 import styles from './DashboardStyle';
 import {DashboardCard, DropDownComponent} from '../../components';
-import renderItem from '../../components/common/ReqComponent/ReqComponent';
+import RenderItem from '../../components/common/ReqComponent/ReqComponent';
 
 const data = [
   {
@@ -40,12 +43,17 @@ const data = [
 ];
 
 const HomeScreen = () => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigate = () => {
+    navigation.navigate('AssignmentDetail');
+  };
   const [isEnabled, setIsEnabled] = useState<boolean>(false);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
-  
+
   return (
     <SafeAreaView style={[styles.dashboard]}>
-      <ScrollView >
+      <ScrollView>
         <View style={styles.header}>
           <View style={styles.dropdown}>
             <DropDownComponent />
@@ -119,12 +127,18 @@ const HomeScreen = () => {
               <Text style={styles.btnText}>View All</Text>
             </TouchableOpacity>
           </View>
-          <FlatList
+          {data?.map(item => {
+            return (
+              <View key={item?.key}>
+                <RenderItem item={item} onPress={navigate} />
+              </View>
+            );
+          })}
+          {/* <FlatList
             data={data}
             keyExtractor={(item: any) => item.key}
             renderItem={renderItem}
-          />
-          
+          /> */}
         </View>
       </ScrollView>
     </SafeAreaView>
