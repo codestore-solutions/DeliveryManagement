@@ -83,7 +83,6 @@ namespace EntityLayer.Models
 
         public string IFSCCode { get; set; } = string.Empty;
 
-        [Required]
         public string AccountNumber { get; set; } = string.Empty;
     }
 }

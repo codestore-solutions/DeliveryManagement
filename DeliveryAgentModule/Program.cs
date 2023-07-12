@@ -93,7 +93,10 @@ namespace DeliveryAgentModule
             builder.Services.AddScoped<IImageService, ImageService>();
             builder.Services.AddScoped<IWorkingLocationService, WorkingLocationService>();
             builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
-            builder.Services.AddScoped<IAgentDetailsService, AgentDetailsService>();
+            builder.Services.AddScoped<IPersonalDetailsService, PersonalDetailsService>();
+            builder.Services.AddScoped<IBankDetailsService, BankDetailsService>();  
+            builder.Services.AddScoped<IKYCService,  KYCService>(); 
+            builder.Services.AddScoped<IVehicleDetailsService , VehicleDetailsService>();   
             builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 
             builder.Services.AddDbContext<DeliveryDbContext>(options =>

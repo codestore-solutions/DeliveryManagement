@@ -8,5 +8,6 @@
         public const string ErrorMessage = "Error";
         public const string NotAvailableMessage = "Not Available";
         public const string CountsUnequalMessage = "Please Check Count of orderIds ,latitudes and longitudes";
+        public const string DatabaseMessage = "Nothing is saved to the database";
     }
 }

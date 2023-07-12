@@ -5,42 +5,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EntityLayer.Models
+namespace EntityLayer.Dtos
 {
-    public class ServiceLocation
+    public class UpdateWorkingLocationDto
     {
-        [Key]
-        public long ServiceLocationId { get; set; }
 
         [Required]
-        [Range(1, long.MaxValue)]
-        public long DeliveryAgentId { get; set; }
-
-        [Required]
-        [StringLength(50)]
+        [StringLength(50, MinimumLength = 1)]
         public string LocationName { get; set; } = null!;
 
         [Required]
         [StringLength(100)]
         public string Address { get; set; } = null!;
-
         public double Latitude { get; set; }
-
         public double Longitude { get; set; }
-
-        [Required]
         public int MaxDistance { get; set; }
 
-        [Required]
-        public TimeSpan StartTime { get; set; } 
+        [Required] 
+        public DateTime StartTime { get; set; }
 
         [Required]
-        public TimeSpan EndTime { get; set; } 
-         
-        [Required]
-        public bool IsActive { get; set; }
+        public DateTime EndTime { get; set; }
 
         [Required]
-        public string SelectedDays { get; set; } = null!;
+        public string FromDay { get; set; } = null!;
+        public string ToDay { get; set; } = string.Empty;
     }
 }

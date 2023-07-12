@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Repository
 {
-    public class WorkingLocationRepository : GenericRepository<WorkingLocation>, IWorkingLocationRepository
+    public class KYCRepository : GenericRepository<KYC>, IKYCRepository
     {
-        public WorkingLocationRepository(DeliveryDbContext dbContext) : base(dbContext)
+        public KYCRepository(DeliveryDbContext dbContext) : base(dbContext)
         {
         }
     }

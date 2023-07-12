@@ -46,12 +46,15 @@ namespace DeliveryAgentModule.Controllers
                 Console.WriteLine(item.Email);
                 if (IsValidCredentials(item.Email, item.Password, loginRequestDto))
                 {
-                    var role = item.Role;
-                    var jwtToken = GenerateJwtToken(item.Email, role);
+                    
+                    var jwtToken = GenerateJwtToken(item.Email, item.Role, item.Id, item.BusinessCategory);
 
                     var responseDto = new LoginResponseDto
                     {
-                        JwtToken = jwtToken,
+                        JwtToken         = jwtToken,
+                        Id               = item.Id,
+                        Email            = item.Email,
+                        BusinessCategory = item.BusinessCategory
                     };
                     // Return the JWT token to the client 
                     return Ok(responseDto);
@@ -67,7 +70,7 @@ namespace DeliveryAgentModule.Controllers
             }
             return false;
         }
-        private string GenerateJwtToken(string email, string role)
+        private string GenerateJwtToken(string email, string role, string id, string businessCategory)
         {    
             // Set the secret key used to sign the JWT token 
             var secretKey = "safmdknfsdDKFKN122sdnmkfnsJDKNF23234Sssds";
@@ -75,23 +78,50 @@ namespace DeliveryAgentModule.Controllers
             var signingKey = new SymmetricSecurityKey(keyBytes);
 
             // Create the claims for the token
-            var claims = new[]
+          
+            
+            if(role == "2")
             {
+                var claims = new[]
+                {
                 new Claim("email", email),
-                new Claim("role", role)
-            };
+                new Claim("role", role),
+                new Claim("id", id),
+                new Claim("businessCategory", businessCategory)
+                };
+                // Create the JWT token
+                var token = new JwtSecurityToken(
+                    claims: claims,
+                    expires: DateTime.UtcNow.AddMonths(2),                 // Set the token expiration time
+                    signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
+                );
 
-            // Create the JWT token
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.UtcNow.AddMonths(2),                 // Set the token expiration time
-                signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
-            );
+                // Serialize the token to a string
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var tokenString = tokenHandler.WriteToken(token);
+                return tokenString;
+            }
+            else
+            {
+                var claims = new[]
+                {
+                new Claim("email", email),
+                new Claim("role", role),
+                new Claim("id", id),
+                };
+                // Create the JWT token
+                var token = new JwtSecurityToken(
+                    claims: claims,
+                    expires: DateTime.UtcNow.AddMonths(2),                 // Set the token expiration time
+                    signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
+                );
 
-            // Serialize the token to a string
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var tokenString = tokenHandler.WriteToken(token);
-            return tokenString;
+                // Serialize the token to a string
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var tokenString = tokenHandler.WriteToken(token);
+                return tokenString;
+            }
+
         }
 
 

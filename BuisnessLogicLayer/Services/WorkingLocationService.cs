@@ -26,87 +26,80 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto> AddNewWorkingLocationAsync(AddNewWorkingLocationDto workingLocationDto)
         {
-            var existingWorkingLocation = await unitOfWork.WorkingLocationRepository.GetAll().Include(c => c.ServiceLocations)
-            .FirstOrDefaultAsync(u => u.DeliveryAgentId == workingLocationDto.DeliveryAgentId);
+            // validate delivery agent Id 
+   
+            var addNewWorkingLocation = new ServiceLocation();
 
-            bool saveResult = false;
-            if (existingWorkingLocation == null)
-            {
-                existingWorkingLocation = new WorkingLocation();
-                existingWorkingLocation.DeliveryAgentId = workingLocationDto.DeliveryAgentId;
-                
-                var newServiceLocation = new ServiceLocation();
-                mapper.Map(workingLocationDto, newServiceLocation);
-                newServiceLocation.WorkingLocationId = existingWorkingLocation.WorkingLocationId;
-                existingWorkingLocation.ServiceLocations.Add(newServiceLocation);
-                await unitOfWork.WorkingLocationRepository.AddAsync(existingWorkingLocation);
-                saveResult = await unitOfWork.SaveAsync();
-            }
-            else
-            {
-                var newServiceLocation = new ServiceLocation();
-                mapper.Map(workingLocationDto, newServiceLocation);
-                newServiceLocation.WorkingLocationId = existingWorkingLocation.WorkingLocationId;
-                existingWorkingLocation.ServiceLocations.Add(newServiceLocation);
-                await unitOfWork.WorkingLocationRepository.AddAsync(existingWorkingLocation);
-                saveResult = await unitOfWork.SaveAsync();
-            }
+            mapper.Map(workingLocationDto, addNewWorkingLocation);
+            string concatenatedSelectedDays = string.Join(" ", workingLocationDto.SelectDays);
+            TimeSpan fromTime    = TimeSpan.Parse(workingLocationDto.FromTime);
+            TimeSpan toTime      = TimeSpan.Parse(workingLocationDto.ToTime);
+            addNewWorkingLocation.SelectedDays = concatenatedSelectedDays;
+            addNewWorkingLocation.StartTime  = fromTime;
+            addNewWorkingLocation.EndTime    = toTime;
+            addNewWorkingLocation.IsActive   = true;
 
+            await unitOfWork.ServiceLocationRepository.AddAsync(addNewWorkingLocation);
+            bool saveResult = await unitOfWork.SaveAsync();
+       
             return new ResponseDto
             {
-                StatusCode = saveResult ? 200 : 500,
-                Success = saveResult,
-                Data = existingWorkingLocation,
-                Message = saveResult ? StringConstant.SuccessMessage : StringConstant.ErrorMessage
+                StatusCode  = saveResult ? 200 : 500,
+                Success     = saveResult,
+                Data        = addNewWorkingLocation,
+                Message     = saveResult ? StringConstant.SuccessMessage : StringConstant.ErrorMessage
             };
 
         }
 
         public async Task<ResponseDto> GetAllWorkingLocationsAsync(long deliveryAgentId)
         {
-            var allLocations = await unitOfWork.WorkingLocationRepository.GetAll().Include(c => c.ServiceLocations)
-            .FirstOrDefaultAsync(u => u.DeliveryAgentId == deliveryAgentId);
+            var allLocations = await unitOfWork.ServiceLocationRepository.GetAll().Where(u => u.DeliveryAgentId == deliveryAgentId).ToListAsync();
 
             return new ResponseDto
             {
-                StatusCode = 200,
-                Success = true,
-                Data = allLocations,
-                Message = StringConstant.SuccessMessage
+                StatusCode  = 200,
+                Success     = true,
+                Data        = allLocations,
+                Message     = StringConstant.SuccessMessage
             };
-
         }
 
-        public async Task<ResponseDto?> DeleteWorkingLocationAsync(long deliveryAgentId, long serviceLocationId)
+        public async Task<ResponseDto?> DeleteWorkingLocationAsync(long serviceLocationId)
         {
-            var allLocations = await unitOfWork.WorkingLocationRepository.GetAll()
-         .Include(c => c.ServiceLocations)
-         .FirstOrDefaultAsync(u => u.DeliveryAgentId == deliveryAgentId);
-
-            bool saveResult = false;
-            if (allLocations == null)
+            var workingLocation = await unitOfWork.ServiceLocationRepository.DeleteAsync(serviceLocationId);
+            bool saveResult = await unitOfWork.SaveAsync();
+           
+            return new ResponseDto
             {
-                return null;
-            }
+                StatusCode   = saveResult ? 200 : 500,
+                Success      = saveResult,
+                Data         = workingLocation,
+                Message      = saveResult ? StringConstant.SuccessMessage : StringConstant.ErrorMessage
+            };
+        }
 
-            var serviceLocation = allLocations.ServiceLocations.FirstOrDefault(p => p.ServiceLocationId == serviceLocationId);
-            if (serviceLocation != null)
-            {
-                allLocations.ServiceLocations.Remove(serviceLocation);
-                saveResult = await unitOfWork.SaveAsync();
-            }
+        public async Task<ResponseDto> UpdateWorkingLocationAsync(long serviceLocationId, UpdateWorkingLocationDto updateWorkingLocationDto)
+        {
+            var serviceLocation = await unitOfWork.ServiceLocationRepository.GetByIdAsync(serviceLocationId);
+            mapper.Map(updateWorkingLocationDto, serviceLocation);
+
+            bool saveResult = await unitOfWork.SaveAsync();
 
             return new ResponseDto
             {
                 StatusCode = saveResult ? 200 : 500,
                 Success = saveResult,
-                Data = allLocations,
+                Data = serviceLocation,
                 Message = saveResult ? StringConstant.SuccessMessage : StringConstant.ErrorMessage
             };
-
         }
 
-        //public async Task<ResponseDto> UpdateWorkingLocationAsync(long serviceLocationId, )
     }
 
 }
+
+
+
+
+

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.IRepository
 {
-    public interface IWorkingLocationRepository : IGenericRepository<WorkingLocation>
+    public interface IVehicleDetailsRepository : IGenericRepository<VehicleDetails>
     {
     }
 }
