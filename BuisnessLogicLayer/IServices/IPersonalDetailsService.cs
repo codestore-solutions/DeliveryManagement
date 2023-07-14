@@ -13,5 +13,8 @@ namespace BusinessLogicLayer.IServices
         public Task<ResponseDto> GetPersonalDetailsAsync(long agentId);
         public Task<ResponseDto> AddDetailsAsync(PersonalDetailsDto personalDetailsDto);
         public Task<ResponseDto?> UpdateDetailsAsync(long id, PersonalDetailsDto agentDetailsDto);
+        public Task<ResponseDto> UpdateAgentAvailabilityStatusAsync(UpdateAgentAvailabilityStatusDto statusDto);
+        public Task<ResponseDto> GetAllDetailsAsync();
+        public Task<ResponseDto> GetDetailByAgentId(long agentId);
     }
 }

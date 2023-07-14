@@ -1,4 +1,5 @@
 ﻿using BusinessLogicLayer.IServices;
+using DeliveryAgentModule.CustomActionFilter;
 using EntityLayer.Common;
 using EntityLayer.Dtos;
 using Microsoft.AspNetCore.Http;
@@ -68,6 +69,18 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> UpdateWorkingLocationAsync(long serviceLocationId, UpdateWorkingLocationDto updateWorkingLocationDto)
         {
             return Ok(await workingLocationService.UpdateWorkingLocationAsync(serviceLocationId, updateWorkingLocationDto));    
+        }
+
+        /// <summary>
+        /// Set Active Address in working locations.
+        /// </summary>
+        /// <param name="activeAddressDto"></param>
+        /// <returns></returns>
+        [HttpPut("updateActiveStatus")]
+        [ValidateModel]
+        public async Task<IActionResult> UpdateActiveAddressAsync(UpdateActiveAddressDto activeAddressDto)
+        {
+            return Ok(await workingLocationService.UpdateActiveAddressAsync(activeAddressDto));
         }
     }
 }

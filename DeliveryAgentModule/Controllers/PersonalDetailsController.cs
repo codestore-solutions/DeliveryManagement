@@ -2,10 +2,8 @@
 using DeliveryAgentModule.CustomActionFilter;
 using EntityLayer.Common;
 using EntityLayer.Dtos;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
-using System.Net.WebSockets;
 
 namespace DeliveryAgent.API.Controllers
 {
@@ -46,6 +44,22 @@ namespace DeliveryAgent.API.Controllers
         }
 
         /// <summary>
+        /// Get all delivery agent details list.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("getAgentsList")]
+        public async Task<IActionResult> GetAllDetailsAsync()
+        {
+            return Ok(await personalDetailsService.GetAllDetailsAsync());   
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetDetailByAgentId(long agentId)
+        {
+            return Ok(await personalDetailsService.GetDetailByAgentId(agentId));
+        }
+
+        /// <summary>
         /// Add personal details of a delivery agent.
         /// </summary>
         /// <param name="agentDetailsDto"></param>
@@ -73,6 +87,18 @@ namespace DeliveryAgent.API.Controllers
                 return BadRequest(StringConstant.InvalidInputError);
             }
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Update Agent On/off Duty Status on Mobile app.
+        /// </summary>
+        /// <param name="statusDto"></param>
+        /// <returns></returns>
+        [HttpPut("updateAgentStatus")]
+        [ValidateModel]
+        public async Task<IActionResult> UpdateAgentAvailabilityStatusAsync(UpdateAgentAvailabilityStatusDto statusDto)
+        {
+            return Ok(await personalDetailsService.UpdateAgentAvailabilityStatusAsync(statusDto));  
         }
 
     }

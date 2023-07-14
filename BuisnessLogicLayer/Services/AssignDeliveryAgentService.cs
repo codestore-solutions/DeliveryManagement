@@ -588,7 +588,6 @@ namespace BusinessLogicLayer.Services
             var assignedAgent = await unitOfWork.AssignDeliveryAgentRepository.GetAll().Include(c => c.Orders)
             .FirstOrDefaultAsync(c => c.PickupLatitude == assignAgentAutomaticallyDto.PickupLatitude
             && c.PickupLongitude == assignAgentAutomaticallyDto.PickupLongitude);
-
             
             if(assignedAgent != null)
             {
@@ -683,6 +682,7 @@ namespace BusinessLogicLayer.Services
             }
             return nearsestAgentId;
         }
+
 
 
     }

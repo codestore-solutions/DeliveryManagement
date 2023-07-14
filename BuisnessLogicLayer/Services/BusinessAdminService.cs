@@ -18,8 +18,8 @@ namespace BusinessLogicLayer.Services
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
         }
-        public async Task<ResponseDto> GetAllDeliveryAgentAsync(long businessId, string? filterOn , string? filterQuery  , OrderAssignedStatus? orderAssignedStatus, DeliveryAgentStatus? status,
-           int pageNumber = 1, int limit = 10)
+        public async Task<ResponseDto> GetAllDeliveryAgentAsync(long businessId, string? filterOn , string? filterQuery  , OrderAssignedStatus? orderAssignedStatus,
+         DeliveryAgentStatus? status, int pageNumber = 1, int limit = 10)
         {
              var allItems = unitOfWork.BusinessAdminRepository.GetAll().Where(x => x.BusinessId == businessId);
         
@@ -35,8 +35,7 @@ namespace BusinessLogicLayer.Services
                 {
                   allItems =  allItems.Where(x => x.AgentEmailId.Contains(filterQuery));
                 }
-            }
-            
+            }          
            var allitems = await allItems.Where(x=>
                     (status == null || x.AgentStatus == status)
                     && (orderAssignedStatus == null || x.OrderAssignStatus == orderAssignedStatus))
@@ -49,8 +48,7 @@ namespace BusinessLogicLayer.Services
                 Success = true,
                 Data = allitems,
                 Message = StringConstant.SuccessMessage
-            };
-             
+            };             
         }
       
         public async Task DeleteDeliveryAgentAsync(long agentId)

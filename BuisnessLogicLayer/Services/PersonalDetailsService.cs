@@ -5,6 +5,7 @@ using EntityLayer.Common;
 using EntityLayer.Dtos;
 using EntityLayer.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using System.Collections.Generic;
@@ -76,6 +77,75 @@ namespace BusinessLogicLayer.Services
             };
         }
 
+        public async Task<ResponseDto> UpdateAgentAvailabilityStatusAsync(UpdateAgentAvailabilityStatusDto statusDto)
+        {
+            var agent = await unitOfWork.PersonalDetailsRepository.GetAll().FirstOrDefaultAsync(u => u.DeliveryAgentId == statusDto.DeliveryAgentId);
+
+            if(agent != null)
+            {
+                agent.AgentStatus = (PersonalDetails.AvailabilityStatus)statusDto.AgentStatus;
+                await unitOfWork.SaveAsync();
+            }
+
+            return new ResponseDto
+            {
+                StatusCode      = 200,
+                Success         = true,
+                Data            = agent,
+                Message = StringConstant.UpdatedMessage,
+            };
+        }
+
+        public async Task<ResponseDto> GetAllDetailsAsync()
+        {
+            var allDetails = await unitOfWork.PersonalDetailsRepository.GetAll()
+            .Join(
+                 unitOfWork.ServiceLocationRepository.GetAll().Where(u => u.IsActive == true),             
+                 pd => pd.DeliveryAgentId,
+                 sl => sl.DeliveryAgentId,
+                 (pd, sl) => new { PersonalDetails = pd, ServiceLocation = sl}
+                 ).ToListAsync();
+
+            return new ResponseDto
+            {
+                StatusCode = 200,
+                Success = true,
+                Data = allDetails,
+                Message = StringConstant.SuccessMessage
+            };
+        }
+
+        public async Task<ResponseDto> GetDetailByAgentId(long agentId)
+        {
+            var allDetail = await unitOfWork.PersonalDetailsRepository.GetAll().Where(u => u.DeliveryAgentId == agentId)
+            .Join(
+                  unitOfWork.BankDetailsRepository.GetAll(),
+                  pd => pd.DeliveryAgentId,
+                  bd => bd.DeliveryAgentId,
+                  (pd, bd) => new { PersonalDetails = pd, BankDetails = bd }
+                )
+           .Join(
+                 unitOfWork.VehicleDetailsRepository.GetAll(),
+                 propa => propa.PersonalDetails.DeliveryAgentId,
+                 vd => vd.DeliveryAgentId,
+                 (p, vd) => new { p.PersonalDetails, p.BankDetails, VehicleDetails = vd }
+                )
+          /* .Join(
+                 unitOfWork.KYCRepository.GetAll(),
+                 p => p.PersonalDetails.DeliveryAgentId,
+                 k => k.DeliveryAgentId,
+                 (p, k) => new { p.PersonalDetails, p.BankDetails, p.VehicleDetails, KYC = k }
+                )*/
+                .ToListAsync();
+
+            return new ResponseDto
+            {
+                StatusCode = 200,
+                Success = true,
+                Data = allDetail,
+                Message = StringConstant.SuccessMessage
+            };
+        }
 
     }
 }

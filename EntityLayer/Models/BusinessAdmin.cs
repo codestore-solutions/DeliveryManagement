@@ -5,7 +5,6 @@ namespace EntityLayer.Models
     public class BusinessAdmin
     {
         [Key]
-        [Required]
         public long Id { get; set; }
 
         [Required]

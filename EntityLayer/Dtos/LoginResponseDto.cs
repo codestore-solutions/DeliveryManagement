@@ -11,6 +11,6 @@ namespace EntityLayer.Dtos
         public string JwtToken { get; set; } = null!;
         public string Id { get; set; } = null!;
         public string Email { get; set; } = null!;
-        public string BusinessCategory { get; set; }
+        public string? BusinessCategory { get; set; }
     }
 }

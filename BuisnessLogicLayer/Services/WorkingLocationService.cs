@@ -29,15 +29,16 @@ namespace BusinessLogicLayer.Services
             // validate delivery agent Id 
    
             var addNewWorkingLocation = new ServiceLocation();
-
             mapper.Map(workingLocationDto, addNewWorkingLocation);
+
             string concatenatedSelectedDays = string.Join(" ", workingLocationDto.SelectDays);
             TimeSpan fromTime    = TimeSpan.Parse(workingLocationDto.FromTime);
             TimeSpan toTime      = TimeSpan.Parse(workingLocationDto.ToTime);
+
             addNewWorkingLocation.SelectedDays = concatenatedSelectedDays;
             addNewWorkingLocation.StartTime  = fromTime;
             addNewWorkingLocation.EndTime    = toTime;
-            addNewWorkingLocation.IsActive   = true;
+            addNewWorkingLocation.IsActive   = false;
 
             await unitOfWork.ServiceLocationRepository.AddAsync(addNewWorkingLocation);
             bool saveResult = await unitOfWork.SaveAsync();
@@ -47,9 +48,8 @@ namespace BusinessLogicLayer.Services
                 StatusCode  = saveResult ? 200 : 500,
                 Success     = saveResult,
                 Data        = addNewWorkingLocation,
-                Message     = saveResult ? StringConstant.SuccessMessage : StringConstant.ErrorMessage
+                Message     = saveResult ? StringConstant.AddedMessage : StringConstant.ErrorMessage
             };
-
         }
 
         public async Task<ResponseDto> GetAllWorkingLocationsAsync(long deliveryAgentId)
@@ -75,7 +75,7 @@ namespace BusinessLogicLayer.Services
                 StatusCode   = saveResult ? 200 : 500,
                 Success      = saveResult,
                 Data         = workingLocation,
-                Message      = saveResult ? StringConstant.SuccessMessage : StringConstant.ErrorMessage
+                Message      = saveResult ? StringConstant.DeletedMessage : StringConstant.DatabaseMessage
             };
         }
 
@@ -89,11 +89,38 @@ namespace BusinessLogicLayer.Services
             return new ResponseDto
             {
                 StatusCode = saveResult ? 200 : 500,
-                Success = saveResult,
-                Data = serviceLocation,
-                Message = saveResult ? StringConstant.SuccessMessage : StringConstant.ErrorMessage
+                Success    = saveResult,
+                Data       = serviceLocation,
+                Message    = saveResult ? StringConstant.UpdatedMessage : StringConstant.DatabaseMessage
             };
         }
+
+        public async Task<ResponseDto> UpdateActiveAddressAsync(UpdateActiveAddressDto activeAddressDto)
+        {
+            var agentLocations = await unitOfWork.ServiceLocationRepository.GetAll().Where(u => u.DeliveryAgentId == activeAddressDto.DeliveryAgentId).ToListAsync();
+
+            foreach(var location in agentLocations)
+            {
+                if(location.ServiceLocationId == activeAddressDto.ServiceLocationId)
+                {
+                    location.IsActive = activeAddressDto.IsActive;
+                }
+                else
+                {
+                    location.IsActive = false;
+                }                                            
+            }
+
+            bool saveResult = await unitOfWork.SaveAsync();
+
+            return new ResponseDto
+            {
+                StatusCode = saveResult ? 200 : 500,
+                Success    = saveResult,
+                Message    = saveResult ? StringConstant.UpdatedMessage : StringConstant.DatabaseMessage
+            };        
+        }
+
 
     }
 
