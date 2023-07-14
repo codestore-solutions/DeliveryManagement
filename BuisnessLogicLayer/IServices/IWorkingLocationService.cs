@@ -12,6 +12,8 @@ namespace BusinessLogicLayer.IServices
     {
         public Task<ResponseDto> AddNewWorkingLocationAsync(AddNewWorkingLocationDto workingLocationDto);
         public Task<ResponseDto> GetAllWorkingLocationsAsync(long deliveryAgentId);
-        public Task<ResponseDto?> DeleteWorkingLocationAsync(long deliveryAgentId, long serviceLocationId);
+        public Task<ResponseDto?> DeleteWorkingLocationAsync(long serviceLocationId);
+        public Task<ResponseDto> UpdateWorkingLocationAsync(long serviceLocationId, UpdateWorkingLocationDto updateWorkingLocationDto);
+        public Task<ResponseDto> UpdateActiveAddressAsync(UpdateActiveAddressDto activeAddressDto);
     }
 }

@@ -14,6 +14,6 @@ namespace BusinessLogicLayer.IServices
        Task<ResponseDto> UpdateAsync(long id, UpdateAgentRequestDto orderAssignDto);
        Task<ResponseDto> SingleAgentAssignAutomaticallyAsync(AssignAgentAutomaticallyDto automaticallyDto);
        public Task<ResponseDto> BulkAgentAssignManuallyAsync(BulkAssignManuallyDto bulkAssignManuallyDto);
-
+       public Task<ResponseDto> AssignAgentAutomaticallyAsync(AssignAgentAutomaticallyDto assignAgentAutomaticallyDto);
     }
 }

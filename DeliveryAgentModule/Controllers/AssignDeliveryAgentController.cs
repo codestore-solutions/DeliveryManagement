@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection.Metadata.Ecma335;
 
 namespace DeliveryAgentModule.Controllers
 {
@@ -149,6 +150,12 @@ namespace DeliveryAgentModule.Controllers
                 return NotFound(StringConstant.InvalidInputError);
             }
             return Ok(updatedOrder);
+        }
+
+        [HttpPost("auto-assign-preferences")]
+        public async Task<IActionResult> AssignAgentAutomaticallyAsync(AssignAgentAutomaticallyDto assignAgentAutomaticallyDto)
+        {
+            return Ok(await deliveryAgentService.AssignAgentAutomaticallyAsync(assignAgentAutomaticallyDto));
         }
 
     }    

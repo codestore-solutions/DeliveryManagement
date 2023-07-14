@@ -20,13 +20,9 @@ namespace DataAccessLayer.Repository
         {
             return _dbSet.AsQueryable();
         }
-        public async Task<T> GetByIdAsync(long id)
+        public async Task<T?> GetByIdAsync(long id)
         {
-            var entity = await _dbSet.FindAsync(id);
-            if (entity == null)
-            {
-                return null;
-            }
+            var entity = await _dbSet.FindAsync(id);         
             return entity;
         }
         public async Task AddAsync(T entity) 

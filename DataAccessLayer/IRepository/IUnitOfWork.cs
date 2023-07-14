@@ -3,8 +3,10 @@ namespace DataAccessLayer.IRepository
 {
     public interface IUnitOfWork: IDisposable
     {
-        public IWorkingLocationRepository WorkingLocationRepository { get; }
-        public IAgentDetailsRepository AgentDetailsRepository { get; }
+        public IVehicleDetailsRepository VehicleDetailsRepository { get; }
+        public IBankDetailsRepository BankDetailsRepository { get; }    
+        public IKYCRepository KYCRepository { get; }    
+        public IPersonalDetailsRepository PersonalDetailsRepository { get; }
         public IImageRepository ImageRepository { get; }
         public IBusinessAdminRepository BusinessAdminRepository { get; }
         public IServiceLocationRepository ServiceLocationRepository { get; }
