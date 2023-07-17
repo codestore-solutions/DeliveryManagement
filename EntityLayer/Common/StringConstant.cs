@@ -12,5 +12,6 @@
         public const string UpdatedMessage               = "Updated Successfully";
         public const string DeletedMessage               = "Deleted Successfully";
         public const string AddedMessage                 = "Added Successfully";
+        public const string AssignedSuccessMessage       = "Assigned Successfully";
     }
 }

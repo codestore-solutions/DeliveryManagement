@@ -4,6 +4,7 @@ using DataAccessLayer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(DeliveryDbContext))]
-    partial class DeliveryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230716180025_Added On-OfF Duty Status Column In Service Location Table")]
+    partial class AddedOnOfFDutyStatusColumnInServiceLocationTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,8 +33,14 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                    b.Property<long>("BusinessId")
+                        .HasColumnType("bigint");
+
+                    b.Property<double>("DeliveryAddressLatitude")
+                        .HasColumnType("float");
+
+                    b.Property<double>("DeliveryAddressLongitude")
+                        .HasColumnType("float");
 
                     b.Property<long>("DeliveryAgentId")
                         .HasColumnType("bigint");
@@ -44,13 +53,6 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<double>("PickupLongitude")
                         .HasColumnType("float");
-
-                    b.Property<DateTime>("UpdatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("VendorAddress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -216,16 +218,6 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<long>("AssignDeliveryAgentId")
                         .HasColumnType("bigint");
-
-                    b.Property<string>("DeliveryAddress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("DeliveryAddressLatitude")
-                        .HasColumnType("float");
-
-                    b.Property<double>("DeliveryAddressLongitude")
-                        .HasColumnType("float");
 
                     b.Property<long>("OrderId")
                         .HasColumnType("bigint");

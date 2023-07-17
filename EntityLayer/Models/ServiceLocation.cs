@@ -38,9 +38,16 @@ namespace EntityLayer.Models
         public TimeSpan EndTime { get; set; } 
          
         [Required]
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; }                                // Represent Active Working Location 
 
         [Required]
         public string SelectedDays { get; set; } = null!;
+        public enum AvailabilityStatus
+        {
+            OffDuty = 0,
+            OnDuty = 1,
+            Busy = 2,
+        }
+        public AvailabilityStatus AgentStatus { get; set; }
     }
 }

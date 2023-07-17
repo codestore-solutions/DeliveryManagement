@@ -14,9 +14,7 @@ namespace BusinessLogicLayer.Mappings
     {
         public AutoMapperProfiles()
         {
-            CreateMap<VerifyAgentRequestDto, BusinessAdmin>().ReverseMap();
-            CreateMap<AgentAssignRequestDto, AssignDeliveryAgent>().ReverseMap();
-            CreateMap<UpdateAgentRequestDto, AssignDeliveryAgent>().ReverseMap();
+ 
             CreateMap<AssignManuallyDto, AssignDeliveryAgent>().ReverseMap();
             CreateMap<PersonalDetailsDto, PersonalDetails>().ReverseMap(); 
             CreateMap<BankDetailsDto, BankDetails>().ReverseMap();  
@@ -24,7 +22,11 @@ namespace BusinessLogicLayer.Mappings
             CreateMap<VehicleDetailsDto, VehicleDetails>().ReverseMap();    
             CreateMap<AddNewWorkingLocationDto, ServiceLocation>().ReverseMap();
             CreateMap<UpdateWorkingLocationDto , ServiceLocation>().ReverseMap();
-            CreateMap<AssignAgentAutomaticallyDto, AssignDeliveryAgent>().ReverseMap();
+            CreateMap<AssignAutomaticObjectDto, AssignDeliveryAgent>().ReverseMap();
+            CreateMap<Order , AssignAutomaticObjectDto>().ReverseMap(); 
+            CreateMap<AssignDeliveryAgent, AssignManuallyObjectDto>().ReverseMap();   
+            CreateMap<Order , AssignManuallyObjectDto>().ReverseMap();
+            
         }
     }
 }

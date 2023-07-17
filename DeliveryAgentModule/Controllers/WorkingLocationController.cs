@@ -1,4 +1,5 @@
 ﻿using BusinessLogicLayer.IServices;
+using BusinessLogicLayer.Services;
 using DeliveryAgentModule.CustomActionFilter;
 using EntityLayer.Common;
 using EntityLayer.Dtos;
@@ -13,9 +14,9 @@ namespace DeliveryAgent.API.Controllers
     [ApiController]
     public class WorkingLocationController : ControllerBase
     {
-        private readonly IWorkingLocationService workingLocationService;
+        private readonly IServiceLocationService workingLocationService;
 
-        public WorkingLocationController(IWorkingLocationService workingLocationService)
+        public WorkingLocationController(IServiceLocationService workingLocationService)
         {
             this.workingLocationService = workingLocationService;
         }
@@ -82,5 +83,30 @@ namespace DeliveryAgent.API.Controllers
         {
             return Ok(await workingLocationService.UpdateActiveAddressAsync(activeAddressDto));
         }
+
+        /// <summary>
+        /// Get agent On/Off Duty Status
+        /// </summary>
+        /// <param name="agentId"></param>
+        /// <returns></returns>
+        [HttpGet("getAvailabilityStatus")]
+        public async Task<IActionResult> GetAgentAvailabilityStatusAsync(long agentId)
+        {
+            return Ok(await workingLocationService.GetAgentAvailabilityStatusAsync(agentId));
+        }
+
+        /// <summary>
+        /// Update Agent On/off Duty Status on Mobile app.
+        /// </summary>
+        /// <param name="statusDto"></param>
+        /// <returns></returns>
+        [HttpPut("updateAgentStatus")]
+        [ValidateModel]
+        public async Task<IActionResult> UpdateAgentAvailabilityStatusAsync(UpdateAgentAvailabilityStatusDto statusDto)
+        {
+            return Ok(await workingLocationService.UpdateAgentAvailabilityStatusAsync(statusDto));
+        }
+
+
     }
 }

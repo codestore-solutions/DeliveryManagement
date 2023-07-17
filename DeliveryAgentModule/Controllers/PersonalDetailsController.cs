@@ -2,8 +2,10 @@
 using DeliveryAgentModule.CustomActionFilter;
 using EntityLayer.Common;
 using EntityLayer.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using static EntityLayer.Models.PersonalDetails;
 
 namespace DeliveryAgent.API.Controllers
 {
@@ -44,16 +46,28 @@ namespace DeliveryAgent.API.Controllers
         }
 
         /// <summary>
-        /// Get all delivery agent details list.
+        /// Get list of agents associated with Business Admin
         /// </summary>
+        /// <param name="agentStatus" example="0:Off Duty , 1: On Duty"></param>
+        /// <param name="filterOn"></param>
+        /// <param name="filterQuery"></param>
+        /// <param name="pageNumber"></param>
+        /// <param name="limit"></param>
         /// <returns></returns>
         [HttpGet("getAgentsList")]
-        public async Task<IActionResult> GetAllDetailsAsync()
+        public async Task<IActionResult> GetAllDetailsAsync([FromQuery] string? filterOn, [FromQuery] string? filterQuery, [FromQuery] int? agentStatus
+        , [FromQuery] int pageNumber = 1, [FromQuery] int limit = 10)
         {
-            return Ok(await personalDetailsService.GetAllDetailsAsync());   
+            return Ok(await personalDetailsService.GetAllDetailsAsync( filterOn, filterQuery, agentStatus, pageNumber, limit));   
         }
 
-        [HttpGet]
+        /// <summary>
+        /// Get Individual Agent Details like Vehicle , personal , kyc , Bank details by agent Id.
+        /// </summary>
+        /// <param name="agentId"></param>
+        /// <returns></returns>
+        [HttpGet("getDetails")]
+        [Authorize]
         public async Task<IActionResult> GetDetailByAgentId(long agentId)
         {
             return Ok(await personalDetailsService.GetDetailByAgentId(agentId));
@@ -89,17 +103,6 @@ namespace DeliveryAgent.API.Controllers
             return Ok(result);
         }
 
-        /// <summary>
-        /// Update Agent On/off Duty Status on Mobile app.
-        /// </summary>
-        /// <param name="statusDto"></param>
-        /// <returns></returns>
-        [HttpPut("updateAgentStatus")]
-        [ValidateModel]
-        public async Task<IActionResult> UpdateAgentAvailabilityStatusAsync(UpdateAgentAvailabilityStatusDto statusDto)
-        {
-            return Ok(await personalDetailsService.UpdateAgentAvailabilityStatusAsync(statusDto));  
-        }
-
+       
     }
 }

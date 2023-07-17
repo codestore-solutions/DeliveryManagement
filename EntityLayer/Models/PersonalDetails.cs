@@ -34,11 +34,6 @@ namespace EntityLayer.Models
         [Required]
         [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }
-        public enum AvailabilityStatus
-        {
-            OffDuty = 0,
-            OnDuty = 1,
-        }
-        public AvailabilityStatus AgentStatus { get; set; }
+     
     }
 }

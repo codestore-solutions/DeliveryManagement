@@ -5,14 +5,11 @@ using EntityLayer.Common;
 using EntityLayer.Dtos;
 using EntityLayer.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
-using Microsoft.Extensions.Logging.Abstractions;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
+using System.Drawing;
+using System.Text.RegularExpressions;
+using static EntityLayer.Models.PersonalDetails;
 
 namespace BusinessLogicLayer.Services
 {
@@ -77,40 +74,42 @@ namespace BusinessLogicLayer.Services
             };
         }
 
-        public async Task<ResponseDto> UpdateAgentAvailabilityStatusAsync(UpdateAgentAvailabilityStatusDto statusDto)
-        {
-            var agent = await unitOfWork.PersonalDetailsRepository.GetAll().FirstOrDefaultAsync(u => u.DeliveryAgentId == statusDto.DeliveryAgentId);
-
-            if(agent != null)
-            {
-                agent.AgentStatus = (PersonalDetails.AvailabilityStatus)statusDto.AgentStatus;
-                await unitOfWork.SaveAsync();
-            }
-
-            return new ResponseDto
-            {
-                StatusCode      = 200,
-                Success         = true,
-                Data            = agent,
-                Message = StringConstant.UpdatedMessage,
-            };
-        }
-
-        public async Task<ResponseDto> GetAllDetailsAsync()
+        public async Task<ResponseDto> GetAllDetailsAsync( string? filterOn, string? filterQuery, int? agentStatus,
+        int pageNumber = 1, int limit = 10)
         {
             var allDetails = await unitOfWork.PersonalDetailsRepository.GetAll()
-            .Join(
-                 unitOfWork.ServiceLocationRepository.GetAll().Where(u => u.IsActive == true),             
-                 pd => pd.DeliveryAgentId,
-                 sl => sl.DeliveryAgentId,
-                 (pd, sl) => new { PersonalDetails = pd, ServiceLocation = sl}
-                 ).ToListAsync();
+           .Join(
+                unitOfWork.ServiceLocationRepository.GetAll().Where(u => u.IsActive == true && ( agentStatus == null || u.AgentStatus == (ServiceLocation.AvailabilityStatus)agentStatus)),
+                pd => pd.DeliveryAgentId,
+                sl => sl.DeliveryAgentId,
+                (pd, sl) => new { PersonalDetails = pd, ServiceLocation = sl }
+                ).Skip((pageNumber - 1) * limit).Take(limit).ToListAsync();
+
+            if (string.IsNullOrWhiteSpace(filterOn) == false && string.IsNullOrWhiteSpace(filterQuery) == false)
+            {
+                if (filterOn.Equals("Email", StringComparison.OrdinalIgnoreCase))
+                {
+                    allDetails = await unitOfWork.PersonalDetailsRepository.GetAll().Where(u => u.Email.Contains(filterQuery))
+               .Join(
+                unitOfWork.ServiceLocationRepository.GetAll().Where(u => u.IsActive == true),
+                pd => pd.DeliveryAgentId,
+                sl => sl.DeliveryAgentId,
+                (pd, sl) => new { PersonalDetails = pd, ServiceLocation = sl }
+                ).Skip((pageNumber - 1) * limit).Take(limit).ToListAsync();
+                }
+            }
+            
+            var response = new ResponseDtoPagination
+            {
+                List  = allDetails,
+                Total = allDetails.Count,
+            };        
 
             return new ResponseDto
             {
                 StatusCode = 200,
                 Success = true,
-                Data = allDetails,
+                Data = response,
                 Message = StringConstant.SuccessMessage
             };
         }
@@ -129,14 +128,13 @@ namespace BusinessLogicLayer.Services
                  propa => propa.PersonalDetails.DeliveryAgentId,
                  vd => vd.DeliveryAgentId,
                  (p, vd) => new { p.PersonalDetails, p.BankDetails, VehicleDetails = vd }
-                )
-          /* .Join(
-                 unitOfWork.KYCRepository.GetAll(),
-                 p => p.PersonalDetails.DeliveryAgentId,
-                 k => k.DeliveryAgentId,
-                 (p, k) => new { p.PersonalDetails, p.BankDetails, p.VehicleDetails, KYC = k }
-                )*/
-                .ToListAsync();
+                ).FirstOrDefaultAsync();
+            /* .Join(
+                   unitOfWork.KYCRepository.GetAll(),
+                   p => p.PersonalDetails.DeliveryAgentId,
+                   k => k.DeliveryAgentId,
+                   (p, k) => new { p.PersonalDetails, p.BankDetails, p.VehicleDetails, KYC = k }
+                  )*/
 
             return new ResponseDto
             {

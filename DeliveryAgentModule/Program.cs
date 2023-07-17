@@ -91,7 +91,7 @@ namespace DeliveryAgentModule
             builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IAssignDeliveryAgentService, AssignDeliveryAgentService>();
             builder.Services.AddScoped<IImageService, ImageService>();
-            builder.Services.AddScoped<IWorkingLocationService, WorkingLocationService>();
+            builder.Services.AddScoped<IServiceLocationService, ServiceLocationService>();
             builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
             builder.Services.AddScoped<IPersonalDetailsService, PersonalDetailsService>();
             builder.Services.AddScoped<IBankDetailsService, BankDetailsService>();  

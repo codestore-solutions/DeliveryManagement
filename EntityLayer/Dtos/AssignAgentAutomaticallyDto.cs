@@ -7,27 +7,55 @@ using System.Threading.Tasks;
 
 namespace EntityLayer.Dtos
 {
+    public class AssignAutomaticObjectDto
+    {
+        [Required]
+        public long OrderId { get; set; } 
+
+        [Required]
+        public string VendorAddress { get; set; } = null!;
+
+        [Required]
+        public double PickupLatitude { get; set; }
+
+        [Required]
+        public double PickupLongitude { get; set; }
+
+        [Required]
+        public string DeliveryAddress { get; set; } = null!;
+
+        [Required]
+        public double DeliveryAddressLatitude { get; set; } 
+
+        [Required]
+        public double DeliveryAddressLongitude { get; set; }
+
+    }
+
     public class AssignAgentAutomaticallyDto
     {
+        public List<AssignAutomaticObjectDto> List { get; set; } = null!;
+        /*[Required]
+        public List<long> OrderIds { get; set; } = null!;
 
         [Required]
-        public long OrderId { get; set; }
+        public List<string> VendorAddresses { get; set; } = null!;
 
         [Required]
-        public double PickupLatitude { get; set; }                          // Vendor Latitude4
+        public List<double> PickupLatitudes { get; set; } = null!;
 
         [Required]
-        public double PickupLongitude { get; set; }                         // Vendor Longitude
+        public List<double> PickupLongitudes { get; set; } = null!;
 
         [Required]
-        public double DeliveryAddressLatitude { get; set; }                 // Customer Shipping/Delivery Latitude
+        public List<string> DeliveryAddresses { get; set; } = null!;
 
         [Required]
-        public double DeliveryAddressLongitude { get; set; }                // Customer Shipping/Delivery Longitude
+        public List<double> DeliveryAddressLatitudes { get; set; } = null!;
 
         [Required]
-        public long BusinessId { get; set; }
-        
+        public List<double> DeliveryAddressLongitudes { get; set; } = null!;*/
+
     }
     
 }

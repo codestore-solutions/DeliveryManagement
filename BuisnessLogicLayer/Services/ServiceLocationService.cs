@@ -13,21 +13,20 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.Services
 {
-    public class WorkingLocationService : IWorkingLocationService
+    public class ServiceLocationService : IServiceLocationService
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
 
-        public WorkingLocationService(IUnitOfWork unitOfWork, IMapper mapper)
+        public ServiceLocationService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
         }
 
         public async Task<ResponseDto> AddNewWorkingLocationAsync(AddNewWorkingLocationDto workingLocationDto)
-        {
-            // validate delivery agent Id 
-   
+        { 
+
             var addNewWorkingLocation = new ServiceLocation();
             mapper.Map(workingLocationDto, addNewWorkingLocation);
 
@@ -36,9 +35,9 @@ namespace BusinessLogicLayer.Services
             TimeSpan toTime      = TimeSpan.Parse(workingLocationDto.ToTime);
 
             addNewWorkingLocation.SelectedDays = concatenatedSelectedDays;
-            addNewWorkingLocation.StartTime  = fromTime;
-            addNewWorkingLocation.EndTime    = toTime;
-            addNewWorkingLocation.IsActive   = false;
+            addNewWorkingLocation.StartTime    = fromTime;
+            addNewWorkingLocation.EndTime      = toTime;
+            addNewWorkingLocation.IsActive     = false;
 
             await unitOfWork.ServiceLocationRepository.AddAsync(addNewWorkingLocation);
             bool saveResult = await unitOfWork.SaveAsync();
@@ -48,7 +47,7 @@ namespace BusinessLogicLayer.Services
                 StatusCode  = saveResult ? 200 : 500,
                 Success     = saveResult,
                 Data        = addNewWorkingLocation,
-                Message     = saveResult ? StringConstant.AddedMessage : StringConstant.ErrorMessage
+                Message     = saveResult ? StringConstant.AddedMessage : StringConstant.DatabaseMessage
             };
         }
 
@@ -99,10 +98,12 @@ namespace BusinessLogicLayer.Services
         {
             var agentLocations = await unitOfWork.ServiceLocationRepository.GetAll().Where(u => u.DeliveryAgentId == activeAddressDto.DeliveryAgentId).ToListAsync();
 
+            var responseObject = new object();
             foreach(var location in agentLocations)
             {
                 if(location.ServiceLocationId == activeAddressDto.ServiceLocationId)
                 {
+                    responseObject = location;
                     location.IsActive = activeAddressDto.IsActive;
                 }
                 else
@@ -117,11 +118,41 @@ namespace BusinessLogicLayer.Services
             {
                 StatusCode = saveResult ? 200 : 500,
                 Success    = saveResult,
+                Data       = responseObject,
                 Message    = saveResult ? StringConstant.UpdatedMessage : StringConstant.DatabaseMessage
             };        
         }
 
+        public async Task<ResponseDto> UpdateAgentAvailabilityStatusAsync(UpdateAgentAvailabilityStatusDto statusDto)
+        {
+            var agentLocations = await unitOfWork.ServiceLocationRepository.GetAll().Where(u => u.DeliveryAgentId == statusDto.DeliveryAgentId).ToListAsync();
 
+            foreach (var agent in agentLocations)
+            {       
+                 agent.AgentStatus = (ServiceLocation.AvailabilityStatus)statusDto.AgentStatus;                        
+            }
+            bool saveResult = await unitOfWork.SaveAsync();
+            return new ResponseDto
+            {
+                StatusCode  = saveResult ? 200 : 500,
+                Success     = saveResult,
+                Data        = agentLocations,
+                Message     = saveResult ? StringConstant.UpdatedMessage : StringConstant.DatabaseMessage,
+            };
+        }
+
+        public async Task<ResponseDto> GetAgentAvailabilityStatusAsync(long agentId)
+        {
+            var agent = await unitOfWork.ServiceLocationRepository.GetAll().FirstOrDefaultAsync(u => u.DeliveryAgentId == agentId && u.IsActive);
+
+            return new ResponseDto
+            {
+                StatusCode = 200,
+                Success    = true,
+                Data       = agent,
+                Message    = StringConstant.SuccessMessage,
+            };
+        }
     }
 
 }
