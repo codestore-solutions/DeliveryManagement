@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,41 +6,71 @@ import {
   Pressable,
   TouchableOpacity,
   ScrollView,
-  SafeAreaView,
+  ActivityIndicator,
 } from 'react-native';
 import {AddIcon, CheckedRadioIcon, ReadioIcon} from '../../assets';
 import globalStyle from '../../global/globalStyle';
 import SelectTimeScreen from '../DayandTime/SelectTimeScreen';
 import AddNewAddress from '../AddNewAddress/AddNewAddress';
+import AddressService from '../../services/AddressSevice';
+import {useAppSelector} from '../../store/hooks';
+import {RootState} from '../../store/index';
+import {AuthStateInterface} from '../../store/features/authSlice';
+import { setLocationIntrface } from '../../utils/types/addressTypes';
 
 const AddAddress = () => {
+  const {data} = useAppSelector(
+    (state: RootState) => state.auth,
+  ) as AuthStateInterface;
   const [selectedIndex, setIndex] = React.useState(0);
+  const [locations, setLocations] = React.useState<any>(null);
   const [edit, setEdit] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const isEdit = () => {
     setEdit(true);
   };
   const isEditCancel = () => {
     setEdit(false);
   };
+  // Set Working Loation
+  const setActiveLoation = async(item:any) =>{
+      let payload: setLocationIntrface ={
+        serviceLocationId: item?.serviceLocationId,
+        deliveryAgentId: Number(data?.id),
+        isActive: true
+      }
+      try {
+        const {statusCode} = await AddressService.setWorkingLocation(payload);
+        if(statusCode === 200){
+          await fetchloactions(Number(data?.id));
+        }
+      } catch (err) {
+          console.log('Error op setting working location', err);
+      }
+  }
+
   const renderItem = (item: any) => {
     return (
-      <View style={styles.card} key={item.id}>
+      <Pressable style={styles.card} key={item.id} onPress={() => setActiveLoation(item)}>
         <View style={styles.cardLeft}>
-          {item.checked ? (
+          {item?.isActive ? (
             <CheckedRadioIcon width={20} height={20} />
           ) : (
             <ReadioIcon width={20} height={20} />
           )}
         </View>
         <View style={styles.cardRight}>
-          <Text style={styles.cardheading}>{item.title}</Text>
-          <Text style={styles.carddesc}>{item.description}</Text>
+          <Text style={styles.cardheading}>{item?.locationName}</Text>
+          <Text style={styles.carddesc}>{item.address}</Text>
           <View style={styles.cardFooter}>
             <View style={styles.cardFooterLeft}>
-              <Text style={styles.time}>{item.time}</Text>
+              <Text style={styles.time}>{item?.selectedDays}</Text>
+              <Text style={styles.time}>
+                {item?.startTime + '-' + item?.endTime}
+              </Text>
             </View>
             <View style={styles.cardFooterRight}>
-              <TouchableOpacity style={styles.btn}>
+              <TouchableOpacity style={styles.btn} onPress={() => deleteLocation(Number(item?.serviceLocationId))}>
                 <Text style={styles.btnTxt}>Delete</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.btn}>
@@ -49,32 +79,63 @@ const AddAddress = () => {
             </View>
           </View>
         </View>
-      </View>
+      </Pressable>
     );
   };
 
-  const data = [
-    {
-      id: '1',
-      title: 'Home',
-      description:
-        'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis eius commodi saepe.',
-      time: 'Mon-Wed (9:00 - 15:00)',
-      checked: true,
-    },
-    {
-      id: '2',
-      title: 'Work',
-      description:
-        'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis eius commodi saepe.',
-      time: 'Mon-Wed (9:00 - 15:00)',
-      checked: false,
-    },
-  ];
+  // const dataArr = [
+  //   {
+  //     id: '1',
+  //     title: 'Home',
+  //     description:
+  //       'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis eius commodi saepe.',
+  //     time: 'Mon-Wed (9:00 - 15:00)',
+  //     checked: true,
+  //   },
+  //   {
+  //     id: '2',
+  //     title: 'Work',
+  //     description:
+  //       'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis eius commodi saepe.',
+  //     time: 'Mon-Wed (9:00 - 15:00)',
+  //     checked: false,
+  //   },
+  // ];
+  const deleteLocation = async (id:number) =>{
+    console.log('id', id);
+    try {
+      setLoading(true);
+      const {data, statusCode} = await AddressService.deleteWorkingLocations(id);
+      console.log('data', data, statusCode)
+      if (statusCode === 200){
+         let filterloc = locations?.filter((item:any) => item?.serviceLocationId !== id);
+         setLocations(filterloc);
+      } 
+    } catch (err) {
+      console.log('Location fetching error', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchloactions = async (id: number) => {
+    try {
+      setLoading(true);
+      const {data, statusCode} = await AddressService.getWorkingLocations(id);
+      if (statusCode === 200) setLocations(data);
+    } catch (err) {
+      console.log('Location fetching error', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchloactions(Number(data?.id));
+  }, []);
+
   if (edit) {
-    return (
-        <AddNewAddress onCancel={isEditCancel} />
-    );
+    return <AddNewAddress onCancel={isEditCancel} />;
   } else {
     return (
       <View style={styles.container}>
@@ -86,7 +147,14 @@ const AddAddress = () => {
         </View>
         <View style={styles.content}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            {data.map(item => renderItem(item))}
+            {loading ? (
+              <ActivityIndicator
+                color={globalStyle.colors.baseColor}
+                size={'large'}
+              />
+            ) : (
+              locations?.map((item: any) => renderItem(item))
+            )}
           </ScrollView>
         </View>
       </View>

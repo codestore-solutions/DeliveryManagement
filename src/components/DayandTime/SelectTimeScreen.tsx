@@ -55,7 +55,7 @@ const SelectTimeScreen: React.FC<Props> = ({
       <ScrollView
         style={{flexGrow: 1}}
         contentContainerStyle={styles.timeLine}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={true}>
         {alldays?.map(item => (
           <TouchableOpacity
             key={item}

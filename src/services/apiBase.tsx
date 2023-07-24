@@ -1,22 +1,25 @@
 // import {useNavigation} from '@react-navigation/native';
 import {constant} from '../constant/GenralConstant'
+import { RootState } from '../store';
+import { useAppSelector } from '../store/hooks';
 import axios from '../utils/intercepters/axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import UserHelper from '../utils/helpers/user'
 /**
  * @param payload Request Body
  * @param endpoint  End Point Url for Target Api
  * @param apiMethod Http Method Type
- * @param params  Toksen require for Remove data Api Validation
+ * @param params  Params Object for Api Params
+ * @param auth Token for User Validation
  * @returns Genric http methods response
  */
 export default async function API(
   payload: Object,
   endpoint: string,
   apiMethod: string,
-  params?: Object
+  params?: Object,
+  auth?: string
 ) {
-  let auth = '';
   let init: Object = {};
   switch (apiMethod) {
     case "GET":

@@ -1,11 +1,10 @@
 import {View, Text, SafeAreaView, FlatList} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {useNavigation} from '@react-navigation/native';
-import {RootStackParamList} from '../../navigations/types';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import styles from './AssignmentStyle';
-import {VericalMenuIcon} from '../../assets';
+import {useNavigation} from '@react-navigation/native';
+import {NavigationProps} from '../../navigations/types';
 import ReqComponent from '../../components/common/ReqComponent/ReqComponent';
+import {VericalMenuIcon} from '../../assets';
 import OrderServices from '../../services/OrderServices';
 import {ApiConstant} from '../../constant/ApiConstant';
 import Loader from '../../components/common/Loader/Loader';
@@ -42,32 +41,29 @@ const data = [
     destination: '4653 Clearview Drive USA',
     clientName: 'David Vese',
     earning: ' $ 10',
-  }, 
+  },
 ];
-
 interface Props {
   userData: any;
 }
-
-const AssignmentScreen: React.FC<Props> = ({userData}) => {
+const PendingAssignment: React.FC<Props> = ({userData}) => {
   const [orderList, setOrderList] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<NavigationProps>();
   const navigate = () => {
     navigation.navigate('AssignmentDetail');
   };
   const renderItem = ({item}: any) => (
-    <ReqComponent item={item} onPress={navigate} />
+    <ReqComponent item={item} onPress={navigate} type={1} />
   );
 
-  const fetchAcceptedRequestList = async (userData: any) => {
+  const fetchPendingRequestList = async (userData: any) => {
     try {
       setLoading(true);
       let payload = {
         page: 1,
         pageSize: 10,
-        status: [5],
+        status: [5, 8],
       };
       const {data, statusCode} = await OrderServices.getDeliveryRquests(
         payload,
@@ -81,12 +77,13 @@ const AssignmentScreen: React.FC<Props> = ({userData}) => {
       console.log('Fexthing Pending Request Error', err);
     } finally {
       setLoading(false);
-    }   
+    }
   };
 
   useEffect(() => {
-    fetchAcceptedRequestList(userData);
+    fetchPendingRequestList(userData);
   }, []);
+
   return (
     <SafeAreaView style={{flex: 1}}>
       {loading ? (
@@ -94,7 +91,7 @@ const AssignmentScreen: React.FC<Props> = ({userData}) => {
       ) : (
         <View style={styles.container}>
           <View style={styles.header}>
-            <Text style={styles.pageHeading}>Ongoing Request</Text>
+            <Text style={styles.pageHeading}>Pending Request</Text>
             <View style={styles.menuIcon}>
               <VericalMenuIcon width={20} height={20} />
             </View>
@@ -103,7 +100,7 @@ const AssignmentScreen: React.FC<Props> = ({userData}) => {
             data={orderList?.list}
             showsVerticalScrollIndicator={false}
             renderItem={renderItem}
-            keyExtractor={item => item.id}
+            keyExtractor={item => item?.id}
             style={styles.content}
           />
         </View>
@@ -112,4 +109,4 @@ const AssignmentScreen: React.FC<Props> = ({userData}) => {
   );
 };
 
-export default AssignmentScreen;
+export default PendingAssignment;

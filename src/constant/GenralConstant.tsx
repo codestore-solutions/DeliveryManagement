@@ -7,7 +7,7 @@ export var constant = {
   splashScreenTiltle:'Welcome to Agent App',
   drawernavItems:{
      item1:'Dashboard',
-     item2:'My Delivery Request',
+     item2:'Delivery Request',
      item3:'My Location',
      item4:'Notification',
      item5:'Settings',

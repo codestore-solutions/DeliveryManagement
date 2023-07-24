@@ -1,26 +1,57 @@
-import {StyleSheet, Text, View, Pressable} from 'react-native';
-import React from 'react';
+import { View } from 'react-native';
+import React,{useState} from 'react';
 import {Formik} from 'formik';
 import globalStyle from '../../global/globalStyle';
 import CustomTextInput from '../common/CustomInput/CustomTextInput';
-import DateInput from '../common/CustomDateInput/DateInput';
 import CustomButton from '../common/CustomButton/CustomButton';
 import { bankDetailvalidationSchema } from '../../utils/validations/userValidation';
 import styles from './DetailStyle'
+import { bankDetailInterface } from '../../utils/types/UserTypes';
+import AgentServices from '../../services/AgentServices';
 
+interface Props{
+  onCancel: () => void;
+  data: any;
+  bankDetails: any;
+  updateDetails: (data:any) => void;
+}
 
-const BankDetailForm:React.FC<{onCancel: () => void;}>= ({onCancel}) => {
-  
-  const submitHandler = (values: any) => {
-    console.log('values', values);
+const BankDetailForm:React.FC<Props>= ({onCancel, data, bankDetails, updateDetails}) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const submitHandler = async (values: any) => {
+    let payload: bankDetailInterface ={
+      deliveryAgentId: Number(data?.id),
+      yourName: values?.name,
+      bankName: values?.bankname,
+      ifscCode: values?.ifsccode,
+      accountNumber: values?.accountNumber
+    }
+    console.log('payload', payload);
+    try {
+      setLoading(true);
+      if (bankDetails) {
+        const {data, statusCode} = await AgentServices.updatebankDetail(
+          payload,
+          bankDetails?.id,
+        );
+        if(statusCode === 200) updateDetails(data);
+      } else {
+        const {data, statusCode} = await AgentServices.addBankDetails(payload);
+        if(statusCode === 200) updateDetails(data);
+      }
+    } catch (err) {
+      console.log('Add Vechile Detail Error', err);
+    } finally{
+        setLoading(false);
+    }
   };
   return (
     <Formik
       initialValues={{
-        name: '',
-        bankname: '',
-        ifsccode: '',
-        accountNumber: '',
+        name:  bankDetails?.yourName ?? '',
+        bankname: bankDetails?.bankName ?? '',
+        ifsccode:bankDetails?.ifscCode ?? '',
+        accountNumber:bankDetails?.accountNumber ?? '',
       }}
       validationSchema={bankDetailvalidationSchema}
       onSubmit={(values) => submitHandler(values)}>
@@ -61,7 +92,8 @@ const BankDetailForm:React.FC<{onCancel: () => void;}>= ({onCancel}) => {
           <View style={styles.lower}>
             <View style={styles.btnConatiner}>
               <View style={{width: '50%'}}>
-                <CustomButton title={'Add Details'}  onPress={handleSubmit}/>
+                <CustomButton title={ bankDetails ?'Update':'Add'} disabled={loading}  onPress={handleSubmit}/>
+             
               </View>
               <View style={{width: '50%'}}>
                 <CustomButton

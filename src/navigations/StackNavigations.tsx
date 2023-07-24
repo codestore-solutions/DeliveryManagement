@@ -18,15 +18,16 @@ import {TabHeader} from '../components';
 import {constant} from '../constant/GenralConstant';
 import {useAppDispatch, useAppSelector} from '../store/hooks';
 import {AuthStateInterface, initializeAuthStateUser, userSelector} from '../store/features/authSlice';
-
 const RootStack = createStackNavigator<RootStackParamList>();
+
 const StackNavigations = () => {
   const dispatch = useAppDispatch();
   const navigation =
     useNavigation<NavigationProps>();
-  const {isAuthenticated, loading} = useAppSelector(
+  const {isAuthenticated, loading, data} = useAppSelector(
     userSelector,
   ) as AuthStateInterface;
+  console.log("A", data);
   // Initalize the state
   useEffect(() => {
     dispatch(initializeAuthStateUser());

@@ -38,3 +38,5 @@ export {default as QrCodeIcon} from './svgs/qr.svg'
 export {default as DangerIcon} from './svgs/danger.svg'
 export {default as InputEmailIcon} from './svgs/mail.svg'
 export {default as InputEyeOffIcon} from './svgs/eye-off.svg'
+export {default as StarIcon} from './svgs/star.svg';
+export {default as StarWhiteIcon} from './svgs/whitestar.svg';

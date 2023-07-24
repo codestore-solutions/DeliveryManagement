@@ -2,28 +2,33 @@ import {View, Text} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {TabView, TabBar} from 'react-native-tab-view';
 import styles from './CreateProfileStyle';
-import {BankDetails, KycDetails, PersonalDetails, VechileDetails} from '../../components';
-import UserService from '../../services/UserService';
-import { useAppSelector } from '../../store/hooks';
-import { RootState } from '../../store';
-import {AuthStateInterface} from '../../store/features/authSlice'
+import {
+  BankDetails,
+  KycDetails,
+  PersonalDetails,
+  VechileDetails,
+} from '../../components';
+import {useAppSelector} from '../../store/hooks';
+import {RootState} from '../../store';
+import {AuthStateInterface} from '../../store/features/authSlice';
 
 const CreateProfile = () => {
-  const {data} = useAppSelector((state:RootState) => state.auth) as  AuthStateInterface
+  const {data} = useAppSelector(
+    (state: RootState) => state.auth,
+  ) as AuthStateInterface;
   const [index, setIndex] = useState(0);
   const [routes] = useState([
     {key: '1', title: 'Pesonal Details'},
     {key: '2', title: 'KYC'},
-    {key: '3', title: 'Vechile Details'},
+    {key: '3', title: 'Vehicle Details'},
     {key: '4', title: 'Bank Details'},
   ]);
-
   const renderScene = ({route}: any) => {
     switch (route.key) {
       case '1':
         return (
           <View style={styles.sceneContainer}>
-            <PersonalDetails data={data}  />
+            <PersonalDetails data={data} />
           </View>
         );
       case '2':
@@ -38,10 +43,10 @@ const CreateProfile = () => {
             <VechileDetails data={data} />
           </View>
         );
-        case '4':
+      case '4':
         return (
           <View style={styles.sceneContainer}>
-            <BankDetails />
+            <BankDetails data={data} />
           </View>
         );
       default:
@@ -72,7 +77,6 @@ const CreateProfile = () => {
       )}
     />
   );
-  
 
   return (
     <TabView

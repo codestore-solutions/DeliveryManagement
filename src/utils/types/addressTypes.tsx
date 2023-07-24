@@ -8,3 +8,11 @@ export interface addNewWorkingLocationInterface{
   latitude?: number,
   longitude?: number
 }
+
+export interface setLocationIntrface{
+    serviceLocationId: number,
+    deliveryAgentId: number,
+    isActive: boolean
+  
+}
+

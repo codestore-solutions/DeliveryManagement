@@ -18,3 +18,4 @@ export {default as  SelectTimeScreen}  from './DayandTime/SelectTimeScreen';
 export {default as AddNewAddress}  from './AddNewAddress/AddNewAddress';
 export {default as Timeline} from './common/TimeLine/TimeLine';
 export {default as Toast} from './common/Toast/Toast'
+export {default as FeedbackCard} from './common/FeedbackCard/FeedbackCard'

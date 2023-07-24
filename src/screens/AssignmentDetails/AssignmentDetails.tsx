@@ -14,10 +14,10 @@ import {CustomButton, Timeline} from '../../components';
 import CustomModal from '../../components/common/CustomModal/CustomModal';
 import ModalMessage from '../../components/common/ModalMessage/ModalMessage';
 import OtpForm from '../../components/OtpForm/OtpForm';
-
-
+import FeedBackScreen from '../FeedBackScreen/FeedBackScreen';
 
 const AssignmentDetails = () => {
+  let orderCompleted = true;
   const [visible, setVisible] = useState<boolean>(false);
   const [otpvisible, otpsetVisible] = useState<boolean>(false);
   const openModal = () => {
@@ -109,18 +109,24 @@ const AssignmentDetails = () => {
             <Text style={styles.labeltxt}> $10</Text>
           </View>
         </View>
-        <Timeline data={data} currentIndex={3} />
-        <View style={styles.qrContainer}>
-          <TouchableOpacity onPress={otpopenModal}>
-            <Text style={styles.btntxt}>Submit OTP</Text>
-          </TouchableOpacity>
-          <View style={styles.qr}>
-            <QrCodeIcon width={80} height={80} />
+        {orderCompleted ? (
+           <FeedBackScreen /> 
+        ) : (
+          <View>
+            <Timeline data={data} currentIndex={3} />
+            <View style={styles.qrContainer}>
+              <TouchableOpacity onPress={otpopenModal}>
+                <Text style={styles.btntxt}>Submit OTP</Text>
+              </TouchableOpacity>
+              <View style={styles.qr}>
+                <QrCodeIcon width={80} height={80} />
+              </View>
+              <View style={styles.btnContainer}>
+                <CustomButton title={'Cash Collected'} onPress={openModal} />
+              </View>
+            </View>
           </View>
-          <View style={styles.btnContainer}>
-            <CustomButton title={'Cash Collected'} onPress={openModal} />
-          </View>
-        </View>
+        )}
       </SafeAreaView>
       <CustomModal
         visible={visible}
@@ -135,9 +141,7 @@ const AssignmentDetails = () => {
       <CustomModal
         visible={otpvisible}
         closeModal={otpcloseModal}
-        element={
-          <OtpForm/>
-        }
+        element={<OtpForm />}
       />
     </ScrollView>
   );

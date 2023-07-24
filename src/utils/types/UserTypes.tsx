@@ -22,3 +22,15 @@ export interface vechleDteailInterface{
      registrationNumber: string
 }
 
+export interface bankDetailInterface{
+  deliveryAgentId: number,
+  yourName: string,
+  bankName: string,
+  ifscCode: string,
+  accountNumber: string
+}
+
+export interface updateAgentStatus{
+  deliveryAgentId: number,
+  agentStatus: number
+}

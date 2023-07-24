@@ -1,41 +1,47 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React from 'react';
+import {StyleSheet, Text, View} from 'react-native';
+import React, {useState} from 'react';
 import CustomTextInput from '../common/CustomInput/CustomTextInput';
 import SelectTimeScreen from '../DayandTime/SelectTimeScreen';
 import globalStyle from '../../global/globalStyle';
 import CustomButton from '../common/CustomButton/CustomButton';
-import { Formik } from 'formik';
-import { addAddresschema } from '../../utils/validations/addressValidation';
-import { addNewWorkingLocationInterface } from '../../utils/types/addressTypes';
-import { useAppSelector } from '../../store/hooks';
-import { RootState } from '../../store';
+import {Formik} from 'formik';
+import {addAddresschema} from '../../utils/validations/addressValidation';
+import {addNewWorkingLocationInterface} from '../../utils/types/addressTypes';
+import {useAppSelector} from '../../store/hooks';
+import {RootState} from '../../store';
 import AddressService from '../../services/AddressSevice';
 
 interface Props {
   onCancel: () => void;
 }
 
-const AddNewAddress: React.FC<Props> = ({ onCancel }) => {
+const AddNewAddress: React.FC<Props> = ({onCancel}) => {
   const {data} = useAppSelector((state: RootState) => state.auth);
-  const addAddressHandler =  (values: any) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const addAddressHandler = async (values: any) => {
     let payload: addNewWorkingLocationInterface = {
-        deliveryAgentId: Number(data?.id),
-        locationName:values?.location,
-        address: values?.address,
-        fromTime: values?.dayAndtime?.fromTime,
-        toTime:  values?.dayAndtime?.toTime,
-        selectDays:  values?.dayAndtime?.days,
+      deliveryAgentId: Number(data?.id),
+      locationName: values?.location,
+      address: values?.address,
+      fromTime: values?.dayAndtime?.fromTime,
+      toTime: values?.dayAndtime?.toTime,
+      selectDays: values?.dayAndtime?.days,
+    };
+    try {
+      setLoading(true);
+      const {data} = await AddressService.addNewWorkingLocation(payload);
+      console.log('data');
+    } catch (err) {
+      console.log('err', err);
+    } finally {
+      setLoading(false);
     }
-
-      AddressService.addNewWorkingLocation(payload).then((res) =>{
-           console.log("Res", res);
-      });
   };
 
-  const addValue = (value:any, setFieldValue:any, formTag:any) => {
+  const addValue = (value: any, setFieldValue: any, formTag: any) => {
     // Set the value of the number field here...
-    setFieldValue(formTag, value)
-}
+    setFieldValue(formTag, value);
+  };
   return (
     <Formik
       initialValues={{
@@ -48,9 +54,8 @@ const AddNewAddress: React.FC<Props> = ({ onCancel }) => {
         },
       }}
       validationSchema={addAddresschema}
-      onSubmit={addAddressHandler}
-    >
-      {({ handleChange, handleBlur, handleSubmit, setFieldValue, values, errors }) => (
+      onSubmit={addAddressHandler}>
+      {({handleChange, handleSubmit, setFieldValue, values, errors}) => (
         <View style={styles.container}>
           <Text style={styles.heading}>Please fill the following details</Text>
           <View style={styles.form}>
@@ -76,10 +81,10 @@ const AddNewAddress: React.FC<Props> = ({ onCancel }) => {
             />
           </View>
           <View style={styles.btnConatiner}>
-            <View style={{ width: '50%' }}>
-              <CustomButton title={'Add Details'} onPress={handleSubmit} />
+            <View style={{width: '50%'}}>
+              <CustomButton disabled={loading} title={'Add Details'} onPress={handleSubmit} />
             </View>
-            <View style={{ width: '50%' }}>
+            <View style={{width: '50%'}}>
               <CustomButton
                 title={'Cancel'}
                 outline={true}

@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View, Pressable} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import {Formik} from 'formik';
 import globalStyle from '../../global/globalStyle';
 import CustomTextInput from '../common/CustomInput/CustomTextInput';
@@ -23,6 +23,7 @@ const PersonalDetailForm: React.FC<Props> = ({
   updateDetails,
   data,
 }) => {
+  const [loading, setLoading] = useState<boolean>(false);
   const handleDateChange = (handleChange: any, date: any) => {
     handleChange('dob')(date);
   };
@@ -36,31 +37,38 @@ const PersonalDetailForm: React.FC<Props> = ({
       gender: values?.gender,
       dateOfBirth: values?.dob,
     };
-    if (personalDetails) {
-      const {data} = await AgentServices.updatePersonalDetail(
-        payload,
-        personalDetails?.id,
-      );
-      updateDetails(data);
-    } else {
-      const {data} = await AgentServices.addPersonalDetail(payload);
-      updateDetails(data);
+    try {
+      setLoading(true);
+      if (personalDetails) {
+        const {data, statusCode} = await AgentServices.updatePersonalDetail(
+          payload,
+          personalDetails?.id,
+        );
+        if (statusCode === 200) updateDetails(data);
+      } else {
+        const {data, statusCode} = await AgentServices.addPersonalDetail(
+          payload,
+        );
+        if (statusCode === 200) updateDetails(data);
+      }
+    } catch (err) {
+      console.log('Personal Detail Error', err);
+    } finally {
+      setLoading(false);
     }
   };
   return (
     <Formik
       initialValues={{
-        name: personalDetails ? personalDetails?.fullName : '',
-        email: data ? data?.email : '',
-        mobileNo: personalDetails ? personalDetails?.phoneNumber : '',
-        dob: personalDetails
-          ? moment(personalDetails?.dateOfBirth).format('YYYY-MM-DD')
-          : '',
-        gender: personalDetails ? personalDetails?.gender : '',
+        name: personalDetails?.fullName ?? '',
+        email: data?.email ?? '',
+        mobileNo: personalDetails?.phoneNumber ?? '',
+        dob: moment(personalDetails?.dateOfBirth).format('YYYY-MM-DD') ?? '',
+        gender: personalDetails?.gender ?? '',
       }}
       validationSchema={personaDetailsValidation}
       onSubmit={values => submitHandler(values)}>
-      {({handleChange, handleBlur, handleSubmit, values, errors}) => (
+      {({handleChange, handleSubmit, values, errors}) => (
         <View style={[globalStyle.container, styles.formContainer]}>
           <CustomTextInput
             placeholder={'Enter your name..'}
@@ -75,6 +83,7 @@ const PersonalDetailForm: React.FC<Props> = ({
             label={'Email'}
             value={values.email}
             name={'email'}
+            disabled={true}
             onChangeText={text => handleChange('email')(text)}
             errors={errors}
           />
@@ -103,7 +112,11 @@ const PersonalDetailForm: React.FC<Props> = ({
           <View style={styles.lower}>
             <View style={styles.btnConatiner}>
               <View style={{width: '50%'}}>
-                <CustomButton title={'Add Details'} onPress={handleSubmit} />
+                <CustomButton
+                  title={personalDetails ? 'Update' : 'Add'}
+                  onPress={handleSubmit}
+                  disabled={loading}
+                />
               </View>
               <View style={{width: '50%'}}>
                 <CustomButton

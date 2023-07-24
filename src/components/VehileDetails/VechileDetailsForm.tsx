@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View, Pressable, ScrollView} from 'react-native';
-import React from 'react';
+import React,{useState} from 'react';
 import {Formik} from 'formik';
 import globalStyle from '../../global/globalStyle';
 import CustomTextInput from '../common/CustomInput/CustomTextInput';
@@ -27,13 +27,7 @@ const VechileDetailsForm: React.FC<Props> = ({
   vechileDetails,
   updateDetails,
 }) => {
-  const handleDateChange = (handleChange: any, date: any) => {
-    // Custom logic for handling date changes
-    console.log('Selected date:', date);
-    handleChange('dob')(date);
-    // Update the state or perform any other necessary operations
-  };
-
+  const [loading, setLoading] = useState<boolean>(false);
   const submitHandler = async (values: any) => {
     let payload: vechleDteailInterface = {
       deliveryAgentId: Number(data?.id),
@@ -46,6 +40,7 @@ const VechileDetailsForm: React.FC<Props> = ({
     };
     console.log('payload', payload);
     try {
+      setLoading(true);
       if (vechileDetails) {
         const {data} = await AgentServices.updateVechileDetail(
           payload,
@@ -59,21 +54,23 @@ const VechileDetailsForm: React.FC<Props> = ({
       }
     } catch (err) {
       console.log('Add Vechile Detail Error', err);
+    }finally{
+       setLoading(false)
     }
   };
   return (
     <Formik
       initialValues={{
-        vechileType: vechileDetails ? vechileDetails?.vehicleType: '',
-        company:vechileDetails ? vechileDetails?.companyName: '',
-        model:vechileDetails ? vechileDetails?.model: '',
-        numberPlate:vechileDetails ? vechileDetails?.numberPlate: '',
-        registrationNumber:vechileDetails ? vechileDetails?.registrationNumber : '',
-        image: vechileDetails ? vechileDetails?.vehicleImageUrl: 'https://unsplash.com/s/photos/bike',
-      }}
+        vechileType:  vechileDetails?.vehicleType ?? '',
+        company: vechileDetails?.companyName ?? '',
+        model: vechileDetails?.model ?? '',
+        numberPlate: vechileDetails?.numberPlate ?? '',
+        registrationNumber: vechileDetails?.registrationNumber  ?? '',
+        image:  vechileDetails?.vehicleImageUrl ?? 'https://unsplash.com/s/photos/bike',
+      }} 
       validationSchema={vechileDetailvalidationSchema}
       onSubmit={values => submitHandler(values)}>
-      {({handleChange, handleBlur, handleSubmit, values, errors}) => (
+      {({handleChange, handleSubmit, values, errors}) => (
         <View style={[globalStyle.container, styles.formContainer]}>
           <ScrollView style={{marginBottom: 60}}>
             <CustomTextInput
@@ -126,7 +123,7 @@ const VechileDetailsForm: React.FC<Props> = ({
           <View style={styles.lower}>
             <View style={styles.btnConatiner}>
               <View style={{width: '50%'}}>
-                <CustomButton title={'Add Details'} onPress={handleSubmit} />
+                <CustomButton disabled={loading} title={ vechileDetails ?'Update':'Add'} onPress={handleSubmit} />
               </View>
               <View style={{width: '50%'}}>
                 <CustomButton

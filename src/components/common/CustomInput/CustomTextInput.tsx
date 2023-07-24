@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {TextInput, TextInputProps, View, Text} from 'react-native';
 import styles from './InputStyle';
 
+
 interface CustomTextInputProps  {
   value?:string;
   label:string;
@@ -9,6 +10,7 @@ interface CustomTextInputProps  {
   placeholder?:string;
   errors?: any;
   onChangeText: (text: string) => void;
+  disabled?: boolean;
 }
 
 const CustomTextInput: React.FC<CustomTextInputProps> = ({
@@ -18,9 +20,9 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
   errors,
   name,
   label,
+  disabled,
   ...rest
 }) => {
- 
   return (
     <View style={styles.conatiner}>
       <Text style={styles.inputlabel}>{label}</Text>
@@ -29,6 +31,7 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
           value={value}
           onChangeText={(text:any) =>onChangeText(text) }
           placeholder={placeholder}
+          editable={!disabled}
           {...rest}
         />
       </View>
