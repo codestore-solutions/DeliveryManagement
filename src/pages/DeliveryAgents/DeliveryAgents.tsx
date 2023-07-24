@@ -3,15 +3,20 @@ import type { ColumnsType } from "antd/es/table";
 // import { v4 as uuidv4 } from "uuid";
 import "./style.scss";
 // import dummyData from "../../../dummyData";
-import {  useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 // import AgentServices from "../../services/AgentServices";
 import { CustomTable } from "../../components";
 import { BusyIcon, DeleteIcon, DetailsIcon } from "../../assets";
 import { useNavigate } from "react-router-dom";
 // import dummyData from "../../../dummyData";
 import { useAppDispatch, useAppSelector } from "../../store/hooks/app";
-import { AgentStateInerface, agentSelector, getAllAgents } from "../../store/features/Agents/agentSlice";
+import {
+  AgentStateInerface,
+  agentSelector,
+  getAllAgents,
+} from "../../store/features/Agents/agentSlice";
 import CustomizeText from "../../utils/helpers/CustomizeText";
+import CustomizeDate from "../../utils/helpers/CustomizeDate";
 import { pagination } from "../../utils/types";
 // import {RightOutlined, LeftOutlined} from "@ant-design/icons";
 
@@ -24,30 +29,29 @@ export interface DataType {
   verStatus: number;
 }
 
-
-interface Props{
+interface Props {
   searchInput?: string;
   filters?: any;
 }
 
-const DeliveryAgents: React.FC<Props> = ({searchInput, filters}) => {
+const DeliveryAgents: React.FC<Props> = ({ searchInput, filters }) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const {loading, agentList}  = useAppSelector(agentSelector)  as AgentStateInerface;
+  const { loading, agentList } = useAppSelector(
+    agentSelector
+  ) as AgentStateInerface;
   const [pagination, setPagination] = useState<pagination>({
-    // simple: true,
     pageNumber: 1,
-    total: 8,
+    total: agentList?.total,
     pageSize: 6,
     showTotal: (total: any, range: any) =>
       `${range[0]}-${range[1]} of ${total} items`,
-      // nextIcon: <RightOutlined style={{ color: '#545bfc', padding:'3px',  border:'1px solid #545bfc',fontSize: '15px', borderRadius:"5px" }} />,
-      // prevIcon: <LeftOutlined style={{color: '#545bfc' , padding:'3px', border:'1px solid #545bfc',fontSize: '15px', borderRadius:"5px"  }} />,
-   
   });
-
   const handleClick = (state: any) => {
-    navigate(`/dashboard/agent-details/${state?.id}`, { state });
+    navigate(
+      `/dashboard/agent-details/${state?.personalDetails?.deliveryAgentId}`,
+      { state }
+    );
   };
 
   /**
@@ -56,15 +60,19 @@ const DeliveryAgents: React.FC<Props> = ({searchInput, filters}) => {
   const columns: ColumnsType<DataType> = [
     {
       title: "Email Id",
-      dataIndex: "agentEmailId",
-      key: "agentEmailId",
-      render: (text) => <p className="col-text">{text}</p>,
+      dataIndex: "personalDetails",
+      key: "personalDetails",
+      render: (personalDetails: any) => (
+        <p className="col-text">{personalDetails?.email}</p>
+      ),
     },
     {
       title: "Name",
-      dataIndex: "deliveryAgentName",
-      key: "deliveryAgentName",
-      render: (text) => <p className="highlighted-col-text">{text}</p>,
+      dataIndex: "personalDetails",
+      key: "personalDetails",
+      render: (personalDetails: any) => (
+        <p className="highlighted-col-text">{personalDetails?.fullName}</p>
+      ),
     },
     {
       title: "Mobile Number",
@@ -93,15 +101,13 @@ const DeliveryAgents: React.FC<Props> = ({searchInput, filters}) => {
     // },
     {
       title: "Status",
-      key: "agentStatus",
-      dataIndex: "agentStatus",
-      render: (_, { agentStatus }) => (
+      key: "serviceLocation",
+      dataIndex: "serviceLocation",
+      render: (_, { serviceLocation }:any) => (
         <>
           <span>
-            {agentStatus === 1 ? (
+            {serviceLocation?.agentStatus === 1 ? (
               <p className="available">Available</p>
-            ) : agentStatus === 2 ? (
-              <p className="busy">Busy</p>
             ) : (
               <p className="offline">offline</p>
             )}{" "}
@@ -111,16 +117,18 @@ const DeliveryAgents: React.FC<Props> = ({searchInput, filters}) => {
     },
     {
       title: "Region",
-      dataIndex: "deliveryAgentAddress",
-      key: "deliveryAgentAddress",
-      render: (text) => CustomizeText(text),
+      dataIndex: "serviceLocation",
+      key: "serviceLocation",
+      render: (serviceLocation: any) => CustomizeText(serviceLocation?.address),
     },
     {
       title: "Date",
-      dataIndex: "date",
-      key: "date",
+      dataIndex: "personalDetails",
+      key: "personalDetails",
 
-      render: () => <p className="col-text">10/01/2022</p>,
+      render: (data: any) => (
+        <p className="col-text"> {CustomizeDate.getDate(data?.dateOfBirth)} </p>
+      ),
     },
     {
       title: "Action",
@@ -139,24 +147,22 @@ const DeliveryAgents: React.FC<Props> = ({searchInput, filters}) => {
     console.log("Page", filters);
     const { current, pageSize } = pagination;
     setPagination({ ...pagination, pageNumber: current, limit: pageSize });
-    
   };
 
-  const fetchAgents = () =>{
+  const fetchAgents = () => {
     let payload = pagination;
-    
-    dispatch(getAllAgents({payload, filters, searchInput}));
-   }
+    dispatch(getAllAgents({ payload, filters, searchInput }));
+  };
 
   useEffect(() => {
-      fetchAgents();
+    fetchAgents();
   }, [dispatch, pagination.pageNumber, filters, searchInput]);
 
   return (
     <div id="delivery-agent">
       <CustomTable
         columns={columns}
-        data={agentList}
+        data={agentList?.list}
         pagination={pagination}
         handleTableChange={handleTableChange}
         loading={loading}

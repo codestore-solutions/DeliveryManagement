@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Space, Table, Tabs } from "antd";
+import { Button, Space, Table, Tabs, message } from "antd";
 import type { TabsProps } from "antd";
 import { AssignAgent } from "..";
 import "./style.scss";
@@ -24,7 +24,7 @@ interface Props {
   orders: any;
   onClose: () => void;
   fetch: any;
-  isOpen:any
+  isOpen: any;
   handleResetSelectionForOrder: () => void;
 }
 
@@ -33,7 +33,7 @@ const AutomaticAssign: React.FC<Props> = ({
   orders,
   onClose,
   fetch,
-  handleResetSelectionForOrder
+  handleResetSelectionForOrder,
 }) => {
   const [previewData, setPreviewData] = useState<Array<any>>();
   const [loading, setLoading] = useState<boolean>(false);
@@ -54,15 +54,14 @@ const AutomaticAssign: React.FC<Props> = ({
       render: (text) => <p className="tableTxt dark">{text}</p>,
     },
     {
+      title: "Agent Id",
+      dataIndex: "deliveryAgentId",
+      render: (text) => <p className="tableTxt dark">{text}</p>,
+    },
+    {
       title: "Agent Name",
       dataIndex: "deliveryAgentName",
       render: (text) => <p className="tableTxt">{text}</p>,
-    },
-    {
-      title: "Address",
-      dataIndex: "deliveryAddress",
-      render: (text) => CustomizeText(text),
-      width: "35%",
     },
     {
       title: "Action",
@@ -84,25 +83,17 @@ const AutomaticAssign: React.FC<Props> = ({
   const aasignAgentAutomatically = async () => {
     try {
       let payload = {
-        orderIds: customizeOrders[0][0],
-        pickupLatitudes: customizeOrders[0][1],
-        pickupLongitudes: customizeOrders[0][2],
-        deliveryAddressLatitudes: customizeOrders[0][3],
-        deliveryAddressLongitudes: customizeOrders[0][4],
-        businessId: 2,
+        list: customizeOrders,
       };
-
       console.log("Automaticselected", payload);
       setLoading(true);
-      AgentService.assignAgentToOrderInBulkAutomatically(payload).then(
-        (res) => {
-          if (res.statusCode === ApiContants.successCode) {
-            let data = CustomizeData.previewData(res?.data);
-            setPreviewData(data);
-            setLoading(false);
-          }
+      AgentService.assignAgentAutomatically(payload).then((res) => {
+        if (res.statusCode === ApiContants.successCode) {
+          console.log('res?.data', res?.data)
+          setPreviewData(res?.data);
+          setLoading(false);
         }
-      );
+      });
     } catch (error) {
       console.log("AutomaticselectedAssignError", error);
       setLoading(false);
@@ -119,34 +110,17 @@ const AutomaticAssign: React.FC<Props> = ({
   };
 
   const aasignAgentConform = () => {
-    const getConformAssignData = CustomizeData.assignAgentAutoData(
-      previewData,
-      orders
-    );
-    // console.log("data", getConformAssignData, orders);
-    AgentService.assignAgentManuallyToOrderInBulk(getConformAssignData)
-      .then((res: any) => {
-        if (res.statusCode === ApiContants.successCode) {
-          let orderPayload = {
-            agentId: res?.data?.agentId,
-            status: res?.data?.status,
-            timestamp: CustomizeDate.getCurrentTimestamp(),
-            orders: res?.data?.orders,
-          };
-          setLoading(true);
-          OrderService.updateOrder(orderPayload).then((res) => {
-            if (res?.status === ApiContants.successCode) {
-              setLoading(false);
-              handleResetSelectionForOrder();
-              fetch();
-              onClose();
-            }
-          });
-        }
-      })
-      .catch((err) => {
-        console.log("Bulk Manual Assign Error", err);
-      });
+    const payload = CustomizeData.assignAgentAutoData(previewData, orders);
+    console.log("data", payload);
+    AgentService.assignAgentManually(payload).then((res: any) => {
+      if (res.statusCode === ApiContants.successCode) {
+        setLoading(false);
+        handleResetSelectionForOrder();
+        fetch();
+        onClose();
+        message.success(res?.message);
+      }
+    });
   };
 
   return (
@@ -194,7 +168,13 @@ const AutomaticAssign: React.FC<Props> = ({
   );
 };
 
-const BuilkAssign: React.FC<Props> = ({ orders, onClose, fetch, isOpen, handleResetSelectionForOrder }) => {
+const BuilkAssign: React.FC<Props> = ({
+  orders,
+  onClose,
+  fetch,
+  isOpen,
+  handleResetSelectionForOrder,
+}) => {
   const [key, setKey] = useState<any>();
   const onChange = (key: string) => {
     setKey(key);
@@ -215,7 +195,7 @@ const BuilkAssign: React.FC<Props> = ({ orders, onClose, fetch, isOpen, handleRe
     },
     {
       key: "2",
-      label: `Mannual Assign`,
+      label: `Manual Assign`,
       children: (
         <AssignAgent
           key={key}

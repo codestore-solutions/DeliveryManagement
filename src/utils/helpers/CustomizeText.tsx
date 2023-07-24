@@ -9,7 +9,8 @@ const copyTextToClipboard = (text: string) => {
 };
 
 const truncateText = (text:string) => {
-    const words = text.split(',')[0];
+    let Arr =  text.split(',');
+    const words = Arr[0] + Arr[1];
     return words + '...';
 
 };

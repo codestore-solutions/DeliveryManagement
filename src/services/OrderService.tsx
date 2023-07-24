@@ -10,10 +10,10 @@ import { message } from "antd";
 const getAvailableOrdersList = async (pagination: any) => {
   const { pageNumber, pageSize } = pagination;
   let params = {
-    storeIds: storesIds,
+    vendorIds: storesIds,
     page: pageNumber,
     pageSize: pageSize,
-    orderStatus:['packing_completed']
+    orderStatus:[4]
   };
   let url = `${ApiContants.orderProcessingbaseUrl}${ApiContants.getAvailableOrders}`;
 
@@ -37,7 +37,7 @@ const getAvailableOrdersList = async (pagination: any) => {
 const getAssignedOrdersList = async (pagination: any, status:any) => {
   const { pageNumber, pageSize } = pagination;
   let params = {
-    storeIds: storesIds,
+    vendorIds: storesIds,
     page: pageNumber,
     pageSize: pageSize,
     orderStatus:[status]
@@ -46,11 +46,10 @@ const getAssignedOrdersList = async (pagination: any, status:any) => {
 
   let res = await API({}, url, "GET", params);
   let count = 1;
-  console.log("React", res?.data);
+  console.log("ReactData", res?.data);
   let fromattedList = res?.data?.data?.list?.map((item:any) =>{
         return {...item, key: count++}
   });
-
   const response = {
       status: res?.status,
       data:{

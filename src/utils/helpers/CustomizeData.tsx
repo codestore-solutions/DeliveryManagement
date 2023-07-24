@@ -1,3 +1,4 @@
+import { automaticAssignAgentInterface, manualAssignAgentInterface } from "../types";
 
 
 function getRandomNumber() {
@@ -50,63 +51,45 @@ const AvilableOrderData = (data: any) => {
 };
 
 const getOrdersArray = (data: any, id:any) => {
-  let Orderids = Array<number>();
-  let pickupLatitudes = Array<number>();
-  let pickupLongitudes = Array<number>();
-  let deliveryAddressLatitudes = Array<number>();
-  let deliveryAddressLongitude = Array<number>();
-  let deliveryAgentId = Array<number>();
+   let manualPayload = Array<manualAssignAgentInterface>();
   data.forEach((item: any) => {
-    deliveryAgentId.push(id);
-    Orderids.push(item.id);
-    pickupLatitudes.push(item.storeDetails?.pickupLatitudes);
-    pickupLongitudes.push(item.storeDetails?.pickupLongitudes);
-    deliveryAddressLatitudes.push(
-      item?.shippingAddressDetails?.deliveryAddressLatitudes
-    );
-    deliveryAddressLongitude.push(
-      item?.shippingAddressDetails?.deliveryAddressLongitudes
-    );
+    let payload: manualAssignAgentInterface = {
+      deliveryAgentId: id,
+      orderId: item?.id,
+      vendorAddressId: item?.vendor?.business?.address_id,
+      pickupLatitude: item?.vendor?.business?.address?.latitude,
+      pickupLongitude: item?.vendor?.business?.address?.longitude,
+      deliveryAddressId: item?.shippingAddress?.id,
+      deliveryAddressLatitude:
+        item?.shippingAddress?.latitude,
+      deliveryAddressLongitude:
+        item?.shippingAddress
+          ?.longitude,
+    };
+    manualPayload.push(payload);
   });
-  let finalResult = Array<Array<any>>([
-    deliveryAgentId,
-    Orderids,
-    pickupLatitudes,
-    pickupLongitudes,
-    deliveryAddressLatitudes,
-    deliveryAddressLongitude,
-  ]);
-
-  return finalResult;
+  return manualPayload;
 };
 
 // Orders
 const getOrdersArrayBulk = (data: any) => {
-  let Orderids = Array<number>();
-  let pickupLatitudes = Array<number>();
-  let pickupLongitudes = Array<number>();
-  let deliveryAddressLatitudes = Array<number>();
-  let deliveryAddressLongitude = Array<number>();
+  let autoAssignPayload = Array<automaticAssignAgentInterface>();
   data.forEach((item: any) => {
-    Orderids.push(item.id);
-    pickupLatitudes.push(item.storeDetails?.pickupLatitudes);
-    pickupLongitudes.push(item.storeDetails?.pickupLongitudes);
-    deliveryAddressLatitudes.push(
-      item?.shippingAddressDetails?.deliveryAddressLatitudes
-    );
-    deliveryAddressLongitude.push(
-      item?.shippingAddressDetails?.deliveryAddressLongitudes
-    );
+    let payload: automaticAssignAgentInterface = {
+      orderId: item?.id,
+      vendorAddressId: item?.vendor?.business?.address_id,
+      pickupLatitude: item?.vendor?.business?.address?.latitude,
+      pickupLongitude: item?.vendor?.business?.address?.longitude,
+      deliveryAddressId: item?.shippingAddress?.id,
+      deliveryAddressLatitude:
+        item?.shippingAddress?.latitude,
+      deliveryAddressLongitude:
+        item?.shippingAddress
+          ?.longitude,
+    };
+    autoAssignPayload.push(payload);
   });
-  let finalResult = Array<Array<any>>([
-    Orderids,
-    pickupLatitudes,
-    pickupLongitudes,
-    deliveryAddressLatitudes,
-    deliveryAddressLongitude,
-  ]);
-
-  return finalResult;
+  return autoAssignPayload;
 };
 
 const previewData = (data: any) => {
@@ -125,42 +108,25 @@ const previewData = (data: any) => {
 };
 
 const assignAgentAutoData = (previewData: any, orderData: any) => {
-  let deliveryAgentId = Array<any>();
-  let orderIds = Array<any>();
-  let pickupLatitudes = Array<any>();
-  let pickupLongitudes = Array<any>();
-  let deliveryAddressLatitudes = Array<any>();
-  let deliveryAddressLongitudes = Array<any>();
-
-  previewData.forEach((ele: any) => {
-    deliveryAgentId.push(ele.agentId);
-    orderIds.push(ele.orderId);
+  let autoAssignPayload = Array<manualAssignAgentInterface>();
+  orderData.forEach((item: any) => {
+    let selectedAgent = previewData?.filter((ele:any) => ele.orderId === item?.id);
+    let payload: manualAssignAgentInterface = {
+      deliveryAgentId: selectedAgent[0]?.deliveryAgentId,
+      orderId: item?.id,
+      vendorAddressId: item?.vendor?.business?.address_id,
+      pickupLatitude: item?.vendor?.business?.address?.latitude,
+      pickupLongitude: item?.vendor?.business?.address?.longitude,
+      deliveryAddressId: item?.shippingAddress?.id,
+      deliveryAddressLatitude:
+        item?.shippingAddress?.latitude,
+      deliveryAddressLongitude:
+        item?.shippingAddress
+          ?.longitude,
+    };
+    autoAssignPayload.push(payload);
   });
-
-  orderIds.forEach((ele) => {
-    let order = orderData.find((item: any) => item.id === ele);
-    pickupLatitudes.push(order?.storeDetails?.pickupLatitudes);
-    pickupLongitudes.push(order?.storeDetails?.pickupLongitudes);
-    deliveryAddressLatitudes.push(
-      order?.shippingAddressDetails?.deliveryAddressLatitudes
-    );
-    deliveryAddressLongitudes.push(
-      order?.shippingAddressDetails?.deliveryAddressLongitudes
-    );
-  });
-
-  let finalResult = {
-    deliveryAgentId: deliveryAgentId,
-    orderIds: orderIds,
-    pickupLatitudes: pickupLatitudes,
-    pickupLongitudes: pickupLongitudes,
-    deliveryAddressLatitudes: deliveryAddressLatitudes,
-    deliveryAddressLongitudes: deliveryAddressLongitudes,
-    businessId: 2,
-  };
-
-  // console.log("Finnal Assign Payload", finalResult);
-  return finalResult;
+  return autoAssignPayload;
 };
 export default {
   AvilableOrderData,

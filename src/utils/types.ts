@@ -9,3 +9,23 @@ export interface pagination {
   nextIcon?: any;
   prevIcon?: any;
 }
+
+export interface manualAssignAgentInterface {
+    deliveryAgentId: number;
+    orderId: number;
+    vendorAddressId: number;
+    pickupLatitude: number;
+    pickupLongitude: number;
+    deliveryAddressId: number;
+    deliveryAddressLatitude: number;
+    deliveryAddressLongitude: number;
+}
+export interface automaticAssignAgentInterface{
+   orderId: number;
+   vendorAddressId: number;
+   pickupLatitude: number;
+   pickupLongitude: number;
+   deliveryAddressId: number;
+   deliveryAddressLatitude: number;
+   deliveryAddressLongitude: number;
+}

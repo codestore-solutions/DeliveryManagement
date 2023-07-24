@@ -13,7 +13,7 @@ import {
   getAvailableOrders,
   orderSelector,
 } from "../../store/features/Orders/ordersSlice";
-import { pagination } from "../../utils/types";
+import { automaticAssignAgentInterface, pagination } from "../../utils/types";
 import { useEffect } from "react";
 import date from "../../utils/helpers/CustomizeDate";
 import CutomizeText from "../../utils/helpers/CustomizeText";
@@ -57,7 +57,7 @@ const AvailableOrders: React.FC<Props> = ({
   const { loading, orderslist } = useAppSelector(
     orderSelector
   ) as OrderStateInerface;
-  const data = CustomizeData.AvilableOrderData(orderslist?.list);
+  const data = orderslist?.list;
   const [pagination, setPagination] = useState<pagination>({
     showLessItems: true,
     hideOnSinglePage: true,
@@ -67,9 +67,7 @@ const AvailableOrders: React.FC<Props> = ({
     pageSize: 7,
     showTotal: (total: any, range: any) =>
       `${range[0]}-${range[1]} of ${total} items`,
-      nextIcon: <RightOutlined style={{ color: '#545bfc', padding:'3px',  border:'1px solid #545bfc',fontSize: '16px', borderRadius:"5px" }} />,
-    prevIcon: <LeftOutlined style={{color: '#545bfc' , padding:'3px', border:'1px solid #545bfc',fontSize: '16px', borderRadius:"5px"  }} />,
-  });
+    });
   const [isOpen, setIsOpen] = useState(false);
   const [isApiCall, setIsApiCall] = useState(false);
   const handleOpenModal = (record: any) => {
@@ -100,14 +98,14 @@ const AvailableOrders: React.FC<Props> = ({
     },
     {
       title: "Vender Name",
-      dataIndex: "storeDetails",
-      key: "storeDetails",
-      render: (storeDetails: any) => CutomizeText(storeDetails?.storname),
+      dataIndex: "vendor",
+      key: "vendor",
+      render: (vender: any) => CutomizeText(vender?.business?.name),
     },
     {
       title: "Payment Mode",
-      dataIndex: "paymentType",
-      key: "paymentType",
+      dataIndex: "paymentMode",
+      key: "paymentMode",
       render: (_, record: any) => (
         <Space size="middle">
           {record?.payment_type === 2 ? (
@@ -120,15 +118,15 @@ const AvailableOrders: React.FC<Props> = ({
     },
     {
       title: "Delivery Region",
-      dataIndex: "shippingAddressDetails",
-      key: "shippingAddressDetails",
-      render: (shippingAddressDetails: any) =>
-        CutomizeText(shippingAddressDetails.address),
+      dataIndex: "shippingAddress",
+      key: "shippingAddress",
+      render: (shippingAddress: any) =>
+        CutomizeText(shippingAddress.street + shippingAddress.state),
     },
     {
       title: "Date",
-      key: "date",
-      dataIndex: "date",
+      key: "createdAt",
+      dataIndex: "createdAt",
       render: (text: any) => <p className="tableTxt">{date.getDate(text)}</p>,
     },
     {
@@ -182,40 +180,30 @@ const AvailableOrders: React.FC<Props> = ({
   };
 
   // Automatic Assign Agent to Single Order
-  const autoAssignAgent = (values: any) => {
-    let payload = {
-      orderId: values?.id,
-      pickupLat: values.storeDetails.pickupLatitudes,
-      pickupLong: values.storeDetails?.pickupLongitudes,
-      deliveryAddressLat:
-        values?.shippingAddressDetails?.deliveryAddressLatitudes,
-      deliveryAddressLong:
-        values?.shippingAddressDetails?.deliveryAddressLongitudes,
-      businessId: 2,
-    };
-    AgentService.assignAgentAutomaticallyToOrder(payload)
-      .then((res) => {
-        setIsApiCall(true);
-        if (res?.statusCode === ApiContants.successCode) {
-          let orderPayload = {
-            agentId: [res?.data.agentId],
-            status: res?.data.status,
-            timestamp: CustomizeDate.getCurrentTimestamp(),
-            orders: [res?.data.orderId],
-          };
-          OrderService.updateOrder(orderPayload).then((res: any) => {
-            if (res?.status === ApiContants.successCode) {
-              fetchOrders();
-            }
-          });
-        }
-      })
-      .catch((err) => {
-        console.log("Assign Agent Auto Error ", err);
-      })
-      .finally(() => {
-        setIsApiCall(false);
-      });
+  const autoAssignAgent = async (values: any) => {
+    let payload : Array<automaticAssignAgentInterface> = [
+       {
+        orderId: values?.id,
+        vendorAddressId: values?.vendor?.business?.address_id,
+        pickupLatitude: values?.vendor?.business?.address?.latitude,
+        pickupLongitude:values?.vendor?.business?.address?.longitude,
+        deliveryAddressId: values?.shippingAddress?.id,
+        deliveryAddressLatitude:values?.shippingAddress?.latitude,
+        deliveryAddressLongitude:values?.shippingAddress?.longitude
+       }
+    ]
+    console.log('payload',values, payload)
+    try {
+      setIsApiCall(true);
+      const {statusCode} = await AgentService.assignAgentAutomatically(payload);
+      if(statusCode === 200){
+          fetchOrders();
+      }
+    } catch (err) {
+        console.log('err assigning single agent automatic', err)
+    }finally{
+       setIsApiCall(false)
+    }
   };
 
   useEffect(() => {

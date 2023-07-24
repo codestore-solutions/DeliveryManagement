@@ -1,15 +1,16 @@
 import { ColumnsType } from "antd/es/table";
-import { Button, Space, Table } from "antd";
+import { Button, Table, message } from "antd";
 import React, { useEffect, useState } from "react";
 import "./style.scss";
-import date from "../../utils/helpers/CustomizeDate";
+// import date from "../../utils/helpers/CustomizeDate";
 import CustomizeData from "../../utils/helpers/CustomizeData";
 import AgentService from "../../services/AgentService";
 import { ApiContants } from "../../constants/ApiContants";
-import OrderService from "../../services/OrderService";
+// import OrderService from "../../services/OrderService";
 import CustomizeText from "../../utils/helpers/CustomizeText";
 import { TableRowSelection } from "antd/es/table/interface";
-import CustomizeDate from "../../utils/helpers/CustomizeDate";
+// import CustomizeDate from "../../utils/helpers/CustomizeDate";
+import { manualAssignAgentInterface } from "../../utils/types";
 
 interface DataType {
   key: React.Key;
@@ -25,7 +26,7 @@ interface Props {
   key?: any;
   fetch?: any;
   isOpen?: any;
-  handleResetSelectionForOrder?: any
+  handleResetSelectionForOrder?: any;
 }
 
 const AssignAgent: React.FC<Props> = ({
@@ -35,9 +36,9 @@ const AssignAgent: React.FC<Props> = ({
   key,
   fetch,
   isOpen,
-  handleResetSelectionForOrder
+  handleResetSelectionForOrder,
 }) => {
-  const [data, setData] = useState<any>();
+  const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [selectedRowData, setSelectedRowData] = useState<any>();
@@ -45,7 +46,7 @@ const AssignAgent: React.FC<Props> = ({
   // console.log("Dtaa", selectedOrderData);
   const [pagination, setPagination] = useState({
     pageNumber: 1,
-    total: 0,
+    total: data?.total,
     pageSize: 4,
     showTotal: (total: any, range: any) =>
       `${range[0]}-${range[1]} of ${total} items`,
@@ -54,78 +55,62 @@ const AssignAgent: React.FC<Props> = ({
   // Select A agent
   const handleRowSelectChange = (selectedRowKeys: React.Key[]) => {
     setSelectedRowKeys(selectedRowKeys);
-    let rowData = data?.find((x: any) => x.key === selectedRowKeys[0]);
+    let rowData = data?.list?.find((x: any) => x.key === selectedRowKeys[0]);
     setSelectedRowData(rowData);
   };
-
   // Reset the Selected Item
   const handleResetSelection = () => {
     setSelectedRowKeys([]);
     setSelectedRowData(null);
   };
   const AgentAssignHandler = async (values: any) => {
+    // console.log("selectedOrder", selectedOrderData, values);
     try {
       if (type === 0) {
-        const updatedArray = data?.map((obj: any) => {
+        const updatedArray = data?.list?.map((obj: any) => {
           if (obj.id === values.id) {
-            return { ...obj, loading: true }; // Step 3: Make modifications
+            return { ...obj, loading: true }; // Make modifications
           }
           return obj;
         });
         setData(updatedArray);
-        let payload = {
-          orderIds: [selectedOrderData?.id],
-          deliveryAgentId: values?.deliveryAgentId,
-          buisnessId: 2,
-          pickupLatitude: selectedOrderData?.storeDetails?.pickupLatitudes,
-          pickupLongitude: selectedOrderData?.storeDetails?.pickupLongitudes,
-          deliveryAddressLatitude:
-            selectedOrderData?.shippingAddressDetails?.deliveryAddressLatitudes,
-          deliveryAddressLongitude:
-            selectedOrderData?.shippingAddressDetails
-              ?.deliveryAddressLongitudes,
-        };
-        let orderPayload = {
-          agentId: [values?.deliveryAgentId],
-          status: "agent_assigned",
-          timestamp: date.getCurrentTimestamp(),
-          orders: [selectedOrderData?.id],
-        };
-        AgentService.assignAgentManuallyToOrder(payload).then((res: any) => {
-          if (res.status === ApiContants.successCode) {
-            OrderService.updateOrder(orderPayload);
+        let payload: Array<manualAssignAgentInterface> = [
+          {
+            deliveryAgentId: values?.personalDetails?.deliveryAgentId,
+            orderId: selectedOrderData?.id,
+            vendorAddressId: selectedOrderData?.vendor?.business?.address_id,
+            pickupLatitude:
+              selectedOrderData?.vendor?.business?.address?.latitude,
+            pickupLongitude:
+              selectedOrderData?.vendor?.business?.address?.longitude,
+            deliveryAddressId: selectedOrderData?.shippingAddress?.id,
+            deliveryAddressLatitude:
+              selectedOrderData?.shippingAddress?.latitude,
+            deliveryAddressLongitude:
+              selectedOrderData?.shippingAddress?.longitude,
+          },
+        ];
+        // console.log('payload', payload);
+        AgentService.assignAgentManually(payload).then((res: any) => {
+          if (res.statusCode === ApiContants.successCode) {
             onClose();
             fetchAgents();
+            message.success(res?.message)
           }
         });
       } else {
-        let customizeOrders = CustomizeData.getOrdersArray(selectedOrderData, values?.deliveryAgentId);
-        let payload = {
-          deliveryAgentId: customizeOrders[0][0],
-          orderIds: customizeOrders[0][1],
-          pickupLatitudes: customizeOrders[0][2],
-          pickupLongitudes: customizeOrders[0][3],
-          deliveryAddressLatitudes: customizeOrders[0][4],
-          deliveryAddressLongitudes: customizeOrders[0][5],
-          businessId: 2,
-        };
-        console.log("Manual Automatic Values", customizeOrders[0][4], payload);
-        AgentService.assignAgentManuallyToOrderInBulk(payload)
+        let payload = CustomizeData.getOrdersArray(
+          selectedOrderData,
+          values?.personalDetails?.deliveryAgentId
+        );
+        // console.log("Manual Automatic Values", payload);
+        AgentService.assignAgentManually(payload)
           .then((res: any) => {
             if (res.statusCode === ApiContants.successCode) {
-              let orderPayload = {
-                agentId: res?.data?.agentId,
-                status: res?.data?.status,
-                timestamp: CustomizeDate.getCurrentTimestamp(),
-                orders: res?.data?.orders,
-              };
-              OrderService.updateOrder(orderPayload).then((res) => {
-                if (res?.status === ApiContants.successCode) {
-                  fetch();
-                  handleResetSelectionForOrder();
-                  onClose();
-                }
-              });
+              fetch();
+              handleResetSelectionForOrder();
+              onClose();
+              message.success(res?.message)
             }
           })
           .catch((err) => {
@@ -139,21 +124,31 @@ const AssignAgent: React.FC<Props> = ({
   const columns: ColumnsType<DataType> = [
     {
       title: "Name",
-      dataIndex: "deliveryAgentName",
+      dataIndex: "personalDetails",
+      render: (personalDetails: any) => (
+        <p className="highlighted-col-text">{personalDetails?.fullName}</p>
+      ),
     },
 
     {
       title: "Address",
-      dataIndex: "deliveryAgentAddress",
-      render: (text) => CustomizeText(text),
+      dataIndex: "serviceLocation",
+      render: (serviceLocation: any) => CustomizeText(serviceLocation?.address),
     },
     {
       title: "Status",
-      dataIndex: "status",
-      render: () => (
-        <Space size="middle">
-          <p className="tableTxt">Available</p>
-        </Space>
+      key: "serviceLocation",
+      dataIndex: "serviceLocation",
+      render: (_, { serviceLocation }: any) => (
+        <>
+          <span>
+            {serviceLocation?.agentStatus === 1 ? (
+              <p className="available">Available</p>
+            ) : (
+              <p className="offline">offline</p>
+            )}{" "}
+          </span>
+        </>
       ),
     },
   ];
@@ -164,18 +159,20 @@ const AssignAgent: React.FC<Props> = ({
     setPagination({ ...pagination, pageNumber: current, limit: pageSize });
   };
 
-  const fetchAgents = () => {
+  const fetchAgents = async () => {
     let payload = pagination;
-    setLoading(true);
-    AgentService.getAvialableAgents(payload)
-      .then((res) => {
-        setData(res);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log("Agents Fetching Err", err);
-        setLoading(false);
-      });
+    try {
+      setLoading(true);
+      const data = await AgentService.getAvialableAgents(payload);
+      if (data?.statusCode === 200) {
+        //  console.log('data', data);
+        setData(data);
+      }
+    } catch (err) {
+      console.log("err", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Row Selection Object for Table
@@ -213,7 +210,7 @@ const AssignAgent: React.FC<Props> = ({
         <Table
           rowSelection={rowSelection}
           columns={columns}
-          dataSource={data}
+          dataSource={data?.list}
           pagination={false}
           loading={loading}
           onChange={handleTableChange}

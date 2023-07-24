@@ -17,12 +17,13 @@ const OrderDetails: React.FC = () => {
   const getDetails = async (id: string | undefined) => {
     try {
       setLoading(true);
-      const res = await OrderService.getOrderDetailsById(id);
-      setData(res);
-      setLoading(false);
+      const { data, statusCode } = await OrderService.getOrderDetailsById(id);
+      console.log("data", data);
+      if (statusCode === 200) setData(data);
     } catch (error) {
       // Handle the error here, e.g., log it or display an error message
       console.error("Error occurred while fetching order details:", error);
+    } finally {
       setLoading(false);
     }
   };
@@ -77,20 +78,22 @@ const OrderDetails: React.FC = () => {
                 <div className="container-content">
                   <div className="container-row">
                     <span className="container-col">OrderId</span>
-                    <p className="container-col dark">
-                      {data?.id ?? "#SDW123"}
-                    </p>
+                    <p className="container-col dark">{data?.id ?? " "}</p>
                   </div>
                   <div className="container-row">
                     <span className="container-col">Date Added</span>
                     <span className="container-col dark">
-                      {date.getDate(data?.createdAt) ?? "10/12/2022"}
+                      {date.getDate(data?.createdAt) ?? " "}
                     </span>
                   </div>
                   <div className="container-row">
                     <span className="container-col">Payment Method</span>
                     <span className="container-col dark">
-                      {data?.paymentMode ?? "paymentMode"}
+                      {data?.paymentMode === 1 ? (
+                        <p className="available">online</p>
+                      ) : (
+                        <p className="offline">COD</p>
+                      )}
                     </span>
                   </div>
                 </div>
@@ -102,17 +105,21 @@ const OrderDetails: React.FC = () => {
                 <div className="container-content">
                   <div className="container-row">
                     <span className="container-col">Name</span>
-                    <span className="container-col dark">Rajiv Sahu</span>
+                    <span className="container-col dark">
+                      {data?.customer?.name}
+                    </span>
                   </div>
                   <div className="container-row">
                     <span className="container-col">Email</span>
                     <span className="container-col dark">
-                      rajivsahu@gmsil.com
+                      {data?.customer?.email}
                     </span>
                   </div>
                   <div className="container-row">
                     <span className="container-col">Contacts</span>
-                    <span className="container-col dark">7860965109</span>
+                    <span className="container-col dark">
+                      {data?.shippingAddress?.phoneNumber}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -124,16 +131,21 @@ const OrderDetails: React.FC = () => {
                   <div className="container-row">
                     <span className="container-col">User Address</span>
                     <p className="container-col sm dark">
-                      {/* {data?.shippingAddressId ?? */}
-                      #Unit 1/23 Hastings Road, Melbourne 3000,Victoria
+                      {data?.shippingAddress?.street +
+                        " ," +
+                        data?.shippingAddress?.city +
+                        " ," +
+                        data?.shippingAddress?.country}
                     </p>
                   </div>
                   <div className="container-row">
                     <span className="container-col">Vendor Address</span>
                     <p className="container-col sm dark">
-                      {/* {data?.shippingAddressId ?? */}
-                      Unit 1/23 Hastings Road, Melbourne 3000,Victoria,
-                      Australia.
+                      {data?.vendor?.business?.address?.street +
+                        " ," +
+                        data?.vendor?.business?.address?.city +
+                        " ," +
+                        data?.vendor?.business?.address?.country}
                     </p>
                   </div>
                 </div>
@@ -162,7 +174,14 @@ const OrderDetails: React.FC = () => {
               Feedback for Delivery Agent
             </h2>
             <div className="box">
-              {loading ? <Spinner /> : <AgentFeedBack rating={feedbackdata?.rating} comment={feedbackdata?.comment} />}
+              {loading ? (
+                <Spinner />
+              ) : (
+                <AgentFeedBack
+                  rating={feedbackdata?.rating}
+                  comment={feedbackdata?.comment}
+                />
+              )}
             </div>
           </div>
         </div>
