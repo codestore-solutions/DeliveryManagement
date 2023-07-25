@@ -29,3 +29,9 @@ export interface automaticAssignAgentInterface{
    deliveryAddressLatitude: number;
    deliveryAddressLongitude: number;
 }
+
+export interface previewDataInterface{
+  deliveryAgentId: number,
+  deliveryAgentName: string,
+  orderId: number
+}

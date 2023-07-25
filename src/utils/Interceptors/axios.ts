@@ -26,19 +26,66 @@ instance.interceptors.response.use(
     let apiData = {
       status: ApiContants.errorCode,
       data: "Network Error"
-    };
+    } as {status :any, data:any};
     if (error && error.response) {
       // Request made and server responded
       console.log(error.response.data);
       console.log(error.response.status);
       console.log(error.response.headers);
-      apiData = {
-        status: error.response.status,
-        data: error.response.data,
-      };
-      if (error.response?.status === ApiContants.unAuthorizedCode) {
-        // unAuthorized();
-        // navigate('/');
+
+      if (error.response.status?.statusCode === ApiContants?.badRequest) {
+        // Handle validation errors
+        const validationErrors = error.response.data;
+        let errorMessages = new Array<any>();
+
+        // Loop through the error object and extract error messages
+        for (const key in validationErrors) {
+          if (Array.isArray(validationErrors[key])) {
+            errorMessages = errorMessages.concat(validationErrors[key]);
+          } else if (typeof validationErrors[key] === "string") {
+            errorMessages.push(validationErrors[key]);
+          }
+        }
+
+        if (errorMessages.length > 0) {
+          // Display error messages to the user
+          console.log('err', errorMessages)
+          message.error(errorMessages[1]);
+          // apiData?.data = errorMessages;
+        }
+      }else if (error.response.status === ApiContants?.badRequest) {
+        // Handle validation errors
+        const validationErrors = error.response.data;
+        let errorMessages = new Array<any>();
+
+        // Loop through the error object and extract error messages
+        for (const key in validationErrors) {
+          if (Array.isArray(validationErrors[key])) {
+            errorMessages = errorMessages.concat(validationErrors[key]);
+          } else if (typeof validationErrors[key] === "string") {
+            errorMessages.push(validationErrors[key]);
+          }
+        }
+
+        if (errorMessages.length > 0) {
+          // Display error messages to the user
+          console.log('err', errorMessages)
+          apiData = {
+             status: error.response.status,
+             data: errorMessages[1]
+          }
+        }
+      }
+      else {
+        // Handle other types of errors
+        apiData = {
+          status: error.response.status,
+          data: error.response.data,
+        };
+        if (error.response?.status === ApiContants.unAuthorizedCode) {
+          // unAuthorized();
+          // navigate('/');
+        }
       }
     } else if (error.request) {
       console.info(
@@ -51,7 +98,6 @@ instance.interceptors.response.use(
         error.message
       );
     }
-    // console.log("Api dtaa", apiData);
     message.error(apiData?.data);
     return Promise.reject(apiData);
   }

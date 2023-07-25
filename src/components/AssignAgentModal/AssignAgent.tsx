@@ -40,6 +40,7 @@ const AssignAgent: React.FC<Props> = ({
 }) => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [apiCalling, setApiCalling] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [selectedRowData, setSelectedRowData] = useState<any>();
 
@@ -64,12 +65,12 @@ const AssignAgent: React.FC<Props> = ({
     setSelectedRowData(null);
   };
   const AgentAssignHandler = async (values: any) => {
-    // console.log("selectedOrder", selectedOrderData, values);
     try {
+      setApiCalling(true);
       if (type === 0) {
         const updatedArray = data?.list?.map((obj: any) => {
           if (obj.id === values.id) {
-            return { ...obj, loading: true }; // Make modifications
+            return { ...obj, loading: true };
           }
           return obj;
         });
@@ -90,14 +91,14 @@ const AssignAgent: React.FC<Props> = ({
               selectedOrderData?.shippingAddress?.longitude,
           },
         ];
-        // console.log('payload', payload);
-        AgentService.assignAgentManually(payload).then((res: any) => {
-          if (res.statusCode === ApiContants.successCode) {
-            onClose();
-            fetchAgents();
-            message.success(res?.message)
-          }
-        });
+        const { statusCode, message } = await AgentService.assignAgentManually(
+          payload
+        );
+        if (statusCode === ApiContants.successCode) {
+          onClose();
+          fetchAgents();
+          message.success(message);
+        }
       } else {
         let payload = CustomizeData.getOrdersArray(
           selectedOrderData,
@@ -110,7 +111,7 @@ const AssignAgent: React.FC<Props> = ({
               fetch();
               handleResetSelectionForOrder();
               onClose();
-              message.success(res?.message)
+              message.success(res?.message);
             }
           })
           .catch((err) => {
@@ -119,6 +120,8 @@ const AssignAgent: React.FC<Props> = ({
       }
     } catch (error) {
       console.log("Assign Agent Error", error);
+    } finally {
+      setApiCalling(false);
     }
   };
   const columns: ColumnsType<DataType> = [
@@ -202,7 +205,7 @@ const AssignAgent: React.FC<Props> = ({
             type="primary"
             onClick={() => AgentAssignHandler(selectedRowData)}
           >
-            Assign
+            {apiCalling ? "Assigning..." : "Assign"}
           </Button>
         </div>
       </div>

@@ -3,9 +3,9 @@ import "./style.scss";
 import "../../pages/DeliveryAgents/style.scss";
 import { Space, Tooltip } from "antd";
 import { ColumnsType } from "antd/es/table";
-import { AssignAgent, CustomModal, CustomTable } from "../index";
+import {  CustomModal, CustomTable } from "../index";
 // import { LoadingOutlined } from "@ant-design/icons";
-import { AutomaticUser, DeliveryUserIcon, DetailsIcon } from "../../assets";
+import {  DeliveryUserIcon, DetailsIcon } from "../../assets";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks/app";
 import {
@@ -13,16 +13,11 @@ import {
   getAvailableOrders,
   orderSelector,
 } from "../../store/features/Orders/ordersSlice";
-import { automaticAssignAgentInterface, pagination } from "../../utils/types";
+import {  pagination } from "../../utils/types";
 import { useEffect } from "react";
 import date from "../../utils/helpers/CustomizeDate";
 import CutomizeText from "../../utils/helpers/CustomizeText";
-import CustomizeData from "../../utils/helpers/CustomizeData";
-import AgentService from "../../services/AgentService";
-import { ApiContants } from "../../constants/ApiContants";
-import CustomizeDate from "../../utils/helpers/CustomizeDate";
-import OrderService from "../../services/OrderService";
-import {RightOutlined, LeftOutlined} from "@ant-design/icons";
+import SingleAssign from "../SingleAssign/SingleAssign";
 // import dummyData from "../../../dummyData";
 
 export interface DataType {
@@ -69,7 +64,6 @@ const AvailableOrders: React.FC<Props> = ({
       `${range[0]}-${range[1]} of ${total} items`,
     });
   const [isOpen, setIsOpen] = useState(false);
-  const [isApiCall, setIsApiCall] = useState(false);
   const handleOpenModal = (record: any) => {
     setSelectedRow(record);
     setIsOpen(true);
@@ -145,7 +139,7 @@ const AvailableOrders: React.FC<Props> = ({
           <div onClick={() => handleClick(record)}>
             <img src={DetailsIcon} alt="" />
           </div>
-          <Tooltip
+          {/* <Tooltip
             placement="right"
             title={isApiCall ? "Assigning.." : "Assign Agent"}
           >
@@ -155,7 +149,7 @@ const AvailableOrders: React.FC<Props> = ({
               className="icon-style"
               onClick={() => !isApiCall && autoAssignAgent(record)}
             />
-          </Tooltip>
+          </Tooltip> */}
         </Space>
       ),
     },
@@ -179,32 +173,6 @@ const AvailableOrders: React.FC<Props> = ({
     dispatch(getAvailableOrders({ payload }));
   };
 
-  // Automatic Assign Agent to Single Order
-  const autoAssignAgent = async (values: any) => {
-    let payload : Array<automaticAssignAgentInterface> = [
-       {
-        orderId: values?.id,
-        vendorAddressId: values?.vendor?.business?.address_id,
-        pickupLatitude: values?.vendor?.business?.address?.latitude,
-        pickupLongitude:values?.vendor?.business?.address?.longitude,
-        deliveryAddressId: values?.shippingAddress?.id,
-        deliveryAddressLatitude:values?.shippingAddress?.latitude,
-        deliveryAddressLongitude:values?.shippingAddress?.longitude
-       }
-    ]
-    console.log('payload',values, payload)
-    try {
-      setIsApiCall(true);
-      const {statusCode} = await AgentService.assignAgentAutomatically(payload);
-      if(statusCode === 200){
-          fetchOrders();
-      }
-    } catch (err) {
-        console.log('err assigning single agent automatic', err)
-    }finally{
-       setIsApiCall(false)
-    }
-  };
 
   useEffect(() => {
     fetchOrders();
@@ -236,12 +204,7 @@ const AvailableOrders: React.FC<Props> = ({
         isOpen={isOpen}
         onClose={handleCloseModal}
         component={
-          <AssignAgent
-            type={0}
-            selectedOrderData={selectedRow}
-            onClose={handleCloseModal}
-            isOpen={isOpen}
-          />
+          <SingleAssign selectedRow={selectedRow} handleCloseModal={handleCloseModal} isOpen={isOpen}  />
         }
         width={600}
       />

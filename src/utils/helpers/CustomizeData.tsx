@@ -92,6 +92,24 @@ const getOrdersArrayBulk = (data: any) => {
   return autoAssignPayload;
 };
 
+const getSingleOrderArray = (data:any) =>{
+  let singleautoAssignPayload = Array<automaticAssignAgentInterface>();
+    let payload: automaticAssignAgentInterface = {
+      orderId: data?.id,
+      vendorAddressId: data?.vendor?.business?.address_id,
+      pickupLatitude: data?.vendor?.business?.address?.latitude,
+      pickupLongitude: data?.vendor?.business?.address?.longitude,
+      deliveryAddressId: data?.shippingAddress?.id,
+      deliveryAddressLatitude:
+        data?.shippingAddress?.latitude,
+      deliveryAddressLongitude:
+        data?.shippingAddress
+          ?.longitude,
+    };
+    singleautoAssignPayload.push(payload);
+    return singleautoAssignPayload;
+}
+
 const previewData = (data: any) => {
   let resData = Array<any>();
   let len = data.orders?.length;
@@ -128,10 +146,20 @@ const assignAgentAutoData = (previewData: any, orderData: any) => {
   });
   return autoAssignPayload;
 };
+
+
+const assignAgentAutoDataSingle = (previewData: any, orderData: any) =>{
+    let payload = orderData?.map((item:any) =>{
+         return {...item, deliveryAgentId: previewData?.deliveryAgentId }
+    })
+    return payload;
+}
 export default {
   AvilableOrderData,
   getOrdersArray,
   previewData,
   assignAgentAutoData,
-  getOrdersArrayBulk
+  getOrdersArrayBulk,
+  getSingleOrderArray,
+  assignAgentAutoDataSingle
 };

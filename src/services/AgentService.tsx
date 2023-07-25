@@ -70,7 +70,6 @@ const getAvialableAgents = async (pagination: any) => {
     list: formattedList,
   };
   return datafetched;
-
 };
 
 /**

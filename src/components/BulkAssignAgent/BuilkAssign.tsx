@@ -6,12 +6,9 @@ import "./style.scss";
 import CustomizeData from "../../utils/helpers/CustomizeData";
 import AgentService from "../../services/AgentService";
 import { ApiContants } from "../../constants/ApiContants";
-// import OrderService from "../../services1/OrderService";
 import { CancelIcon } from "../../assets";
 import { ColumnsType } from "antd/es/table";
-import CustomizeText from "../../utils/helpers/CustomizeText";
-import CustomizeDate from "../../utils/helpers/CustomizeDate";
-import OrderService from "../../services/OrderService";
+
 
 interface DataType {
   key: React.Key;
@@ -29,7 +26,7 @@ interface Props {
 }
 
 // Bulk Automatic Assign Component
-const AutomaticAssign: React.FC<Props> = ({
+ const AutomaticAssign: React.FC<Props> = ({
   orders,
   onClose,
   fetch,
@@ -56,7 +53,7 @@ const AutomaticAssign: React.FC<Props> = ({
     {
       title: "Agent Id",
       dataIndex: "deliveryAgentId",
-      render: (text) => <p className="tableTxt dark">{text}</p>,
+      render: (text) => <p className="tableTxt dark">{!text ? "Not Available": text}</p>,
     },
     {
       title: "Agent Name",
@@ -111,7 +108,7 @@ const AutomaticAssign: React.FC<Props> = ({
 
   const aasignAgentConform = () => {
     const payload = CustomizeData.assignAgentAutoData(previewData, orders);
-    console.log("data", payload);
+    // console.log("data", payload);
     AgentService.assignAgentManually(payload).then((res: any) => {
       if (res.statusCode === ApiContants.successCode) {
         setLoading(false);
