@@ -1,5 +1,6 @@
 export const ApiConstant = {
-    baseUrl : 'https://app-deliveragent-dev.azurewebsites.net/api/',
+    baseUrl : 'https://app-deliveryagent-dev.azurewebsites.net/api/v1/',
+    orderUrl: 'https://order-processing-dev.azurewebsites.net/api/',
     //API response codes
     successCode: 200,
     successEndRange: 299,
@@ -11,9 +12,26 @@ export const ApiConstant = {
     notFound: 404,
     
     //Authentiction endpoint
-    loginEndpoint:  'login',
+    loginEndpoint:  'testing/login',
     // Agents EndPoints
+    agentDetails: 'agentDetail',
     verifyAgent:'businessAdmin/verify-new-agent-request',
-  
-
+    // Address Api EndPoints
+    changeWorkiingLocation:'working-location/updateActiveStatus',
+    addNewWorkingLocationEndpoint:'working-location',
+    updateAgentStatus:'working-location/updateAgentStatus',
+    // Agent Onboarding Api Enpoints
+    personalDetailendpoint:'personal-details/get',
+    addpersonalDetailendpoint:'personal-details/add',
+    updatepersonalDetailendpoint:'personal-details/update',
+    kycDetailendpoint:'KYC',
+    addvechileDetailendpoint:'vehicle-details/add',
+    getvechileDetailendpoint:'vehicle-details/get',
+    updatevechileDetailendpoint:'vehicle-details/update',
+    getbankdetailEndpoint:'bank-details/get',
+    addbankdetailEndpoint:'bank-details/add',
+    updatebankdetailEndpoint:'bank-details/update',
+     // Orders Requets Endpoints
+     getOrderRequest:'delivery/getOrdersByDeliveryAgentId'
+    
   };

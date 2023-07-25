@@ -1,21 +1,25 @@
-import {View, Text, TouchableOpacity, Image, Switch} from 'react-native';
+import { View, Text, TouchableOpacity, Image, Switch, Pressable } from 'react-native';
 import React from 'react';
 import styles from './DrawerMenuStyle';
+import { useNavigation } from '@react-navigation/native';
 import {
   DrawerContentScrollView,
   DrawerItemList,
 } from '@react-navigation/drawer';
+import { NavigationProps } from './types';
 
 const CustomDrawerMenu = (props: any) => {
+  const navigation =
+    useNavigation<NavigationProps>();
   return (
     <DrawerContentScrollView {...props} style={styles.container}>
       <View style={styles.drawerHeader}>
-        <View style={styles.avatarImg}>
+        <Pressable style={styles.avatarImg} onPress={() => navigation.navigate('CreateProfile')}>
           <Image
             source={require('../assets/images/avatar.png')}
             style={styles.avatarImg}
           />
-        </View>
+        </Pressable>
         <View style={styles.info}>
           <Text style={styles.name}>Agent Name</Text>
           <View style={styles.statusContainer}>
@@ -25,11 +29,6 @@ const CustomDrawerMenu = (props: any) => {
         </View>
       </View>
       <DrawerItemList {...props} />
-
-      <TouchableOpacity style={styles.drawerFooter}>
-        {/* <LogoutIcon /> */}
-        <Text style={styles.logout}>Logout</Text>
-      </TouchableOpacity>
     </DrawerContentScrollView>
   );
 };

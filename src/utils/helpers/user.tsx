@@ -1,30 +1,30 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const Userheplers = {
-  storeUser: async (user: any) => {
-    try {
-      const userString = JSON.stringify(user);
-      await AsyncStorage.setItem('user', userString);
-      console.log('User object stored successfully!');
-    } catch (error) {
-      console.log('Error storing user object:', error);
-    }
-  },
+const storeUser = async (user:any) => {
+  const userString = JSON.stringify(user);
+  await AsyncStorage.setItem('user', userString);
+};
 
-  retrieveUser: async () => {
-    try {
-      const userString = await AsyncStorage.getItem('user');
-      if (userString !== null) {
-        const user = JSON.parse(userString);
-        console.log('Retrieved user object:', user);
-        return user;
-      } else {
-        console.log('No user object found.');
-        return null;
-      }
-    } catch (error) {
-      console.log('Error retrieving user object:', error);
-      return null;
-    }
-  },
+const removeUser = async () => {
+  await AsyncStorage.removeItem('user');
+  console.log('User removed from storage successfully!');
+};
+
+const getUser = async () => {
+  const userString = await AsyncStorage.getItem('user');
+  const data = userString ? JSON.parse(userString) : null
+  return data ? data : null;
+};
+
+const checkUser = async () => {
+  const userString = await AsyncStorage.getItem('user');
+  const data = userString ? JSON.parse(userString) : null;
+  return data ? true : false;
+};
+
+export default {
+  storeUser,
+  removeUser,
+  getUser,
+  checkUser,
 };

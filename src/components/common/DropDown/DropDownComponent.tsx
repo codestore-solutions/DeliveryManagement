@@ -11,6 +11,7 @@ const data = [
   {label: 'Current Location', value: '4'},
 ];
 
+
 const DropDownComponent = () => {
   const [value, setValue] = useState<any>(null);
   const renderItem = (item: any) => {

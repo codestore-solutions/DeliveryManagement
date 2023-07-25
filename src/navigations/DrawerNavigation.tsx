@@ -9,7 +9,8 @@ import {
   SettignScreen,
   NotificationScreen,
   HelpAndSupportScreen,
-  RevenueScreen
+  LocationScreen,
+  AssignmentTabination
 } from '../screens/index';
 import CustomDrawerMenu from './CustomDrawerMenu';
 // import {StackScreenHeader} from '../components';
@@ -45,14 +46,14 @@ const DrawerNavigation = () => {
       />
       <Drawer.Screen
         name="Assignments"
-        component={AssignmentScreen}
+        component={AssignmentTabination}
         options={{
           drawerLabel:constant.drawernavItems.item2
         }}
       />
       <Drawer.Screen
-        name="Revenue"
-        component={RevenueScreen}
+        name="Location"
+        component={LocationScreen}
         options={{
           drawerLabel: constant.drawernavItems.item3
         }}

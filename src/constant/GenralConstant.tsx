@@ -1,7 +1,17 @@
+import { DeliveryImg } from "../assets";
 export var constant = {
+  //App Connstants
   defaultLanguage: 'en',
   appTitle:'App Title',
+  appLogo: <DeliveryImg/> ,
   splashScreenTiltle:'Welcome to Agent App',
+  drawernavItems:{
+     item1:'Dashboard',
+     item2:'Delivery Request',
+     item3:'My Location',
+     item4:'Notification',
+     item5:'Settings',
+  },
   loginSuccess: 'Logged in Successfully',
   loginFail: 'Incorrect username or password!',
   logout: 'Logout',
@@ -13,12 +23,5 @@ export var constant = {
   refreshToken: 'refreshToken',
   signout: 'Sign out',
   loginUserDetail:'loginUserDetail',
-  drawernavItems:{
-     item1:'Dashboard',
-     item2:'My Delivery Request',
-     item3:'Revenue',
-     item4:'Notification',
-     item5:'Settigns',
-  }
 
 };

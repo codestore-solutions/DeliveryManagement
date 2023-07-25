@@ -1,25 +1,34 @@
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
-  Image,
   TextInput,
   TouchableOpacity,
-  Pressable,
+  ActivityIndicator,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {RootStackParamList} from '../../navigations/types';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import React, {useState} from 'react';
-import globalStyle from '../../global/globalStyle';
-import styles from './LoginStyle';
 import {Formik} from 'formik';
-import {LogoImg, ShowPasswordIcon, HidePasswordIcon} from '../../assets';
-import {loginValidationSchema} from '../../utils/validations/authValidation';
+import styles from './LoginStyle';
+import {LogoDark, InputEmailIcon, InputEyeOffIcon} from '../../assets';
+import {loginValidationSchema} from '../../utils/validations/userValidation';
+import {useAppDispatch, useAppSelector} from '../../store/hooks';
+import {RootState} from '../../store';
+import {loginUser} from '../../store/features/authSlice';
+import {loginPayload} from '../../utils/types/UserTypes';
+import { Pressable } from 'react-native';
 
 const LoginScreen = () => {
+  const dispatch = useAppDispatch();
+  const {loading} = useAppSelector((state: RootState) => state.auth);
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const loginHandler = (values: any) => {
+    let payload: loginPayload = {
+      username: values?.email,
+      password: values?.password,
+    };
+    console.log("p", payload);
+    dispatch(loginUser(payload));
+  };
+
   return (
     <Formik
       initialValues={{
@@ -27,17 +36,56 @@ const LoginScreen = () => {
         password: '',
       }}
       validationSchema={loginValidationSchema}
-      onSubmit={values => {}}>
+      onSubmit={loginHandler}>
       {({handleChange, handleBlur, handleSubmit, values, errors}) => (
-        <View style={styles.btnContainer}>
-          <TouchableOpacity 
-            onPress={() =>
-              navigation.navigate('Home', {
-                screen: 'Dashboard',
-              })
-            }>
-            <Text style={{ color:'red'}}>Login Page</Text>
-          </TouchableOpacity>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <View style={styles.icon}>
+              <LogoDark width={85} height={85} />
+            </View>
+            <Text style={styles.heading}>Sign In</Text>
+          </View>
+          <View style={styles.formContainer}>
+            <View style={styles.formElement}>
+              <TextInput
+                style={styles.formInput}
+                placeholder="Email"
+                onChangeText={handleChange('email')}
+                onBlur={handleBlur('email')}
+                value={values.email}
+              />
+              <InputEmailIcon width={20} height={20} />
+            </View>
+            {errors && <Text style={styles.errorMessage}>{errors.email}</Text>}
+            <View style={styles.formElement}>
+              <TextInput
+                style={styles.formInput}
+                placeholder="Password"
+                secureTextEntry={!showPassword}
+                onChangeText={handleChange('password')}
+                onBlur={handleBlur('password')}
+                value={values.password}
+              />
+              <Pressable onPress={() => setShowPassword(!showPassword)}>
+                <InputEyeOffIcon width={20} height={20} />
+              </Pressable>
+            </View>
+            {errors && (
+              <Text style={styles.errorMessage}>{errors.password}</Text>
+            )}
+            <View style={styles.formtag}>
+              <View />
+              <Text style={styles.formText}>Forgot Password?</Text>
+            </View>
+            <TouchableOpacity
+              style={styles.btn}
+              disabled={loading}
+              onPress={handleSubmit}>
+              <Text style={styles.btnTxt}>Login</Text>
+              {loading && <ActivityIndicator size="small" color="#fff" />}
+            </TouchableOpacity>
+            {/* <Toast /> */}
+          </View>
         </View>
       )}
     </Formik>
