@@ -89,6 +89,7 @@ const AssignAgent: React.FC<Props> = ({
               selectedOrderData?.shippingAddress?.latitude,
             deliveryAddressLongitude:
               selectedOrderData?.shippingAddress?.longitude,
+              orderStatus:5
           },
         ];
         const { statusCode, message } = await AgentService.assignAgentManually(

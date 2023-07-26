@@ -65,6 +65,7 @@ const getOrdersArray = (data: any, id:any) => {
       deliveryAddressLongitude:
         item?.shippingAddress
           ?.longitude,
+          orderStatus:5
     };
     manualPayload.push(payload);
   });
@@ -141,6 +142,7 @@ const assignAgentAutoData = (previewData: any, orderData: any) => {
       deliveryAddressLongitude:
         item?.shippingAddress
           ?.longitude,
+          orderStatus:item?.orderStatus
     };
     autoAssignPayload.push(payload);
   });
@@ -149,8 +151,9 @@ const assignAgentAutoData = (previewData: any, orderData: any) => {
 
 
 const assignAgentAutoDataSingle = (previewData: any, orderData: any) =>{
+  console.log('pre', previewData)
     let payload = orderData?.map((item:any) =>{
-         return {...item, deliveryAgentId: previewData?.deliveryAgentId }
+         return {...item, deliveryAgentId: previewData[0]?.deliveryAgentId, orderStatus: 5 }
     })
     return payload;
 }

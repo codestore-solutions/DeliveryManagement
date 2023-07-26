@@ -91,9 +91,9 @@ const AssignedOrders: React.FC<Props> = ({activeTab}) => {
     },
     {
       title: "Order Status",
-      dataIndex: "status",
-      key: "status",
-      render: () => <p className="tableTxt">Assigned</p>,
+      dataIndex: "orderStatus",
+      key: "orderStatus",
+      render: (orderStatus:any) => <p className="tableTxt">{orderStatus === 6 ? 'Accepted' : 'Assigned'}</p>,
     },
     {
       title: "Date",
@@ -114,7 +114,7 @@ const AssignedOrders: React.FC<Props> = ({activeTab}) => {
 
   const fetchOrder = () => {
     setLoading(true);
-    OrderService.getAssignedOrdersList(pagination, 5)
+    OrderService.getAssignedOrdersList(pagination, [5,6])
       .then((res: any) => {
         if (res?.status === ApiContants.successCode) {
           setData(res?.data);

@@ -8,7 +8,6 @@ interface Props{
 }
 
 const AgentFeedBack: React.FC<Props> = ({rating, comment}) => {
-
   const renderStars = () => {
     const stars = [];
     for (let i = 0; i < rating; i++) {
@@ -41,5 +40,9 @@ const AgentFeedBack: React.FC<Props> = ({rating, comment}) => {
     </div>
   );
 };
+
+
+
+
 
 export default AgentFeedBack;

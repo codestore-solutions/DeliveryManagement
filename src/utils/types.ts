@@ -19,6 +19,7 @@ export interface manualAssignAgentInterface {
     deliveryAddressId: number;
     deliveryAddressLatitude: number;
     deliveryAddressLongitude: number;
+    orderStatus:number;
 }
 export interface automaticAssignAgentInterface{
    orderId: number;

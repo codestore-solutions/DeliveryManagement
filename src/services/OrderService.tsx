@@ -13,7 +13,7 @@ const getAvailableOrdersList = async (pagination: any) => {
     vendorIds: storesIds,
     page: pageNumber,
     pageSize: pageSize,
-    orderStatus:[4]
+    orderStatus:[4,7]
   };
   let url = `${ApiContants.orderProcessingbaseUrl}${ApiContants.getAvailableOrders}`;
 
@@ -40,7 +40,7 @@ const getAssignedOrdersList = async (pagination: any, status:any) => {
     vendorIds: storesIds,
     page: pageNumber,
     pageSize: pageSize,
-    orderStatus:[status]
+    orderStatus:status
   };
   let url = `${ApiContants.orderProcessingbaseUrl}${ApiContants.getAvailableOrders}`;
 
