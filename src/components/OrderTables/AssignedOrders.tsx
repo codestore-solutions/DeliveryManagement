@@ -71,25 +71,29 @@ const AssignedOrders: React.FC<Props> = ({activeTab}) => {
     },
     {
       title: "Vender Name",
-      dataIndex: "storeId",
-      key: "storeId",
-      render: (text: any) => <p className="tableTxt">{text}</p>,
+      dataIndex: "vendor",
+      key: "vendor",
+      render: (vendor: any) => <p className="tableTxt">{vendor?.first_name + vendor?.last_name}</p>,
     },
     {
       title: "Payment Mode",
       dataIndex: "paymentMode",
       key: "paymentMode",
-      render: (text) => (
+      render: (_, record: any) => (
         <Space size="middle">
-            <p className="available">{text}</p>
+          {record?.payment_type === 2 ? (
+            <p className="offline">COD</p>
+          ) : (
+            <p className="available">Online</p>
+          )}
         </Space>
       ),
     },
     {
       title: "Order Status",
-      dataIndex: "status",
-      key: "status",
-      render: () => <p className="tableTxt">Assigned</p>,
+      dataIndex: "orderStatus",
+      key: "orderStatus",
+      render: (orderStatus:any) => <p className="tableTxt">{orderStatus === 6 ? 'Accepted' : 'Assigned'}</p>,
     },
     {
       title: "Date",
@@ -110,7 +114,7 @@ const AssignedOrders: React.FC<Props> = ({activeTab}) => {
 
   const fetchOrder = () => {
     setLoading(true);
-    OrderService.getAssignedOrdersList(pagination, 'agent_assigned')
+    OrderService.getAssignedOrdersList(pagination, [5,6])
       .then((res: any) => {
         if (res?.status === ApiContants.successCode) {
           setData(res?.data);
@@ -129,6 +133,7 @@ const AssignedOrders: React.FC<Props> = ({activeTab}) => {
   useEffect(() => {
     setPagination({ ...pagination, total: data?.total });
   }, [data]);
+
   return (
     <CustomTable
       columns={columns}

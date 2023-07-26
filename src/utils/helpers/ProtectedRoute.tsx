@@ -12,7 +12,7 @@ const ProtectedRoute: React.FC<Props> = ({
   redirectPath,
   children,
 }) => {
-  console.log("Route", isAuthenticated);
+  // console.log("Route", isAuthenticated);
   if (isAuthenticated) return <>{children}</>;
   return <Navigate to={redirectPath} replace />;
 };

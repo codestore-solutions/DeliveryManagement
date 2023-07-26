@@ -36,19 +36,19 @@ const Dashboard: React.FC = () => {
     },
     {
       key: "2",
-      icon: <DeliveredProcedureOutlined />,
+      icon: <DeliveredProcedureOutlined width={20} height={20}  />,
       label: "Agents",
       path: "/dashboard/agents",
     },
     {
       key: "3",
-      icon: <UnorderedListOutlined />,
+      icon: <UnorderedListOutlined width={20} height={20}  />,
       label: "Orders",
       path: "/dashboard/orders",
     },
     {
       key: "4",
-      icon: <UserAddOutlined />,
+      icon: <UserAddOutlined width={20} height={20}  />,
       label: "Profile",
       path: "/dashboard/profile",
     },

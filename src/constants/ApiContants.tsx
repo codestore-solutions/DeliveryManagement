@@ -18,14 +18,12 @@ export const ApiContants = {
      loginEndpoint:  'testing/login',
 
      // Agents Endpoints
-     getAgentList: '/business-admin/get-agents',
-     assignAgentAutomatically: 'agent/assign-agent',
-     assignOrderInBulk:'agent/assign-agent-bulk',
+     getAgentList: 'personal-details/getAgentsList',
+     getAgentDteails:'personal-details/getDetails',
+     assignAgentAutomatically: 'assignAgent/automatically-assign-preview',
      getAssignedAgent:'agent/GetAll',
      modifyAgentStatus:'business-admin',
-     assignAgentManual:'agent/assign-manually',
-     assignAgentBulkAutomatic:'agent/assign-agent-bulk',
-     assignAgentManualBulk:'agent/bulk-assign-manually',
+     assignAgentManual:'assignAgent/assign-manually',
      //Orders Processing endpoint
      getOrders:'business/getOrdersByStoresId',
      getAvailableOrders: 'business/getOrdersByStoresIdAndStatus',

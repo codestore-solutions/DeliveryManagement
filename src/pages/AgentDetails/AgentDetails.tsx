@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./style.scss";
-// import { useLocation } from "react-router-dom";
-// import AgentServices from "../../services/AgentServices";
+import { useLocation } from "react-router-dom";
 // import { LoadingOutlined } from "@ant-design/icons";
 import {
   BusyIcon,
@@ -14,12 +13,17 @@ import {
   TimeTick,
 } from "../../assets";
 import { Col, Row } from "antd";
+import AgentService from "../../services/AgentService";
+import Spinner from "../Spinner/Spinner";
+import CustomizeDate from "../../utils/helpers/CustomizeDate";
 
 // const antIcon = <LoadingOutlined style={{ color: "#fff" }} spin />;
 const AgentDetails: React.FC = () => {
-  // const [loading, setLoading] = useState<boolean>(false);
-  // const location = useLocation();
-  // const state = location.state;
+  const [data, setData] = useState<any>(null);
+  console.log('data', data);
+  const [loading, setLoading] = useState<boolean>(false);
+  const location = useLocation();
+  const id = location.state?.personalDetails?.deliveryAgentId;
   // console.log("Dey", state)
   // const verifyAgentHandler = async () => {
   //   let instance = AgentServices.getInstance();
@@ -28,7 +32,25 @@ const AgentDetails: React.FC = () => {
   //     if (res) setLoading(false);
   //   });
   // };
+  const fetchAgentDetails = async (id: number) => {
+    try {
+      setLoading(true);
+      const { data, statusCode } = await AgentService.getAgentDetails(id);
+      if (statusCode === 200) setData(data);
+    } catch (err) {
+      console.log("Agent Details fetching  Error", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
+    fetchAgentDetails(Number(id));
+  }, []);
+  
+   if(loading){
+     return <Spinner />
+   }
   return (
     <div id="agent-details">
       <div className="agent-header">
@@ -56,15 +78,15 @@ const AgentDetails: React.FC = () => {
               <div className="container-content">
                 <div className="container-row">
                   <span className="container-col">Name</span>
-                  <span className="container-col dark">Raju Kumar</span>
+                  <span className="container-col dark">{data?.personalDetails?.fullName}</span>
                 </div>
                 <div className="container-row">
                   <span className="container-col">Email Id</span>
-                  <span className="container-col dark">198raju@gmail.com</span>
+                  <span className="container-col dark">{data?.personalDetails?.email}</span>
                 </div>
                 <div className="container-row">
                   <span className="container-col">Mobile Number</span>
-                  <span className="container-col dark">+1 12345-09876</span>
+                  <span className="container-col dark">{data?.personalDetails?.phoneNumber}</span>
                 </div>
               </div>
             </div>
@@ -76,11 +98,11 @@ const AgentDetails: React.FC = () => {
               <div className="container-content">
                 <div className="container-row">
                   <span className="container-col">Unique ID</span>
-                  <span className="container-col dark">Raju Kumar</span>
+                  <span className="container-col dark">{data?.personalDetails?.deliveryAgentId}</span>
                 </div>
                 <div className="container-row">
                   <span className="container-col">Joining Date</span>
-                  <span className="container-col dark">10/12/2022</span>
+                  <span className="container-col dark">{CustomizeDate.getDate(data?.personalDetails?.dateOfBirth)}</span>
                 </div>
                 <div className="container-row">
                   <span className="container-col">DL Number</span>
@@ -96,15 +118,15 @@ const AgentDetails: React.FC = () => {
               <div className="container-content">
                 <div className="container-row">
                   <span className="container-col">IFSC</span>
-                  <span className="container-col dark">SBIN0002583</span>
+                  <span className="container-col dark">{data?.bankDetails?.ifscCode}</span>
                 </div>
                 <div className="container-row">
                   <span className="container-col">A/C Number</span>
-                  <span className="container-col dark">761223440817203842</span>
+                  <span className="container-col dark">{data?.bankDetails?.accountNumber}</span>
                 </div>
                 <div className="container-row">
                   <span className="container-col">Branch</span>
-                  <span className="container-col dark">Sector 62,Noida</span>
+                  <span className="container-col dark">{data?.bankDetails?.bankName}</span>
                 </div>
                 <div className="container-row">
                   <span className="container-col">Res. Address</span>
@@ -114,37 +136,26 @@ const AgentDetails: React.FC = () => {
                 </div>
               </div>
             </div>
-          </Col>
+          </Col>                                                    
         </Row>
         {/* Add Vechile Details Container */}
         <div className="vechile-details">
           <h3>Vechile Details</h3>
           <div className="details">
             <span className="details-item">
-              Vehicle Number : <span className="dark">UP24 ED 1234</span>{" "}
+              Vehicle Number : <span className="dark">{data?.vehicleDetails?.numberPlate}</span>{" "}
             </span>
             <span className="details-item">
-              Vehicle Number : <span className="dark">UP24 ED 1234</span>{" "}
+              Registration Number : <span className="dark">{data?.vehicleDetails?.registrationNumber}</span>{" "}
             </span>
             <span className="details-item">
-              Vehicle Number : <span className="dark">UP24 ED 1234</span>{" "}
+             VechileType : <span className="dark">{data?.vehicleDetails?.vehicleType}</span>{" "}
             </span>
             <span className="details-item">
-              Vehicle Number : <span className="dark">UP24 ED 1234</span>{" "}
-            </span>
-          </div>
-        </div>
-        <div className="vechile-details">
-          <h3>Wallet Details</h3>
-          <div className="details">
-            <span className="details-item">
-              Wallet Balance : <span className="dark">456 Inr</span>{" "}
+              Vehicle Model : <span className="dark">{data?.vehicleDetails?.model}</span>{" "}
             </span>
             <span className="details-item">
-              Carryover Limit : <span className="dark"> 3456 Inr</span>{" "}
-            </span>
-            <span className="details-item">
-              Carryover Amount : <span className="dark"> 3456 Inr</span>{" "}
+              Vechile Company : <span className="dark">{data?.vehicleDetails?.companyName}</span>{" "}
             </span>
           </div>
         </div>

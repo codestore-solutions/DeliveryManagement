@@ -3,9 +3,9 @@ import "./style.scss";
 import "../../pages/DeliveryAgents/style.scss";
 import { Space, Tooltip } from "antd";
 import { ColumnsType } from "antd/es/table";
-import { AssignAgent, CustomModal, CustomTable } from "../index";
+import {  CustomModal, CustomTable } from "../index";
 // import { LoadingOutlined } from "@ant-design/icons";
-import { AutomaticUser, DeliveryUserIcon, DetailsIcon } from "../../assets";
+import {  DeliveryUserIcon, DetailsIcon } from "../../assets";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks/app";
 import {
@@ -13,16 +13,11 @@ import {
   getAvailableOrders,
   orderSelector,
 } from "../../store/features/Orders/ordersSlice";
-import { pagination } from "../../utils/types";
+import {  pagination } from "../../utils/types";
 import { useEffect } from "react";
 import date from "../../utils/helpers/CustomizeDate";
 import CutomizeText from "../../utils/helpers/CustomizeText";
-import CustomizeData from "../../utils/helpers/CustomizeData";
-import AgentService from "../../services/AgentService";
-import { ApiContants } from "../../constants/ApiContants";
-import CustomizeDate from "../../utils/helpers/CustomizeDate";
-import OrderService from "../../services/OrderService";
-import {RightOutlined, LeftOutlined} from "@ant-design/icons";
+import SingleAssign from "../SingleAssign/SingleAssign";
 // import dummyData from "../../../dummyData";
 
 export interface DataType {
@@ -57,7 +52,7 @@ const AvailableOrders: React.FC<Props> = ({
   const { loading, orderslist } = useAppSelector(
     orderSelector
   ) as OrderStateInerface;
-  const data = CustomizeData.AvilableOrderData(orderslist?.list);
+  const data = orderslist?.list;
   const [pagination, setPagination] = useState<pagination>({
     showLessItems: true,
     hideOnSinglePage: true,
@@ -67,11 +62,8 @@ const AvailableOrders: React.FC<Props> = ({
     pageSize: 7,
     showTotal: (total: any, range: any) =>
       `${range[0]}-${range[1]} of ${total} items`,
-      nextIcon: <RightOutlined style={{ color: '#545bfc', padding:'3px',  border:'1px solid #545bfc',fontSize: '16px', borderRadius:"5px" }} />,
-    prevIcon: <LeftOutlined style={{color: '#545bfc' , padding:'3px', border:'1px solid #545bfc',fontSize: '16px', borderRadius:"5px"  }} />,
-  });
+    });
   const [isOpen, setIsOpen] = useState(false);
-  const [isApiCall, setIsApiCall] = useState(false);
   const handleOpenModal = (record: any) => {
     setSelectedRow(record);
     setIsOpen(true);
@@ -100,14 +92,14 @@ const AvailableOrders: React.FC<Props> = ({
     },
     {
       title: "Vender Name",
-      dataIndex: "storeDetails",
-      key: "storeDetails",
-      render: (storeDetails: any) => CutomizeText(storeDetails?.storname),
+      dataIndex: "vendor",
+      key: "vendor",
+      render: (vender: any) => CutomizeText(vender?.business?.name),
     },
     {
       title: "Payment Mode",
-      dataIndex: "paymentType",
-      key: "paymentType",
+      dataIndex: "paymentMode",
+      key: "paymentMode",
       render: (_, record: any) => (
         <Space size="middle">
           {record?.payment_type === 2 ? (
@@ -120,15 +112,15 @@ const AvailableOrders: React.FC<Props> = ({
     },
     {
       title: "Delivery Region",
-      dataIndex: "shippingAddressDetails",
-      key: "shippingAddressDetails",
-      render: (shippingAddressDetails: any) =>
-        CutomizeText(shippingAddressDetails.address),
+      dataIndex: "shippingAddress",
+      key: "shippingAddress",
+      render: (shippingAddress: any) =>
+        CutomizeText(shippingAddress.street + shippingAddress.state),
     },
     {
       title: "Date",
-      key: "date",
-      dataIndex: "date",
+      key: "createdAt",
+      dataIndex: "createdAt",
       render: (text: any) => <p className="tableTxt">{date.getDate(text)}</p>,
     },
     {
@@ -147,7 +139,7 @@ const AvailableOrders: React.FC<Props> = ({
           <div onClick={() => handleClick(record)}>
             <img src={DetailsIcon} alt="" />
           </div>
-          <Tooltip
+          {/* <Tooltip
             placement="right"
             title={isApiCall ? "Assigning.." : "Assign Agent"}
           >
@@ -157,7 +149,7 @@ const AvailableOrders: React.FC<Props> = ({
               className="icon-style"
               onClick={() => !isApiCall && autoAssignAgent(record)}
             />
-          </Tooltip>
+          </Tooltip> */}
         </Space>
       ),
     },
@@ -181,42 +173,6 @@ const AvailableOrders: React.FC<Props> = ({
     dispatch(getAvailableOrders({ payload }));
   };
 
-  // Automatic Assign Agent to Single Order
-  const autoAssignAgent = (values: any) => {
-    let payload = {
-      orderId: values?.id,
-      pickupLat: values.storeDetails.pickupLatitudes,
-      pickupLong: values.storeDetails?.pickupLongitudes,
-      deliveryAddressLat:
-        values?.shippingAddressDetails?.deliveryAddressLatitudes,
-      deliveryAddressLong:
-        values?.shippingAddressDetails?.deliveryAddressLongitudes,
-      businessId: 2,
-    };
-    AgentService.assignAgentAutomaticallyToOrder(payload)
-      .then((res) => {
-        setIsApiCall(true);
-        if (res?.statusCode === ApiContants.successCode) {
-          let orderPayload = {
-            agentId: [res?.data.agentId],
-            status: res?.data.status,
-            timestamp: CustomizeDate.getCurrentTimestamp(),
-            orders: [res?.data.orderId],
-          };
-          OrderService.updateOrder(orderPayload).then((res: any) => {
-            if (res?.status === ApiContants.successCode) {
-              fetchOrders();
-            }
-          });
-        }
-      })
-      .catch((err) => {
-        console.log("Assign Agent Auto Error ", err);
-      })
-      .finally(() => {
-        setIsApiCall(false);
-      });
-  };
 
   useEffect(() => {
     fetchOrders();
@@ -248,12 +204,7 @@ const AvailableOrders: React.FC<Props> = ({
         isOpen={isOpen}
         onClose={handleCloseModal}
         component={
-          <AssignAgent
-            type={0}
-            selectedOrderData={selectedRow}
-            onClose={handleCloseModal}
-            isOpen={isOpen}
-          />
+          <SingleAssign selectedRow={selectedRow} handleCloseModal={handleCloseModal} isOpen={isOpen}  />
         }
         width={600}
       />

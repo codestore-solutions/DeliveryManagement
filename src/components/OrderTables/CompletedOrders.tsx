@@ -97,7 +97,7 @@ const CompletedOrders: React.FC<Props> = ({ activeTab }) => {
 
   const fetchOrder = () => {
     setLoading(true);
-    OrderService.getAssignedOrdersList(pagination, "delivered")
+    OrderService.getAssignedOrdersList(pagination, [11])
       .then((res: any) => {
         if (res?.status === ApiContants.successCode) {
           setData(res?.data);
