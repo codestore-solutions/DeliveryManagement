@@ -28,7 +28,12 @@ namespace DeliveryAgent.API.Controllers
         [HttpGet("get")]
         public async Task<IActionResult> GetBankDetailAsync([FromQuery][Required] long agentId)
         {
-            return Ok(await bankDetailsService.GetAsync(agentId));
+            var result = await bankDetailsService.GetAsync(agentId);
+            if(result == null)
+            {
+                return BadRequest(StringConstant.InvalidInputError);  
+            }
+            return Ok(result);
         }
 
         /// <summary>
@@ -38,9 +43,14 @@ namespace DeliveryAgent.API.Controllers
         /// <returns></returns>
         [HttpPost("add")]
         [ValidateModel]
-        public async Task<IActionResult> AddBankDetailsAsync([FromBody] BankDetailsDto bankDetailsDto)
+        public async Task<IActionResult> AddBankDetailsAsync([FromBody][Required] BankDetailsDto bankDetailsDto)
         {
-            return Ok(await bankDetailsService.AddDetailsAsync(bankDetailsDto));
+            var result = await bankDetailsService.AddDetailsAsync(bankDetailsDto);
+            if(result == null)
+            {
+                return BadRequest(StringConstant.InvalidInputError);
+            }
+            return Ok(result);
         }
 
         /// <summary>
@@ -51,7 +61,7 @@ namespace DeliveryAgent.API.Controllers
         /// <returns></returns>
         [HttpPut("update")]
         [ValidateModel]
-        public async Task<IActionResult> UpdateDetailsAsync([FromQuery][Required] long id, [FromBody] BankDetailsDto bankDetailsDto)
+        public async Task<IActionResult> UpdateDetailsAsync([FromQuery][Required] long id, [FromBody][Required] BankDetailsDto bankDetailsDto)
         {
             var result = await bankDetailsService.UpdateDetailsAsync(id, bankDetailsDto);
             if (result == null)

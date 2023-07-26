@@ -16,23 +16,28 @@ namespace EntityLayer.Dtos
         public long DeliveryAgentId { get; set; }
 
         [Required]
-        [StringLength(50)]
+        [StringLength(50, MinimumLength = 1)]
+        [RegularExpression(@"^[A-Za-z0-9.:,/ -]+$")]
         public string LocationName { get; set; } = null!;
 
         [Required]
-        [StringLength(100)]
+        [StringLength(100, MinimumLength = 1)]
+        [RegularExpression(@"^[A-Za-z0-9.:,/ -]+$")]
         public string Address { get; set; } = null!;
 
         [Required]
         [DataType(DataType.Time)]
+        [RegularExpression(@"^[0-2][0-9]:00$")]
         public string FromTime { get; set; } = null!;
 
         [Required]
+        [DataType(DataType.Time)]
+        [RegularExpression(@"^[0-2][0-9]:00$")]
         public string ToTime { get; set; } = null!;
          
         [Required]
-        public List<string> SelectDays { get; set; } = null!;
-
+        public List<string> SelectedDays { get; set; } = null!;
+       
         public double Latitude { get; set; }
 
         public double Longitude { get; set; }

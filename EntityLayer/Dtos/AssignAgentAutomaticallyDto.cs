@@ -13,7 +13,7 @@ namespace EntityLayer.Dtos
         public long OrderId { get; set; } 
 
         [Required]
-        public string VendorAddress { get; set; } = null!;
+        public long VendorAddressId { get; set; } 
 
         [Required]
         public double PickupLatitude { get; set; }
@@ -22,7 +22,7 @@ namespace EntityLayer.Dtos
         public double PickupLongitude { get; set; }
 
         [Required]
-        public string DeliveryAddress { get; set; } = null!;
+        public long DeliveryAddressId { get; set; } 
 
         [Required]
         public double DeliveryAddressLatitude { get; set; } 
@@ -35,27 +35,6 @@ namespace EntityLayer.Dtos
     public class AssignAgentAutomaticallyDto
     {
         public List<AssignAutomaticObjectDto> List { get; set; } = null!;
-        /*[Required]
-        public List<long> OrderIds { get; set; } = null!;
-
-        [Required]
-        public List<string> VendorAddresses { get; set; } = null!;
-
-        [Required]
-        public List<double> PickupLatitudes { get; set; } = null!;
-
-        [Required]
-        public List<double> PickupLongitudes { get; set; } = null!;
-
-        [Required]
-        public List<string> DeliveryAddresses { get; set; } = null!;
-
-        [Required]
-        public List<double> DeliveryAddressLatitudes { get; set; } = null!;
-
-        [Required]
-        public List<double> DeliveryAddressLongitudes { get; set; } = null!;*/
-
     }
     
 }

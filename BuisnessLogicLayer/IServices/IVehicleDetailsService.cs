@@ -10,9 +10,8 @@ namespace BusinessLogicLayer.IServices
 {
     public interface IVehicleDetailsService
     {
-        public Task<ResponseDto> GetAsync(long agentId);
-        public Task<ResponseDto> AddDetailsAsync(VehicleDetailsDto vehicleDetailsDto);
-
+        public Task<ResponseDto?> GetAsync(long agentId);
+        public Task<ResponseDto?> AddDetailsAsync(VehicleDetailsDto vehicleDetailsDto);
         public Task<ResponseDto?> UpdateDetailsAsync(long id, VehicleDetailsDto vehicleDetailsDto);
     }
 }

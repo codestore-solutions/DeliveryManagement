@@ -12,23 +12,29 @@ namespace EntityLayer.Dtos
 
         [Required]
         [StringLength(50, MinimumLength = 1)]
+        [RegularExpression(@"^[A-Za-z0-9.:,/ -]+$")]
         public string LocationName { get; set; } = null!;
 
         [Required]
-        [StringLength(100)]
+        [StringLength(100, MinimumLength = 1)]
+        [RegularExpression(@"^[A-Za-z0-9.:,/ -]+$")]
         public string Address { get; set; } = null!;
+
+        [Required]
+        [DataType(DataType.Time)]
+        [RegularExpression(@"^[0-2][0-9]:00$")]
+        public string FromTime { get; set; } = null!;
+
+        [Required]
+        [DataType(DataType.Time)]
+        [RegularExpression(@"^[0-2][0-9]:00$")]
+        public string ToTime { get; set; } = null!;
+
+        [Required]
+        public List<string> SelectedDays { get; set; } = null!;
+
         public double Latitude { get; set; }
+
         public double Longitude { get; set; }
-        public int MaxDistance { get; set; }
-
-        [Required] 
-        public DateTime StartTime { get; set; }
-
-        [Required]
-        public DateTime EndTime { get; set; }
-
-        [Required]
-        public string FromDay { get; set; } = null!;
-        public string ToDay { get; set; } = string.Empty;
     }
 }

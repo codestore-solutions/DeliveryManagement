@@ -7,11 +7,11 @@ using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using static EntityLayer.Models.Order;
 using System.Net.Http;
 using DeliveryAgentModule.CustomActionFilter;
 using Newtonsoft.Json.Linq;
 using EntityLayer.Common;
+using System.ComponentModel.DataAnnotations;
 
 namespace DeliveryAgentModule.Controllers
 {
@@ -31,7 +31,7 @@ namespace DeliveryAgentModule.Controllers
 
         [HttpPost("login")]
         [MapToApiVersion("1.0")]
-        public async Task<IActionResult> Login([FromBody] LoginRequestDto loginRequestDto)
+        public async Task<IActionResult> Login([FromBody][Required] LoginRequestDto loginRequestDto)
         {
             var microserviceResponse = await httpClient.GetAsync("https://order-processing-dev.azurewebsites.net/api/v1/users/listAllUsers");
             if(microserviceResponse == null)

@@ -28,7 +28,12 @@ namespace DeliveryAgent.API.Controllers
         [HttpGet("get")]
         public async Task<IActionResult> GetAgentDetailAsync([FromQuery][Required] long agentId)
         {
-            return Ok(await vehicleDetailsService.GetAsync(agentId));
+            var result = await vehicleDetailsService.GetAsync(agentId);
+            if(result == null)
+            {
+                return NotFound(StringConstant.InvalidInputError);
+            }
+            return Ok(result);
         }
 
         /// <summary>
@@ -37,9 +42,15 @@ namespace DeliveryAgent.API.Controllers
         /// <param name="vehicleDetailsDto"></param>
         /// <returns></returns>
         [HttpPost("add")]
-        public async Task<IActionResult> AddVehicleDetailsAsync([FromBody] VehicleDetailsDto vehicleDetailsDto)
+        [ValidateModel]
+        public async Task<IActionResult> AddVehicleDetailsAsync([FromBody][Required] VehicleDetailsDto vehicleDetailsDto)
         {
-            return Ok(await vehicleDetailsService.AddDetailsAsync(vehicleDetailsDto));
+            var result = await vehicleDetailsService.AddDetailsAsync(vehicleDetailsDto);        
+            if(result == null)
+            {
+                return BadRequest(StringConstant.ExistingMessage);
+            }
+            return Ok(result);
         }
 
         /// <summary>

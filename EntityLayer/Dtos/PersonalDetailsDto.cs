@@ -17,10 +17,12 @@ namespace EntityLayer.Dtos
 
         [Required]
         [StringLength(100, MinimumLength = 1)]
+        [RegularExpression(@"^[A-Za-z0-9.:,/ -]+$")]
         public string FullName { get; set; } = null!;
 
         [Required]
-        [RegularExpression(@"^\d{10}$")]
+        [DataType(DataType.PhoneNumber)]
+        [RegularExpression(@"^\d{12}$")]
         public string PhoneNumber { get; set; } = null!;
 
         [Required]
@@ -28,6 +30,8 @@ namespace EntityLayer.Dtos
         public string Email { get; set; } = null!;
 
         [Required]
+        [RegularExpression(@"^[A-Za-z0-9.:,/ -]+$")]
+        [StringLength(10, MinimumLength = 1)]
         public string Gender { get; set; } = null!;
 
         [Required]

@@ -14,7 +14,7 @@ namespace DataAccessLayer.IRepository
         IQueryable<T> GetAll();
         Task<T?> GetByIdAsync(long id); 
         public Task AddAsync(T entity);    
-        Task<T> DeleteAsync(long id);
+        Task<T?> DeleteAsync(long id);
         public void Delete(T entity);
     }
 }

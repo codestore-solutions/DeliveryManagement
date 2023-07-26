@@ -24,20 +24,35 @@ namespace BusinessLogicLayer.Services
             this.mapper = mapper;
         }
 
-        public async Task<ResponseDto> GetAsync(long agentId)
+        public async Task<ResponseDto?> GetAsync(long agentId)
         {
             var agentDetail = await unitOfWork.BankDetailsRepository.GetAll().FirstOrDefaultAsync(u => u.DeliveryAgentId == agentId);
-            return new ResponseDto
+
+            if(agentDetail == null)
             {
-                StatusCode = 200,
-                Success = true,
-                Data = agentDetail,
-                Message = StringConstant.SuccessMessage
-            };
+                return null;
+            }
+            var response = new ResponseDto();
+
+            if(agentDetail != null)
+            {
+                response.StatusCode = 200;
+                response.Success    = true;
+                response.Data       = agentDetail;
+                response.Message    = StringConstant.SuccessMessage;
+            }
+            return response;
         }
 
-        public async Task<ResponseDto> AddDetailsAsync(BankDetailsDto bankDetailsDto)
-        {    
+        public async Task<ResponseDto?> AddDetailsAsync(BankDetailsDto bankDetailsDto)
+        {
+            var exitingDetails = await unitOfWork.BankDetailsRepository.GetAll()
+            .FirstOrDefaultAsync(u => u.DeliveryAgentId == bankDetailsDto.DeliveryAgentId);
+
+            if (exitingDetails != null)
+            {
+                return null;
+            }
             var bankDetails = new BankDetails();
             mapper.Map(bankDetailsDto, bankDetails);
 
@@ -60,7 +75,6 @@ namespace BusinessLogicLayer.Services
             {
                 return null;
             }
-
             mapper.Map(bankDetailsDto, bankDetails);
             bool saveResult = await unitOfWork.SaveAsync();
 
@@ -69,8 +83,9 @@ namespace BusinessLogicLayer.Services
                 StatusCode      = saveResult ? 200 : 500,
                 Success         = saveResult,
                 Data            = saveResult ? bankDetails : StringConstant.DatabaseMessage,
-                Message         = saveResult ? StringConstant.SuccessMessage : StringConstant.DatabaseMessage
+                Message         = saveResult ? StringConstant.UpdatedMessage : StringConstant.DatabaseMessage
             };
         }
+
     }
 }

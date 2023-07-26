@@ -13,5 +13,7 @@
         public const string DeletedMessage               = "Deleted Successfully";
         public const string AddedMessage                 = "Added Successfully";
         public const string AssignedSuccessMessage       = "Assigned Successfully";
+        public const string ExistingMessage              = "Details already exists in DB";
+        public const string InternalServerErrorMessage = "Details already exists in DB";
     }
 }

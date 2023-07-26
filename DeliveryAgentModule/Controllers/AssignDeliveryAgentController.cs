@@ -7,6 +7,14 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection.Metadata.Ecma335;
+using static System.Net.Mime.MediaTypeNames;
+using System.Text;
+using System.Text.Json;
+using Azure;
+using System.Net.Http.Headers;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using EntityLayer.Models;
+using Newtonsoft.Json;
 
 namespace DeliveryAgentModule.Controllers
 {
@@ -40,7 +48,8 @@ namespace DeliveryAgentModule.Controllers
         /// </summary>
         /// <param name="assignAgentAutomaticallyDto"></param>
         /// <returns></returns>
-        [HttpPost("automatically-assign")]
+        [HttpPost("automatically-assign-preview")]
+        [ValidateModel]
         public async Task<IActionResult> AssignAgentAutomaticallyAsync(AssignAgentAutomaticallyDto assignAgentAutomaticallyDto)
         {
             return Ok(await deliveryAgentService.AssignAgentAutomaticallyAsync(assignAgentAutomaticallyDto));
@@ -62,8 +71,52 @@ namespace DeliveryAgentModule.Controllers
         [ValidateModel]
         public async Task<IActionResult> AssignAgentManuallyAsync(AssignManuallyDto assignManuallyDto)
         {
-            return Ok(await deliveryAgentService.AssignAgentManuallyAsync(assignManuallyDto));
-         
+            var response = await deliveryAgentService.AssignAgentManuallyAsync(assignManuallyDto);
+
+            using var client = new HttpClient();
+
+            var requestBody = new UpdateOrderStatus();
+
+            requestBody.orderStatus = 5;
+            foreach (var obj in assignManuallyDto.List)
+            {
+                var order = new Order
+                {
+                    orderId         = obj.OrderId,
+                    deliveryAgentId = obj.DeliveryAgentId,
+                };
+                requestBody.orders.Add(order);
+            }
+
+            HttpContent requestJson = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json");
+            // Add the authorization header with the token
+            string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFtYW4uc2hhaEBleGFtcGxlLmNvbSIsInJvbGUiOiIyIiwiaWQiOiIyIiwiYnVzaW5lc3NDYXRlZ29yeSI6IjEiLCJleHAiOjE2OTQ2Njg1NTd9.5o0-bpi-JluyVoztkzksonQRmCINzYjPYle6xVu4HHo";
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            var microserviceResponse =  client.PutAsync("https://order-processing-dev.azurewebsites.net/api/v1/order/updateOrderWithAgent", requestJson).Result;
+            if (microserviceResponse.IsSuccessStatusCode)
+            {
+                return Ok(response);
+            }
+            else
+            {          
+                return NotFound(response);
+            }
+        }
+        
+        /// <summary>
+        /// Accept or Reject Order by agent through Mobile App.
+        /// </summary>
+        /// <param name="acceptRejectOrderDto"></param>
+        /// <returns></returns>
+        [HttpPost("acceptOrReject")]
+        public async Task<IActionResult> AcceptOrder([FromBody] AcceptRejectOrderDto acceptRejectOrderDto )
+        {
+            var result = await deliveryAgentService.AcceptOrderAsync(acceptRejectOrderDto);
+            if(result.Success == false)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
 
     }    

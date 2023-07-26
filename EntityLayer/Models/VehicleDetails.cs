@@ -31,7 +31,7 @@ namespace EntityLayer.Models
 
 
         [Required]
-        [StringLength(20)]
+        [StringLength(50)]
         public string NumberPlate { get; set; } = null!;
 
         [Required]

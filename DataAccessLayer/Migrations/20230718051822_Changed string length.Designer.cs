@@ -4,6 +4,7 @@ using DataAccessLayer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(DeliveryDbContext))]
-    partial class DeliveryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230718051822_Changed string length")]
+    partial class Changedstringlength
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,20 +36,11 @@ namespace DataAccessLayer.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<long>("DeliveryAddressId")
-                        .HasColumnType("bigint");
-
-                    b.Property<double>("DeliveryAddressLatitude")
-                        .HasColumnType("float");
-
-                    b.Property<double>("DeliveryAddressLongitude")
-                        .HasColumnType("float");
-
                     b.Property<long>("DeliveryAgentId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("OrderId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("OrdersCount")
+                        .HasColumnType("int");
 
                     b.Property<double>("PickupLatitude")
                         .HasColumnType("float");
@@ -59,9 +53,6 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<long>("VendorAddressId")
                         .HasColumnType("bigint");
-
-                    b.Property<int>("orderStatus")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -217,6 +208,36 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("kYCs");
                 });
 
+            modelBuilder.Entity("EntityLayer.Models.Order", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("AssignDeliveryAgentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("DeliveryAddressId")
+                        .HasColumnType("bigint");
+
+                    b.Property<double>("DeliveryAddressLatitude")
+                        .HasColumnType("float");
+
+                    b.Property<double>("DeliveryAddressLongitude")
+                        .HasColumnType("float");
+
+                    b.Property<long>("OrderId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssignDeliveryAgentId");
+
+                    b.ToTable("Orders");
+                });
+
             modelBuilder.Entity("EntityLayer.Models.PersonalDetails", b =>
                 {
                     b.Property<long>("Id")
@@ -346,6 +367,22 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("VechicleDetails");
+                });
+
+            modelBuilder.Entity("EntityLayer.Models.Order", b =>
+                {
+                    b.HasOne("EntityLayer.Models.AssignDeliveryAgent", "AssignDeliveryAgent")
+                        .WithMany("Orders")
+                        .HasForeignKey("AssignDeliveryAgentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AssignDeliveryAgent");
+                });
+
+            modelBuilder.Entity("EntityLayer.Models.AssignDeliveryAgent", b =>
+                {
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

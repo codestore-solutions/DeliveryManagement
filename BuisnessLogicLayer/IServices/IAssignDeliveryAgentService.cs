@@ -10,5 +10,7 @@ namespace BusinessLogicLayer.IServices
        public Task<ResponseDto> GetAllAsync(int pageNumber=1, int limit=10);
        public Task<ResponseDto> AssignAgentManuallyAsync(AssignManuallyDto assignManuallyDto);
        public Task<ResponseDto> AssignAgentAutomaticallyAsync(AssignAgentAutomaticallyDto assignAgentAutomaticallyDto);
+       public Task<ResponseDto?> AcceptOrderAsync(AcceptRejectOrderDto acceptRejectOrderDto);
+      
     }
 }

@@ -18,7 +18,7 @@ namespace EntityLayer.Dtos
         public long OrderId { get; set; }
 
         [Required]
-        public string VendorAddress { get; set; } = null!;
+        public long VendorAddressId { get; set; } 
 
         [Required]
         [Range(0, double.MaxValue)]
@@ -29,7 +29,7 @@ namespace EntityLayer.Dtos
         public double PickupLongitude { get; set; }
 
         [Required]
-        public string DeliveryAddress { get; set; } = null!;
+        public long DeliveryAddressId { get; set; } 
 
         [Required]
         [Range(0, double.MaxValue)]
@@ -38,6 +38,15 @@ namespace EntityLayer.Dtos
         [Required]
         [Range(0, double.MaxValue)]
         public double DeliveryAddressLongitude { get; set; }
+        public enum OrderStatus
+        {
+            Assigned = 5,
+            Accepted = 6,
+            Rejected = 7,
+            Ongoing = 8,
+            Delivered = 9,
+        }
+        public OrderStatus orderStatus { get; set; }
     }
     public class AssignManuallyDto
     {

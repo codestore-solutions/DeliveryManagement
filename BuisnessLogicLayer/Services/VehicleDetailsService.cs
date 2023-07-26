@@ -24,9 +24,15 @@ namespace BusinessLogicLayer.Services
             this.mapper = mapper;
         }
 
-        public async Task<ResponseDto> AddDetailsAsync(VehicleDetailsDto vehicleDetailsDto)
-        {
-            
+        public async Task<ResponseDto?> AddDetailsAsync(VehicleDetailsDto vehicleDetailsDto)
+        {   
+            var exitingDetails = await unitOfWork.VehicleDetailsRepository.GetAll()
+            .FirstOrDefaultAsync(u => u.DeliveryAgentId == vehicleDetailsDto.DeliveryAgentId);
+
+            if (exitingDetails != null)
+            {
+                return null;
+            }
             var addNewvehicleDetails = new VehicleDetails();
             mapper.Map(vehicleDetailsDto, addNewvehicleDetails);
             await unitOfWork.VehicleDetailsRepository.AddAsync(addNewvehicleDetails);
@@ -37,11 +43,11 @@ namespace BusinessLogicLayer.Services
                 StatusCode   = saveResult ? 200 : 500,
                 Success      = saveResult,
                 Data         = addNewvehicleDetails,
-                Message      = saveResult ? StringConstant.SuccessMessage : StringConstant.DatabaseMessage
+                Message      = saveResult ? StringConstant.AddedMessage : StringConstant.DatabaseMessage
             };
         }
 
-        public async Task<ResponseDto> GetAsync(long agentId)
+        public async Task<ResponseDto?> GetAsync(long agentId)
         {
             var vehicleDetails = await unitOfWork.VehicleDetailsRepository.GetAll().FirstOrDefaultAsync(u => u.DeliveryAgentId == agentId);
             if (vehicleDetails == null)
@@ -51,12 +57,11 @@ namespace BusinessLogicLayer.Services
             return new ResponseDto
             {
                 StatusCode = 200,
-                Success = true,
-                Data = vehicleDetails,
-                Message = StringConstant.SuccessMessage
+                Success    = true,
+                Data       = vehicleDetails,
+                Message    = StringConstant.SuccessMessage
             };
         }
-
 
         public async Task<ResponseDto?> UpdateDetailsAsync(long id, VehicleDetailsDto vehicleDetailsDto)
         {
@@ -65,7 +70,6 @@ namespace BusinessLogicLayer.Services
             {
                 return null;
             }
-
             mapper.Map(vehicleDetailsDto, vehicleDetails);
             bool saveResult = await unitOfWork.SaveAsync();
 
@@ -74,7 +78,7 @@ namespace BusinessLogicLayer.Services
                 StatusCode      = saveResult ? 200 : 500,
                 Success         = saveResult,
                 Data            = vehicleDetails ,
-                Message         = saveResult ? StringConstant.SuccessMessage : StringConstant.DatabaseMessage
+                Message         = saveResult ? StringConstant.UpdatedMessage : StringConstant.DatabaseMessage
             };
         }
 

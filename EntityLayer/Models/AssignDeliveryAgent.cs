@@ -12,11 +12,10 @@ namespace EntityLayer.Models
         public long DeliveryAgentId { get; set; }
 
         [Required]
-        public List<Order> Orders { get; set; } = new List<Order>();   
-        public int OrdersCount { get; set; }
+        public long OrderId { get; set; }
 
         [Required]
-        public string VendorAddress { get; set; } = null!;
+        public long VendorAddressId { get; set; } 
 
         [Required]
         public double PickupLatitude { get; set; }
@@ -29,7 +28,26 @@ namespace EntityLayer.Models
 
         [Required]
         public DateTime UpdatedOn { get; set; }
-             
+
+      
+        [Required]
+        public long DeliveryAddressId { get; set; }
+
+        [Required]
+        public double DeliveryAddressLatitude { get; set; }
+
+        [Required]
+        public double DeliveryAddressLongitude { get; set; }
+
+        public enum OrderStatus
+        {
+            Assigned = 5,
+            Accepted = 6,
+            Rejected = 7,
+            Ongoing = 8,
+            Delivered = 9,
+        }
+        public OrderStatus orderStatus { get; set; }
 
     }
 }

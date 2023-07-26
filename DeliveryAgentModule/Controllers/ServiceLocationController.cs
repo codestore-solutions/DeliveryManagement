@@ -4,6 +4,7 @@ using DeliveryAgentModule.CustomActionFilter;
 using EntityLayer.Common;
 using EntityLayer.Dtos;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection.Metadata.Ecma335;
@@ -12,11 +13,11 @@ namespace DeliveryAgent.API.Controllers
 {
     [Route("api/v{version:apiVersion}/working-location")]
     [ApiController]
-    public class WorkingLocationController : ControllerBase
+    public class ServiceLocationController : ControllerBase
     {
         private readonly IServiceLocationService workingLocationService;
 
-        public WorkingLocationController(IServiceLocationService workingLocationService)
+        public ServiceLocationController(IServiceLocationService workingLocationService)
         {
             this.workingLocationService = workingLocationService;
         }
@@ -29,7 +30,12 @@ namespace DeliveryAgent.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllWorkingLocationsAsync([FromQuery][Required] long deliveryAgentId)
         {
-            return Ok(await workingLocationService.GetAllWorkingLocationsAsync(deliveryAgentId));   
+            var result = await workingLocationService.GetAllWorkingLocationsAsync(deliveryAgentId);
+            if (result == null)
+            {
+                return BadRequest(StringConstant.InvalidInputError);
+            }
+            return Ok(result);
         }
 
         /// <summary>
@@ -38,9 +44,15 @@ namespace DeliveryAgent.API.Controllers
         /// <param name="workingLocationDto"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> AddNewWorkingLocationAsync(AddNewWorkingLocationDto workingLocationDto)
+        [ValidateModel]
+        public async Task<IActionResult> AddNewWorkingLocationAsync([FromBody][Required] AddNewWorkingLocationDto workingLocationDto)
         {
-            return Ok(await workingLocationService.AddNewWorkingLocationAsync(workingLocationDto));
+            var result = await workingLocationService.AddNewWorkingLocationAsync(workingLocationDto);
+            if(result == null)
+            {
+                return BadRequest(StringConstant.ExistingMessage);
+            }
+            return Ok(result);
         }
 
         /// <summary>
@@ -50,7 +62,7 @@ namespace DeliveryAgent.API.Controllers
         /// <param name="serviceLocationId"></param>
         /// <returns></returns>
         [HttpDelete]
-        public async Task<IActionResult> DeleteWorkingLocationAsync([FromQuery] long serviceLocationId)
+        public async Task<IActionResult> DeleteWorkingLocationAsync([FromQuery][Required] long serviceLocationId)
         {
             var serviceLocation = await workingLocationService.DeleteWorkingLocationAsync(serviceLocationId);
             if(serviceLocation == null)
@@ -67,9 +79,15 @@ namespace DeliveryAgent.API.Controllers
         /// <param name="updateWorkingLocationDto"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<IActionResult> UpdateWorkingLocationAsync(long serviceLocationId, UpdateWorkingLocationDto updateWorkingLocationDto)
+        [ValidateModel]
+        public async Task<IActionResult> UpdateWorkingLocationAsync([Required] long serviceLocationId, [FromBody][Required] UpdateWorkingLocationDto updateWorkingLocationDto)
         {
-            return Ok(await workingLocationService.UpdateWorkingLocationAsync(serviceLocationId, updateWorkingLocationDto));    
+            var result = await workingLocationService.UpdateWorkingLocationAsync(serviceLocationId, updateWorkingLocationDto);
+            if (result == null)
+            {
+                return BadRequest(StringConstant.InvalidInputError);
+            }
+            return Ok(result);
         }
 
         /// <summary>
@@ -81,7 +99,12 @@ namespace DeliveryAgent.API.Controllers
         [ValidateModel]
         public async Task<IActionResult> UpdateActiveAddressAsync(UpdateActiveAddressDto activeAddressDto)
         {
-            return Ok(await workingLocationService.UpdateActiveAddressAsync(activeAddressDto));
+            var result = await workingLocationService.UpdateActiveAddressAsync(activeAddressDto);
+            if (result == null)
+            {
+                return BadRequest(StringConstant.InvalidInputError);
+            }
+            return Ok(result);
         }
 
         /// <summary>
@@ -90,9 +113,14 @@ namespace DeliveryAgent.API.Controllers
         /// <param name="agentId"></param>
         /// <returns></returns>
         [HttpGet("getAvailabilityStatus")]
-        public async Task<IActionResult> GetAgentAvailabilityStatusAsync(long agentId)
+        public async Task<IActionResult> GetAgentAvailabilityStatusAsync([Required] long agentId)
         {
-            return Ok(await workingLocationService.GetAgentAvailabilityStatusAsync(agentId));
+            var result = await workingLocationService.GetAgentAvailabilityStatusAsync(agentId);
+            if(result == null)
+            {
+                return BadRequest(StringConstant.InvalidInputError);
+            }
+            return Ok(result);
         }
 
         /// <summary>
@@ -102,11 +130,15 @@ namespace DeliveryAgent.API.Controllers
         /// <returns></returns>
         [HttpPut("updateAgentStatus")]
         [ValidateModel]
-        public async Task<IActionResult> UpdateAgentAvailabilityStatusAsync(UpdateAgentAvailabilityStatusDto statusDto)
+        public async Task<IActionResult> UpdateAgentAvailabilityStatusAsync([FromBody][Required] UpdateAgentAvailabilityStatusDto statusDto)
         {
-            return Ok(await workingLocationService.UpdateAgentAvailabilityStatusAsync(statusDto));
+            var result = await workingLocationService.UpdateAgentAvailabilityStatusAsync(statusDto);
+            if (result == null)
+            {
+                return BadRequest(StringConstant.InvalidInputError);
+            }
+            return Ok(result);
         }
-
 
     }
 }

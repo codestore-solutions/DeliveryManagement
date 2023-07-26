@@ -11,11 +11,13 @@ namespace BusinessLogicLayer.IServices
 {
     public interface IPersonalDetailsService
     {
-        public Task<ResponseDto> GetPersonalDetailsAsync(long agentId);
-        public Task<ResponseDto> AddDetailsAsync(PersonalDetailsDto personalDetailsDto);
+        public Task<ResponseDto?> GetPersonalDetailsAsync(long agentId);
+        public Task<ResponseDto?> AddDetailsAsync(PersonalDetailsDto personalDetailsDto);
         public Task<ResponseDto?> UpdateDetailsAsync(long id, PersonalDetailsDto agentDetailsDto);
-        public Task<ResponseDto> GetAllDetailsAsync( string? filterOn, string? filterQuery, int? agentStatus
+        public Task<ResponseDto?> GetAllDetailsAsync( string? filterOn, string? filterQuery, int? agentStatus
          , int pageNumber = 1, int limit = 10);
-        public Task<ResponseDto> GetDetailByAgentId(long agentId);
+        public Task<ResponseDto?> GetDetailByAgentId(long agentId);
+        public Task<ResponseDto> GetMultipleAgentsList(List<long> agentIds);
+        
     }
 }

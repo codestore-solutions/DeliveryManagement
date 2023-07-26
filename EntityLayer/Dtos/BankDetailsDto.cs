@@ -14,19 +14,23 @@ namespace EntityLayer.Dtos
         public long DeliveryAgentId { get; set; }
 
         [Required]
-        [StringLength(100)]
+        [StringLength(50)]
+        [RegularExpression(@"^[A-Za-z0-9.:,/ -]+$")]
         public string YourName { get; set; } = null!;
 
         [Required]
-        [StringLength(100)]
+        [StringLength(50)]
+        [RegularExpression(@"^[A-Za-z0-9.:,/ -]+$")]
         public string BankName { get; set; } = null!;
 
         [Required]
-        [StringLength(100)]
+        [StringLength(50)]
+        [RegularExpression(@"^[A-Za-z0-9.:,/ -]+$")]
         public string IFSCCode { get; set; } = null!;
 
         [Required]
-        [StringLength(100)]
+        [StringLength(50)]
+        [RegularExpression(@"^[A-Za-z0-9.:,/ -]+$")]
         public string AccountNumber { get; set; } = null!;
     }
 }

@@ -22,14 +22,18 @@ namespace DataAccessLayer.Repository
         }
         public async Task<T?> GetByIdAsync(long id)
         {
-            var entity = await _dbSet.FindAsync(id);         
+            var entity = await _dbSet.FindAsync(id);
+            if(entity == null)
+            {
+                return null;
+            }
             return entity;
         }
         public async Task AddAsync(T entity) 
         {
           await _dbSet.AddAsync(entity);   
         }
-        public async Task<T> DeleteAsync(long id)
+        public async Task<T?> DeleteAsync(long id)
         {
             var entity = await _dbSet.FindAsync(id);
             if(entity == null) 

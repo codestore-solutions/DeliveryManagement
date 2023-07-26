@@ -37,6 +37,7 @@ namespace DeliveryAgent.API.Controllers
         /// <param name="kYCDto"></param>
         /// <returns></returns>
         [HttpPost("add")]
+        [ValidateModel]
         public async Task<IActionResult> AddKYCDetailsAsync([FromBody] KYCDto kYCDto)
         {
             return Ok(await kYCService.AddDetailsAsync(kYCDto));

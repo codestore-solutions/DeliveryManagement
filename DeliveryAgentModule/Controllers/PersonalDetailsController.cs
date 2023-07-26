@@ -42,7 +42,12 @@ namespace DeliveryAgent.API.Controllers
         [HttpGet("get")]
         public async Task<IActionResult> GetAgentDetailAsync([FromQuery][Required] long agentId)
         {
-            return Ok(await personalDetailsService.GetPersonalDetailsAsync(agentId));
+            var result = await personalDetailsService.GetPersonalDetailsAsync(agentId);
+            if(result == null)
+            {
+                return BadRequest(StringConstant.InvalidInputError);
+            }
+            return Ok(result);
         }
 
         /// <summary>
@@ -58,7 +63,12 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> GetAllDetailsAsync([FromQuery] string? filterOn, [FromQuery] string? filterQuery, [FromQuery] int? agentStatus
         , [FromQuery] int pageNumber = 1, [FromQuery] int limit = 10)
         {
-            return Ok(await personalDetailsService.GetAllDetailsAsync( filterOn, filterQuery, agentStatus, pageNumber, limit));   
+            var result = await personalDetailsService.GetAllDetailsAsync( filterOn, filterQuery, agentStatus, pageNumber, limit);
+            if (result == null)
+            {
+                return NotFound(StringConstant.ResourceNotFoundError);
+            }
+            return Ok(result);
         }
 
         /// <summary>
@@ -70,7 +80,12 @@ namespace DeliveryAgent.API.Controllers
         [Authorize]
         public async Task<IActionResult> GetDetailByAgentId(long agentId)
         {
-            return Ok(await personalDetailsService.GetDetailByAgentId(agentId));
+            var result = await personalDetailsService.GetDetailByAgentId(agentId);
+            if(result == null)
+            {
+                return BadRequest(StringConstant.InvalidInputError);
+            }
+            return Ok(result);
         }
 
         /// <summary>
@@ -80,9 +95,14 @@ namespace DeliveryAgent.API.Controllers
         /// <returns></returns>
         [HttpPost("add")]
         [ValidateModel]
-        public async Task<IActionResult> AddPersonaltDetailsAsync([FromBody] PersonalDetailsDto agentDetailsDto)
+        public async Task<IActionResult> AddPersonaltDetailsAsync([FromBody][Required] PersonalDetailsDto agentDetailsDto)
         {
-            return Ok(await personalDetailsService.AddDetailsAsync(agentDetailsDto));
+            var result = await personalDetailsService.AddDetailsAsync(agentDetailsDto);
+            if(result == null) 
+            {
+                return BadRequest(StringConstant.ExistingMessage);
+            }
+            return Ok(result);
         }
 
         /// <summary>
@@ -103,6 +123,21 @@ namespace DeliveryAgent.API.Controllers
             return Ok(result);
         }
 
-       
+        /// <summary>
+        /// Fetching multiple agent details required in Order Processing Module.
+        /// </summary>
+        /// <param name="agentIds"></param>
+        /// <returns></returns>
+        [HttpGet("getMultipleAgent")]
+        public async Task<IActionResult> GetMultipleAgentsList([FromQuery] List<long> agentIds)
+        {
+            var result = await personalDetailsService.GetMultipleAgentsList(agentIds);
+            if(result == null)
+            {
+                return BadRequest(StringConstant.InvalidInputError);
+            }
+            return Ok(result);
+
+        }
     }
 }
