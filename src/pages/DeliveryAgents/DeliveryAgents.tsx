@@ -82,9 +82,9 @@ const DeliveryAgents: React.FC<Props> = ({ searchInput, filters }) => {
     },
     {
       title: "Mobile Number",
-      dataIndex: "contacts",
-      key: "contacts",
-      render: () => <p className="col-text">7860965109</p>,
+      dataIndex: "personalDetails",
+      key: "personalDetails",
+      render: (personalDetails:any) => <p className="col-text">{personalDetails?.phoneNumber}</p>,
     },
     {
       title: "Status",
@@ -144,7 +144,9 @@ const DeliveryAgents: React.FC<Props> = ({ searchInput, filters }) => {
   useEffect(() => {
     fetchAgents();
   }, [dispatch, pagination.pageNumber, filters, searchInput]);
-
+  useEffect(() => {
+    setPagination({ ...pagination, total: agentList?.total });
+  }, [agentList]);
   return (
     <div id="delivery-agent">
       <CustomTable

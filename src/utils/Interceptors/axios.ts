@@ -25,7 +25,7 @@ instance.interceptors.response.use(
   (error) => {
     let apiData = {
       status: ApiContants.errorCode,
-      data: "Network Error"
+      data: "Service Unavailable"
     } as {status :any, data:any};
     if (error && error.response) {
       // Request made and server responded
