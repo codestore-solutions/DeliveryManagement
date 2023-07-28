@@ -5,7 +5,7 @@ export const ApiContants = {
      // API Response Codes
      successCode: 200,
      successEndRange: 299,
-     errorCode: 900,
+     errorCode: 503,
      badRequest: 400,
      unAuthorizedCode: 401,
      forbidden: 403,
