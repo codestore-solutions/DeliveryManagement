@@ -10,6 +10,12 @@ const getUser =  () => {
   return data ? JSON.parse(data)?.jwtToken : null;
 };
 
+const getUserDetails =  () => {
+  const data = localStorage.getItem(ApiContants.user);
+  // console.log("data",data)
+  return data ? JSON.parse(data) : null;
+};
+
 function logout() {
   try {
     localStorage.removeItem(ApiContants.user);
@@ -31,5 +37,6 @@ export default {
   setUser,
   getUser,
   CheckTokenAndRedirect,
-  logout
+  logout,
+  getUserDetails
 };

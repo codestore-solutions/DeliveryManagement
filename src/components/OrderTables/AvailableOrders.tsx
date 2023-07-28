@@ -68,7 +68,7 @@ const AvailableOrders: React.FC<Props> = ({
     setSelectedRow(record);
     setIsOpen(true);
   };
-
+  
   const handleCloseModal = () => {
     setIsOpen(false);
   };
@@ -85,6 +85,12 @@ const AvailableOrders: React.FC<Props> = ({
 
   const columns: ColumnsType<DataType> = [
     {
+      title: "Sr. No",
+      dataIndex: "key",
+      key: "key",
+      render: (text: any) => <p className="tableId">{text}</p>,
+    },
+    {
       title: "OrderId",
       dataIndex: "id",
       key: "id",
@@ -94,7 +100,7 @@ const AvailableOrders: React.FC<Props> = ({
       title: "Vender Name",
       dataIndex: "vendor",
       key: "vendor",
-      render: (vender: any) => CutomizeText(vender?.business?.name),
+      render: (vendor: any) => CutomizeText(vendor?.business?.name),
     },
     {
       title: "Payment Mode",

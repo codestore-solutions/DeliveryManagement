@@ -32,8 +32,13 @@ instance.interceptors.response.use(
       console.log(error.response.data);
       console.log(error.response.status);
       console.log(error.response.headers);
-
-      if (error.response.status?.statusCode === ApiContants?.badRequest) {
+      if(error.response.status === ApiContants.internalServerError){
+        apiData = {
+          status: error.response.status,
+          data: error.response.data?.message,
+        };
+      }
+      else if (error.response.status?.statusCode === ApiContants?.badRequest) {
         // Handle validation errors
         const validationErrors = error.response.data;
         let errorMessages = new Array<any>();
@@ -75,7 +80,13 @@ instance.interceptors.response.use(
              data: errorMessages[1]
           }
         }
+      } else if(error.response.status === ApiContants.notFound){
+        apiData = {
+          status: error.response.status,
+          data: 'Not Found'
+       }
       }
+
       else {
         // Handle other types of errors
         apiData = {

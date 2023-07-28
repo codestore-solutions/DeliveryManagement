@@ -31,6 +31,7 @@ export const ApiContants = {
      getAssinedOrders: 'order/assigned-orders',
      getCompletedOrders: 'order/completed-orders',
      updateOrder:'order/updateOrder',
+     getOrderTimeLine:'order/getOrderTimeline',
      //feedback endpoints
      getAgentFeedback:'feedback/deliveryAgentFeedback/'
 }

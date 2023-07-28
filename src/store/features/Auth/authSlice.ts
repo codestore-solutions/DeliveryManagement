@@ -6,6 +6,7 @@ import UserStorage from "../../../utils/helpers/UserStorage";
 
 export interface AuthStateInterface {
   isAuthenticated: boolean;
+  data: any;
   loading: boolean;
   isSuccess: boolean;
   error: any;
@@ -13,6 +14,7 @@ export interface AuthStateInterface {
 
 const initialState: AuthStateInterface = {
   isAuthenticated: UserStorage.CheckTokenAndRedirect() ? true : false,
+  data: UserStorage.getUserDetails(),
   loading: false,
   isSuccess: false,
   error: null,
@@ -49,10 +51,11 @@ const authSlice: any = createSlice({
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
       })
-      .addCase(loginUser.fulfilled, (state) => {
+      .addCase(loginUser.fulfilled, (state, action) => {
         (state.loading = false),
           (state.isSuccess = true),
           (state.isAuthenticated = true);
+          (state.data = action.payload.data);
       })
       .addCase(loginUser.rejected, (state, action) => {
         (state.loading = false),

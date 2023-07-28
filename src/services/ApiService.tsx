@@ -64,7 +64,7 @@ export default async function API(
       };
       break;
   }
-  console.log("Api URL ::" , `${endpoint}`);
+  console.log("Api URL ::" , `${endpoint}`, init);
 
   return axios(init)
     .then((res) => {

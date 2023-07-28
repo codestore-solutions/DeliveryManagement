@@ -3,13 +3,14 @@ import "./style.scss";
 import { LeftArrowIcon } from "../../assets";
 import { Button, Col, Row } from "antd";
 import { AgentFeedBack, CustomTimeline } from "../../components";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import OrderService from "../../services/OrderService";
 import Spinner from "../Spinner/Spinner";
 import date from "../../utils/helpers/CustomizeDate";
 import AgentService from "../../services/AgentService";
 
 const OrderDetails: React.FC = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [data, setData] = useState<any>();
   const [feedbackdata, setFeedbackData] = useState<any>();
@@ -39,10 +40,13 @@ const OrderDetails: React.FC = () => {
       setLoading(false);
     }
   };
+  function goBack() {
+    navigate(-1); // This will navigate one step back in the history stack.
+  }
   // console.log("data", feedbackdata);
   useEffect(() => {
     getDetails(id);
-    getfeedbackDetails(6);
+    if (data?.orderStatus === 1) getfeedbackDetails(6);
   }, [id]);
 
   if (loading) {
@@ -52,22 +56,26 @@ const OrderDetails: React.FC = () => {
       <div id="order-details">
         <div className="order-header">
           <div className="left">
+            <span onClick={goBack}>
             <img src={LeftArrowIcon} alt="" />
+            </span>
             <h3>Order Details </h3>
           </div>
           <div className="right">
-            <Button
-              type="primary"
-              style={{
-                height: "45px",
-                backgroundColor: "#545BFC",
-                padding: "10px 25px",
-                fontWeight: "600",
-                borderRadius: "15px",
-              }}
-            >
-              Assign Agent
-            </Button>
+            {(data?.orderStatus === 4 || data?.orderStatus === 7) && (
+              <Button
+                type="primary"
+                style={{
+                  height: "45px",
+                  backgroundColor: "#545BFC",
+                  padding: "10px 25px",
+                  fontWeight: "600",
+                  borderRadius: "15px",
+                }}
+              >
+                Assign Agent
+              </Button>
+            )}
           </div>
         </div>
         <div className="order-details-content">
@@ -154,35 +162,43 @@ const OrderDetails: React.FC = () => {
           </Row>
         </div>
         <div className="order-tracking">
-          <div className="order-header">
-            <div className="left">
-              <h3>Status </h3>
-            </div>
-            <div className="right"></div>
-          </div>
+          {data?.orderStatus >= 5 && (
+            <>
+              <div className="order-header">
+                <div className="left">
+                  <h3>Status </h3>
+                </div>
+                <div className="right"></div>
+              </div>
+              <div className="timeline">
+                <CustomTimeline id={data?.id} />
+              </div>
+            </>
+          )}
           <div className="timeline">
-            <CustomTimeline />
-          </div>
-          <div className="timeline">
-            <h2
-              style={{
-                padding: "15px 0",
-                fontSize: "20px",
-                letterSpacing: "0.02em",
-              }}
-            >
-              Feedback for Delivery Agent
-            </h2>
-            <div className="box">
-              {loading ? (
-                <Spinner />
-              ) : (
-                <AgentFeedBack
-                  rating={feedbackdata?.rating}
-                  comment={feedbackdata?.comment}
-                />
-              )}
-            </div>
+            {data?.orderStatus === 11 && (
+              <>
+                <h2
+                  style={{
+                    padding: "15px 0",
+                    fontSize: "20px",
+                    letterSpacing: "0.02em",
+                  }}
+                >
+                  Feedback for Delivery Agent
+                </h2>
+                <div className="box">
+                  {loading ? (
+                    <Spinner />
+                  ) : (
+                    <AgentFeedBack
+                      rating={feedbackdata?.rating}
+                      comment={feedbackdata?.comment}
+                    />
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

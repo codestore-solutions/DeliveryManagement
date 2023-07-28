@@ -39,6 +39,7 @@ const AssignAgent: React.FC<Props> = ({
   handleResetSelectionForOrder,
 }) => {
   const [data, setData] = useState<any>(null);
+  const [searchInput, setSearchInput] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
   const [apiCalling, setApiCalling] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -63,6 +64,12 @@ const AssignAgent: React.FC<Props> = ({
   const handleResetSelection = () => {
     setSelectedRowKeys([]);
     setSelectedRowData(null);
+  };
+  const searchHandler = (e: any) => {
+    e.preventDefault();
+
+    console.log("Search Hnadler", searchInput);
+    setSearchInput(searchInput);
   };
   const AgentAssignHandler = async (values: any) => {
     try {
@@ -89,7 +96,7 @@ const AssignAgent: React.FC<Props> = ({
               selectedOrderData?.shippingAddress?.latitude,
             deliveryAddressLongitude:
               selectedOrderData?.shippingAddress?.longitude,
-              orderStatus:5
+            orderStatus: 5,
           },
         ];
         const { statusCode, message } = await AgentService.assignAgentManually(
@@ -167,7 +174,7 @@ const AssignAgent: React.FC<Props> = ({
     let payload = pagination;
     try {
       setLoading(true);
-      const data = await AgentService.getAvialableAgents(payload);
+      const data = await AgentService.getAvialableAgents(payload, searchInput);
       if (data?.statusCode === 200) {
         //  console.log('data', data);
         setData(data);
@@ -188,12 +195,19 @@ const AssignAgent: React.FC<Props> = ({
 
   useEffect(() => {
     fetchAgents();
-  }, [isOpen, pagination.pageNumber, key]);
+  }, [isOpen, pagination.pageNumber, key, searchInput]);
 
   return (
     <div id="assign-agent">
       <div className="assign-agent-header">
-        <input type="text" placeholder="Search" />
+        <form className="search-box" onSubmit={searchHandler}>
+          <input
+            type="text"
+            value={searchInput}
+            placeholder="Search"
+            onChange={(e) => setSearchInput(e.target.value)}
+          />
+        </form>
         <div className="header-btns">
           <Button
             type="default"

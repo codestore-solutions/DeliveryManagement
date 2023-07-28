@@ -63,7 +63,7 @@ const Agent = () => {
             <DeliveryAgents searchInput={searchInput} filters={filters} />
           </TabPane>
           <TabPane tab="Assigned Agents" key="1">
-            <AssignedAgents />
+            <AssignedAgents activeTab={activeTab} />
           </TabPane>
         </Tabs>
       </div>

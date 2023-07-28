@@ -51,12 +51,14 @@ const getAgentDetails = async (id: number) => {
  * @returns List of All Assigned Agents
  */
 
-const getAvialableAgents = async (pagination: any) => {
+const getAvialableAgents = async (pagination: any, searchInput:any) => {
   const { pageNumber, pageSize } = pagination;
   let params = {
     pageNumber: pageNumber,
     limit: pageSize,
     agentStatus: 1,
+    filterOn: searchInput ? "email" : undefined,
+    filterQuery: searchInput,
   };
   let url = `${ApiContants.baseUrl}${ApiContants.getAgentList}`;
   const { data, status } = await API({}, url, "GET", params);
