@@ -52,9 +52,10 @@ namespace DeliveryAgentModule.Controllers
                     var responseDto = new LoginResponseDto
                     {
                         JwtToken         = jwtToken,
+                        Name             = item.Name,
                         Id               = item.Id,
                         Email            = item.Email,
-                        BusinessCategory = item.BusinessCategory
+                        BusinessCategory = item.BusinessCategory,
                     };
                     // Return the JWT token to the client 
                     return Ok(responseDto);

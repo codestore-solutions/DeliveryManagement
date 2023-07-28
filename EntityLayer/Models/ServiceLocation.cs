@@ -49,5 +49,12 @@ namespace EntityLayer.Models
             Busy = 2,
         }
         public AvailabilityStatus AgentStatus { get; set; }
+
+        public enum VerificationStatus
+        {
+            NotVerified = 0,
+            Verified    = 1
+        }
+        public VerificationStatus verificationStatus { get; set; }
     }
 }

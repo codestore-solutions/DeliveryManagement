@@ -29,11 +29,7 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> GetAgentDetailAsync([FromQuery][Required] long agentId)
         {
             var result = await vehicleDetailsService.GetAsync(agentId);
-            if(result == null)
-            {
-                return NotFound(StringConstant.InvalidInputError);
-            }
-            return Ok(result);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
 
         /// <summary>
@@ -46,11 +42,7 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> AddVehicleDetailsAsync([FromBody][Required] VehicleDetailsDto vehicleDetailsDto)
         {
             var result = await vehicleDetailsService.AddDetailsAsync(vehicleDetailsDto);        
-            if(result == null)
-            {
-                return BadRequest(StringConstant.ExistingMessage);
-            }
-            return Ok(result);
+            return result == null ? BadRequest(new { message = StringConstant.ExistingMessage }) : Ok(result);
         }
 
         /// <summary>
@@ -64,11 +56,7 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> UpdateDetailsAsync([FromQuery][Required] long id, [FromBody] VehicleDetailsDto vehicleDetailsDto)
         {
             var result = await vehicleDetailsService.UpdateDetailsAsync(id, vehicleDetailsDto);
-            if (result == null)
-            {
-                return BadRequest(StringConstant.InvalidInputError);
-            }
-            return Ok(result);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
 
     }

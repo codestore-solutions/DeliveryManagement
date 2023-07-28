@@ -13,13 +13,13 @@ namespace EntityLayer.Common
         public bool Success { get; set; }
         public string Message { get; set; } = null!;
 
-        public static ErrorResponseDto BuildSuccessResponse(int statusCode, string message, bool success)
+        public static ErrorResponseDto BuildErrorResponse(int statusCode, string message, bool success)
         {
             var response = new ErrorResponseDto
             {
                 StatusCode = statusCode,
-                Message = message,
-                Success = success
+                Message    = message,
+                Success    = success
             };
             return response;
         }

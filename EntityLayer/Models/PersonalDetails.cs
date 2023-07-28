@@ -34,6 +34,7 @@ namespace EntityLayer.Models
         [Required]
         [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }
-     
+        public string Address { get; set; } = null!;
+        public string ProfileImageUrl { get; set; } = string.Empty;
     }
 }

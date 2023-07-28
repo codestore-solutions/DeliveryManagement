@@ -43,11 +43,7 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> GetAgentDetailAsync([FromQuery][Required] long agentId)
         {
             var result = await personalDetailsService.GetPersonalDetailsAsync(agentId);
-            if(result == null)
-            {
-                return BadRequest(StringConstant.InvalidInputError);
-            }
-            return Ok(result);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
 
         /// <summary>
@@ -63,12 +59,8 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> GetAllDetailsAsync([FromQuery] string? filterOn, [FromQuery] string? filterQuery, [FromQuery] int? agentStatus
         , [FromQuery] int pageNumber = 1, [FromQuery] int limit = 10)
         {
-            var result = await personalDetailsService.GetAllDetailsAsync( filterOn, filterQuery, agentStatus, pageNumber, limit);
-            if (result == null)
-            {
-                return NotFound(StringConstant.ResourceNotFoundError);
-            }
-            return Ok(result);
+            var result = await personalDetailsService.GetAllDetailsAsync(filterOn, filterQuery, agentStatus, pageNumber, limit);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
 
         /// <summary>
@@ -81,11 +73,7 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> GetDetailByAgentId(long agentId)
         {
             var result = await personalDetailsService.GetDetailByAgentId(agentId);
-            if(result == null)
-            {
-                return BadRequest(StringConstant.InvalidInputError);
-            }
-            return Ok(result);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
 
         /// <summary>
@@ -98,11 +86,7 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> AddPersonaltDetailsAsync([FromBody][Required] PersonalDetailsDto agentDetailsDto)
         {
             var result = await personalDetailsService.AddDetailsAsync(agentDetailsDto);
-            if(result == null) 
-            {
-                return BadRequest(StringConstant.ExistingMessage);
-            }
-            return Ok(result);
+            return result == null ? BadRequest(new { message = StringConstant.ExistingMessage }) : Ok(result);
         }
 
         /// <summary>
@@ -116,11 +100,7 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> UpdateDetailsAsync([FromQuery][Required] long id,[FromBody] PersonalDetailsDto agentDetailsDto)
         {
             var result = await personalDetailsService.UpdateDetailsAsync(id, agentDetailsDto);
-            if (result == null)
-            {
-                return BadRequest(StringConstant.InvalidInputError);
-            }
-            return Ok(result);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
 
         /// <summary>
@@ -132,12 +112,7 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> GetMultipleAgentsList([FromQuery] List<long> agentIds)
         {
             var result = await personalDetailsService.GetMultipleAgentsList(agentIds);
-            if(result == null)
-            {
-                return BadRequest(StringConstant.InvalidInputError);
-            }
-            return Ok(result);
-
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
     }
 }

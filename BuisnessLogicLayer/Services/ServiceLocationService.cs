@@ -6,11 +6,6 @@ using EntityLayer.Dtos;
 using EntityLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.Services
 {
@@ -190,6 +185,29 @@ namespace BusinessLogicLayer.Services
                 Data       = responseDto,
                 Message    = StringConstant.SuccessMessage,
             };
+        }
+
+        public async Task<ResponseDto?> UpdateVerificationStatusAsync(UpdateVerificationStatusDto updateVerificationStatusDto)
+        {
+            var agent = await unitOfWork.ServiceLocationRepository.GetAll().FirstOrDefaultAsync(u => u.DeliveryAgentId == updateVerificationStatusDto.DeliveryAgentId
+            && u.IsActive);
+
+            if(agent != null)
+            {
+                agent.verificationStatus = (ServiceLocation.VerificationStatus)updateVerificationStatusDto.verificationStatus;
+                await unitOfWork.SaveAsync();
+            }
+            return new ResponseDto { StatusCode = 200, Success = true , Data = updateVerificationStatusDto, Message = StringConstant.UpdatedMessage};
+        }
+
+        public async Task<ResponseDto?> GetVerificationStatusAsync(long agentId)
+        {
+            var agent = await unitOfWork.ServiceLocationRepository.GetAll().FirstOrDefaultAsync(u => u.DeliveryAgentId == agentId && u.IsActive);
+            if (agent == null)
+            {
+                return null;
+            }
+            return new ResponseDto();
         }
 
     }

@@ -12,5 +12,6 @@ namespace EntityLayer.Dtos
         public string Id { get; set; } = null!;
         public string Email { get; set; } = null!;
         public string? BusinessCategory { get; set; }
+        public string Name { get; set; } = null!;
     }
 }

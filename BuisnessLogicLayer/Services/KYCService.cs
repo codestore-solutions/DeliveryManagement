@@ -24,9 +24,13 @@ namespace BusinessLogicLayer.Services
             this.mapper = mapper;
         }
 
-        public async Task<ResponseDto> GetAsync(long agentId)
+        public async Task<ResponseDto?> GetAsync(long agentId)
         {
             var kYCDetail = await unitOfWork.KYCRepository.GetAll().FirstOrDefaultAsync(u => u.DeliveryAgentId == agentId);
+            if(kYCDetail == null)
+            {
+                return null;
+            }
             return new ResponseDto
             {
                 StatusCode = 200,

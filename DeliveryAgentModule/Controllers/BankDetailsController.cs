@@ -29,11 +29,7 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> GetBankDetailAsync([FromQuery][Required] long agentId)
         {
             var result = await bankDetailsService.GetAsync(agentId);
-            if(result == null)
-            {
-                return BadRequest(StringConstant.InvalidInputError);  
-            }
-            return Ok(result);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
 
         /// <summary>
@@ -46,11 +42,7 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> AddBankDetailsAsync([FromBody][Required] BankDetailsDto bankDetailsDto)
         {
             var result = await bankDetailsService.AddDetailsAsync(bankDetailsDto);
-            if(result == null)
-            {
-                return BadRequest(StringConstant.InvalidInputError);
-            }
-            return Ok(result);
+            return result == null ? BadRequest(new { message = StringConstant.ExistingMessage }) : Ok(result);
         }
 
         /// <summary>
@@ -64,11 +56,7 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> UpdateDetailsAsync([FromQuery][Required] long id, [FromBody][Required] BankDetailsDto bankDetailsDto)
         {
             var result = await bankDetailsService.UpdateDetailsAsync(id, bankDetailsDto);
-            if (result == null)
-            {
-                return BadRequest(StringConstant.InvalidInputError);
-            }
-            return Ok(result);
+            return result == null? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
 
     }

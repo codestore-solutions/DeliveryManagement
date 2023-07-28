@@ -44,8 +44,11 @@ namespace EntityLayer.Models
             Assigned = 5,
             Accepted = 6,
             Rejected = 7,
-            Ongoing = 8,
-            Delivered = 9,
+            Pickedup = 8,
+            ReachedDestination = 9,
+            NotAcceptedByCustomer= 10,
+            Delivered = 11,
+            Return = 12,
         }
         public OrderStatus orderStatus { get; set; }
 

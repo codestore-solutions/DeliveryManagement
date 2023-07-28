@@ -43,6 +43,7 @@ namespace DeliveryAgentModule.Controllers
             return Ok(await deliveryAgentService.GetAllAsync(pageNumber,limit));
         }
 
+
         /// <summary>
         /// Assign agent automatically according to the preffered working location by delivery Agent .
         /// </summary>
@@ -102,6 +103,7 @@ namespace DeliveryAgentModule.Controllers
                 return NotFound(response);
             }
         }
+
         
         /// <summary>
         /// Accept or Reject Order by agent through Mobile App.
@@ -118,6 +120,14 @@ namespace DeliveryAgentModule.Controllers
             }
             return Ok(result);
         }
+
+        [HttpGet("CountDeliveredOrRejectedOrders")]
+        public async Task<IActionResult> GetRejectedOrdersAsync([FromQuery][Required] long agentId)
+        {
+            var result = await deliveryAgentService.GetDeliveredOrRejectedOrdersCountAsync(agentId);
+            return result == null ? NotFound(StringConstant.ResourceNotFoundError) : Ok(result);
+        }
+
 
     }    
     

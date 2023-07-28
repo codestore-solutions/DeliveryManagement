@@ -4,6 +4,7 @@ using DeliveryAgentModule.CustomActionFilter;
 using EntityLayer.Common;
 using EntityLayer.Dtos;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
@@ -28,7 +29,8 @@ namespace DeliveryAgent.API.Controllers
         [HttpGet("get")]
         public async Task<IActionResult> GetAgentDetailAsync([FromQuery][Required] long agentId)
         {
-            return Ok(await kYCService.GetAsync(agentId));
+            var result = await kYCService.GetAsync(agentId);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
 
         /// <summary>

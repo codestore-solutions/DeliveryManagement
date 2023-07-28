@@ -11,6 +11,8 @@ namespace BusinessLogicLayer.IServices
        public Task<ResponseDto> AssignAgentManuallyAsync(AssignManuallyDto assignManuallyDto);
        public Task<ResponseDto> AssignAgentAutomaticallyAsync(AssignAgentAutomaticallyDto assignAgentAutomaticallyDto);
        public Task<ResponseDto?> AcceptOrderAsync(AcceptRejectOrderDto acceptRejectOrderDto);
-      
+       public Task<ResponseDto?> GetDeliveredOrRejectedOrdersCountAsync(long agentId);
+
+
     }
 }

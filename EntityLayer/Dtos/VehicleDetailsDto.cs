@@ -33,7 +33,7 @@ namespace EntityLayer.Dtos
         [Required]
         [StringLength(25)]
         [RegularExpression(@"^[A-Za-z0-9.:,/ -]+$")]
-        public string NumberPlate { get; set; } = null!;
+        public string DLNumber { get; set; } = null!;
 
         [Required]
         [StringLength(200)]

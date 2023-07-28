@@ -31,11 +31,7 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> GetAllWorkingLocationsAsync([FromQuery][Required] long deliveryAgentId)
         {
             var result = await workingLocationService.GetAllWorkingLocationsAsync(deliveryAgentId);
-            if (result == null)
-            {
-                return BadRequest(StringConstant.InvalidInputError);
-            }
-            return Ok(result);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
 
         /// <summary>
@@ -48,11 +44,7 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> AddNewWorkingLocationAsync([FromBody][Required] AddNewWorkingLocationDto workingLocationDto)
         {
             var result = await workingLocationService.AddNewWorkingLocationAsync(workingLocationDto);
-            if(result == null)
-            {
-                return BadRequest(StringConstant.ExistingMessage);
-            }
-            return Ok(result);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
 
         /// <summary>
@@ -64,12 +56,8 @@ namespace DeliveryAgent.API.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteWorkingLocationAsync([FromQuery][Required] long serviceLocationId)
         {
-            var serviceLocation = await workingLocationService.DeleteWorkingLocationAsync(serviceLocationId);
-            if(serviceLocation == null)
-            {
-                return BadRequest(StringConstant.InvalidInputError);
-            }
-            return Ok(serviceLocation);
+            var result = await workingLocationService.DeleteWorkingLocationAsync(serviceLocationId);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
 
         /// <summary>
@@ -83,11 +71,7 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> UpdateWorkingLocationAsync([Required] long serviceLocationId, [FromBody][Required] UpdateWorkingLocationDto updateWorkingLocationDto)
         {
             var result = await workingLocationService.UpdateWorkingLocationAsync(serviceLocationId, updateWorkingLocationDto);
-            if (result == null)
-            {
-                return BadRequest(StringConstant.InvalidInputError);
-            }
-            return Ok(result);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
 
         /// <summary>
@@ -100,11 +84,7 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> UpdateActiveAddressAsync(UpdateActiveAddressDto activeAddressDto)
         {
             var result = await workingLocationService.UpdateActiveAddressAsync(activeAddressDto);
-            if (result == null)
-            {
-                return BadRequest(StringConstant.InvalidInputError);
-            }
-            return Ok(result);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
 
         /// <summary>
@@ -116,11 +96,7 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> GetAgentAvailabilityStatusAsync([Required] long agentId)
         {
             var result = await workingLocationService.GetAgentAvailabilityStatusAsync(agentId);
-            if(result == null)
-            {
-                return BadRequest(StringConstant.InvalidInputError);
-            }
-            return Ok(result);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
 
         /// <summary>
@@ -133,11 +109,7 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> UpdateAgentAvailabilityStatusAsync([FromBody][Required] UpdateAgentAvailabilityStatusDto statusDto)
         {
             var result = await workingLocationService.UpdateAgentAvailabilityStatusAsync(statusDto);
-            if (result == null)
-            {
-                return BadRequest(StringConstant.InvalidInputError);
-            }
-            return Ok(result);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
 
     }

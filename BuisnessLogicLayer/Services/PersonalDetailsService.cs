@@ -85,44 +85,47 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto?> GetAllDetailsAsync( string? filterOn, string? filterQuery, int? agentStatus,
         int pageNumber = 1, int limit = 10)
-        {
-            var allDetails = await unitOfWork.PersonalDetailsRepository.GetAll()
-           .Join(
-                unitOfWork.ServiceLocationRepository.GetAll().Where(u => u.IsActive == true && ( agentStatus == null || u.AgentStatus == (ServiceLocation.AvailabilityStatus)agentStatus)),
-                pd => pd.DeliveryAgentId,
-                sl => sl.DeliveryAgentId,
-                (pd, sl) => new { PersonalDetails = pd, ServiceLocation = sl }
-                ).Skip((pageNumber - 1) * limit).Take(limit).ToListAsync();
+        {    
+            var personalDetailsQuery = unitOfWork.PersonalDetailsRepository.GetAll();
 
-            if (string.IsNullOrWhiteSpace(filterOn) == false && string.IsNullOrWhiteSpace(filterQuery) == false)
+            if (filterOn != null && !string.IsNullOrWhiteSpace(filterQuery))
             {
                 if (filterOn.Equals("Email", StringComparison.OrdinalIgnoreCase))
                 {
-                    allDetails = await unitOfWork.PersonalDetailsRepository.GetAll().Where(u => u.Email.Contains(filterQuery))
-               .Join(
-                unitOfWork.ServiceLocationRepository.GetAll().Where(u => u.IsActive == true),
-                pd => pd.DeliveryAgentId,
-                sl => sl.DeliveryAgentId,
-                (pd, sl) => new { PersonalDetails = pd, ServiceLocation = sl }
-                ).Skip((pageNumber - 1) * limit).Take(limit).ToListAsync();
+                    personalDetailsQuery = personalDetailsQuery.Where(u => u.Email.Contains(filterQuery));
+                }
+                else if (filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
+                    personalDetailsQuery = personalDetailsQuery.Where(u => u.FullName.Contains(filterQuery));
                 }
             }
-            if(allDetails == null)
+
+            var filteredDetails = personalDetailsQuery.Join(
+                unitOfWork.ServiceLocationRepository.GetAll().Where(u => u.IsActive
+                && (agentStatus == null || u.AgentStatus == (ServiceLocation.AvailabilityStatus)agentStatus)),
+                pd => pd.DeliveryAgentId,
+                sl => sl.DeliveryAgentId,
+                (pd, sl)=> new { PersonalDetails = pd, ServiceLocation = sl }
+            );
+
+            var totalCount = await filteredDetails.CountAsync();
+            var pagedDetails = await filteredDetails.Skip((pageNumber - 1) * limit).Take(limit).ToListAsync();
+
+            if (pagedDetails.Count == 0)
             {
                 return null;
             }
-            
+
             var response = new ResponseDtoPagination
             {
-                List  = allDetails,
-                Total = allDetails.Count,
-            };        
-
+                List = pagedDetails,
+                Total = totalCount
+            };
             return new ResponseDto
             {
                 StatusCode = 200,
                 Success = true,
-                Data = response,
+                Data    = response,
                 Message = StringConstant.SuccessMessage
             };
         }

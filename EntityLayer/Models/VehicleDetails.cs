@@ -32,12 +32,14 @@ namespace EntityLayer.Models
 
         [Required]
         [StringLength(50)]
-        public string NumberPlate { get; set; } = null!;
+        public string DLNumber { get; set; } = null!;
 
         [Required]
+        [StringLength (200)]
         public string VehicleImageUrl { get; set; } = null!;
 
         [Required]
+        [StringLength(50)]
         public string RegistrationNumber { get; set; } = null!;
     }
 }

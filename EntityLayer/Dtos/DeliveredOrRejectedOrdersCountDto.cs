@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace EntityLayer.Dtos
 {
-    public class AcceptRejectOrderDto
+    public class DeliveredOrRejectedOrdersCountDto
     {
-        public int OrderStatus { get; set; }
-        public List<long> OrderIds { get; set; } = new List<long>();
+        public int DeliveredOrdersCount { get; set; }
+        public int RejectedOrdersCount { get; set; }
     }
 }
