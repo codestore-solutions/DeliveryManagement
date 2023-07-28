@@ -93,6 +93,12 @@ const AgentDetails: React.FC = () => {
                   <span className="container-col">Mobile Number</span>
                   <span className="container-col dark">{data?.personalDetails?.phoneNumber}</span>
                 </div>
+                <div className="container-row">
+                  <span className="container-col">Res. Address</span>
+                  <span className="container-col dark">
+                   {data?.personalDetails?.address}
+                  </span>
+                </div>
               </div>
             </div>
           </Col>
@@ -113,6 +119,7 @@ const AgentDetails: React.FC = () => {
                   <span className="container-col">DL Number</span>
                   <span className="container-col dark">GARSK12746239DH</span>
                 </div>
+                
               </div>
             </div>
           </Col>
@@ -133,34 +140,29 @@ const AgentDetails: React.FC = () => {
                   <span className="container-col">Branch</span>
                   <span className="container-col dark">{data?.bankDetails?.bankName}</span>
                 </div>
-                <div className="container-row">
-                  <span className="container-col">Res. Address</span>
-                  <span className="container-col dark">
-                    Unit 1/23 Hastings Road, Melbourne 3000,Victoria, Australia.
-                  </span>
-                </div>
+               
               </div>
             </div>
           </Col>                                                    
         </Row>
         {/* Add Vechile Details Container */}
         <div className="vechile-details">
-          <h3>Vechile Details</h3>
+          <h3>Vehicle Details</h3>
           <div className="details">
             <span className="details-item">
-              Vehicle Number : <span className="dark">{data?.vehicleDetails?.numberPlate}</span>{" "}
+              DL Number : <span className="dark">{data?.vehicleDetails?.dlNumber}</span>{" "}
             </span>
             <span className="details-item">
               Registration Number : <span className="dark">{data?.vehicleDetails?.registrationNumber}</span>{" "}
             </span>
             <span className="details-item">
-             VechileType : <span className="dark">{data?.vehicleDetails?.vehicleType}</span>{" "}
+             VehicleType : <span className="dark">{data?.vehicleDetails?.vehicleType}</span>{" "}
             </span>
             <span className="details-item">
               Vehicle Model : <span className="dark">{data?.vehicleDetails?.model}</span>{" "}
             </span>
             <span className="details-item">
-              Vechile Company : <span className="dark">{data?.vehicleDetails?.companyName}</span>{" "}
+              Vehicle Company : <span className="dark">{data?.vehicleDetails?.companyName}</span>{" "}
             </span>
           </div>
         </div>

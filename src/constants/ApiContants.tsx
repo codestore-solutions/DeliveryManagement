@@ -16,7 +16,6 @@ export const ApiContants = {
      user: "user",
      // API Endpints Constants
      loginEndpoint:  'testing/login',
-
      // Agents Endpoints
      getAgentList: 'personal-details/getAgentsList',
      getAgentDteails:'personal-details/getDetails',

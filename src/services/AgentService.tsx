@@ -16,7 +16,7 @@ const getAllAgents = async (
     pageNumber: pageNumber,
     limit: pageSize,
     agentStatus: filters?.status,
-    filterOn: searchInput ? "email" : undefined,
+    // filterOn: searchInput ? "email" : undefined,
     filterQuery: searchInput,
   };
   let url = `${ApiContants.baseUrl}${ApiContants.getAgentList}`;

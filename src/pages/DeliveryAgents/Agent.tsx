@@ -30,7 +30,7 @@ const Agent = () => {
   const searchHandler = (e: any) => {
     e.preventDefault();
 
-    console.log("Search Hnadler", searchInput);
+    console.log("Search Handler", searchInput);
     setSearchInput(searchInput);
   };
   return (

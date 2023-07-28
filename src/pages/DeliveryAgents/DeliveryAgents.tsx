@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 // import dummyData from "../../../dummyData";
 import { useAppDispatch, useAppSelector } from "../../store/hooks/app";
 import {
-  AgentStateInerface,
+  AgentStateInerface as AgentStateInterface,
   agentSelector,
   getAllAgents,
 } from "../../store/features/Agents/agentSlice";
@@ -39,7 +39,7 @@ const DeliveryAgents: React.FC<Props> = ({ searchInput, filters }) => {
   const dispatch = useAppDispatch();
   const { loading, agentList } = useAppSelector(
     agentSelector
-  ) as AgentStateInerface;
+  ) as AgentStateInterface;
   const [pagination, setPagination] = useState<pagination>({
     pageNumber: 1,
     total: agentList?.total,
