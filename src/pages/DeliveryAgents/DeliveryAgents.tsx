@@ -146,6 +146,7 @@ const DeliveryAgents: React.FC<Props> = ({ searchInput, filters }) => {
   }, [dispatch, pagination.pageNumber, filters, searchInput]);
   useEffect(() => {
     setPagination({ ...pagination, total: agentList?.total });
+    
   }, [agentList]);
   return (
     <div id="delivery-agent">
