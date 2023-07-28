@@ -3,6 +3,9 @@ import "./style.scss";
 import { DownOutlined } from "@ant-design/icons";
 import { Avatar, Dropdown, MenuProps, Space } from "antd";
 import { NotificationIcon } from "../../assets";
+import { useAppSelector } from "../../store/hooks/app";
+import { RootState } from "../../store";
+import { AuthStateInterface } from "../../store/features/Auth/authSlice";
 interface NavbarProps {}
 
 const items: MenuProps["items"] = [
@@ -20,6 +23,7 @@ const items: MenuProps["items"] = [
   },
 ];
 const Navbar: FC<NavbarProps> = () => {
+  const {data} = useAppSelector((state:RootState) => state.auth) as AuthStateInterface;
   // const handleChange = (value: string | string[]) => {
   //   console.log(`Selected: ${value}`);
   // };
@@ -50,15 +54,16 @@ const Navbar: FC<NavbarProps> = () => {
                   />
                 }
               />
-                {/* <p className="tag">olivia@gmail.com</p> */}
-              <Dropdown menu={{ items }} className="dropdown">
+                
+                <Dropdown menu={{ items }} className="dropdown">
                 <a onClick={(e) => e.preventDefault()}>
                   <Space style={{ height: "35px"}} >
-                    <p className="tag">olivia@gmail.com</p>
+                    <p className="tag">{data?.email}</p>
                   </Space>
                   <DownOutlined className="icon" />
                 </a>
               </Dropdown>
+               
             </div>
           </div>
         </div>

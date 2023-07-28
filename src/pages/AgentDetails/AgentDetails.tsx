@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./style.scss";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 // import { LoadingOutlined } from "@ant-design/icons";
 import {
   BusyIcon,
@@ -19,6 +19,7 @@ import CustomizeDate from "../../utils/helpers/CustomizeDate";
 
 // const antIcon = <LoadingOutlined style={{ color: "#fff" }} spin />;
 const AgentDetails: React.FC = () => {
+  const navigate = useNavigate();
   const [data, setData] = useState<any>(null);
   console.log('data', data);
   const [loading, setLoading] = useState<boolean>(false);
@@ -43,7 +44,9 @@ const AgentDetails: React.FC = () => {
       setLoading(false);
     }
   };
-
+  function goBack() {
+    navigate(-1); // This will navigate one step back in the history stack.
+  }
   useEffect(() => {
     fetchAgentDetails(Number(id));
   }, []);
@@ -55,7 +58,9 @@ const AgentDetails: React.FC = () => {
     <div id="agent-details">
       <div className="agent-header">
         <div className="left">
-          <img src={LeftArrowIcon} alt="" />
+        <span onClick={goBack}>
+            <img src={LeftArrowIcon} alt="" />
+            </span>
           <h3>Delivery Partner Details </h3>
         </div>
         <div className="right">

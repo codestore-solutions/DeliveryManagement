@@ -89,11 +89,21 @@ const updateOrder = async (payload: any) => {
   return response;
 };
 
+
+const getOrderTimeline  = async (id: number) =>{
+  let url = `${ApiContants.orderProcessingbaseUrl}${ApiContants.getOrderTimeLine}/${id}`;
+  let res = await API({}, url, "GET");
+  return res?.data;
+}
+
+
+
 const OrderService = {
   getAvailableOrdersList,
   getAssignedOrdersList,
   getOrderDetailsById,
-  updateOrder
+  updateOrder,
+  getOrderTimeline
 };
 
 export default OrderService;

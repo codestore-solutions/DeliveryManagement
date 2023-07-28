@@ -12,7 +12,6 @@ const truncateText = (text:string) => {
     let Arr =  text.split(',');
     const words = Arr[0] + Arr[1];
     return words + '...';
-
 };
 
 const CustomizeText = (data: any) => {

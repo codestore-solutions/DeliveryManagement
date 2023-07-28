@@ -1,6 +1,9 @@
-import React from 'react'
+import React,{useState,useEffect} from 'react'
 import { Steps } from 'antd';
 import './style.scss'
+import OrderService from '../../../services/OrderService';
+import { ApiContants } from '../../../constants/ApiContants';
+import { getCurrIdx, getTimeLineData } from '../../../utils/helpers/CustomizeTimeLine';
 
 const customDot = () =>{
     return (
@@ -8,30 +11,66 @@ const customDot = () =>{
     )
 }
 
-const CustomTimeline: React.FC = () => { 
+interface Props{
+   id: number
+}
+
+const CustomTimeline: React.FC<Props> = ({id}) => { 
+  const [curr, setCurr] = useState<any>();
+  const [timeLinedata, setTimeLineData] = useState<any>([
+    {
+      key:0,
+      title: '',
+      description: '',
+    },
+    {
+      key:1,
+      title: '',
+      description: '',
+    },
+    {
+      key:2,
+      title: '',
+      description: '',
+    },
+    {
+      key:3,
+      title: '',
+      description: '',
+    },
+  ]);
+  
+  const updateTimeLineData = (payload: any): void => {
+    setTimeLineData((prevData:any) =>
+      prevData.map((item:any) => (item.key === payload.key ? { ...item, ...payload } : item))
+    );
+  };
+  const getTimeLineDetails = async() =>{
+     try {
+        const {data, statusCode} = await OrderService.getOrderTimeline(Number(id));
+        if(statusCode === ApiContants.successCode){
+          if(data.length > 0){
+            getTimeLineData(data,updateTimeLineData);
+             let currIdx = getCurrIdx(data);
+            //  console.log('currdata', currIdx)
+             setCurr(currIdx);
+          }
+        }
+     } catch (err) {
+         console.log('Timeline fetching err', err)
+     }
+  }
+  
+  useEffect(() =>{
+    getTimeLineDetails();
+  }, [id])
+
   return (
     <Steps
      className='custom-steps'
      progressDot={ customDot }
-      current={1}
-      items={[
-        {
-          title: 'On the way to pick parcel',
-        //   description: 'This is a description.',
-        },
-        {
-          title: 'Parcel Picked',
-        //   description: 'This is a description.',
-        },
-        {
-          title: 'On the way to deliver',
-        //   description: 'This is a description.',
-        },
-        {
-          title: 'Delivered',
-        //   description: 'This is a description.',
-        },
-      ]}
+      current={curr}
+      items={timeLinedata}
     />
   )
 }

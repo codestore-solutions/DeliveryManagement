@@ -59,6 +59,12 @@ const DeliveryAgents: React.FC<Props> = ({ searchInput, filters }) => {
    */
   const columns: ColumnsType<DataType> = [
     {
+      title: "Sr No.",
+      dataIndex: "key",
+      key: "key",
+      render: (text) => <p className="tableId">{text}</p>,
+    },
+    {
       title: "Email Id",
       dataIndex: "personalDetails",
       key: "personalDetails",
@@ -80,25 +86,6 @@ const DeliveryAgents: React.FC<Props> = ({ searchInput, filters }) => {
       key: "contacts",
       render: () => <p className="col-text">7860965109</p>,
     },
-    // {
-    //   title: "Status",
-    //   key: "agentStatus",
-    //   dataIndex: "agentStatus",
-    //   filters: availibilityFilters,
-    //   render: (_, { agentStatus }) => (
-    //     <>
-    //       <span>
-    //         {" "}
-    //         {agentStatus === 1 ? (
-    //           <p className="tableTxtAv">Available</p>
-    //         ) : (
-    //           <p className="tableTxtNot">Not Available</p>
-    //         )}{" "}
-    //       </span>
-    //     </>
-    //   ),
-    //   onFilter: (value: any, record: any) => record.agentStatus === value,
-    // },
     {
       title: "Status",
       key: "serviceLocation",

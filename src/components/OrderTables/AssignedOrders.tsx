@@ -11,7 +11,7 @@ import OrderService from "../../services/OrderService";
 import { ApiContants } from "../../constants/ApiContants";
 import CustomizeDate from "../../utils/helpers/CustomizeDate";
 import { pagination } from "../../utils/types";
-import {RightOutlined, LeftOutlined} from "@ant-design/icons";
+// import {RightOutlined, LeftOutlined} from "@ant-design/icons";
 // import moment from "moment";
 
 export interface DataType {
@@ -38,9 +38,7 @@ const AssignedOrders: React.FC<Props> = ({activeTab}) => {
     pageSize: 6,
     showTotal: (total: any, range: any) =>
       `${range[0]}-${range[1]} of ${total} items`,
-    nextIcon: <RightOutlined style={{ color: '#545bfc', padding:'3px',  border:'1px solid #545bfc',fontSize: '16px', borderRadius:"5px" }} />,
-    prevIcon: <LeftOutlined style={{color: '#545bfc' , padding:'3px', border:'1px solid #545bfc',fontSize: '16px', borderRadius:"5px"  }} />,
-  });
+   });
   const handleTableChange = (pagination: any) => {
     console.log("pag", pagination);
     const { current, pageSize } = pagination;
@@ -51,6 +49,12 @@ const AssignedOrders: React.FC<Props> = ({activeTab}) => {
   };
   const columns: ColumnsType<DataType> = [
     {
+      title: "Sr. No",
+      dataIndex: "key",
+      key: "key",
+      render: (text: any) => <p className="tableId">{text}</p>,
+    },
+    {
       title: "OrderId",
       dataIndex: "id",
       key: "id",
@@ -58,14 +62,14 @@ const AssignedOrders: React.FC<Props> = ({activeTab}) => {
     },
     {
       title: "Agent Name",
-      dataIndex: "deliveryId",
-      key: "deliveryId",
-      render: (text: any) => (
+      dataIndex: "deliveryAgent",
+      key: "deliveryAgent",
+      render: (deliveryAgent: any) => (
         <p
           className="tableTxt"
-          onClick={() => navigate("/dashboard/agent-details")}
+          // onClick={() => navigate("/dashboard/agent-details")}
         >
-          {text}
+          {deliveryAgent?.fullName}
         </p>
       ),
     },

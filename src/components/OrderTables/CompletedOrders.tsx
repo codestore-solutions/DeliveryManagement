@@ -44,6 +44,12 @@ const CompletedOrders: React.FC<Props> = ({ activeTab }) => {
   };
   const columns: ColumnsType<DataType> = [
     {
+      title: "Sr. No",
+      dataIndex: "key",
+      key: "key",
+      render: (text: any) => <p className="tableId">{text}</p>,
+    },
+    {
       title: "OrderId",
       dataIndex: "id",
       key: "id",
@@ -51,23 +57,27 @@ const CompletedOrders: React.FC<Props> = ({ activeTab }) => {
     },
     {
       title: "Agent Name",
-      dataIndex: "deliveryId",
-      key: "deliveryId",
-      render: (text: any) => <p className="tableTxt">{text}</p>,
+      dataIndex: "deliveryAgent",
+      key: "deliveryAgent",
+      render: (deliveryAgent: any) => <p className="tableTxt">{deliveryAgent?.fullName}</p>,
     },
     {
       title: "Vender Name",
-      dataIndex: "storeId",
-      key: "storeId",
-      render: (text: any) => <p className="tableTxt">{text}</p>,
+      dataIndex: "vendor",
+      key: "vendor",
+      render: (vender: any) => <p className="tableTxt">{vender?.business?.name}</p>,
     },
     {
       title: "Payment Mode",
       dataIndex: "paymentMode",
       key: "paymentMode",
-      render: (text) => (
+      render: (_, record: any) => (
         <Space size="middle">
-          <p className="available">{text}</p>
+          {record?.payment_type === 2 ? (
+            <p className="offline">COD</p>
+          ) : (
+            <p className="available">Online</p>
+          )}
         </Space>
       ),
     },
