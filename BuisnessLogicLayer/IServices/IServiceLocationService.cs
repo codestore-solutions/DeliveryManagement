@@ -17,5 +17,7 @@ namespace BusinessLogicLayer.IServices
         public Task<ResponseDto?> UpdateActiveAddressAsync(UpdateActiveAddressDto activeAddressDto);
         public Task<ResponseDto?> UpdateAgentAvailabilityStatusAsync(UpdateAgentAvailabilityStatusDto statusDto);
         public Task<ResponseDto?> GetAgentAvailabilityStatusAsync(long agentId);
+        public Task<ResponseDto?> UpdateVerificationStatusAsync(UpdateVerificationStatusDto updateVerificationStatusDto);
+        public Task<ResponseDto?> GetVerificationStatusAsync(long agentId);
     }
 }

@@ -40,6 +40,7 @@ namespace DeliveryAgent.API.Controllers
     /// <param name="agentId"></param>
     /// <returns></returns>
         [HttpGet("get")]
+       // [Authorize(Roles = "2,5")]
         public async Task<IActionResult> GetAgentDetailAsync([FromQuery][Required] long agentId)
         {
             var result = await personalDetailsService.GetPersonalDetailsAsync(agentId);
@@ -56,10 +57,11 @@ namespace DeliveryAgent.API.Controllers
         /// <param name="limit"></param>
         /// <returns></returns>
         [HttpGet("getAgentsList")]
-        public async Task<IActionResult> GetAllDetailsAsync([FromQuery] string? filterOn, [FromQuery] string? filterQuery, [FromQuery] int? agentStatus
+        //[Authorize(Roles = "2")]
+        public async Task<IActionResult> GetAllDetailsAsync([FromQuery] string? filterQuery, [FromQuery] int? agentStatus
         , [FromQuery] int pageNumber = 1, [FromQuery] int limit = 10)
         {
-            var result = await personalDetailsService.GetAllDetailsAsync(filterOn, filterQuery, agentStatus, pageNumber, limit);
+            var result = await personalDetailsService.GetAllDetailsAsync(filterQuery, agentStatus, pageNumber, limit);
             return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
 
@@ -69,7 +71,7 @@ namespace DeliveryAgent.API.Controllers
         /// <param name="agentId"></param>
         /// <returns></returns>
         [HttpGet("getDetails")]
-        [Authorize]
+        //[Authorize(Roles = "2")]
         public async Task<IActionResult> GetDetailByAgentId(long agentId)
         {
             var result = await personalDetailsService.GetDetailByAgentId(agentId);
@@ -83,6 +85,7 @@ namespace DeliveryAgent.API.Controllers
         /// <returns></returns>
         [HttpPost("add")]
         [ValidateModel]
+        //[Authorize(Roles = "5")]
         public async Task<IActionResult> AddPersonaltDetailsAsync([FromBody][Required] PersonalDetailsDto agentDetailsDto)
         {
             var result = await personalDetailsService.AddDetailsAsync(agentDetailsDto);
@@ -97,6 +100,7 @@ namespace DeliveryAgent.API.Controllers
         /// <returns></returns>
         [HttpPut("update")]
         [ValidateModel]
+       // [Authorize(Roles = "5")]
         public async Task<IActionResult> UpdateDetailsAsync([FromQuery][Required] long id,[FromBody] PersonalDetailsDto agentDetailsDto)
         {
             var result = await personalDetailsService.UpdateDetailsAsync(id, agentDetailsDto);

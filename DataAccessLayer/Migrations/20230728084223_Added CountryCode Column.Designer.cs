@@ -4,6 +4,7 @@ using DataAccessLayer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(DeliveryDbContext))]
-    partial class DeliveryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230728084223_Added CountryCode Column")]
+    partial class AddedCountryCodeColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -112,11 +115,38 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<string>("AgentEmailId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("AgentLatitude")
+                        .HasColumnType("float");
+
+                    b.Property<double>("AgentLongitude")
+                        .HasColumnType("float");
+
+                    b.Property<int>("AgentStatus")
+                        .HasColumnType("int");
+
                     b.Property<long>("BusinessId")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("DeliveryAgentAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<long>("DeliveryAgentId")
                         .HasColumnType("bigint");
+
+                    b.Property<string>("DeliveryAgentName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MaxDistance")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderAssignStatus")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -283,9 +313,6 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<TimeSpan>("StartTime")
                         .HasColumnType("time");
-
-                    b.Property<int>("verificationStatus")
-                        .HasColumnType("int");
 
                     b.HasKey("ServiceLocationId");
 

@@ -53,7 +53,7 @@ namespace EntityLayer.Models
         public enum VerificationStatus
         {
             NotVerified = 0,
-            Verified    = 1
+            Verified = 1
         }
         public VerificationStatus verificationStatus { get; set; }
     }

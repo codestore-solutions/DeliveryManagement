@@ -83,21 +83,14 @@ namespace BusinessLogicLayer.Services
             };
         }
 
-        public async Task<ResponseDto?> GetAllDetailsAsync( string? filterOn, string? filterQuery, int? agentStatus,
+        public async Task<ResponseDto?> GetAllDetailsAsync( string? filterQuery, int? agentStatus,
         int pageNumber = 1, int limit = 10)
         {    
             var personalDetailsQuery = unitOfWork.PersonalDetailsRepository.GetAll();
 
-            if (filterOn != null && !string.IsNullOrWhiteSpace(filterQuery))
+            if (!string.IsNullOrWhiteSpace(filterQuery))
             {
-                if (filterOn.Equals("Email", StringComparison.OrdinalIgnoreCase))
-                {
-                    personalDetailsQuery = personalDetailsQuery.Where(u => u.Email.Contains(filterQuery));
-                }
-                else if (filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
-                {
-                    personalDetailsQuery = personalDetailsQuery.Where(u => u.FullName.Contains(filterQuery));
-                }
+               personalDetailsQuery = personalDetailsQuery.Where(u => u.Email.Contains(filterQuery) || u.FullName.Contains(filterQuery));
             }
 
             var filteredDetails = personalDetailsQuery.Join(

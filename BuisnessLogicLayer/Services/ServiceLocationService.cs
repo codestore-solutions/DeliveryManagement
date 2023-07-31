@@ -192,12 +192,12 @@ namespace BusinessLogicLayer.Services
             var agent = await unitOfWork.ServiceLocationRepository.GetAll().FirstOrDefaultAsync(u => u.DeliveryAgentId == updateVerificationStatusDto.DeliveryAgentId
             && u.IsActive);
 
-            if(agent != null)
+            if (agent != null)
             {
                 agent.verificationStatus = (ServiceLocation.VerificationStatus)updateVerificationStatusDto.verificationStatus;
                 await unitOfWork.SaveAsync();
             }
-            return new ResponseDto { StatusCode = 200, Success = true , Data = updateVerificationStatusDto, Message = StringConstant.UpdatedMessage};
+            return new ResponseDto { StatusCode = 200, Success = true, Data = updateVerificationStatusDto, Message = StringConstant.UpdatedMessage };
         }
 
         public async Task<ResponseDto?> GetVerificationStatusAsync(long agentId)

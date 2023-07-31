@@ -22,6 +22,9 @@ namespace EntityLayer.Models
         public string FullName { get; set; } = null!;
 
         [Required]
+        public string CountryCode { get; set; } = null!;
+
+        [Required]
         public string PhoneNumber { get; set; } = null!;
 
         [Required]
@@ -34,7 +37,10 @@ namespace EntityLayer.Models
         [Required]
         [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }
+
+        [Required]
         public string Address { get; set; } = null!;
+
         public string ProfileImageUrl { get; set; } = string.Empty;
     }
 }

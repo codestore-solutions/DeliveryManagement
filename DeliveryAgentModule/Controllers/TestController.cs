@@ -34,12 +34,16 @@ namespace DeliveryAgentModule.Controllers
         public async Task<IActionResult> Login([FromBody][Required] LoginRequestDto loginRequestDto)
         {
             var microserviceResponse = await httpClient.GetAsync("https://order-processing-dev.azurewebsites.net/api/v1/users/listAllUsers");
-            if(microserviceResponse == null)
+            if(!microserviceResponse.IsSuccessStatusCode)
             {
-                return BadRequest(StringConstant.ErrorMessage);
+                return BadRequest(new { message = StringConstant.MicroserviceError});
             }
             var content = await microserviceResponse.Content.ReadAsStringAsync();
             var data = JsonConvert.DeserializeObject <MyDataClass>(content);
+            if(data == null)
+            {
+                return NotFound(new { message = StringConstant.ResourceNotFoundError });
+            }
   
               foreach (var item in data.Data)
               {
@@ -79,8 +83,6 @@ namespace DeliveryAgentModule.Controllers
             var signingKey = new SymmetricSecurityKey(keyBytes);
 
             // Create the claims for the token
-          
-            
             if(role == "2")
             {
                 var claims = new[]
@@ -93,7 +95,7 @@ namespace DeliveryAgentModule.Controllers
                 // Create the JWT token
                 var token = new JwtSecurityToken(
                     claims: claims,
-                    expires: DateTime.UtcNow.AddMonths(2),                 // Set the token expiration time
+                    expires: DateTime.UtcNow.AddMonths(2),                 
                     signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
                 );
 

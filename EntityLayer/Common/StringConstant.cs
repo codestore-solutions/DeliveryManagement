@@ -1,4 +1,6 @@
-﻿namespace EntityLayer.Common
+﻿using System.Diagnostics.Metrics;
+
+namespace EntityLayer.Common
 {
     public static class StringConstant
     {
@@ -15,5 +17,6 @@
         public const string ExistingMessage              = "Details already exists in DB";
         public const string InternalServerErrorMessage   = "Internal Server Error";
         public const string MicroserviceError            = "Microservice is not responding";
+        public const string FullNameError                = "Enter Full Name in proper Format";
     }
 }

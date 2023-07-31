@@ -112,5 +112,19 @@ namespace DeliveryAgent.API.Controllers
             return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
 
+        [HttpPost("VerifyAgentKycDocuments")]
+        [ValidateModel]
+        public async Task<IActionResult> UpdateVerificationStatusAsync(UpdateVerificationStatusDto updateVerificationStatusDto)
+        {
+            var result = await workingLocationService.UpdateVerificationStatusAsync(updateVerificationStatusDto);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
+        }
+
+        [HttpGet("getVerificationStatus")]
+        public async Task<IActionResult> GetVerificationStatusAsync([FromQuery][Required] long agentId)
+        {
+            var result = await workingLocationService.GetVerificationStatusAsync(agentId);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
+        }
     }
 }
