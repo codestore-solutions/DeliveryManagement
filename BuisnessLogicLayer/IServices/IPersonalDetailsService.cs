@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static EntityLayer.Models.PersonalDetails;
+using static EntityLayer.Models.PersonalDetail;
 
 namespace BusinessLogicLayer.IServices
 {
@@ -18,6 +18,9 @@ namespace BusinessLogicLayer.IServices
          , int pageNumber = 1, int limit = 10);
         public Task<ResponseDto?> GetDetailByAgentId(long agentId);
         public Task<ResponseDto> GetMultipleAgentsList(List<long> agentIds);
-        
+        public Task<ResponseDto?> AddProfileCompletedStatusAsync(UpdateProfileCompletedDto updateProfileCompletedDto);
+        public Task<ResponseDto?> GetProfileCompletedStatusAsync(long agentId);
+
+
     }
 }

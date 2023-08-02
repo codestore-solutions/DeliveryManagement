@@ -70,7 +70,7 @@ namespace BusinessLogicLayer.Services
             var responseObjectList = new List<AutomaticallyAssignResponseDto>();       
             foreach(var obj in assignAgentAutomaticallyDto.List)
             {
-                // Search for suitable delivery agent in Database.
+                // Search for suitable delivery agent within 5 km radius in Database.
                 var getNearestDeliveryAgentId = await NearestAgentWithinRange(obj.DeliveryAddressLatitude, obj.DeliveryAddressLongitude,
                     obj.PickupLatitude, obj.PickupLongitude, 5);
 
@@ -89,7 +89,7 @@ namespace BusinessLogicLayer.Services
                 }
                 // If we get agent nearby , then assign order to that agent
 
-                var agent = await unitOfWork.PersonalDetailsRepository.GetAll().FirstOrDefaultAsync(u => u.DeliveryAgentId == getNearestDeliveryAgentId);
+                var agent = await unitOfWork.PersonalDetailsRepository.GetAll().FirstOrDefaultAsync(u => u.AgentId == getNearestDeliveryAgentId);
                 if(agent == null)
                 {
                     return new ResponseDto();
@@ -115,7 +115,7 @@ namespace BusinessLogicLayer.Services
 
         private bool IsAgentAvailableForAnotherOrder(long agentId , double deliveryLatitude, double deliveryLongitude, double pickupLatitude , double pickupLongitude)
         {
-            var agent = unitOfWork.ServiceLocationRepository.GetAll().FirstOrDefault(u => u.DeliveryAgentId == agentId
+            var agent = unitOfWork.ServiceLocationRepository.GetAll().FirstOrDefault(u => u.AgentId == agentId
             && u.IsActive
             && u.AgentStatus == ServiceLocation.AvailabilityStatus.OnDuty);
             
@@ -160,7 +160,7 @@ namespace BusinessLogicLayer.Services
 
                 if (deliveryDistance <= maxDistance && pickupDistance <= maxDistance)
                 {
-                    nearsestAgentId = agent.DeliveryAgentId;
+                    nearsestAgentId = agent.AgentId;
                     return nearsestAgentId;
                 }
             }
@@ -190,7 +190,7 @@ namespace BusinessLogicLayer.Services
         {
             using var client = new HttpClient();
             var requestBody  = new UpdateOrderStatusDto();
-            requestBody.status = acceptRejectOrderDto.OrderStatus;
+            requestBody.status = acceptRejectOrderDto.DeliveryStatus;
             foreach(var orderId in acceptRejectOrderDto.OrderIds)
             {             
                 requestBody.orders.Add(orderId);
@@ -210,7 +210,7 @@ namespace BusinessLogicLayer.Services
                     {
                         continue;
                     }
-                    assignedAgent.orderStatus = (AssignDeliveryAgent.OrderStatus)acceptRejectOrderDto.OrderStatus;
+                    assignedAgent.deliveryStatus = (AssignDeliveryAgent.DeliveryStatus)acceptRejectOrderDto.DeliveryStatus;
                     await unitOfWork.SaveAsync();
                 }
 
@@ -236,11 +236,11 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto?> GetDeliveredOrRejectedOrdersCountAsync(long agentId)
         {
-            var rejectedOrdersCount = await unitOfWork.AssignDeliveryAgentRepository.GetAll().Where(u => u.DeliveryAgentId == agentId
-            && u.orderStatus == AssignDeliveryAgent.OrderStatus.Rejected).CountAsync();
+            var rejectedOrdersCount = await unitOfWork.AssignDeliveryAgentRepository.GetAll().Where(u => u.AgentId == agentId
+            && u.deliveryStatus == AssignDeliveryAgent.DeliveryStatus.Rejected).CountAsync();
 
-            var countDeliverd = await unitOfWork.AssignDeliveryAgentRepository.GetAll().Where(u => u.DeliveryAgentId == agentId
-            && u.orderStatus == (AssignDeliveryAgent.OrderStatus)11).CountAsync();
+            var countDeliverd = await unitOfWork.AssignDeliveryAgentRepository.GetAll().Where(u => u.AgentId == agentId
+            && u.deliveryStatus == (AssignDeliveryAgent.DeliveryStatus)11).CountAsync();
 
             var response = new DeliveredOrRejectedOrdersCountDto
             {
@@ -249,7 +249,63 @@ namespace BusinessLogicLayer.Services
             };
 
             return new ResponseDto { StatusCode = 200, Success = true, Data = response, Message = StringConstant.SuccessMessage };
-        } 
+        }
+
+        public async Task<ResponseDto?> UpdatePickupOrDeliveryStatusAsync(UpdatePickupOrDeliveryStatusDto pickupOrDeliveryStatusDto)
+        {
+            using var client = new HttpClient();
+            var requestBody  = new UpdateOrderStatusDto();
+            requestBody.status = pickupOrDeliveryStatusDto.DeliveryStatus;
+            foreach (var orderId in pickupOrDeliveryStatusDto.OrderIds)
+            {
+                requestBody.orders.Add(orderId);
+            }
+
+            HttpContent requestJson = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json");
+            string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im9ta2FyLnNoYXJtYUBleGFtcGxlLmNvbSIsInJvbGUiOiI1IiwiaWQiOiI3IiwiZXhwIjoxNjk1NjM4NzU2fQ.igzzKvqwh64yT9dtVwqUfuYC28nkYa-w97TAEJS8P64";
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            var microserviceResponse = client.PutAsync("https://order-processing-dev.azurewebsites.net/api/v1/order/updateOrder", requestJson).Result;
+
+            if (microserviceResponse.IsSuccessStatusCode)
+            {
+                foreach (var orderId in pickupOrDeliveryStatusDto.OrderIds)
+                {
+                    var assignedAgent = await unitOfWork.AssignDeliveryAgentRepository.GetAll().FirstOrDefaultAsync(u => u.OrderId == orderId);
+                    if (assignedAgent == null)
+                    {
+                        return null;
+                    }
+                    assignedAgent.deliveryStatus = (AssignDeliveryAgent.DeliveryStatus)pickupOrDeliveryStatusDto.DeliveryStatus;
+                    if(pickupOrDeliveryStatusDto.DeliveryStatus == 8)
+                    {
+                        assignedAgent.DeliveryImage = pickupOrDeliveryStatusDto.Image;
+                    }
+                    else
+                    {
+                        assignedAgent.PickupImage = pickupOrDeliveryStatusDto.Image;
+                    }                 
+                    await unitOfWork.SaveAsync();
+                }
+
+                return new ResponseDto
+                {
+                    StatusCode = 200,
+                    Success    = true,
+                    Data       = requestBody,
+                    Message    = StringConstant.SuccessMessage
+                };
+            }
+            else
+            {
+                return new ResponseDto
+                {
+                    StatusCode = 400,
+                    Success    = false,
+                    Data       = requestBody,
+                    Message    = StringConstant.MicroserviceError
+                };
+            }
+        }
 
     }
 }

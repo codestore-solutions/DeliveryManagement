@@ -10,7 +10,7 @@ namespace EntityLayer.Dtos
     public class AssignAgentManuallyDto
     {
         [Required]
-        public long DeliveryAgentId { get; set; } 
+        public long AgentId { get; set; } 
 
         [Required]
         public List<long> OrderIds { get; set; } = null!;

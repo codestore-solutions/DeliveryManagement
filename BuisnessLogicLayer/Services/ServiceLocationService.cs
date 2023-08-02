@@ -20,7 +20,7 @@ namespace BusinessLogicLayer.Services
             this.mapper = mapper;
         }
 
-        public async Task<ResponseDto?> AddNewWorkingLocationAsync(AddNewWorkingLocationDto workingLocationDto)
+        public async Task<ResponseDto?> AddNewWorkingLocationAsync(AddServiceLocationDto workingLocationDto)
         { 
             var addNewWorkingLocation = new ServiceLocation();
             mapper.Map(workingLocationDto, addNewWorkingLocation);
@@ -48,7 +48,7 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto?> GetAllWorkingLocationsAsync(long deliveryAgentId)
         {
-            var allLocations = await unitOfWork.ServiceLocationRepository.GetAll().Where(u => u.DeliveryAgentId == deliveryAgentId).ToListAsync();
+            var allLocations = await unitOfWork.ServiceLocationRepository.GetAll().Where(u => u.AgentId == deliveryAgentId).ToListAsync();
             if(allLocations.IsNullOrEmpty())
             {
                 return null;
@@ -111,7 +111,7 @@ namespace BusinessLogicLayer.Services
         public async Task<ResponseDto?> UpdateActiveAddressAsync(UpdateActiveAddressDto activeAddressDto)
         {
             var agentLocations = await unitOfWork.ServiceLocationRepository.GetAll()
-            .Where(u => u.DeliveryAgentId == activeAddressDto.DeliveryAgentId).ToListAsync();
+            .Where(u => u.AgentId == activeAddressDto.AgentId).ToListAsync();
 
             if (agentLocations.IsNullOrEmpty())
             {
@@ -145,7 +145,7 @@ namespace BusinessLogicLayer.Services
         public async Task<ResponseDto?> UpdateAgentAvailabilityStatusAsync(UpdateAgentAvailabilityStatusDto statusDto)
         {
             var agentLocations = await unitOfWork.ServiceLocationRepository.GetAll()
-            .Where(u => u.DeliveryAgentId == statusDto.DeliveryAgentId).ToListAsync();
+            .Where(u => u.AgentId == statusDto.DeliveryAgentId).ToListAsync();
 
             if(agentLocations.IsNullOrEmpty()) { return null; }
             var responseDto = new AvailabilityStatusDto();
@@ -168,7 +168,7 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto?> GetAgentAvailabilityStatusAsync(long agentId)
         {
-            var agent = await unitOfWork.ServiceLocationRepository.GetAll().FirstOrDefaultAsync(u => u.DeliveryAgentId == agentId && u.IsActive);
+            var agent = await unitOfWork.ServiceLocationRepository.GetAll().FirstOrDefaultAsync(u => u.AgentId == agentId && u.IsActive);
             if(agent == null)
             {
                 return null;
@@ -189,7 +189,7 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto?> UpdateVerificationStatusAsync(UpdateVerificationStatusDto updateVerificationStatusDto)
         {
-            var agent = await unitOfWork.ServiceLocationRepository.GetAll().FirstOrDefaultAsync(u => u.DeliveryAgentId == updateVerificationStatusDto.DeliveryAgentId
+            var agent = await unitOfWork.ServiceLocationRepository.GetAll().FirstOrDefaultAsync(u => u.AgentId == updateVerificationStatusDto.AgentId
             && u.IsActive);
 
             if (agent != null)
@@ -202,14 +202,19 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto?> GetVerificationStatusAsync(long agentId)
         {
-            var agent = await unitOfWork.ServiceLocationRepository.GetAll().FirstOrDefaultAsync(u => u.DeliveryAgentId == agentId && u.IsActive);
+            var agent = await unitOfWork.ServiceLocationRepository.GetAll().FirstOrDefaultAsync(u => u.AgentId == agentId && u.IsActive);
             if (agent == null)
             {
                 return null;
             }
-            return new ResponseDto();
+            var response = new VerificationStatusDto
+            {
+                verificationStatus = (VerificationStatusDto.VerificationStatus)agent.verificationStatus
+            };
+            return new ResponseDto {Success = true, StatusCode = 200, Data = response, Message = StringConstant.SuccessMessage };
         }
 
+       
     }
 
 }

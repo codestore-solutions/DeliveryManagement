@@ -12,11 +12,13 @@ namespace EntityLayer.Dtos
         [Required]
         [Range(1, long.MaxValue)]
         public long DeliveryAgentId { get; set; }
+
         public enum AvailabilityStatus
         {
             OffDuty = 0,
             OnDuty = 1,
         }
+
 
         [Required]
         public AvailabilityStatus AgentStatus { get; set; }

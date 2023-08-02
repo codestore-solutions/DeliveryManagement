@@ -5,7 +5,7 @@ using EntityLayer.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
-using static EntityLayer.Models.PersonalDetails;
+using static EntityLayer.Models.PersonalDetail;
 
 namespace DeliveryAgent.API.Controllers
 {
@@ -29,7 +29,7 @@ namespace DeliveryAgent.API.Controllers
     ///     GET: /api/v1/personal-details/get?agentId=4001
     ///     {
     ///         "id": 1,
-    ///         "deliveryAgentId": 4001,
+    ///         "agentId": 4001,
     ///         "fullName": "sonu",
     ///         "phoneNumber": "5724213308",
     ///         "email": "sonu@example.com",
@@ -116,6 +116,20 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> GetMultipleAgentsList([FromQuery] List<long> agentIds)
         {
             var result = await personalDetailsService.GetMultipleAgentsList(agentIds);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
+        }
+
+        [HttpPut("updateProfileCompletedStatus")]
+        public async Task<IActionResult> AddProfileCompletedStatusAsync(UpdateProfileCompletedDto updateProfileCompletedDto)
+        {
+            var result = await personalDetailsService.AddProfileCompletedStatusAsync(updateProfileCompletedDto);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
+        }
+
+        [HttpGet("getProfileCompletedStatus")]
+        public async Task<IActionResult> GetProfileCompletedStatusAsync([FromQuery]long agentId)
+        {
+            var result = await personalDetailsService.GetProfileCompletedStatusAsync(agentId);
             return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
     }

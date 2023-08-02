@@ -16,7 +16,7 @@ namespace EntityLayer.Dtos
 
         [Required]
         [Range(1, long.MaxValue)]   
-        public long DeliveryAgentId { get; set; }
+        public long AgentId { get; set; }
 
         [Required]
         [Range(0 ,1)]

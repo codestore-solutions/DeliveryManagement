@@ -10,7 +10,7 @@ namespace DataAccessLayer.Data
 
         }
         public DbSet<AssignDeliveryAgent> AssignDeliveryAgents { get; set; }
-        public DbSet<PersonalDetails> PersonalDetails { get; set; }
+        public DbSet<PersonalDetail> PersonalDetails { get; set; }
         public DbSet<KYC> kYCs { get; set; }
         public DbSet<BankDetails> BankDetails { get; set; }
         public DbSet<VehicleDetails> VechicleDetails { get; set; }

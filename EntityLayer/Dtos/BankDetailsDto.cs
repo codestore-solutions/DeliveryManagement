@@ -11,12 +11,12 @@ namespace EntityLayer.Dtos
     {
         [Required]
         [Range(1, long.MaxValue)]
-        public long DeliveryAgentId { get; set; }
+        public long AgentId { get; set; }
 
         [Required]
         [StringLength(50)]
         [RegularExpression(@"^[A-Za-z0-9.:,/ -]+$")]
-        public string YourName { get; set; } = null!;
+        public string AccountHolderName { get; set; } = null!;
 
         [Required]
         [StringLength(50)]

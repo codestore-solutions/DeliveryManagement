@@ -15,6 +15,7 @@ using System.Text;
 using BusinessLogicLayer.Mappings;
 using DeliveryAgentModule.Middlewares;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.FileProviders;
 
 namespace DeliveryAgentModule
 {
@@ -35,6 +36,7 @@ namespace DeliveryAgentModule
             builder.Logging.AddSerilog(logger);
 
             builder.Services.AddControllers();
+            builder.Services.AddHttpContextAccessor();
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
@@ -191,6 +193,12 @@ namespace DeliveryAgentModule
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images")),
+                RequestPath = "/Images"
+            });
 
             app.MapControllers();
 

@@ -9,7 +9,7 @@ namespace EntityLayer.Models
         public long Id { get; set; }
 
         [Required]
-        public long DeliveryAgentId { get; set; }
+        public long AgentId { get; set; }
 
         [Required]
         public long OrderId { get; set; }
@@ -39,18 +39,22 @@ namespace EntityLayer.Models
         [Required]
         public double DeliveryAddressLongitude { get; set; }
 
-        public enum OrderStatus
+        [Required]
+        public string PickupImage { get; set; } = string.Empty;
+
+        [Required]
+        public string DeliveryImage { get; set; } = string.Empty;
+        public enum DeliveryStatus
         {
             Assigned = 5,
             Accepted = 6,
             Rejected = 7,
             Pickedup = 8,
             ReachedDestination = 9,
-            NotAcceptedByCustomer= 10,
-            Delivered = 11,
-            Return = 12,
+            NotAcceptedByCustomer = 10,
+            Delivered  = 11,
         }
-        public OrderStatus orderStatus { get; set; }
+        public DeliveryStatus deliveryStatus { get; set; }
 
     }
 }

@@ -13,30 +13,32 @@ namespace EntityLayer.Models
         public long Id { get; set; }
 
         [Required]
-        public long DeliveryAgentId { get; set; }
+        public long AgentId { get; set; }
 
-        [Required]  
-        [StringLength(50)]
-        public string VehicleType { get; set; } = null!;
-
-
-        [Required]
-        [StringLength(50)]
-        public string Model { get; set; } = null!;
-
-
-        [Required]
-        [StringLength(50)]
-        public string CompanyName { get; set; } = null!;
-
+        public enum VehicleTypes
+        {
+            Motorcycle = 1,
+            Scooter    = 2,
+            GearlessMotorcycle = 3,
+            Scooty = 4
+        }
+        public VehicleTypes VehicleType { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string DLNumber { get; set; } = null!;
+        public string VehicleModel { get; set; } = null!;
+
+        [Required]
+        [StringLength(50)]
+        public string Company { get; set; } = null!;
+
+        [Required]
+        [StringLength(50)]
+        public string ManufacturedYear { get; set; } = null!;
 
         [Required]
         [StringLength (200)]
-        public string VehicleImageUrl { get; set; } = null!;
+        public string VehicleImage { get; set; } = null!;
 
         [Required]
         [StringLength(50)]

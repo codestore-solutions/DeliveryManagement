@@ -65,11 +65,11 @@ namespace DeliveryAgentModule.Controllers
                     return Ok(responseDto);
                 }
               }
-            return BadRequest(StringConstant.InvalidInputError);         
+            return BadRequest(new {message = StringConstant.InvalidCredentialError});         
         }
         private bool IsValidCredentials(string email, string password, LoginRequestDto loginRequestDto)
         {
-            if (loginRequestDto.Username == email && loginRequestDto.Password == password)
+            if ((loginRequestDto.Username.ToLower() == email) && loginRequestDto.Password == password)
             {
                 return true;
             }

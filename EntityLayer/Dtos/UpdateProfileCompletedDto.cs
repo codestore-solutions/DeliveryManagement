@@ -7,21 +7,14 @@ using System.Threading.Tasks;
 
 namespace EntityLayer.Dtos
 {
-    public class UpdateVerificationStatusDto
+    public class UpdateProfileCompletedDto
     {
-
         [Required]
         [Range(1, long.MaxValue)]
         public long AgentId { get; set; }
-        public enum VerificationStatus
-        {
-            NotVerified = 0,
-            Verified = 1,
-            Pending = 2
-        }
 
         [Required]
-        [Range(0,2)]
-        public VerificationStatus verificationStatus { get; set; }
+        [Range(0, 1)]
+        public bool IsProfileCompleted { get; set; }
     }
 }

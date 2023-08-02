@@ -9,13 +9,10 @@ using System.Xml.Linq;
 
 namespace EntityLayer.Models
 {
-    public class PersonalDetails
-    { 
-        [Key]
+    public class PersonalDetail
+    {
         public long Id { get; set; }
-
-        [Required]
-        public long DeliveryAgentId { get; set; }
+        public long AgentId { get; set; }
 
         [Required]
         [StringLength(50, MinimumLength = 1)]
@@ -40,7 +37,7 @@ namespace EntityLayer.Models
 
         [Required]
         public string Address { get; set; } = null!;
-
-        public string ProfileImageUrl { get; set; } = string.Empty;
+        public string ProfileImage { get; set; } = string.Empty;
+        public bool IsProfileCompleted { get; set; }
     }
 }

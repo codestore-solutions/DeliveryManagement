@@ -27,7 +27,7 @@ namespace BusinessLogicLayer.Services
         public async Task<ResponseDto?> AddDetailsAsync(VehicleDetailsDto vehicleDetailsDto)
         {   
             var exitingDetails = await unitOfWork.VehicleDetailsRepository.GetAll()
-            .FirstOrDefaultAsync(u => u.DeliveryAgentId == vehicleDetailsDto.DeliveryAgentId);
+            .FirstOrDefaultAsync(u => u.AgentId == vehicleDetailsDto.AgentId);
 
             if (exitingDetails != null)
             {
@@ -49,7 +49,7 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto?> GetAsync(long agentId)
         {
-            var vehicleDetails = await unitOfWork.VehicleDetailsRepository.GetAll().FirstOrDefaultAsync(u => u.DeliveryAgentId == agentId);
+            var vehicleDetails = await unitOfWork.VehicleDetailsRepository.GetAll().FirstOrDefaultAsync(u => u.AgentId == agentId);
             if (vehicleDetails == null)
             {
                 return null;

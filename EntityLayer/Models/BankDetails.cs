@@ -14,11 +14,11 @@ namespace EntityLayer.Models
 
         [Required]
         [Range(1, long.MaxValue)]    
-        public long DeliveryAgentId { get; set; }
+        public long AgentId { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string YourName { get; set; } = null!;
+        public string AccountHolderName { get; set; } = null!;
 
         [Required]
         [StringLength(100)]
@@ -30,6 +30,6 @@ namespace EntityLayer.Models
 
         [Required]
         [StringLength(100)]
-        public string AccountNumber { get; set; } = null!;
+        public string AccountNumber { get; set; } = null!;    
     }
 }

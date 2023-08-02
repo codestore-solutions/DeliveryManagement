@@ -14,7 +14,7 @@ namespace EntityLayer.Models
 
         [Required]
         [Range(1, long.MaxValue)]
-        public long DeliveryAgentId { get; set; }
+        public long AgentId { get; set; }
 
         [Required]
         [StringLength(50)]

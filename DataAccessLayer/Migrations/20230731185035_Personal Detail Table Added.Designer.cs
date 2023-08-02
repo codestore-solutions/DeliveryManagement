@@ -4,6 +4,7 @@ using DataAccessLayer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(DeliveryDbContext))]
-    partial class DeliveryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230731185035_Personal Detail Table Added")]
+    partial class PersonalDetailTableAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,16 +48,8 @@ namespace DataAccessLayer.Migrations
                     b.Property<double>("DeliveryAddressLongitude")
                         .HasColumnType("float");
 
-                    b.Property<string>("DeliveryImage")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<long>("OrderId")
                         .HasColumnType("bigint");
-
-                    b.Property<string>("PickupImage")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("PickupLatitude")
                         .HasColumnType("float");
@@ -68,7 +63,7 @@ namespace DataAccessLayer.Migrations
                     b.Property<long>("VendorAddressId")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("deliveryStatus")
+                    b.Property<int>("orderStatus")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -144,6 +139,7 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FileName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FilePath")
@@ -184,12 +180,17 @@ namespace DataAccessLayer.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<long>("PersonalDetailId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Photo")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PersonalDetailId");
 
                     b.ToTable("kYCs");
                 });
@@ -228,9 +229,6 @@ namespace DataAccessLayer.Migrations
                     b.Property<string>("Gender")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsProfileCompleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
@@ -341,6 +339,17 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("VechicleDetails");
+                });
+
+            modelBuilder.Entity("EntityLayer.Models.KYC", b =>
+                {
+                    b.HasOne("EntityLayer.Models.PersonalDetail", "PersonalDetail")
+                        .WithMany()
+                        .HasForeignKey("PersonalDetailId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PersonalDetail");
                 });
 #pragma warning restore 612, 618
         }

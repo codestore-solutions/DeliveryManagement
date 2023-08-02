@@ -18,5 +18,6 @@ namespace EntityLayer.Common
         public const string InternalServerErrorMessage   = "Internal Server Error";
         public const string MicroserviceError            = "Microservice is not responding";
         public const string FullNameError                = "Enter Full Name in proper Format";
+        public const string InvalidCredentialError       = "Invalid Username or Password";
     }
 }

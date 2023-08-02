@@ -2,18 +2,10 @@
 using DeliveryAgentModule.CustomActionFilter;
 using EntityLayer.Common;
 using EntityLayer.Dtos;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections;
 using System.ComponentModel.DataAnnotations;
-using System.Reflection.Metadata.Ecma335;
 using static System.Net.Mime.MediaTypeNames;
 using System.Text;
-using System.Text.Json;
-using Azure;
-using System.Net.Http.Headers;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
-using EntityLayer.Models;
 using Newtonsoft.Json;
 
 namespace DeliveryAgentModule.Controllers
@@ -84,7 +76,7 @@ namespace DeliveryAgentModule.Controllers
                 var order = new Order
                 {
                     orderId         = obj.OrderId,
-                    deliveryAgentId = obj.DeliveryAgentId,
+                    deliveryAgentId = obj.AgentId,
                 };
                 requestBody.orders.Add(order);
             }
@@ -128,6 +120,12 @@ namespace DeliveryAgentModule.Controllers
             return result == null ? NotFound(StringConstant.ResourceNotFoundError) : Ok(result);
         }
 
+        [HttpPut("updatePickupOrDeliveryStatus")]
+        public async Task<IActionResult> UpdatePickupOrDeliveryStatusAsync(UpdatePickupOrDeliveryStatusDto pickupOrDeliveryStatusDto)
+        {
+            var result = await deliveryAgentService.UpdatePickupOrDeliveryStatusAsync(pickupOrDeliveryStatusDto);
+            return result == null ? NotFound(StringConstant.ResourceNotFoundError): Ok(result);
+        }
 
     }    
     

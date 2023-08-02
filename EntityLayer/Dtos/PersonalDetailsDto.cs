@@ -14,7 +14,7 @@ namespace EntityLayer.Dtos
 
         [Required]
         [Range(1, long.MaxValue)]
-        public long DeliveryAgentId { get; set; }
+        public long AgentId { get; set; }
 
         [Required]
         [StringLength(50, MinimumLength = 1)]
@@ -52,6 +52,6 @@ namespace EntityLayer.Dtos
         public string Address { get; set; } = null!;
 
         [DataType(DataType.Url)]
-        public string ProfileImageUrl { get; set; } = string.Empty;
+        public string ProfileImage { get; set; } = string.Empty;
     }
 }

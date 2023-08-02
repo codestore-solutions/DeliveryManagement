@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace EntityLayer.Dtos
 {
-    public class AddNewWorkingLocationDto
+    public class AddServiceLocationDto
     {
         [Required]
         [Range(1, long.MaxValue)]
-        public long DeliveryAgentId { get; set; }
+        public long AgentId { get; set; }
 
         [Required]
         [StringLength(50, MinimumLength = 1)]
