@@ -54,7 +54,7 @@ const getOrdersArray = (data: any, id:any) => {
    let manualPayload = Array<manualAssignAgentInterface>();
   data.forEach((item: any) => {
     let payload: manualAssignAgentInterface = {
-      deliveryAgentId: id,
+      agentId: id,
       orderId: item?.id,
       vendorAddressId: item?.vendor?.business?.address_id,
       pickupLatitude: item?.vendor?.business?.address?.latitude,
@@ -131,7 +131,7 @@ const assignAgentAutoData = (previewData: any, orderData: any) => {
   orderData.forEach((item: any) => {
     let selectedAgent = previewData?.filter((ele:any) => ele.orderId === item?.id);
     let payload: manualAssignAgentInterface = {
-      deliveryAgentId: selectedAgent[0]?.deliveryAgentId,
+      agentId: selectedAgent[0]?.deliveryAgentId,
       orderId: item?.id,
       vendorAddressId: item?.vendor?.business?.address_id,
       pickupLatitude: item?.vendor?.business?.address?.latitude,

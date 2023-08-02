@@ -1,5 +1,6 @@
 import { Tabs } from "antd";
 import { useState } from "react";
+import { useDebounce } from 'use-debounce';
 import DeliveryAgents from "./DeliveryAgents";
 import { AssignedAgents } from "..";
 import "./style.scss";
@@ -10,6 +11,7 @@ const Agent = () => {
   const [filters, setFilters] = useState<any>();
   const [isOpen, setIsOpen] = useState(false);
   const [searchInput, setSearchInput] = useState<string>();
+  const [debouncedSearchTerm] = useDebounce(searchInput, 500);
   const [activeTab, setActiveTab] = useState("0");
   const handleTabChange = (tabKey: any) => {
     setActiveTab(tabKey);
@@ -60,7 +62,7 @@ const Agent = () => {
       <div className="content">
         <Tabs activeKey={activeTab} onChange={handleTabChange}>
           <TabPane tab="All Agents" key="0">
-            <DeliveryAgents searchInput={searchInput} filters={filters} />
+            <DeliveryAgents searchInput={debouncedSearchTerm} filters={filters} />
           </TabPane>
           <TabPane tab="Assigned Agents" key="1">
             <AssignedAgents activeTab={activeTab} />

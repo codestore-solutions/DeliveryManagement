@@ -35,6 +35,9 @@ interface Props {
 }
 
 const DeliveryAgents: React.FC<Props> = ({ searchInput, filters }) => {
+  const scrollConfig = {
+      x: 900
+  };
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { loading, agentList } = useAppSelector(
@@ -49,7 +52,7 @@ const DeliveryAgents: React.FC<Props> = ({ searchInput, filters }) => {
   });
   const handleClick = (state: any) => {
     navigate(
-      `/dashboard/agent-details/${state?.personalDetails?.deliveryAgentId}`,
+      `/dashboard/agent-details/${state?.personalDetails?.agentId}`,
       { state }
     );
   };
@@ -156,6 +159,7 @@ const DeliveryAgents: React.FC<Props> = ({ searchInput, filters }) => {
         pagination={pagination}
         handleTableChange={handleTableChange}
         loading={loading}
+        scroll={scrollConfig}
       />
     </div>
   );

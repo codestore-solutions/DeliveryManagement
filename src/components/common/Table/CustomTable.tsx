@@ -10,7 +10,9 @@ interface customTableProps {
   pagination: {};
   handleTableChange: any;
   loading: boolean;
-  scroll?: any
+  scroll?: {
+    x: number | string; // Set the value according to your needs
+  };
 }
 
 const CustomTable: FC<customTableProps> = ({
@@ -20,8 +22,9 @@ const CustomTable: FC<customTableProps> = ({
   handleTableChange,
   loading,
   rowSelection,
-  scroll
+  scroll,
 }) => {
+  const defaultScroll = { x: 800 };
   return (
     <Table
       rowSelection={rowSelection}
@@ -30,7 +33,7 @@ const CustomTable: FC<customTableProps> = ({
       pagination={pagination}
       onChange={handleTableChange}
       loading={loading}
-      scroll={scroll}
+      scroll={scroll ? { ...defaultScroll, ...scroll } : defaultScroll}
       id="custom-table"
     />
   );

@@ -24,7 +24,7 @@ const AgentDetails: React.FC = () => {
   console.log('data', data);
   const [loading, setLoading] = useState<boolean>(false);
   const location = useLocation();
-  const id = location.state?.personalDetails?.deliveryAgentId;
+  const id = location.state?.personalDetails?.agentId;
   // console.log("Dey", state)
   // const verifyAgentHandler = async () => {
   //   let instance = AgentServices.getInstance();
@@ -150,7 +150,7 @@ const AgentDetails: React.FC = () => {
           <h3>Vehicle Details</h3>
           <div className="details">
             <span className="details-item">
-              DL Number : <span className="dark">{data?.vehicleDetails?.dlNumber}</span>{" "}
+            ManufacturedYear : <span className="dark">{data?.vehicleDetails?.manufacturedYear}</span>{" "}
             </span>
             <span className="details-item">
               Registration Number : <span className="dark">{data?.vehicleDetails?.registrationNumber}</span>{" "}
@@ -159,10 +159,10 @@ const AgentDetails: React.FC = () => {
              VehicleType : <span className="dark">{data?.vehicleDetails?.vehicleType}</span>{" "}
             </span>
             <span className="details-item">
-              Vehicle Model : <span className="dark">{data?.vehicleDetails?.model}</span>{" "}
+              Vehicle Model : <span className="dark">{data?.vehicleDetails?.vehicleModel}</span>{" "}
             </span>
             <span className="details-item">
-              Vehicle Company : <span className="dark">{data?.vehicleDetails?.companyName}</span>{" "}
+              Vehicle Company : <span className="dark">{data?.vehicleDetails?.company}</span>{" "}
             </span>
           </div>
         </div>

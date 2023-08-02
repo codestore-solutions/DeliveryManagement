@@ -37,8 +37,12 @@ instance.interceptors.response.use(
           status: error.response.status,
           data: error.response.data?.message,
         };
-      }
-      else if (error.response.status?.statusCode === ApiContants?.badRequest) {
+      }else if(error.response.status === ApiContants?.badRequest){
+        apiData = {
+          status: error.response.status,
+          data: error.response.data
+       }
+      } else if (error.response.status?.statusCode === ApiContants?.badRequest) {
         // Handle validation errors
         const validationErrors = error.response.data;
         let errorMessages = new Array<any>();
