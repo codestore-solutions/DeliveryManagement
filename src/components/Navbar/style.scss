@@ -4,7 +4,7 @@
   display: flex;
   justify-content: space-between;
   background-color: $buttonText_color;
-  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
+  z-index: -1;
   .nav-left {
     p {
       padding: 0 10px;
@@ -13,9 +13,11 @@
       letter-spacing: 0.03em;
       color: #7E8299;
     }
+
     .ant-select-selector {
       border: none;
     }
+
     .ant-select {
       /* Your custom styles here */
       width: 250px;
@@ -24,6 +26,7 @@
       // border-radius: 15px;
     }
   }
+
   .nav-right {
     .nav-items {
       display: flex;
@@ -44,8 +47,8 @@
           }
           .status {
             position: absolute;
-            top: 30;
-            left: -5;
+            top: 0px; /* Add 'px' here */
+            left: 15px; /* Add 'px' here */
             width: 8px;
             height: 8px;
             background-color: red;
@@ -53,14 +56,36 @@
           }
         }
         cursor: pointer;
-        .avtar {
-          .img {
+        .avatar {
+          img {
             border: 1px solid $background_color;
           }
         }
+
         .dropdown {
           height: 55px;
           align-items: center;
+          .name {
+            font-family: "Poppins";
+            font-style: normal;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: 16px;
+            color: #777777;
+          }
+          .email {
+            font-family: "Poppins";
+            font-style: normal;
+            font-weight: normal;
+            font-size: 12px;
+            line-height: 12px;
+            color: #777777;
+            position: absolute;
+            right:0;
+            top: -20;
+            padding-right:3px;
+            padding-bottom: 10px;
+          }
           .tag {
             font-family: "Poppins";
             font-style: normal;
@@ -70,11 +95,39 @@
             padding-right: 0 10px;
             color: #777777;
           }
-          .icon{
-             color: #000000;
-             padding-left: 15px;
+
+          .icon {
+            color: #000000;
+            padding-left: 15px;
           }
         }
+      }
+    }
+  }
+
+  // Responsive styles
+  @media (max-width: 568px) {
+    flex-direction: column;
+    align-items: center;
+    .nav-right {
+      margin-top: 10px; /* Adjust the spacing as needed */
+    }
+    .nav-left,
+    .nav-right {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    .nav-left p {
+      text-align: center;
+    }
+
+    .nav-items {
+      flex-direction: column;
+      align-items: center;
+      .nav-item {
+        margin-top: 10px; /* Adjust the spacing as needed */
       }
     }
   }

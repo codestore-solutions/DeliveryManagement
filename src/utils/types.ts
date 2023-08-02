@@ -11,7 +11,7 @@ export interface pagination {
 }
 
 export interface manualAssignAgentInterface {
-    deliveryAgentId: number;
+    agentId: number;
     orderId: number;
     vendorAddressId: number;
     pickupLatitude: number;

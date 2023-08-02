@@ -11,6 +11,7 @@ import CustomizeText from "../../utils/helpers/CustomizeText";
 import { TableRowSelection } from "antd/es/table/interface";
 // import CustomizeDate from "../../utils/helpers/CustomizeDate";
 import { manualAssignAgentInterface } from "../../utils/types";
+import { useDebounce } from 'use-debounce';
 
 interface DataType {
   key: React.Key;
@@ -40,6 +41,7 @@ const AssignAgent: React.FC<Props> = ({
 }) => {
   const [data, setData] = useState<any>(null);
   const [searchInput, setSearchInput] = useState<string>();
+  const [debouncedSearchTerm] = useDebounce(searchInput, 500);
   const [loading, setLoading] = useState<boolean>(false);
   const [apiCalling, setApiCalling] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -84,7 +86,7 @@ const AssignAgent: React.FC<Props> = ({
         setData(updatedArray);
         let payload: Array<manualAssignAgentInterface> = [
           {
-            deliveryAgentId: values?.personalDetails?.deliveryAgentId,
+            agentId: values?.personalDetails?.agentId,
             orderId: selectedOrderData?.id,
             vendorAddressId: selectedOrderData?.vendor?.business?.address_id,
             pickupLatitude:
@@ -110,7 +112,7 @@ const AssignAgent: React.FC<Props> = ({
       } else {
         let payload = CustomizeData.getOrdersArray(
           selectedOrderData,
-          values?.personalDetails?.deliveryAgentId
+          values?.personalDetails?.agentId
         );
         // console.log("Manual Automatic Values", payload);
         AgentService.assignAgentManually(payload)
@@ -176,7 +178,7 @@ const AssignAgent: React.FC<Props> = ({
       setLoading(true);
       const data = await AgentService.getAvialableAgents(payload, searchInput);
       if (data?.statusCode === 200) {
-        //  console.log('data', data);
+         console.log('data', data);
         setData(data);
       }
     } catch (err) {
@@ -195,7 +197,7 @@ const AssignAgent: React.FC<Props> = ({
 
   useEffect(() => {
     fetchAgents();
-  }, [isOpen, pagination.pageNumber, key, searchInput]);
+  }, [isOpen, pagination.pageNumber, key, debouncedSearchTerm]);
 
   return (
     <div id="assign-agent">
