@@ -102,7 +102,7 @@ const AutomaticAssign: React.FC<AutoProps> = ({
     const aasignAgentConform = () => {
       const payload = CustomizeData.assignAgentAutoDataSingle(previewData, customizeOrders) as manualAssignAgentInterface;
       console.log("predata", payload);
-    if(payload?.deliveryAgentId !== null){
+    if(payload?.agentId !== null){
         AgentService.assignAgentManually(payload).then((res: any) => {
           if (res.statusCode === ApiContants.successCode) {
             setLoading(false);
