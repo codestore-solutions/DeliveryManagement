@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EntityLayer.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -32,5 +33,6 @@ namespace EntityLayer.Dtos
         [StringLength(50)]
         [RegularExpression(@"^[A-Za-z0-9.:,/ -]+$")]
         public string AccountNumber { get; set; } = null!;
+     
     }
 }

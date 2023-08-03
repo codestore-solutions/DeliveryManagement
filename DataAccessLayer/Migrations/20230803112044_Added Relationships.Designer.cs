@@ -4,6 +4,7 @@ using DataAccessLayer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(DeliveryDbContext))]
-    partial class DeliveryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230803112044_Added Relationships")]
+    partial class AddedRelationships
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -241,7 +244,7 @@ namespace DataAccessLayer.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DocumentImage")
+                    b.Property<string>("Document")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -320,7 +323,7 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("AgentDetailId")
+                    b.Property<long>("AgentId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Company")
@@ -359,9 +362,6 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AgentDetailId")
-                        .IsUnique();
-
                     b.ToTable("VechicleDetails");
                 });
 
@@ -387,24 +387,11 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("AgentDetail");
                 });
 
-            modelBuilder.Entity("EntityLayer.Models.VehicleDetails", b =>
-                {
-                    b.HasOne("EntityLayer.Models.AgentDetail", "AgentDetail")
-                        .WithOne("VehicleDetails")
-                        .HasForeignKey("EntityLayer.Models.VehicleDetails", "AgentDetailId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AgentDetail");
-                });
-
             modelBuilder.Entity("EntityLayer.Models.AgentDetail", b =>
                 {
                     b.Navigation("BankDetails");
 
                     b.Navigation("KYCs");
-
-                    b.Navigation("VehicleDetails");
                 });
 #pragma warning restore 612, 618
         }

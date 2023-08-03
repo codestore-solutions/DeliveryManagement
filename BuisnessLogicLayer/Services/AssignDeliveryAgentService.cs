@@ -11,6 +11,7 @@ using System.Text;
 using Newtonsoft.Json;
 using System.Runtime.CompilerServices;
 using Microsoft.IdentityModel.Tokens;
+using Timer = System.Timers.Timer;
 
 namespace BusinessLogicLayer.Services
 {
@@ -52,10 +53,15 @@ namespace BusinessLogicLayer.Services
                 assignNewAgent.UpdatedOn = DateTime.Now;
 
                 await unitOfWork.AssignDeliveryAgentRepository.AddAsync(assignNewAgent);
+                _assignedAgents.Add(obj.OrderId, obj.AgentId);
+                var timer = new Timer(30000);
+                timer.Elapsed += (sender, e) => HandleTimeout(obj.OrderId);
+                Console.WriteLine("Timer started. Waiting for 30 seconds...");
+                timer.Start();
                 saveResult = await unitOfWork.SaveAsync();
                 responseObject.Add(assignNewAgent);                           
             }
-           
+
             return new ResponseDto()
             {
                 StatusCode = 200,
@@ -63,6 +69,34 @@ namespace BusinessLogicLayer.Services
                 Data       = responseObject,
                 Message    = saveResult ? StringConstant.AssignedSuccessMessage : StringConstant.DatabaseMessage
             };
+        }
+
+        private void HandleTimeout(long orderId)
+        {
+            if (_assignedAgents.ContainsKey(orderId))
+            {
+                // Order was not accepted within the timeout
+                _assignedAgents.Remove(orderId);
+            }
+        }
+
+        public void AcceptOrder(int orderId)
+        {
+            if (_assignedAgents.ContainsKey(orderId))
+            {
+                // The assigned agent accepted the order
+                // Handle the accepted order logic here
+            }
+        }
+
+        public void RejectOrder(int orderId)
+        {
+            if (_assignedAgents.ContainsKey(orderId))
+            {
+                // The assigned agent rejected the order
+                // Handle the rejected order logic here
+                _assignedAgents.Remove(orderId);
+            }
         }
 
         public async Task<ResponseDto> AssignAgentAutomaticallyAsync(AssignAgentAutomaticallyDto assignAgentAutomaticallyDto)
@@ -186,9 +220,8 @@ namespace BusinessLogicLayer.Services
             return degrees * (Math.PI / 180);
         }
 
-        public async Task<ResponseDto?> AcceptOrderAsync(AcceptRejectOrderDto acceptRejectOrderDto)
+        public async Task<ResponseDto?> AcceptOrderAsync(AcceptRejectOrderDto acceptRejectOrderDto, string token)
         {
-            using var client = new HttpClient();
             var requestBody  = new UpdateOrderStatusDto();
             requestBody.status = acceptRejectOrderDto.DeliveryStatus;
             foreach(var orderId in acceptRejectOrderDto.OrderIds)
@@ -197,9 +230,9 @@ namespace BusinessLogicLayer.Services
             }
       
             HttpContent requestJson = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json");
-            string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im9ta2FyLnNoYXJtYUBleGFtcGxlLmNvbSIsInJvbGUiOiI1IiwiaWQiOiI3IiwiZXhwIjoxNjk1NjM4NzU2fQ.igzzKvqwh64yT9dtVwqUfuYC28nkYa-w97TAEJS8P64";
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
-            var microserviceResponse = client.PutAsync("https://order-processing-dev.azurewebsites.net/api/v1/order/updateOrder", requestJson).Result;
+            string token1 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im9ta2FyLnNoYXJtYUBleGFtcGxlLmNvbSIsInJvbGUiOiI1IiwiaWQiOiI3IiwiZXhwIjoxNjk1NjM4NzU2fQ.igzzKvqwh64yT9dtVwqUfuYC28nkYa-w97TAEJS8P64";
+            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token1}");
+            var microserviceResponse = httpClient.PutAsync("https://order-processing-dev.azurewebsites.net/api/v1/order/updateOrder", requestJson).Result;
 
             if (microserviceResponse.IsSuccessStatusCode)
             {
@@ -253,7 +286,6 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto?> UpdatePickupOrDeliveryStatusAsync(UpdatePickupOrDeliveryStatusDto pickupOrDeliveryStatusDto)
         {
-            using var client = new HttpClient();
             var requestBody  = new UpdateOrderStatusDto();
             requestBody.status = pickupOrDeliveryStatusDto.DeliveryStatus;
             foreach (var orderId in pickupOrDeliveryStatusDto.OrderIds)
@@ -263,8 +295,8 @@ namespace BusinessLogicLayer.Services
 
             HttpContent requestJson = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json");
             string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im9ta2FyLnNoYXJtYUBleGFtcGxlLmNvbSIsInJvbGUiOiI1IiwiaWQiOiI3IiwiZXhwIjoxNjk1NjM4NzU2fQ.igzzKvqwh64yT9dtVwqUfuYC28nkYa-w97TAEJS8P64";
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
-            var microserviceResponse = client.PutAsync("https://order-processing-dev.azurewebsites.net/api/v1/order/updateOrder", requestJson).Result;
+            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            var microserviceResponse = httpClient.PutAsync("https://order-processing-dev.azurewebsites.net/api/v1/order/updateOrder", requestJson).Result;
 
             if (microserviceResponse.IsSuccessStatusCode)
             {

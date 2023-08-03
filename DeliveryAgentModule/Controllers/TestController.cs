@@ -31,6 +31,7 @@ namespace DeliveryAgentModule.Controllers
 
         [HttpPost("login")]
         [MapToApiVersion("1.0")]
+        [ValidateModel]
         public async Task<IActionResult> Login([FromBody][Required] LoginRequestDto loginRequestDto)
         {
             var microserviceResponse = await httpClient.GetAsync("https://order-processing-dev.azurewebsites.net/api/v1/users/listAllUsers");

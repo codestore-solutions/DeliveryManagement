@@ -11,10 +11,7 @@ namespace EntityLayer.Models
     {
         [Key]
         public long Id { get; set; }
-
-        [Required]
-        [Range(1, long.MaxValue)]    
-        public long AgentId { get; set; }
+        public long AgentDetailId { get; set; }
 
         [Required]
         [StringLength(100)]
@@ -30,6 +27,9 @@ namespace EntityLayer.Models
 
         [Required]
         [StringLength(100)]
-        public string AccountNumber { get; set; } = null!;    
+        public string AccountNumber { get; set; } = null!;
+        public DateTime CreatedOn { get; set; }
+        public DateTime UpdatedOn { get; set; }   
+        public virtual AgentDetail AgentDetail { get; set; } = null!;
     }
 }

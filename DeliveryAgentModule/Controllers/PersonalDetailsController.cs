@@ -5,7 +5,7 @@ using EntityLayer.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
-using static EntityLayer.Models.PersonalDetail;
+using static EntityLayer.Models.AgentDetail;
 
 namespace DeliveryAgent.API.Controllers
 {

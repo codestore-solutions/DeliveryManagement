@@ -18,6 +18,7 @@ namespace EntityLayer.Dtos
         public long OrderId { get; set; }
 
         [Required]
+        [Range(1, long.MaxValue)]
         public long VendorAddressId { get; set; } 
 
         [Required]
@@ -46,6 +47,8 @@ namespace EntityLayer.Dtos
             Ongoing = 8,
             Delivered = 9,
         }
+
+        [Required]
         public OrderStatus orderStatus { get; set; }
     }
     public class AssignManuallyDto

@@ -19,5 +19,7 @@ namespace EntityLayer.Common
         public const string MicroserviceError            = "Microservice is not responding";
         public const string FullNameError                = "Enter Full Name in proper Format";
         public const string InvalidCredentialError       = "Invalid Username or Password";
+        public const string OrderIdRequiredError         = "At least one order ID is required.";
+    
     }
 }

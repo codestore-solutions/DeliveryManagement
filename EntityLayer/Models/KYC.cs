@@ -11,24 +11,28 @@ namespace EntityLayer.Models
     {
         [Key]
         public long Id { get; set; }
+        public long AgentDetailId { get; set; }
+        public enum DocumentTypes
+        {
+            DrivingLicence = 1,
+            PanCard        = 2,
+            AadharCard     = 3,
+            Photo          = 4
+        }
 
         [Required]
-        public long AgentId { get; set; }
+        public DocumentTypes DocumentType { get; set; }
 
         [Required]
-        [StringLength(200)]
-        public string DrivingLicense { get; set; } = null!;
+        [Url]
+        public string DocumentImage { get; set; } = null!;
 
         [Required]
-        [StringLength(200)]
-        public string Photo { get; set; } = null!;
+        public DateTime CreatedOn { get; set; }
 
         [Required]
-        [StringLength(200)]
-        public string AadharCard { get; set; } = null!;
+        public DateTime UpdatedOn { get; set; }
 
-        [Required]
-        [StringLength(200)]
-        public string Pancard { get; set; } = null!; 
+        public virtual AgentDetail AgentDetail { get; set; } = null!;
     }
 }

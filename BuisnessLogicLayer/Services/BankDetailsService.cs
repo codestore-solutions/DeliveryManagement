@@ -26,9 +26,14 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto?> GetAsync(long agentId)
         {
-            var agentDetail = await unitOfWork.BankDetailsRepository.GetAll().FirstOrDefaultAsync(u => u.AgentId == agentId);
+            var agentDetail = await unitOfWork.PersonalDetailsRepository.GetAll().FirstOrDefaultAsync(u => u.AgentId == agentId);
+            if(agentDetail == null) 
+            {
+                return null;
+            }
+            var result = agentDetail.BankDetails;
 
-            if(agentDetail == null)
+            if (result == null)
             {
                 return null;
             }
@@ -38,7 +43,7 @@ namespace BusinessLogicLayer.Services
             {
                 response.StatusCode = 200;
                 response.Success    = true;
-                response.Data       = agentDetail;
+                response.Data       = result;
                 response.Message    = StringConstant.SuccessMessage;
             }
             return response;
@@ -46,15 +51,24 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto?> AddDetailsAsync(BankDetailsDto bankDetailsDto)
         {
-            var exitingDetails = await unitOfWork.BankDetailsRepository.GetAll()
+            var personalDetail = await unitOfWork.PersonalDetailsRepository.GetAll()
             .FirstOrDefaultAsync(u => u.AgentId == bankDetailsDto.AgentId);
+            if(personalDetail== null)
+            {
+                return null;
+            }
+            var existingDetails = personalDetail.BankDetails;
 
-            if (exitingDetails != null)
+            if (existingDetails != null)
             {
                 return null;
             }
             var bankDetails = new BankDetails();
             mapper.Map(bankDetailsDto, bankDetails);
+            bankDetails.AgentDetailId = personalDetail.Id;
+            bankDetails.AgentDetail   = personalDetail;
+            bankDetails.CreatedOn = DateTime.Now;
+            bankDetails.UpdatedOn = DateTime.Now;
 
             await unitOfWork.BankDetailsRepository.AddAsync(bankDetails);
             bool saveResult = await unitOfWork.SaveAsync();          
@@ -76,6 +90,7 @@ namespace BusinessLogicLayer.Services
                 return null;
             }
             mapper.Map(bankDetailsDto, bankDetails);
+            bankDetails.UpdatedOn = DateTime.Now;
             bool saveResult = await unitOfWork.SaveAsync();
 
             return new ResponseDto

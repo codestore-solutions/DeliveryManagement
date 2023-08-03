@@ -9,8 +9,9 @@ using System.Xml.Linq;
 
 namespace EntityLayer.Models
 {
-    public class PersonalDetail
+    public class AgentDetail
     {
+        [Key]
         public long Id { get; set; }
         public long AgentId { get; set; }
 
@@ -39,5 +40,10 @@ namespace EntityLayer.Models
         public string Address { get; set; } = null!;
         public string ProfileImage { get; set; } = string.Empty;
         public bool IsProfileCompleted { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public DateTime UpdatedOn { get; set; }
+        public virtual BankDetails? BankDetails { get; set; }
+        public virtual ICollection<KYC>? KYCs { get; set; } = new List<KYC>();
+        public virtual VehicleDetails? VehicleDetails { get; set; } 
     }
 }

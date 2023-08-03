@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static EntityLayer.Models.PersonalDetail;
+using static EntityLayer.Models.AgentDetail;
 
 namespace BusinessLogicLayer.IServices
 {

@@ -26,22 +26,26 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto?> AddDetailsAsync(VehicleDetailsDto vehicleDetailsDto)
         {   
-            var exitingDetails = await unitOfWork.VehicleDetailsRepository.GetAll()
+            var personalDetails = await unitOfWork.PersonalDetailsRepository.GetAll()
             .FirstOrDefaultAsync(u => u.AgentId == vehicleDetailsDto.AgentId);
 
-            if (exitingDetails != null)
+            if (personalDetails == null)
             {
                 return null;
             }
             var addNewvehicleDetails = new VehicleDetails();
             mapper.Map(vehicleDetailsDto, addNewvehicleDetails);
+            addNewvehicleDetails.AgentDetailId = personalDetails.Id;
+            addNewvehicleDetails.AgentDetail = personalDetails;
+            addNewvehicleDetails.CreatedOn = DateTime.Now;
+            addNewvehicleDetails.UpdatedOn = DateTime.Now;
             await unitOfWork.VehicleDetailsRepository.AddAsync(addNewvehicleDetails);
             bool saveResult = await unitOfWork.SaveAsync();
            
             return new ResponseDto
             {
-                StatusCode   = saveResult ? 200 : 500,
-                Success      = saveResult,
+                StatusCode   = 200,
+                Success      = true,
                 Data         = addNewvehicleDetails,
                 Message      = saveResult ? StringConstant.AddedMessage : StringConstant.DatabaseMessage
             };
@@ -49,8 +53,10 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto?> GetAsync(long agentId)
         {
-            var vehicleDetails = await unitOfWork.VehicleDetailsRepository.GetAll().FirstOrDefaultAsync(u => u.AgentId == agentId);
-            if (vehicleDetails == null)
+            var personalDetail = await unitOfWork.PersonalDetailsRepository.GetAll().FirstOrDefaultAsync(u => u.AgentId == agentId);
+            if (personalDetail == null) {  return null; }
+            var vehicleDetail = personalDetail.VehicleDetails; 
+            if (vehicleDetail == null)
             {
                 return null;
             }
@@ -58,7 +64,7 @@ namespace BusinessLogicLayer.Services
             {
                 StatusCode = 200,
                 Success    = true,
-                Data       = vehicleDetails,
+                Data       = vehicleDetail,
                 Message    = StringConstant.SuccessMessage
             };
         }
@@ -71,13 +77,14 @@ namespace BusinessLogicLayer.Services
                 return null;
             }
             mapper.Map(vehicleDetailsDto, vehicleDetails);
+            vehicleDetails.UpdatedOn = DateTime.Now;
             bool saveResult = await unitOfWork.SaveAsync();
 
             return new ResponseDto
             {
-                StatusCode      = saveResult ? 200 : 500,
-                Success         = saveResult,
-                Data            = vehicleDetails ,
+                StatusCode      = 200,
+                Success         = true,
+                Data            = vehicleDetails,
                 Message         = saveResult ? StringConstant.UpdatedMessage : StringConstant.DatabaseMessage
             };
         }

@@ -26,35 +26,47 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto?> GetAsync(long agentId)
         {
-            var kYCDetail = await unitOfWork.KYCRepository.GetAll().FirstOrDefaultAsync(u => u.AgentId == agentId);
-            if(kYCDetail == null)
+            var personalDetail = await unitOfWork.PersonalDetailsRepository.GetAll().FirstOrDefaultAsync(u => u.AgentId == agentId);
+            var kycDetail = personalDetail.KYCs;
+            if(kycDetail == null)
             {
                 return null;
             }
             return new ResponseDto
             {
                 StatusCode = 200,
-                Success = true,
-                Data = kYCDetail,
-                Message = StringConstant.SuccessMessage
+                Success    = true,
+                Data       = kycDetail,
+                Message    = StringConstant.SuccessMessage
             };
         }
 
-        public async Task<ResponseDto> AddDetailsAsync(KYCDto kycDto)
+        public async Task<ResponseDto?> AddDetailsAsync(KYCDto kycDto)
         {
-           
+            var personalDetails = await unitOfWork.PersonalDetailsRepository.GetAll()
+           .FirstOrDefaultAsync(u => u.AgentId == kycDto.AgentId);
+
+            if(personalDetails == null)
+            {
+                return null;
+            }
+
             var  kycDetails = new KYC();
             mapper.Map(kycDto, kycDetails);
-            await unitOfWork.KYCRepository.AddAsync(kycDetails);
+            kycDetails.AgentDetail   = personalDetails;
+            kycDetails.AgentDetailId = personalDetails.Id;
+            kycDetails.CreatedOn = DateTime.Now;
+            kycDetails.UpdatedOn = DateTime.Now;
+
+            await unitOfWork.KYCRepository.AddAsync(kycDetails);  
             bool saveResult = await unitOfWork.SaveAsync();
           
-
             return new ResponseDto
             {
-                StatusCode = saveResult ? 200 : 500,
-                Success = saveResult,
-                Data = kycDetails,
-                Message = saveResult ? StringConstant.SuccessMessage : StringConstant.ErrorMessage
+                StatusCode = 200,
+                Success    = true,
+                Data       = kycDetails,
+                Message    = saveResult ? StringConstant.SuccessMessage : StringConstant.DatabaseMessage
             };
 
         }
@@ -68,14 +80,15 @@ namespace BusinessLogicLayer.Services
             }
 
             mapper.Map(kYCDto, kYCDetails);
+            kYCDetails.UpdatedOn = DateTime.Now;
             bool saveResult = await unitOfWork.SaveAsync();
 
             return new ResponseDto
             {
-                StatusCode = saveResult ? 200 : 500,
-                Success = saveResult,
-                Data = saveResult ? kYCDetails : StringConstant.DatabaseMessage,
-                Message = saveResult ? StringConstant.SuccessMessage : StringConstant.DatabaseMessage
+                StatusCode = 200,
+                Success    = true,
+                Data       = kYCDetails,
+                Message    = saveResult ? StringConstant.SuccessMessage : StringConstant.DatabaseMessage
             };
         }
     }

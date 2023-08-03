@@ -42,8 +42,8 @@ namespace EntityLayer.Dtos
         public string ManufacturedYear { get; set; } = null!;
 
         [Required]
-        [StringLength(200)]
-        [RegularExpression(@"^https?://[A-Za-z0-9:/.? -]+$")]
+        [DataType(DataType.ImageUrl)]
+        [Url]
         public string VehicleImage { get; set; } = null!;
 
         [Required]

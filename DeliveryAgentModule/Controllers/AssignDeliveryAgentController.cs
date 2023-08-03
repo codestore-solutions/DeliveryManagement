@@ -105,12 +105,26 @@ namespace DeliveryAgentModule.Controllers
         [HttpPost("acceptOrReject")]
         public async Task<IActionResult> AcceptOrder([FromBody] AcceptRejectOrderDto acceptRejectOrderDto )
         {
-            var result = await deliveryAgentService.AcceptOrderAsync(acceptRejectOrderDto);
+            var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+          /*  var claims = User.Claims;
+
+            // Find the claim with the "id" type
+            var idClaim = claims.FirstOrDefault(c => c.Type == "id");
+
+            if (idClaim == null)
+            {
+                // The "id" claim was not found in the token
+                return BadRequest("User ID not found in token.");
+            }
+
+            // Access the user ID from the claim
+            var userId = idClaim.Value;*/
+            var result = await deliveryAgentService.AcceptOrderAsync(acceptRejectOrderDto,token);
             if(result.Success == false)
             {
                 return BadRequest(result);
             }
-            return Ok(result);
+            return StatusCode(StatusCodes.Status200OK, result);
         }
 
         [HttpGet("CountDeliveredOrRejectedOrders")]

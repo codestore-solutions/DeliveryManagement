@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Text.RegularExpressions;
-using static EntityLayer.Models.PersonalDetail;
+using static EntityLayer.Models.AgentDetail;
 
 namespace BusinessLogicLayer.Services
 {
@@ -50,8 +50,10 @@ namespace BusinessLogicLayer.Services
             {
                 return null;
             }
-            var addNewDetails = new PersonalDetail();
+            var addNewDetails = new AgentDetail();
             mapper.Map(agentDetailsDto, addNewDetails);
+            addNewDetails.CreatedOn = DateTime.Now;
+            addNewDetails.UpdatedOn = DateTime.Now;
             await unitOfWork.PersonalDetailsRepository.AddAsync(addNewDetails);
             bool saveResult = await unitOfWork.SaveAsync();
            
@@ -72,13 +74,14 @@ namespace BusinessLogicLayer.Services
                 return null;
             }
             mapper.Map(agentDetailsDto, agentDetail);
+            agentDetail.UpdatedOn = DateTime.Now;
             bool saveResult = await unitOfWork.SaveAsync();
 
             return new ResponseDto
             {
-                StatusCode  = saveResult ? 200 : 500,
-                Success     = saveResult,
-                Data        = saveResult? agentDetail: StringConstant.DatabaseMessage,
+                StatusCode  = 200 ,
+                Success     = true,
+                Data        = agentDetail,
                 Message     = saveResult ? StringConstant.UpdatedMessage : StringConstant.DatabaseMessage
             };
         }
@@ -125,8 +128,8 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto?> GetDetailByAgentId(long agentId)
         {
-            var allDetail = await unitOfWork.PersonalDetailsRepository.GetAll().Where(u => u.AgentId == agentId)
-            .Join(
+            var allDetail = await unitOfWork.PersonalDetailsRepository.GetAll().Where(u => u.AgentId == agentId).ToListAsync();
+            /*.Join(
                   unitOfWork.BankDetailsRepository.GetAll(),
                   pd => pd.AgentId,
                   bd => bd.AgentId,
@@ -137,7 +140,7 @@ namespace BusinessLogicLayer.Services
                  propa => propa.PersonalDetails.AgentId,
                  vd => vd.AgentId,
                  (p, vd) => new { p.PersonalDetails, p.BankDetails, VehicleDetails = vd }
-                ).FirstOrDefaultAsync();
+                ).FirstOrDefaultAsync();*/
             /* .Join(
                    unitOfWork.KYCRepository.GetAll(),
                    p => p.PersonalDetails.DeliveryAgentId,

@@ -29,16 +29,17 @@ namespace EntityLayer.Dtos
         [Required]
         [DataType(DataType.PhoneNumber)]
         [StringLength(15, MinimumLength = 10)]
-        [RegularExpression(@"^[0-9+)( -]+$")]
+        [Phone]
         public string PhoneNumber { get; set; } = null!;
 
         [Required]
         [DataType(DataType.EmailAddress)]
+        [EmailAddress]
         public string Email { get; set; } = null!;
 
         [Required]
         [RegularExpression(@"^[A-Za-z0-9 -]+$")]
-        [StringLength(25)]
+        [StringLength(15)]
         public string Gender { get; set; } = null!;
 
         [Required]
@@ -52,6 +53,7 @@ namespace EntityLayer.Dtos
         public string Address { get; set; } = null!;
 
         [DataType(DataType.Url)]
+        [Url]
         public string ProfileImage { get; set; } = string.Empty;
     }
 }

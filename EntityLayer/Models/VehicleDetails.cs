@@ -12,9 +12,7 @@ namespace EntityLayer.Models
         [Key]
         public long Id { get; set; }
 
-        [Required]
-        public long AgentId { get; set; }
-
+        public long AgentDetailId { get; set; }
         public enum VehicleTypes
         {
             Motorcycle = 1,
@@ -43,5 +41,8 @@ namespace EntityLayer.Models
         [Required]
         [StringLength(50)]
         public string RegistrationNumber { get; set; } = null!;
+        public DateTime CreatedOn { get; set; }
+        public DateTime UpdatedOn { get; set; }
+        public virtual AgentDetail AgentDetail { get; set; } = null!;
     }
 }

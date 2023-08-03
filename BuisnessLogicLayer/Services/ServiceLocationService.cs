@@ -145,7 +145,7 @@ namespace BusinessLogicLayer.Services
         public async Task<ResponseDto?> UpdateAgentAvailabilityStatusAsync(UpdateAgentAvailabilityStatusDto statusDto)
         {
             var agentLocations = await unitOfWork.ServiceLocationRepository.GetAll()
-            .Where(u => u.AgentId == statusDto.DeliveryAgentId).ToListAsync();
+            .Where(u => u.AgentId == statusDto.AgentId).ToListAsync();
 
             if(agentLocations.IsNullOrEmpty()) { return null; }
             var responseDto = new AvailabilityStatusDto();

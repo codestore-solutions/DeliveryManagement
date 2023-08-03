@@ -6,6 +6,7 @@ using EntityLayer.Dtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 
 namespace DeliveryAgent.API.Controllers
@@ -42,7 +43,8 @@ namespace DeliveryAgent.API.Controllers
         [ValidateModel]
         public async Task<IActionResult> AddKYCDetailsAsync([FromBody] KYCDto kYCDto)
         {
-            return Ok(await kYCService.AddDetailsAsync(kYCDto));
+            var result = await kYCService.AddDetailsAsync(kYCDto);
+            return result == null ? NotFound(new { message = StringConstant.ExistingMessage }) : Ok(result);
         }
 
         /// <summary>

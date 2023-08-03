@@ -16,7 +16,7 @@ namespace BusinessLogicLayer.Mappings
         {
  
             CreateMap<AssignManuallyDto, AssignDeliveryAgent>().ReverseMap();
-            CreateMap<PersonalDetailsDto, PersonalDetail>().ReverseMap(); 
+            CreateMap<PersonalDetailsDto, AgentDetail>().ReverseMap(); 
             CreateMap<BankDetailsDto, BankDetails>().ReverseMap();  
             CreateMap<KYCDto,  KYC>().ReverseMap();  
             CreateMap<VehicleDetailsDto, VehicleDetails>().ReverseMap();    
