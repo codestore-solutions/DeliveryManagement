@@ -11,17 +11,17 @@ namespace DeliveryAgent.API.Controllers
 {
     [Route("api/v{version:apiVersion}/personal-details")]
     [ApiController]
-    public class PersonalDetailsController : ControllerBase
+    public class AgentDetailsController : ControllerBase
     {
-        private readonly IPersonalDetailsService personalDetailsService;
+        private readonly IAgentDetailsService agentDetailsService;
 
-        public PersonalDetailsController(IPersonalDetailsService personalDetailsService)
+        public AgentDetailsController(IAgentDetailsService agentDetailsService)
         {
-            this.personalDetailsService = personalDetailsService;
+            this.agentDetailsService = agentDetailsService;
         }
 
         /// <summary>
-    /// Get Personal details by agent Id.
+    /// Get Agent details by agent Id.
     /// </summary>
     /// <remarks>
     /// Sample response:
@@ -41,10 +41,14 @@ namespace DeliveryAgent.API.Controllers
     /// <returns></returns>
         [HttpGet("get")]
        // [Authorize(Roles = "2,5")]
-        public async Task<IActionResult> GetAgentDetailAsync([FromQuery][Required] long agentId)
+        public async Task<ActionResult<ResponseDto>> GetAgentDetailAsync([FromQuery][Required] long agentId)
         {
-            var result = await personalDetailsService.GetPersonalDetailsAsync(agentId);
-            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
+            var result = await agentDetailsService.GetPersonalDetailsAsync(agentId);
+            if(result != null)
+            {
+                return result;
+            }
+            return NotFound(new { message = StringConstant.ResourceNotFoundError });
         }
 
         /// <summary>
@@ -61,7 +65,7 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> GetAllDetailsAsync([FromQuery] string? filterQuery, [FromQuery] int? agentStatus
         , [FromQuery] int pageNumber = 1, [FromQuery] int limit = 10)
         {
-            var result = await personalDetailsService.GetAllDetailsAsync(filterQuery, agentStatus, pageNumber, limit);
+            var result = await agentDetailsService.GetAllDetailsAsync(filterQuery, agentStatus, pageNumber, limit);
             return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
 
@@ -74,7 +78,7 @@ namespace DeliveryAgent.API.Controllers
         //[Authorize(Roles = "2")]
         public async Task<IActionResult> GetDetailByAgentId(long agentId)
         {
-            var result = await personalDetailsService.GetDetailByAgentId(agentId);
+            var result = await agentDetailsService.GetDetailByAgentId(agentId);
             return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
 
@@ -86,9 +90,9 @@ namespace DeliveryAgent.API.Controllers
         [HttpPost("add")]
         [ValidateModel]
         //[Authorize(Roles = "5")]
-        public async Task<IActionResult> AddPersonaltDetailsAsync([FromBody][Required] PersonalDetailsDto agentDetailsDto)
+        public async Task<IActionResult> AddPersonaltDetailsAsync([FromBody][Required] AgentDetailsDto agentDetailsDto)
         {
-            var result = await personalDetailsService.AddDetailsAsync(agentDetailsDto);
+            var result = await agentDetailsService.AddDetailsAsync(agentDetailsDto);
             return result == null ? BadRequest(new { message = StringConstant.ExistingMessage }) : Ok(result);
         }
 
@@ -101,9 +105,9 @@ namespace DeliveryAgent.API.Controllers
         [HttpPut("update")]
         [ValidateModel]
        // [Authorize(Roles = "5")]
-        public async Task<IActionResult> UpdateDetailsAsync([FromQuery][Required] long id,[FromBody] PersonalDetailsDto agentDetailsDto)
+        public async Task<IActionResult> UpdateDetailsAsync([FromQuery][Required] long id,[FromBody] AgentDetailsDto agentDetailsDto)
         {
-            var result = await personalDetailsService.UpdateDetailsAsync(id, agentDetailsDto);
+            var result = await agentDetailsService.UpdateDetailsAsync(id, agentDetailsDto);
             return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
 
@@ -115,21 +119,21 @@ namespace DeliveryAgent.API.Controllers
         [HttpGet("getMultipleAgent")]
         public async Task<IActionResult> GetMultipleAgentsList([FromQuery] List<long> agentIds)
         {
-            var result = await personalDetailsService.GetMultipleAgentsList(agentIds);
+            var result = await agentDetailsService.GetMultipleAgentsList(agentIds);
             return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
 
         [HttpPut("updateProfileCompletedStatus")]
         public async Task<IActionResult> AddProfileCompletedStatusAsync(UpdateProfileCompletedDto updateProfileCompletedDto)
         {
-            var result = await personalDetailsService.AddProfileCompletedStatusAsync(updateProfileCompletedDto);
+            var result = await agentDetailsService.AddProfileCompletedStatusAsync(updateProfileCompletedDto);
             return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
 
         [HttpGet("getProfileCompletedStatus")]
         public async Task<IActionResult> GetProfileCompletedStatusAsync([FromQuery]long agentId)
         {
-            var result = await personalDetailsService.GetProfileCompletedStatusAsync(agentId);
+            var result = await agentDetailsService.GetProfileCompletedStatusAsync(agentId);
             return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
     }

@@ -9,7 +9,7 @@ using System.Xml.Linq;
 
 namespace EntityLayer.Dtos
 {
-    public class PersonalDetailsDto
+    public class AgentDetailsDto
     {
 
         [Required]

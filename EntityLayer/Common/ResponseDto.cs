@@ -12,36 +12,14 @@ namespace EntityLayer.Common
         public int StatusCode { get; set; }
         public bool Success { get; set; }
         public string Message { get; set; } = null!;
-
-        public static ErrorResponseDto BuildErrorResponse(int statusCode, string message, bool success)
-        {
-            var response = new ErrorResponseDto
-            {
-                StatusCode = statusCode,
-                Message    = message,
-                Success    = success
-            };
-            return response;
-        }
     }
     public class ResponseDto
     {
         public int StatusCode { get; set; }
         public bool Success { get; set; }
-        public object Data { get; set; } = null!;
+        public object? Data { get; set; } 
         public string Message { get; set; } = null!;
 
-        public static ResponseDto BuildSuccessResponse(int statusCode,  bool success ,object data, string message)
-        {
-            var response = new ResponseDto
-            {
-                StatusCode = statusCode,
-                Message = message,
-                Data    = data,
-                Success = success
-            };
-            return response;
-        }
     }
 
     

@@ -26,7 +26,7 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto?> GetAsync(long agentId)
         {
-            var personalDetail = await unitOfWork.PersonalDetailsRepository.GetAll().FirstOrDefaultAsync(u => u.AgentId == agentId);
+            var personalDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == agentId);
             var kycDetail = personalDetail.KYCs;
             if(kycDetail == null)
             {
@@ -40,21 +40,20 @@ namespace BusinessLogicLayer.Services
                 Message    = StringConstant.SuccessMessage
             };
         }
-
         public async Task<ResponseDto?> AddDetailsAsync(KYCDto kycDto)
         {
-            var personalDetails = await unitOfWork.PersonalDetailsRepository.GetAll()
+            var agentDetails = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable()
            .FirstOrDefaultAsync(u => u.AgentId == kycDto.AgentId);
 
-            if(personalDetails == null)
+            if(agentDetails == null)
             {
                 return null;
             }
 
-            var  kycDetails = new KYC();
+            var  kycDetails = new KYCDetail();
             mapper.Map(kycDto, kycDetails);
-            kycDetails.AgentDetail   = personalDetails;
-            kycDetails.AgentDetailId = personalDetails.Id;
+            kycDetails.AgentDetails   = agentDetails;
+            kycDetails.AgentDetailId  = agentDetails.Id;
             kycDetails.CreatedOn = DateTime.Now;
             kycDetails.UpdatedOn = DateTime.Now;
 
@@ -68,9 +67,7 @@ namespace BusinessLogicLayer.Services
                 Data       = kycDetails,
                 Message    = saveResult ? StringConstant.SuccessMessage : StringConstant.DatabaseMessage
             };
-
         }
-
         public async Task<ResponseDto?> UpdateDetailsAsync(long id, KYCDto kYCDto)
         {
             var kYCDetails = await unitOfWork.KYCRepository.GetByIdAsync(id);

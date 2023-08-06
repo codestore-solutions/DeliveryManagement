@@ -11,7 +11,7 @@ namespace DataAccessLayer.IRepository
 {
     public interface IGenericRepository<T> where T: class
     {
-        IQueryable<T> GetAll();
+        IQueryable<T> GetAllAsQueryable();
         Task<T?> GetByIdAsync(long id); 
         public Task AddAsync(T entity);    
         Task<T?> DeleteAsync(long id);

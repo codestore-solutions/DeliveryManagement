@@ -12,7 +12,7 @@ namespace DataAccessLayer.Repository
             VehicleDetailsRepository = new VehicleDetailsRepository(this.dbContext);
             BankDetailsRepository = new BankDetailsRepository(this.dbContext);
             KYCRepository = new KYCRepository(this.dbContext);
-            PersonalDetailsRepository = new PersonalDetailsRepository(this.dbContext);
+            AgentDetailsRepository = new AgentDetailsRepository(this.dbContext);
             AssignDeliveryAgentRepository = new AssignDeliveryAgentRepository(this.dbContext);
             ServiceLocationRepository = new ServiceLocationRepository(this.dbContext);
             BusinessAdminRepository=new BusinessAdminRepository(this.dbContext);  
@@ -29,7 +29,7 @@ namespace DataAccessLayer.Repository
 
         public IImageRepository ImageRepository { get; private set; }
 
-        public IPersonalDetailsRepository PersonalDetailsRepository { get; private set; }
+        public IAgentDetailsRepository AgentDetailsRepository { get; private set; }
 
         public IVehicleDetailsRepository VehicleDetailsRepository { get; private set; }
 

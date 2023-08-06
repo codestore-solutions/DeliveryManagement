@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Repository
 {
-    public class KYCRepository : GenericRepository<KYC>, IKYCRepository
+    public class KYCRepository : GenericRepository<KYCDetail>, IKYCRepository
     {
         public KYCRepository(DeliveryDbContext dbContext) : base(dbContext)
         {

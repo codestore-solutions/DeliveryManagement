@@ -1,30 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using static EntityLayer.Common.EnumConstants;
 
 namespace EntityLayer.Models
 {
-    public class KYC
+    public class KYCDetail
     {
         [Key]
         public long Id { get; set; }
-        public long AgentDetailId { get; set; }
-        public enum DocumentTypes
-        {
-            DrivingLicence = 1,
-            PanCard        = 2,
-            AadharCard     = 3,
-            Photo          = 4
-        }
 
+        [Required]
+        [ForeignKey("AgentDetail")]
+        public long AgentDetailId { get; set; }
+
+        // Enum
         [Required]
         public DocumentTypes DocumentType { get; set; }
 
         [Required]
-        [Url]
         public string DocumentImage { get; set; } = null!;
 
         [Required]
@@ -32,7 +31,6 @@ namespace EntityLayer.Models
 
         [Required]
         public DateTime UpdatedOn { get; set; }
-
-        public virtual AgentDetail AgentDetail { get; set; } = null!;
+        public virtual AgentDetail AgentDetails { get; set; } = null!;
     }
 }

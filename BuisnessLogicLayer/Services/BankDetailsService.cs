@@ -26,7 +26,7 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto?> GetAsync(long agentId)
         {
-            var agentDetail = await unitOfWork.PersonalDetailsRepository.GetAll().FirstOrDefaultAsync(u => u.AgentId == agentId);
+            var agentDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == agentId);
             if(agentDetail == null) 
             {
                 return null;
@@ -51,7 +51,7 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto?> AddDetailsAsync(BankDetailsDto bankDetailsDto)
         {
-            var personalDetail = await unitOfWork.PersonalDetailsRepository.GetAll()
+            var personalDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable()
             .FirstOrDefaultAsync(u => u.AgentId == bankDetailsDto.AgentId);
             if(personalDetail== null)
             {
@@ -63,7 +63,7 @@ namespace BusinessLogicLayer.Services
             {
                 return null;
             }
-            var bankDetails = new BankDetails();
+            var bankDetails = new BankDetail();
             mapper.Map(bankDetailsDto, bankDetails);
             bankDetails.AgentDetailId = personalDetail.Id;
             bankDetails.AgentDetail   = personalDetail;

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,45 +27,54 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto?> AddDetailsAsync(VehicleDetailsDto vehicleDetailsDto)
         {   
-            var personalDetails = await unitOfWork.PersonalDetailsRepository.GetAll()
+            var agentDetails = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable()
             .FirstOrDefaultAsync(u => u.AgentId == vehicleDetailsDto.AgentId);
 
-            if (personalDetails == null)
+            if (agentDetails == null) return BuildErrorResponse((int)HttpStatusCode.NotFound, "AgentId doesn't exist", false);
+
+            var vehicleDetails = agentDetails.VehicleDetails;
+            if(vehicleDetails == null)
             {
-                return null;
+                var addVehicleDetails = new VehicleDetail();
+                mapper.Map(vehicleDetailsDto, addVehicleDetails);
+                addVehicleDetails.AgentDetailId = agentDetails.Id;
+                addVehicleDetails.AgentDetails = agentDetails;
+                addVehicleDetails.CreatedOn = DateTime.Now;
+                addVehicleDetails.UpdatedOn = DateTime.Now;
+
+                await unitOfWork.VehicleDetailsRepository.AddAsync(addVehicleDetails);
+                bool saveResult = await unitOfWork.SaveAsync();
+
+                return new ResponseDto
+                {
+                    StatusCode = 200,
+                    Success = true,
+                    Data    = addVehicleDetails,
+                    Message = saveResult ? StringConstant.AddedMessage : StringConstant.DatabaseMessage
+                };
             }
-            var addNewvehicleDetails = new VehicleDetails();
-            mapper.Map(vehicleDetailsDto, addNewvehicleDetails);
-            addNewvehicleDetails.AgentDetailId = personalDetails.Id;
-            addNewvehicleDetails.AgentDetail = personalDetails;
-            addNewvehicleDetails.CreatedOn = DateTime.Now;
-            addNewvehicleDetails.UpdatedOn = DateTime.Now;
-            await unitOfWork.VehicleDetailsRepository.AddAsync(addNewvehicleDetails);
-            bool saveResult = await unitOfWork.SaveAsync();
-           
-            return new ResponseDto
-            {
-                StatusCode   = 200,
-                Success      = true,
-                Data         = addNewvehicleDetails,
-                Message      = saveResult ? StringConstant.AddedMessage : StringConstant.DatabaseMessage
-            };
+            return null;
         }
 
         public async Task<ResponseDto?> GetAsync(long agentId)
         {
-            var personalDetail = await unitOfWork.PersonalDetailsRepository.GetAll().FirstOrDefaultAsync(u => u.AgentId == agentId);
-            if (personalDetail == null) {  return null; }
-            var vehicleDetail = personalDetail.VehicleDetails; 
+            var agentDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == agentId);
+            if (agentDetail == null) { return BuildErrorResponse((int)HttpStatusCode.NotFound, StringConstant.IdNotExistError, false); }
+
+            var vehicleDetail = agentDetail.VehicleDetails; 
             if (vehicleDetail == null)
             {
-                return null;
+                return BuildErrorResponse((int)HttpStatusCode.NotFound, StringConstant.ResourceNotFoundError , false); 
             }
+
+            var vehicleDetailDto = new VehicleDetailsDto();
+            mapper.Map(vehicleDetail, vehicleDetailDto);
+
             return new ResponseDto
             {
                 StatusCode = 200,
                 Success    = true,
-                Data       = vehicleDetail,
+                Data       = vehicleDetailDto,
                 Message    = StringConstant.SuccessMessage
             };
         }
@@ -87,6 +97,17 @@ namespace BusinessLogicLayer.Services
                 Data            = vehicleDetails,
                 Message         = saveResult ? StringConstant.UpdatedMessage : StringConstant.DatabaseMessage
             };
+        }
+
+        public static ResponseDto BuildErrorResponse(int statusCode, string message, bool success)
+        {
+            var response = new ResponseDto
+            {
+                StatusCode = statusCode,
+                Message    = message,
+                Success    = success
+            };
+            return response;
         }
 
     }

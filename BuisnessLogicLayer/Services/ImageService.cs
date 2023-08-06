@@ -29,9 +29,9 @@ namespace BusinessLogicLayer.Services
             return new ResponseDto
             {
                 StatusCode = 200,
-                Success = true,
-                Data = image,
-                Message = StringConstant.AddedMessage
+                Success    = true,
+                Data       = image,
+                Message    = StringConstant.AddedMessage
             };
         }
 

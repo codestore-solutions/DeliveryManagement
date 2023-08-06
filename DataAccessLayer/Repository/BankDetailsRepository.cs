@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Repository
 {
-    public class BankDetailsRepository : GenericRepository<BankDetails>, IBankDetailsRepository
+    public class BankDetailsRepository : GenericRepository<BankDetail>, IBankDetailsRepository
     {
         public BankDetailsRepository(DeliveryDbContext dbContext) : base(dbContext)
         {

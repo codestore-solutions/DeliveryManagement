@@ -16,7 +16,7 @@ namespace DataAccessLayer.Repository
             _dbSet = dbContext.Set<T>();
         }
 
-        public IQueryable<T> GetAll()
+        public IQueryable<T> GetAllAsQueryable()
         {
             return _dbSet.AsQueryable();
         }
@@ -47,7 +47,6 @@ namespace DataAccessLayer.Repository
         {
             _dbSet.Remove(entity);
         }
-        
 
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.IRepository
 {
-    public interface IKYCRepository : IGenericRepository<KYC>
+    public interface IKYCRepository : IGenericRepository<KYCDetail>
     {
     }
 }

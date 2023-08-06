@@ -32,22 +32,15 @@ namespace DeliveryAgentModule.Controllers
             ValidateFileUpload(requestDto);
             if (ModelState.IsValid)
             {
-                var imageDomainModel = new Image
-                {
-                    File = requestDto.File,             
-                    FileName = requestDto.FileName,
-                    FileSizeInBytes = requestDto.File.Length,
-                    FileExtension = Path.GetExtension(requestDto.File.FileName)
-                };
-                var localFilePath = Path.Combine(webHostEnvironment.ContentRootPath, "Images", $"{ imageDomainModel.FileName}{imageDomainModel.FileExtension}");
+                var fileName = requestDto.File.FileName;
+                //var fileExtension = Path.GetExtension(requestDto.File.FileName);
+                var localFilePath = Path.Combine(webHostEnvironment.ContentRootPath, "Images", $"{fileName}");
                 using var stream = new FileStream(localFilePath, FileMode.Create);
-                await imageDomainModel.File.CopyToAsync(stream);
+                await requestDto.File.CopyToAsync(stream);
                 var urlFilePath = $"{httpContextAccessor.HttpContext.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}" +
-                    $"{httpContextAccessor.HttpContext.Request.PathBase}/Images/{imageDomainModel.FileName}{imageDomainModel.FileExtension}";
+                    $"{httpContextAccessor.HttpContext.Request.PathBase}/Images/{fileName}";
 
-                imageDomainModel.FilePath = urlFilePath;
-                var result = await imageService.Upload(imageDomainModel);
-                return Ok(result);
+                return Ok(new ResponseDto { StatusCode = 200 , Success = true, Data= new {urlFilePath = urlFilePath}, Message = StringConstant.SuccessMessage});
             }
             return BadRequest(ModelState);
         }

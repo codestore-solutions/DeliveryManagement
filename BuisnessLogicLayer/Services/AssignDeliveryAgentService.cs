@@ -31,7 +31,7 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto> GetAllAsync(int pageNumber = 1, int limit = 10)
         {
-            var allItems = await unitOfWork.AssignDeliveryAgentRepository.GetAll().Skip((pageNumber - 1) * limit).Take(limit).ToListAsync();    
+            var allItems = await unitOfWork.AssignDeliveryAgentRepository.GetAllAsQueryable().Skip((pageNumber - 1) * limit).Take(limit).ToListAsync();    
             return new ResponseDto
             {
                 StatusCode  = 200,
@@ -54,10 +54,10 @@ namespace BusinessLogicLayer.Services
 
                 await unitOfWork.AssignDeliveryAgentRepository.AddAsync(assignNewAgent);
                 _assignedAgents.Add(obj.OrderId, obj.AgentId);
-                var timer = new Timer(30000);
+              /*  var timer = new Timer(30000);
                 timer.Elapsed += (sender, e) => HandleTimeout(obj.OrderId);
                 Console.WriteLine("Timer started. Waiting for 30 seconds...");
-                timer.Start();
+                timer.Start();*/
                 saveResult = await unitOfWork.SaveAsync();
                 responseObject.Add(assignNewAgent);                           
             }
@@ -123,7 +123,7 @@ namespace BusinessLogicLayer.Services
                 }
                 // If we get agent nearby , then assign order to that agent
 
-                var agent = await unitOfWork.PersonalDetailsRepository.GetAll().FirstOrDefaultAsync(u => u.AgentId == getNearestDeliveryAgentId);
+                var agent = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == getNearestDeliveryAgentId);
                 if(agent == null)
                 {
                     return new ResponseDto();
@@ -147,9 +147,9 @@ namespace BusinessLogicLayer.Services
             };
         }
 
-        private bool IsAgentAvailableForAnotherOrder(long agentId , double deliveryLatitude, double deliveryLongitude, double pickupLatitude , double pickupLongitude)
+      /*  private bool IsAgentAvailableForAnotherOrder(long agentId , double deliveryLatitude, double deliveryLongitude, double pickupLatitude , double pickupLongitude)
         {
-            var agent = unitOfWork.ServiceLocationRepository.GetAll().FirstOrDefault(u => u.AgentId == agentId
+            var agent = unitOfWork.ServiceLocationRepository.GetAllAsQueryable().FirstOrDefault(u => u.AgentId == agentId
             && u.IsActive
             && u.AgentStatus == ServiceLocation.AvailabilityStatus.OnDuty);
             
@@ -163,7 +163,7 @@ namespace BusinessLogicLayer.Services
                 return true;
             }
             return false;
-        }
+        }*/
 
         public async Task<long?> NearestAgentWithinRange(double deliveryLatitude, double deliveryLongitude, double pickupLatitude, double pickupLongitude, int maxDistance)
         {
@@ -178,8 +178,8 @@ namespace BusinessLogicLayer.Services
             TimeSpan currentTimeOfDay = currentTime.TimeOfDay;
 
             // Fetching available Delivery agents list based on Working location preferences from Db.
-            var availableAgentList = await unitOfWork.ServiceLocationRepository.GetAll().Where(u=> u.IsActive 
-            && u.AgentStatus == ServiceLocation.AvailabilityStatus.OnDuty
+            var availableAgentList = await unitOfWork.ServiceLocationRepository.GetAllAsQueryable().Where(u=> u.IsActive 
+            && u.AgentDetails.AgentStatus == EnumConstants.AvailabilityStatus.OnDuty
             && u.SelectedDays.Contains(currentDay)
             && currentTimeOfDay <= u.EndTime 
             && currentTimeOfDay >= u.StartTime ).ToListAsync();
@@ -194,7 +194,7 @@ namespace BusinessLogicLayer.Services
 
                 if (deliveryDistance <= maxDistance && pickupDistance <= maxDistance)
                 {
-                    nearsestAgentId = agent.AgentId;
+                    nearsestAgentId = agent.AgentDetails.AgentId;
                     return nearsestAgentId;
                 }
             }
@@ -238,12 +238,12 @@ namespace BusinessLogicLayer.Services
             {
                 foreach (var orderId in acceptRejectOrderDto.OrderIds)
                 {
-                    var assignedAgent = await unitOfWork.AssignDeliveryAgentRepository.GetAll().FirstOrDefaultAsync(u => u.OrderId == orderId);
+                    var assignedAgent = await unitOfWork.AssignDeliveryAgentRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.OrderId == orderId);
                     if(assignedAgent == null)
                     {
                         continue;
                     }
-                    assignedAgent.deliveryStatus = (AssignDeliveryAgent.DeliveryStatus)acceptRejectOrderDto.DeliveryStatus;
+                    assignedAgent.DeliveryStatus = (EnumConstants.DeliveryStatus)acceptRejectOrderDto.DeliveryStatus;
                     await unitOfWork.SaveAsync();
                 }
 
@@ -269,11 +269,11 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto?> GetDeliveredOrRejectedOrdersCountAsync(long agentId)
         {
-            var rejectedOrdersCount = await unitOfWork.AssignDeliveryAgentRepository.GetAll().Where(u => u.AgentId == agentId
-            && u.deliveryStatus == AssignDeliveryAgent.DeliveryStatus.Rejected).CountAsync();
+            var rejectedOrdersCount = await unitOfWork.AssignDeliveryAgentRepository.GetAllAsQueryable().Where(u => u.AgentId == agentId
+            && u.DeliveryStatus == EnumConstants.DeliveryStatus.Rejected).CountAsync();
 
-            var countDeliverd = await unitOfWork.AssignDeliveryAgentRepository.GetAll().Where(u => u.AgentId == agentId
-            && u.deliveryStatus == (AssignDeliveryAgent.DeliveryStatus)11).CountAsync();
+            var countDeliverd = await unitOfWork.AssignDeliveryAgentRepository.GetAllAsQueryable().Where(u => u.AgentId == agentId
+            && u.DeliveryStatus == (EnumConstants.DeliveryStatus)11).CountAsync();
 
             var response = new DeliveredOrRejectedOrdersCountDto
             {
@@ -302,12 +302,12 @@ namespace BusinessLogicLayer.Services
             {
                 foreach (var orderId in pickupOrDeliveryStatusDto.OrderIds)
                 {
-                    var assignedAgent = await unitOfWork.AssignDeliveryAgentRepository.GetAll().FirstOrDefaultAsync(u => u.OrderId == orderId);
+                    var assignedAgent = await unitOfWork.AssignDeliveryAgentRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.OrderId == orderId);
                     if (assignedAgent == null)
                     {
                         return null;
                     }
-                    assignedAgent.deliveryStatus = (AssignDeliveryAgent.DeliveryStatus)pickupOrDeliveryStatusDto.DeliveryStatus;
+                    assignedAgent.DeliveryStatus = (EnumConstants.DeliveryStatus)pickupOrDeliveryStatusDto.DeliveryStatus;
                     if(pickupOrDeliveryStatusDto.DeliveryStatus == 8)
                     {
                         assignedAgent.DeliveryImage = pickupOrDeliveryStatusDto.Image;

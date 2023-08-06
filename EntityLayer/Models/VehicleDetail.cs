@@ -1,48 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace EntityLayer.Models
 {
-    public class VehicleDetails
+    public class VehicleDetail
     {
         [Key]
         public long Id { get; set; }
 
+        [Required]
+        [ForeignKey("AgentDetail")]
         public long AgentDetailId { get; set; }
         public enum VehicleTypes
         {
-            Motorcycle = 1,
-            Scooter    = 2,
-            GearlessMotorcycle = 3,
-            Scooty = 4
+            Motorcycle = 1 ,
+            Scooter    ,
+            GearlessMotorcycle ,
+            Scooty 
         }
         public VehicleTypes VehicleType { get; set; }
 
         [Required]
-        [StringLength(50)]
         public string VehicleModel { get; set; } = null!;
 
         [Required]
-        [StringLength(50)]
         public string Company { get; set; } = null!;
 
         [Required]
-        [StringLength(50)]
         public string ManufacturedYear { get; set; } = null!;
 
         [Required]
-        [StringLength (200)]
         public string VehicleImage { get; set; } = null!;
 
         [Required]
-        [StringLength(50)]
         public string RegistrationNumber { get; set; } = null!;
+
+        [Required]
         public DateTime CreatedOn { get; set; }
+
+        [Required]
         public DateTime UpdatedOn { get; set; }
-        public virtual AgentDetail AgentDetail { get; set; } = null!;
+        public virtual AgentDetail AgentDetails { get; set; } = null!;
     }
 }

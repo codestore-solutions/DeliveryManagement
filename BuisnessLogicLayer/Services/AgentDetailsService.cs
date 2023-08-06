@@ -6,20 +6,16 @@ using EntityLayer.Common;
 using EntityLayer.Dtos;
 using EntityLayer.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Text.RegularExpressions;
-using static EntityLayer.Models.AgentDetail;
+
 
 namespace BusinessLogicLayer.Services
 {
-    public class PersonalDetailsService : IPersonalDetailsService
+    public class AgentDetailsService : IAgentDetailsService
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
 
-        public PersonalDetailsService(IUnitOfWork unitOfWork, IMapper mapper)
+        public AgentDetailsService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
@@ -27,24 +23,19 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto?> GetPersonalDetailsAsync(long agentId)
         {
-            var agentDetail = await unitOfWork.PersonalDetailsRepository.GetAll().FirstOrDefaultAsync(u => u.AgentId == agentId);
+            var agentDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == agentId);
             if (agentDetail == null)
             {
                 return null;
             }
-
-            return new ResponseDto
-            {
-                StatusCode = 200,
-                Success = true,
-                Data = agentDetail,
-                Message = StringConstant.SuccessMessage
-            };
+          /*  var responseDto = new AgentDetailResponseDto();
+            mapper.Map<ResponseDto>(agentDetail);*/
+            return new ResponseDto { StatusCode = 200, Success = true, Data = agentDetail, Message = StringConstant.SuccessMessage };
         }
 
-        public async Task<ResponseDto?> AddDetailsAsync(PersonalDetailsDto agentDetailsDto)
+        public async Task<ResponseDto?> AddDetailsAsync(AgentDetailsDto agentDetailsDto)
         {
-            var existingDetails = await unitOfWork.PersonalDetailsRepository.GetAll()
+            var existingDetails = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable()
             .FirstOrDefaultAsync(u => u.AgentId == agentDetailsDto.AgentId);
             if (existingDetails != null)
             {
@@ -54,21 +45,21 @@ namespace BusinessLogicLayer.Services
             mapper.Map(agentDetailsDto, addNewDetails);
             addNewDetails.CreatedOn = DateTime.Now;
             addNewDetails.UpdatedOn = DateTime.Now;
-            await unitOfWork.PersonalDetailsRepository.AddAsync(addNewDetails);
+            await unitOfWork.AgentDetailsRepository.AddAsync(addNewDetails);
             bool saveResult = await unitOfWork.SaveAsync();
            
             return new ResponseDto
             {
-                StatusCode       = saveResult ? 200 : 500,
-                Success          = saveResult,
+                StatusCode       = 200,
+                Success          = true,
                 Data             = addNewDetails,
                 Message          = saveResult ? StringConstant.AddedMessage: StringConstant.DatabaseMessage
             };  
         }
 
-        public async Task<ResponseDto?> UpdateDetailsAsync(long id, PersonalDetailsDto agentDetailsDto)
+        public async Task<ResponseDto?> UpdateDetailsAsync(long id, AgentDetailsDto agentDetailsDto)
         {
-            var agentDetail = await unitOfWork.PersonalDetailsRepository.GetByIdAsync(id);
+            var agentDetail = await unitOfWork.AgentDetailsRepository.GetByIdAsync(id);
             if (agentDetail == null)
             {
                 return null;
@@ -89,20 +80,22 @@ namespace BusinessLogicLayer.Services
         public async Task<ResponseDto?> GetAllDetailsAsync( string? filterQuery, int? agentStatus,
         int pageNumber = 1, int limit = 10)
         {    
-            var personalDetailsQuery = unitOfWork.PersonalDetailsRepository.GetAll();
+            var agentDetailsQuery = unitOfWork.AgentDetailsRepository.GetAllAsQueryable();
 
             if (!string.IsNullOrWhiteSpace(filterQuery))
             {
-               personalDetailsQuery = personalDetailsQuery.Where(u => u.Email.Contains(filterQuery) || u.FullName.Contains(filterQuery));
+               agentDetailsQuery = agentDetailsQuery.Where(u => u.Email.Contains(filterQuery) || u.FullName.Contains(filterQuery));
             }
 
-            var filteredDetails = personalDetailsQuery.Join(
-                unitOfWork.ServiceLocationRepository.GetAll().Where(u => u.IsActive
+            var filteredDetails = agentDetailsQuery.Include("ServiceLocations").Where(u => u.IsProfileCompleted
+            && (agentStatus == null || u.AgentStatus == (EnumConstants.AvailabilityStatus)agentStatus));
+           /* var filteredDetails = agentDetailsQuery.Join(
+                unitOfWork.ServiceLocationRepository.GetAllAsQueryable().Where(u => u.IsActive
                 && (agentStatus == null || u.AgentStatus == (ServiceLocation.AvailabilityStatus)agentStatus)),
                 pd => pd.AgentId,
                 sl => sl.AgentId,
                 (pd, sl)=> new { PersonalDetails = pd, ServiceLocation = sl }
-            );
+            );*/
 
             var totalCount = await filteredDetails.CountAsync();
             var pagedDetails = await filteredDetails.Skip((pageNumber - 1) * limit).Take(limit).ToListAsync();
@@ -128,7 +121,14 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto?> GetDetailByAgentId(long agentId)
         {
-            var allDetail = await unitOfWork.PersonalDetailsRepository.GetAll().Where(u => u.AgentId == agentId).ToListAsync();
+            var agentDetails = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == agentId);
+            if(agentDetails == null) 
+            { 
+                return null;
+            }
+            var bankDetail = agentDetails.BankDetails;
+            var vehicleDetail = agentDetails.VehicleDetails;
+            var kycDetail = agentDetails.KYCs;
             /*.Join(
                   unitOfWork.BankDetailsRepository.GetAll(),
                   pd => pd.AgentId,
@@ -148,16 +148,11 @@ namespace BusinessLogicLayer.Services
                    (p, k) => new { p.PersonalDetails, p.BankDetails, p.VehicleDetails, KYC = k }
                   )*/
 
-            if (allDetail ==null)
-            {
-                return null;
-            }
-
             return new ResponseDto
             {
                 StatusCode  = 200,
                 Success     = true,
-                Data        = allDetail,
+                Data        = agentDetails,
                 Message     = StringConstant.SuccessMessage
             };
         }
@@ -168,7 +163,7 @@ namespace BusinessLogicLayer.Services
 
             foreach (var agentId in agentIds)
             {
-                var agent = await unitOfWork.PersonalDetailsRepository.GetAll().FirstOrDefaultAsync(u => u.AgentId == agentId);
+                var agent = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == agentId);
                 if (agent == null)
                 {                  
                     continue;
@@ -187,7 +182,7 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto?> AddProfileCompletedStatusAsync(UpdateProfileCompletedDto updateProfileCompletedDto)
         {
-            var agent = await unitOfWork.PersonalDetailsRepository.GetAll().FirstOrDefaultAsync(u => u.AgentId == updateProfileCompletedDto.AgentId);
+            var agent = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == updateProfileCompletedDto.AgentId);
 
             if (agent == null)
             {
@@ -202,7 +197,7 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto?> GetProfileCompletedStatusAsync(long agentId)
         {
-            var agent = await unitOfWork.PersonalDetailsRepository.GetAll().FirstOrDefaultAsync(u => u.AgentId == agentId);
+            var agent = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == agentId);
 
             if (agent == null)
             {
@@ -216,9 +211,5 @@ namespace BusinessLogicLayer.Services
             };
             return new ResponseDto { StatusCode = 200, Success = true, Data = response, Message = StringConstant.SuccessMessage };
         }
-
-
-
-
     }
 }

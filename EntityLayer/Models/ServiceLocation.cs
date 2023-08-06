@@ -10,15 +10,16 @@ namespace EntityLayer.Models
     public class ServiceLocation
     {
         [Key]
-        public long ServiceLocationId { get; set; }
+        public long Id { get; set; }
 
-        [Required]
+     /*   [Required]
         [Range(1, long.MaxValue)]
-        public long AgentId { get; set; }
+        public long AgentId { get; set; }*/
 
         [Required]
         [StringLength(50)]
         public string LocationName { get; set; } = null!;
+        public long AgentDetailId { get; set; }
 
         [Required]
         [StringLength(100)]
@@ -27,9 +28,6 @@ namespace EntityLayer.Models
         public double Latitude { get; set; }
 
         public double Longitude { get; set; }
-
-        [Required]
-        public int MaxDistance { get; set; }
 
         [Required]
         public TimeSpan StartTime { get; set; } 
@@ -42,19 +40,10 @@ namespace EntityLayer.Models
 
         [Required]
         public string SelectedDays { get; set; } = null!;
-        public enum AvailabilityStatus
-        {
-            OffDuty = 0,
-            OnDuty = 1,
-            Busy = 2,
-        }
-        public AvailabilityStatus AgentStatus { get; set; }
 
-        public enum VerificationStatus
-        {
-            NotVerified = 0,
-            Verified = 1
-        }
-        public VerificationStatus verificationStatus { get; set; }
+        // References
+        public virtual AgentDetail AgentDetails { get; set; } = null!;
+       
+       
     }
 }

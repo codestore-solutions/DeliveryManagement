@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using static EntityLayer.Common.EnumConstants;
 
 namespace EntityLayer.Models
 {
@@ -13,10 +14,11 @@ namespace EntityLayer.Models
     {
         [Key]
         public long Id { get; set; }
+
+        // AgentId from User Module
         public long AgentId { get; set; }
 
         [Required]
-        [StringLength(50, MinimumLength = 1)]
         public string FullName { get; set; } = null!;
 
         [Required]
@@ -39,11 +41,23 @@ namespace EntityLayer.Models
         [Required]
         public string Address { get; set; } = null!;
         public string ProfileImage { get; set; } = string.Empty;
+
+        [Required]
         public bool IsProfileCompleted { get; set; }
+
+        [Required]
         public DateTime CreatedOn { get; set; }
+
+        [Required]
         public DateTime UpdatedOn { get; set; }
-        public virtual BankDetails? BankDetails { get; set; }
-        public virtual ICollection<KYC>? KYCs { get; set; } = new List<KYC>();
-        public virtual VehicleDetails? VehicleDetails { get; set; } 
+
+        public AvailabilityStatus AgentStatus { get; set; }
+        public VerificationStatus verificationStatus { get; set; }
+
+        // Navigation to references
+        public virtual BankDetail? BankDetails { get; set; }
+        public virtual ICollection<KYCDetail>? KYCs { get; set; } = new List<KYCDetail>();
+        public virtual VehicleDetail? VehicleDetails { get; set; }
+        public virtual ICollection<ServiceLocation> ServiceLocations { get; set; } = new List<ServiceLocation>();
     }
 }

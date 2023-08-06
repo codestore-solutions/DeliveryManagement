@@ -1,5 +1,6 @@
 ﻿using EntityLayer.Common;
 using EntityLayer.Dtos;
+using EntityLayer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +10,11 @@ using static EntityLayer.Models.AgentDetail;
 
 namespace BusinessLogicLayer.IServices
 {
-    public interface IPersonalDetailsService
+    public interface IAgentDetailsService
     {
         public Task<ResponseDto?> GetPersonalDetailsAsync(long agentId);
-        public Task<ResponseDto?> AddDetailsAsync(PersonalDetailsDto personalDetailsDto);
-        public Task<ResponseDto?> UpdateDetailsAsync(long id, PersonalDetailsDto agentDetailsDto);
+        public Task<ResponseDto?> AddDetailsAsync(AgentDetailsDto personalDetailsDto);
+        public Task<ResponseDto?> UpdateDetailsAsync(long id, AgentDetailsDto agentDetailsDto);
         public Task<ResponseDto?> GetAllDetailsAsync(string? filterQuery, int? agentStatus
          , int pageNumber = 1, int limit = 10);
         public Task<ResponseDto?> GetDetailByAgentId(long agentId);

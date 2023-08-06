@@ -4,6 +4,7 @@ using DataAccessLayer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(DeliveryDbContext))]
-    partial class DeliveryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230804042259_Change In Schema")]
+    partial class ChangeInSchema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,9 +42,6 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<long>("AgentId")
                         .HasColumnType("bigint");
-
-                    b.Property<int>("AgentStatus")
-                        .HasColumnType("int");
 
                     b.Property<string>("CountryCode")
                         .IsRequired()
@@ -79,9 +79,6 @@ namespace DataAccessLayer.Migrations
                     b.Property<DateTime>("UpdatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("verificationStatus")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("AgentDetails");
@@ -114,9 +111,6 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("DeliveryStatus")
-                        .HasColumnType("int");
-
                     b.Property<long>("OrderId")
                         .HasColumnType("bigint");
 
@@ -135,6 +129,9 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<long>("VendorAddressId")
                         .HasColumnType("bigint");
+
+                    b.Property<int>("deliveryStatus")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -201,6 +198,33 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("BusinessAdmins");
                 });
 
+            modelBuilder.Entity("EntityLayer.Models.Image", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("FileExtension")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("FileSizeInBytes")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Images");
+                });
+
             modelBuilder.Entity("EntityLayer.Models.KYCDetail", b =>
                 {
                     b.Property<long>("Id")
@@ -234,19 +258,22 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("EntityLayer.Models.ServiceLocation", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<long>("ServiceLocationId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ServiceLocationId"));
 
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<long>("AgentDetailId")
+                    b.Property<long>("AgentId")
                         .HasColumnType("bigint");
+
+                    b.Property<int>("AgentStatus")
+                        .HasColumnType("int");
 
                     b.Property<TimeSpan>("EndTime")
                         .HasColumnType("time");
@@ -265,6 +292,9 @@ namespace DataAccessLayer.Migrations
                     b.Property<double>("Longitude")
                         .HasColumnType("float");
 
+                    b.Property<int>("MaxDistance")
+                        .HasColumnType("int");
+
                     b.Property<string>("SelectedDays")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -272,9 +302,10 @@ namespace DataAccessLayer.Migrations
                     b.Property<TimeSpan>("StartTime")
                         .HasColumnType("time");
 
-                    b.HasKey("Id");
+                    b.Property<int>("verificationStatus")
+                        .HasColumnType("int");
 
-                    b.HasIndex("AgentDetailId");
+                    b.HasKey("ServiceLocationId");
 
                     b.ToTable("ServiceLocations");
                 });
@@ -340,35 +371,24 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("EntityLayer.Models.KYCDetail", b =>
                 {
-                    b.HasOne("EntityLayer.Models.AgentDetail", "AgentDetails")
+                    b.HasOne("EntityLayer.Models.AgentDetail", "AgentDetail")
                         .WithMany("KYCs")
                         .HasForeignKey("AgentDetailId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("AgentDetails");
-                });
-
-            modelBuilder.Entity("EntityLayer.Models.ServiceLocation", b =>
-                {
-                    b.HasOne("EntityLayer.Models.AgentDetail", "AgentDetails")
-                        .WithMany("ServiceLocations")
-                        .HasForeignKey("AgentDetailId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AgentDetails");
+                    b.Navigation("AgentDetail");
                 });
 
             modelBuilder.Entity("EntityLayer.Models.VehicleDetail", b =>
                 {
-                    b.HasOne("EntityLayer.Models.AgentDetail", "AgentDetails")
+                    b.HasOne("EntityLayer.Models.AgentDetail", "AgentDetail")
                         .WithOne("VehicleDetails")
                         .HasForeignKey("EntityLayer.Models.VehicleDetail", "AgentDetailId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("AgentDetails");
+                    b.Navigation("AgentDetail");
                 });
 
             modelBuilder.Entity("EntityLayer.Models.AgentDetail", b =>
@@ -376,8 +396,6 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("BankDetails");
 
                     b.Navigation("KYCs");
-
-                    b.Navigation("ServiceLocations");
 
                     b.Navigation("VehicleDetails");
                 });

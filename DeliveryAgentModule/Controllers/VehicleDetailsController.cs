@@ -6,6 +6,7 @@ using EntityLayer.Dtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 
 namespace DeliveryAgent.API.Controllers
 {
@@ -26,10 +27,15 @@ namespace DeliveryAgent.API.Controllers
         /// <param name="agentId" example ="4001"></param>
         /// <returns></returns>
         [HttpGet("get")]
-        public async Task<IActionResult> GetAgentDetailAsync([FromQuery][Required] long agentId)
+        public async Task<ActionResult<ResponseDto?>> GetAgentDetailAsync([FromQuery][Required] long agentId)
         {
             var result = await vehicleDetailsService.GetAsync(agentId);
-            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
+            
+            if(result.StatusCode == (int)HttpStatusCode.NotFound)
+            {
+                return NotFound(result);
+            }
+            return result;
         }
 
         /// <summary>
@@ -41,7 +47,11 @@ namespace DeliveryAgent.API.Controllers
         [ValidateModel]
         public async Task<IActionResult> AddVehicleDetailsAsync([FromBody][Required] VehicleDetailsDto vehicleDetailsDto)
         {
-            var result = await vehicleDetailsService.AddDetailsAsync(vehicleDetailsDto);        
+            var result = await vehicleDetailsService.AddDetailsAsync(vehicleDetailsDto);
+            if (result.StatusCode == (int)HttpStatusCode.NotFound)
+            {
+                return NotFound(result);
+            }
             return result == null ? BadRequest(new { message = StringConstant.ExistingMessage }) : Ok(result);
         }
 

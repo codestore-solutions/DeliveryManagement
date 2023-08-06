@@ -1,5 +1,6 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
+using static EntityLayer.Common.EnumConstants;
 
 namespace EntityLayer.Models
 {
@@ -44,17 +45,8 @@ namespace EntityLayer.Models
 
         [Required]
         public string DeliveryImage { get; set; } = string.Empty;
-        public enum DeliveryStatus
-        {
-            Assigned = 5,
-            Accepted = 6,
-            Rejected = 7,
-            Pickedup = 8,
-            ReachedDestination = 9,
-            NotAcceptedByCustomer = 10,
-            Delivered  = 11,
-        }
-        public DeliveryStatus deliveryStatus { get; set; }
+       
+        public DeliveryStatus DeliveryStatus { get; set; }
 
     }
 }

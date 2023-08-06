@@ -28,7 +28,7 @@ namespace DeliveryAgentModule
             // Add services to the container.
             var logger = new LoggerConfiguration()
                 .WriteTo.Console()
-                .WriteTo.File("Logs/OrderLineGet_Logs.txt", rollingInterval: RollingInterval.Minute)
+                .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Minute)
                 .MinimumLevel.Warning()
                 .CreateLogger();
 
@@ -95,7 +95,7 @@ namespace DeliveryAgentModule
             builder.Services.AddScoped<IImageService, ImageService>();
             builder.Services.AddScoped<IServiceLocationService, ServiceLocationService>();
             builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
-            builder.Services.AddScoped<IPersonalDetailsService, PersonalDetailsService>();
+            builder.Services.AddScoped<IAgentDetailsService, AgentDetailsService>();
             builder.Services.AddScoped<IBankDetailsService, BankDetailsService>();  
             builder.Services.AddScoped<IKYCService,  KYCService>(); 
             builder.Services.AddScoped<IVehicleDetailsService , VehicleDetailsService>();   

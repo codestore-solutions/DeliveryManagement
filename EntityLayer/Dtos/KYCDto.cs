@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static EntityLayer.Common.EnumConstants;
 
 namespace EntityLayer.Dtos
 {
@@ -13,14 +14,7 @@ namespace EntityLayer.Dtos
         [Range(1, long.MaxValue)]    
         public long AgentId { get; set; }
 
-        public enum DocumentTypes
-        {
-            DrivingLicence = 1,
-            PanCard = 2,
-            AadharCard = 3,
-            Photo = 4
-        }
-
+        // Enum For Document Types
         [Required]
         public DocumentTypes DocumentType { get; set; }
 
