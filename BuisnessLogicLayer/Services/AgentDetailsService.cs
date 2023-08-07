@@ -21,22 +21,23 @@ namespace BusinessLogicLayer.Services
             this.mapper = mapper;
         }
 
-        public async Task<ResponseDto?> GetPersonalDetailsAsync(long agentId)
+        public async Task<AgentDetailResponseDto?> GetPersonalDetailsAsync(long agentId)
         {
             var agentDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == agentId);
             if (agentDetail == null)
             {
                 return null;
             }
-          /*  var responseDto = new AgentDetailResponseDto();
-            mapper.Map<ResponseDto>(agentDetail);*/
-            return new ResponseDto { StatusCode = 200, Success = true, Data = agentDetail, Message = StringConstant.SuccessMessage };
+            var agentDetailResponse = new AgentDetailResponseDto();
+            mapper.Map(agentDetail, agentDetailResponse);
+            return agentDetailResponse;
         }
 
         public async Task<ResponseDto?> AddDetailsAsync(AgentDetailsDto agentDetailsDto)
         {
             var existingDetails = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable()
             .FirstOrDefaultAsync(u => u.AgentId == agentDetailsDto.AgentId);
+            // Handling Duplicate Record 
             if (existingDetails != null)
             {
                 return null;
@@ -117,7 +118,7 @@ namespace BusinessLogicLayer.Services
                 Data    = response,
                 Message = StringConstant.SuccessMessage
             };
-        }
+        } 
 
         public async Task<ResponseDto?> GetDetailByAgentId(long agentId)
         {

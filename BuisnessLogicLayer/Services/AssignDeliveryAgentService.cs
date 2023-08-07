@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using System.Runtime.CompilerServices;
 using Microsoft.IdentityModel.Tokens;
 using Timer = System.Timers.Timer;
+using System.Net.WebSockets;
 
 namespace BusinessLogicLayer.Services
 {
@@ -178,15 +179,14 @@ namespace BusinessLogicLayer.Services
             TimeSpan currentTimeOfDay = currentTime.TimeOfDay;
 
             // Fetching available Delivery agents list based on Working location preferences from Db.
-            var availableAgentList = await unitOfWork.ServiceLocationRepository.GetAllAsQueryable().Where(u=> u.IsActive 
+            var availableAgentList = await unitOfWork.ServiceLocationRepository.GetAllAsQueryable().Where(u => u.IsActive
             && u.AgentDetails.AgentStatus == EnumConstants.AvailabilityStatus.OnDuty
             && u.SelectedDays.Contains(currentDay)
-            && currentTimeOfDay <= u.EndTime 
-            && currentTimeOfDay >= u.StartTime ).ToListAsync();
+            ).ToListAsync();
             
             long? nearsestAgentId = null;
             foreach (var agent in availableAgentList)
-            {             
+            {
                 // Check Delivery region is within the range according to the preferences of delivery agent.
                 double deliveryDistance = CalculateDistance(deliveryLatitude, deliveryLongitude, agent.Latitude, agent.Longitude);
                 // Check Pickup region is within the range according to the preferences of delivery agent.

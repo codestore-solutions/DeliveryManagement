@@ -24,8 +24,8 @@ namespace BusinessLogicLayer.Mappings
             CreateMap<UpdateWorkingLocationDto , ServiceLocation>().ReverseMap();
             CreateMap<AssignAutomaticObjectDto, AssignDeliveryAgent>().ReverseMap();    
             CreateMap<AssignDeliveryAgent, AssignManuallyObjectDto>().ReverseMap();  
-            CreateMap<AgentDetail, AgentDetailResponseDto>().ReverseMap();
-            
+            CreateMap<AgentDetailResponseDto, AgentDetail>().ReverseMap();
+            CreateMap<AgentDetail, BankDetail>().ReverseMap();            
         }
     }
 }

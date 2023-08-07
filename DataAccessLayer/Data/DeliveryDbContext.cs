@@ -16,6 +16,8 @@ namespace DataAccessLayer.Data
         public DbSet<VehicleDetail> VehicleDetails { get; set; }
         public DbSet<BusinessAdmin> BusinessAdmins { get; set; }
         public DbSet<ServiceLocation> ServiceLocations { get; set; }    
+        public DbSet<TimeSlot> TimeSlots { get; set; }  
+        public DbSet<AgentTimeSlot> AgentTimeSlots { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

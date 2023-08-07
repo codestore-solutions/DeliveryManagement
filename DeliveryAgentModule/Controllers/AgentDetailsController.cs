@@ -5,6 +5,7 @@ using EntityLayer.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 using static EntityLayer.Models.AgentDetail;
 
 namespace DeliveryAgent.API.Controllers
@@ -46,7 +47,7 @@ namespace DeliveryAgent.API.Controllers
             var result = await agentDetailsService.GetPersonalDetailsAsync(agentId);
             if(result != null)
             {
-                return result;
+                return new ResponseDto { StatusCode = (int)HttpStatusCode.OK, Success = true, Data = result, Message = StringConstant.SuccessMessage};
             }
             return NotFound(new { message = StringConstant.ResourceNotFoundError });
         }

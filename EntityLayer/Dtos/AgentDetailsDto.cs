@@ -52,8 +52,7 @@ namespace EntityLayer.Dtos
         [RegularExpression(@"^[A-Za-z0-9.:,/@*&%#!{} -]+$")]
         public string Address { get; set; } = null!;
 
-        [DataType(DataType.Url)]
-        [Url]
+        [Required]
         public string ProfileImage { get; set; } = string.Empty;
     }
 }

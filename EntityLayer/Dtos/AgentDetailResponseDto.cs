@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EntityLayer.Common;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -10,49 +11,58 @@ namespace EntityLayer.Dtos
 {
     public class AgentDetailResponseDto
     {
-        public class AgentDetailResponseDTO
-        {
-            [Key]
-            public long Id { get; set; }
+        [Key]
+        public long Id { get; set; }
 
-            // AgentId from User Module
-            public long AgentId { get; set; }
 
-            [Required]
-            public string FullName { get; set; } = null!;
+        // AgentId from User Module
+        [Required]
+        [Range(1, long.MaxValue)]
+        public long AgentId { get; set; }
 
-            [Required]
-            public string CountryCode { get; set; } = null!;
+        [Required]
+        [StringLength(50, MinimumLength = 1)]
+        [RegularExpression(@"^[A-Za-z0-9.:,/ -]+$", ErrorMessage = StringConstant.FullNameError)]
+        public string FullName { get; set; } = null!;
 
-            [Required]
-            public string PhoneNumber { get; set; } = null!;
+        [Required]
+        [StringLength(5)]
+        [RegularExpression(@"^[0-9+ -]+$")]
+        public string CountryCode { get; set; } = null!;
 
-            [Required]
-            [EmailAddress]
-            public string Email { get; set; } = null!;
+        [Required]
+        [DataType(DataType.PhoneNumber)]
+        [StringLength(15, MinimumLength = 10)]
+        [Phone]
+        public string PhoneNumber { get; set; } = null!;
 
-            [Required]
-            public string Gender { get; set; } = null!;
+        [Required]
+        [DataType(DataType.EmailAddress)]
+        [EmailAddress]
+        public string Email { get; set; } = null!;
 
-            [Required]
-            [DataType(DataType.Date)]
-            public DateTime DateOfBirth { get; set; }
+        [Required]
+        [RegularExpression(@"^[A-Za-z0-9 -]+$")]
+        [StringLength(15)]
+        public string Gender { get; set; } = null!;
 
-            [Required]
-            public string Address { get; set; } = null!;
-            public string ProfileImage { get; set; } = string.Empty;
+        [Required]
+        [DataType(DataType.Date)]
+        [Display(Name = "Date of Birth")]
+        public DateTime DateOfBirth { get; set; }
 
-            [Required]
-            public bool IsProfileCompleted { get; set; }
+        [Required]
+        [StringLength(100)]
+        [RegularExpression(@"^[A-Za-z0-9.:,/@*&%#!{} -]+$")]
+        public string Address { get; set; } = null!;
 
-            [Required]
-            public DateTime CreatedOn { get; set; }
+        [DataType(DataType.Url)]
+        [Url]
+        public string ProfileImage { get; set; } = string.Empty;
 
-            [Required]
-            public DateTime UpdatedOn { get; set; }
-
-            public AvailabilityStatus AgentStatus { get; set; }
-            public VerificationStatus verificationStatus { get; set; }
-        }
+        [Required]
+        public bool IsProfileCompleted { get; set; }
+        public AvailabilityStatus AgentStatus { get; set; }
+        public VerificationStatus verificationStatus { get; set; }
     }
 }

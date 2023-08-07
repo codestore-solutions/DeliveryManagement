@@ -9,6 +9,7 @@ namespace DataAccessLayer.Repository
         public UnitOfWork(DeliveryDbContext dbContext)
         {
             this.dbContext = dbContext;
+            TimeSlotRepository = new TimeSlotRepository(this.dbContext);
             VehicleDetailsRepository = new VehicleDetailsRepository(this.dbContext);
             BankDetailsRepository = new BankDetailsRepository(this.dbContext);
             KYCRepository = new KYCRepository(this.dbContext);
@@ -36,6 +37,8 @@ namespace DataAccessLayer.Repository
         public IBankDetailsRepository BankDetailsRepository { get; private set; }
 
         public IKYCRepository KYCRepository { get; private set; }
+
+        public ITimeSlotRepository TimeSlotRepository { get; private set; }
 
         public void Dispose()
         {

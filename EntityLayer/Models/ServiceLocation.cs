@@ -12,10 +12,6 @@ namespace EntityLayer.Models
         [Key]
         public long Id { get; set; }
 
-     /*   [Required]
-        [Range(1, long.MaxValue)]
-        public long AgentId { get; set; }*/
-
         [Required]
         [StringLength(50)]
         public string LocationName { get; set; } = null!;
@@ -29,21 +25,22 @@ namespace EntityLayer.Models
 
         public double Longitude { get; set; }
 
-        [Required]
+       /* [Required]
         public TimeSpan StartTime { get; set; } 
 
         [Required]
-        public TimeSpan EndTime { get; set; } 
-         
+        public TimeSpan EndTime { get; set; }*/
+
+        // Represent Active Working Location 
         [Required]
-        public bool IsActive { get; set; }                                // Represent Active Working Location 
+        public bool IsActive { get; set; }                                
 
         [Required]
         public string SelectedDays { get; set; } = null!;
 
         // References
         public virtual AgentDetail AgentDetails { get; set; } = null!;
-       
+        public virtual ICollection<AgentTimeSlot> AgentTimeSlots { get; set;} = new List<AgentTimeSlot>(); 
        
     }
 }

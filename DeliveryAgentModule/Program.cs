@@ -100,6 +100,7 @@ namespace DeliveryAgentModule
             builder.Services.AddScoped<IKYCService,  KYCService>(); 
             builder.Services.AddScoped<IVehicleDetailsService , VehicleDetailsService>();   
             builder.Services.AddScoped<ITokenRepository, TokenRepository>();
+            builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
 
             builder.Services.AddDbContext<DeliveryDbContext>(options =>
             options.UseSqlServer("name=ConnectionStrings:DeliveryAgentConnectionString"));

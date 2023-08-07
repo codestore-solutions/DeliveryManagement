@@ -24,28 +24,18 @@ namespace BusinessLogicLayer.Services
             this.mapper = mapper;
         }
 
-        public async Task<ResponseDto?> GetAsync(long agentId)
+        public async Task<BankDetailsDto?> GetAsync(long agentId)
         {
-            var agentDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == agentId);
-            if(agentDetail == null) 
+            var agentDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable()
+            .FirstOrDefaultAsync(u => u.AgentId == agentId);
+
+            if (agentDetail == null || agentDetail.BankDetails == null)
             {
                 return null;
             }
-            var result = agentDetail.BankDetails;
-
-            if (result == null)
-            {
-                return null;
-            }
-            var response = new ResponseDto();
-
-            if(agentDetail != null)
-            {
-                response.StatusCode = 200;
-                response.Success    = true;
-                response.Data       = result;
-                response.Message    = StringConstant.SuccessMessage;
-            }
+            var bankDetails = agentDetail.BankDetails;
+            var response = new BankDetailsDto();
+            mapper.Map(bankDetails, response);
             return response;
         }
 

@@ -38,8 +38,8 @@ namespace BusinessLogicLayer.Services
             TimeSpan toTime      = TimeSpan.Parse(serviceLocationDto.ToTime);
 
             addNewWorkingLocation.SelectedDays = concatenatedSelectedDays;
-            addNewWorkingLocation.StartTime    = fromTime;
-            addNewWorkingLocation.EndTime      = toTime;
+            /*addNewWorkingLocation.StartTime    = fromTime;
+            addNewWorkingLocation.EndTime      = toTime;*/
             if (agentDetail.ServiceLocations.IsNullOrEmpty())
             {
                 addNewWorkingLocation.IsActive = true;
@@ -112,8 +112,8 @@ namespace BusinessLogicLayer.Services
             TimeSpan toTime = TimeSpan.Parse(updateWorkingLocationDto.ToTime);
             string concatenatedSelectedDays = string.Join(" ", updateWorkingLocationDto.SelectedDays);
 
-            serviceLocation.StartTime = fromTime;
-            serviceLocation.EndTime = toTime;
+           /* serviceLocation.StartTime = fromTime;
+            serviceLocation.EndTime = toTime;*/
             serviceLocation.SelectedDays = concatenatedSelectedDays;
             bool saveResult = await unitOfWork.SaveAsync();
 

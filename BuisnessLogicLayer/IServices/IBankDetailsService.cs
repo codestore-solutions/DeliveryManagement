@@ -1,5 +1,6 @@
 ﻿using EntityLayer.Common;
 using EntityLayer.Dtos;
+using EntityLayer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace BusinessLogicLayer.IServices
 {
     public interface IBankDetailsService
     {
-        public Task<ResponseDto?> GetAsync(long agentId);
+        public Task<BankDetailsDto?> GetAsync(long agentId);
         public Task<ResponseDto?> AddDetailsAsync(BankDetailsDto bankDetailsDto);
         public Task<ResponseDto?> UpdateDetailsAsync(long id, BankDetailsDto bankDetailsDto);
     }
