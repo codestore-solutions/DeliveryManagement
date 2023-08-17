@@ -25,12 +25,23 @@ namespace BusinessLogicLayer.Services
             this.mapper = mapper;
         }
 
+        public async Task<VehicleDetailResponseDto?> GetAsync(long agentId)
+        {
+            var agentDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == agentId);
+            if (agentDetail == null || agentDetail.VehicleDetails == null) { return null; }
+
+            var vehicleDetail = agentDetail.VehicleDetails;
+            var response = new VehicleDetailResponseDto();
+            mapper.Map(vehicleDetail, response);
+            return response;
+        }
+
         public async Task<ResponseDto?> AddDetailsAsync(VehicleDetailsDto vehicleDetailsDto)
         {   
             var agentDetails = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable()
             .FirstOrDefaultAsync(u => u.AgentId == vehicleDetailsDto.AgentId);
 
-            if (agentDetails == null) return BuildErrorResponse((int)HttpStatusCode.NotFound, "AgentId doesn't exist", false);
+            if (agentDetails == null) return BuildErrorResponse(404, StringConstant.IdNotExistError, false);
 
             var vehicleDetails = agentDetails.VehicleDetails;
             if(vehicleDetails == null)
@@ -54,29 +65,6 @@ namespace BusinessLogicLayer.Services
                 };
             }
             return null;
-        }
-
-        public async Task<ResponseDto?> GetAsync(long agentId)
-        {
-            var agentDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == agentId);
-            if (agentDetail == null) { return BuildErrorResponse((int)HttpStatusCode.NotFound, StringConstant.IdNotExistError, false); }
-
-            var vehicleDetail = agentDetail.VehicleDetails; 
-            if (vehicleDetail == null)
-            {
-                return BuildErrorResponse((int)HttpStatusCode.NotFound, StringConstant.ResourceNotFoundError , false); 
-            }
-
-            var vehicleDetailDto = new VehicleDetailsDto();
-            mapper.Map(vehicleDetail, vehicleDetailDto);
-
-            return new ResponseDto
-            {
-                StatusCode = 200,
-                Success    = true,
-                Data       = vehicleDetailDto,
-                Message    = StringConstant.SuccessMessage
-            };
         }
 
         public async Task<ResponseDto?> UpdateDetailsAsync(long id, VehicleDetailsDto vehicleDetailsDto)

@@ -14,7 +14,6 @@ namespace EntityLayer.Dtos
         [Key]
         public long Id { get; set; }
 
-
         // AgentId from User Module
         [Required]
         [Range(1, long.MaxValue)]

@@ -100,26 +100,26 @@ namespace BusinessLogicLayer.Services
             }
         }
 
-        public async Task<ResponseDto> AssignAgentAutomaticallyAsync(AssignAgentAutomaticallyDto assignAgentAutomaticallyDto)
+        public async Task<ResponseDto?> AssignAgentAutomaticallyAsync(AssignAgentAutomaticallyDto assignAgentAutomaticallyDto)
         {
             var responseObjectList = new List<AutomaticallyAssignResponseDto>();       
             foreach(var obj in assignAgentAutomaticallyDto.List)
             {
                 // Search for suitable delivery agent within 5 km radius in Database.
                 var getNearestDeliveryAgentId = await NearestAgentWithinRange(obj.DeliveryAddressLatitude, obj.DeliveryAddressLongitude,
-                    obj.PickupLatitude, obj.PickupLongitude, 5);
+                    obj.PickupLatitude, obj.PickupLongitude, 5,9);
 
                 // If we didn't get any agent nearby , push notification .i.e, No delivery agent is available nearby
                 if (getNearestDeliveryAgentId == null)
                 {
-                    var responseObj1 = new AutomaticallyAssignResponseDto
+                    var notAvailableResponse = new AutomaticallyAssignResponseDto
                     {
                         DeliveryAgentId = null,
                         DeliveryAgentName = StringConstant.NotAvailableMessage,
                         OrderId = obj.OrderId
                     };
 
-                    responseObjectList.Add(responseObj1);
+                    responseObjectList.Add(notAvailableResponse);
                     continue;
                 }
                 // If we get agent nearby , then assign order to that agent
@@ -127,7 +127,7 @@ namespace BusinessLogicLayer.Services
                 var agent = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == getNearestDeliveryAgentId);
                 if(agent == null)
                 {
-                    return new ResponseDto();
+                    return null;
                 }
 
                 var responseObj = new AutomaticallyAssignResponseDto
@@ -148,7 +148,7 @@ namespace BusinessLogicLayer.Services
             };
         }
 
-      /*  private bool IsAgentAvailableForAnotherOrder(long agentId , double deliveryLatitude, double deliveryLongitude, double pickupLatitude , double pickupLongitude)
+        /*  private bool IsAgentAvailableForAnotherOrder(long agentId , double deliveryLatitude, double deliveryLongitude, double pickupLatitude , double pickupLongitude)
         {
             var agent = unitOfWork.ServiceLocationRepository.GetAllAsQueryable().FirstOrDefault(u => u.AgentId == agentId
             && u.IsActive
@@ -166,7 +166,8 @@ namespace BusinessLogicLayer.Services
             return false;
         }*/
 
-        public async Task<long?> NearestAgentWithinRange(double deliveryLatitude, double deliveryLongitude, double pickupLatitude, double pickupLongitude, int maxDistance)
+        public async Task<long?> NearestAgentWithinRange(double deliveryLatitude, double deliveryLongitude, double pickupLatitude, 
+            double pickupLongitude, int maxDistance, long? slotId)
         {
             // Find current day in string format
             DateTime currentTime = DateTime.Now;
@@ -181,8 +182,9 @@ namespace BusinessLogicLayer.Services
             // Fetching available Delivery agents list based on Working location preferences from Db.
             var availableAgentList = await unitOfWork.ServiceLocationRepository.GetAllAsQueryable().Where(u => u.IsActive
             && u.AgentDetails.AgentStatus == EnumConstants.AvailabilityStatus.OnDuty
+            && u.AgentDetails.verificationStatus == EnumConstants.VerificationStatus.Verified
             && u.SelectedDays.Contains(currentDay)
-            ).ToListAsync();
+            && u.AgentTimeSlots.Any(slot => slot.TimeSlotId == slotId)).ToListAsync();
             
             long? nearsestAgentId = null;
             foreach (var agent in availableAgentList)

@@ -39,5 +39,13 @@ namespace EntityLayer.Common
             NotAcceptedByCustomer = 10,
             Delivered = 11,
         }
+
+        public enum VehicleTypes
+        {
+            Motorcycle = 1,
+            Scooter,
+            GearlessMotorcycle,
+            Scooty
+        }
     }
 }

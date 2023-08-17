@@ -1,21 +1,23 @@
 using BusinessLogicLayer.IServices;
+using BusinessLogicLayer.Mappings;
 using BusinessLogicLayer.Services;
 using DataAccessLayer.Data;
 using DataAccessLayer.IRepository;
 using DataAccessLayer.Repository;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Serilog;
-using Microsoft.OpenApi.Models;
-using System.Reflection;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Identity;
-using System.Text;
-using BusinessLogicLayer.Mappings;
+using DeliveryAgent.API.CustomActionFilter;
 using DeliveryAgentModule.Middlewares;
-using System.Text.Json.Serialization;
+using EntityLayer.Common;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Serilog;
+using System.Reflection;
+using System.Text;
+using System.Text.Json.Serialization;
 
 namespace DeliveryAgentModule
 {
@@ -28,39 +30,40 @@ namespace DeliveryAgentModule
             // Add services to the container.
             var logger = new LoggerConfiguration()
                 .WriteTo.Console()
-                .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Minute)
-                .MinimumLevel.Warning()
+                .WriteTo.File(StringConstant.LogPath, rollingInterval: RollingInterval.Day)
                 .CreateLogger();
-
             builder.Logging.ClearProviders();
             builder.Logging.AddSerilog(logger);
 
             builder.Services.AddControllers();
+            builder.Services.AddControllers(options =>
+            {
+                options.Filters.AddService<LoggingActionFilter>();
+            });
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                 options.JsonSerializerOptions.WriteIndented = true;
             });
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-
-            builder.Services.AddApiVersioning(options=>{
+            builder.Services.AddApiVersioning(options =>
+            {
                 options.AssumeDefaultVersionWhenUnspecified = true;
                 options.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
                 options.ReportApiVersions = true;
             });
-
             builder.Services.AddVersionedApiExplorer(options =>
             {
                 options.GroupNameFormat = "'v'VVV";
                 options.SubstituteApiVersionInUrl = true;
             });
-
             builder.Services.AddSwaggerGen(options =>
             {
-               // options.SwaggerDoc("v1", new OpenApiInfo { Title = "Delivery Agent API", Version = "v1" });
-                options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme,new OpenApiSecurityScheme
+                // options.SwaggerDoc("v1", new OpenApiInfo { Title = "Delivery Agent API", Version = "v1" });
+                options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
                     In = ParameterLocation.Header,
@@ -96,18 +99,18 @@ namespace DeliveryAgentModule
             builder.Services.AddScoped<IServiceLocationService, ServiceLocationService>();
             builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
             builder.Services.AddScoped<IAgentDetailsService, AgentDetailsService>();
-            builder.Services.AddScoped<IBankDetailsService, BankDetailsService>();  
-            builder.Services.AddScoped<IKYCService,  KYCService>(); 
-            builder.Services.AddScoped<IVehicleDetailsService , VehicleDetailsService>();   
+            builder.Services.AddScoped<IBankDetailsService, BankDetailsService>();
+            builder.Services.AddScoped<IKYCService, KYCService>();
+            builder.Services.AddScoped<IVehicleDetailsService, VehicleDetailsService>();
             builder.Services.AddScoped<ITokenRepository, TokenRepository>();
             builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
+            builder.Services.AddScoped<LoggingActionFilter>();
+            builder.Services.AddScoped<IAccountService, AccountService>();  
 
             builder.Services.AddDbContext<DeliveryDbContext>(options =>
-            options.UseSqlServer("name=ConnectionStrings:DeliveryAgentConnectionString"));
-
-          //  builder.Services.AddDbContext<DeliveryAuthDbContext>(options =>
-          //  options.UseSqlServer(builder.Configuration.GetConnectionString("DeliveryAgentAuthConnectionString")));
-
+            options.UseSqlServer(builder.Configuration.GetConnectionString(StringConstant.ConnectionStringPath)));
+            /*            builder.Services.AddDbContext<DeliveryAuthDbContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DeliveryAgentAuthConnectionString")));*/
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowOrigin", builder =>
@@ -117,21 +120,18 @@ namespace DeliveryAgentModule
                            .AllowAnyHeader();
                 });
             });
-
-           /* builder.Services.AddIdentityCore<IdentityUser>()
-                .AddRoles<IdentityRole>()
-                .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("DeliveryAgent")
-                .AddEntityFrameworkStores<DeliveryAuthDbContext>()
-                .AddDefaultTokenProviders();*/
-
+            /* builder.Services.AddIdentityCore<IdentityUser>()
+                 .AddRoles<IdentityRole>()
+                 .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("DeliveryAgent")
+                 .AddEntityFrameworkStores<DeliveryAuthDbContext>()
+                 .AddDefaultTokenProviders();*/
             builder.Services.AddSingleton<HttpClient>(sp =>
             {
                 // Create a new instance of HttpClient
                 var httpClient = new HttpClient();
-               // httpClient.Timeout = TimeSpan.FromSeconds(60);
+                // httpClient.Timeout = TimeSpan.FromSeconds(60);
                 return httpClient;
             });
-
             builder.Services.Configure<IdentityOptions>(options =>
             {
                 options.Password.RequireDigit = false;
@@ -140,7 +140,6 @@ namespace DeliveryAgentModule
                 options.Password.RequiredUniqueChars = 1;
                 options.Password.RequireUppercase = false;
             });
-
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 options.TokenValidationParameters = new TokenValidationParameters
@@ -154,27 +153,24 @@ namespace DeliveryAgentModule
                     IssuerSigningKey = new SymmetricSecurityKey(
                         Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
                 });
-
             builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
             var app = builder.Build();
-
-            var versionDescriptionProvider = 
+            var versionDescriptionProvider =
                 app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
 
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
-                foreach(var description in versionDescriptionProvider.ApiVersionDescriptions)
+                foreach (var description in versionDescriptionProvider.ApiVersionDescriptions)
                 {
                     options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
                         description.GroupName.ToUpperInvariant());
                 }
             });
-
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
-               
+
             }
 
             var webSocketOptions = new WebSocketOptions
@@ -182,7 +178,6 @@ namespace DeliveryAgentModule
                 KeepAliveInterval = TimeSpan.FromMinutes(2)
             };
 
-           
             app.UseCors("AllowOrigin");
 
             app.UseHttpsRedirection();

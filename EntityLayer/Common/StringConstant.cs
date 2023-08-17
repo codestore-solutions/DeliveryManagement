@@ -21,6 +21,8 @@ namespace EntityLayer.Common
         public const string InvalidCredentialError       = "Invalid Username or Password";
         public const string OrderIdRequiredError         = "At least one order ID is required.";
         public const string IdNotExistError              = "Id doesn't exist";
-
+        public const string LogPath                      = "Logs/log-.txt";
+        public const string ConnectionStringPath         = "DeliveryAgentConnectionString";
+        public const string TokenMissing                 = "Authorization token is missing.";
     }
 }

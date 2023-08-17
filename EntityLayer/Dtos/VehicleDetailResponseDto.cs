@@ -1,23 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static EntityLayer.Common.EnumConstants;
 
-namespace EntityLayer.Models
+namespace EntityLayer.Dtos
 {
-    public class VehicleDetail
+    public class VehicleDetailResponseDto
     {
-        [Key]
         public long Id { get; set; }
 
-        [Required]
-        [ForeignKey("AgentDetail")]
-        public long AgentDetailId { get; set; }
-       
         public VehicleTypes VehicleType { get; set; }
 
         [Required]
@@ -34,12 +29,5 @@ namespace EntityLayer.Models
 
         [Required]
         public string RegistrationNumber { get; set; } = null!;
-
-        [Required]
-        public DateTime CreatedOn { get; set; }
-
-        [Required]
-        public DateTime UpdatedOn { get; set; }
-        public virtual AgentDetail AgentDetails { get; set; } = null!;
     }
 }

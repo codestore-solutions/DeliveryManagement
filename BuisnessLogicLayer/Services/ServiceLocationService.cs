@@ -21,7 +21,7 @@ namespace BusinessLogicLayer.Services
             this.mapper = mapper;
         }
 
-        public async Task<ResponseDto?> AddNewWorkingLocationAsync(AddServiceLocationDto serviceLocationDto)
+        public async Task<ResponseDto?> AddNewWorkingLocationAsync(ServiceLocationDto serviceLocationDto)
         {
             var agentDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable()
             .FirstOrDefaultAsync(u => u.AgentId == serviceLocationDto.AgentId);
@@ -30,36 +30,54 @@ namespace BusinessLogicLayer.Services
                 return null;
             }
 
-            var addNewWorkingLocation = new ServiceLocation();
-            mapper.Map(serviceLocationDto, addNewWorkingLocation);
+            var addServiceLocation = new ServiceLocation();
+            mapper.Map(serviceLocationDto, addServiceLocation);
 
             string concatenatedSelectedDays = string.Join(" ", serviceLocationDto.SelectedDays);
-            TimeSpan fromTime    = TimeSpan.Parse(serviceLocationDto.FromTime);
-            TimeSpan toTime      = TimeSpan.Parse(serviceLocationDto.ToTime);
+            addServiceLocation.SelectedDays = concatenatedSelectedDays;
 
-            addNewWorkingLocation.SelectedDays = concatenatedSelectedDays;
-            /*addNewWorkingLocation.StartTime    = fromTime;
-            addNewWorkingLocation.EndTime      = toTime;*/
             if (agentDetail.ServiceLocations.IsNullOrEmpty())
             {
-                addNewWorkingLocation.IsActive = true;
+                addServiceLocation.IsActive = true;
             }
             else
             {
-                addNewWorkingLocation.IsActive = false;
+                addServiceLocation.IsActive = false;
             }
-            addNewWorkingLocation.AgentDetailId = agentDetail.Id;
-            addNewWorkingLocation.AgentDetails  = agentDetail;
-            agentDetail.ServiceLocations.Add(addNewWorkingLocation);
 
-            await unitOfWork.ServiceLocationRepository.AddAsync(addNewWorkingLocation);
+            addServiceLocation.AgentDetailId = agentDetail.Id;
+            addServiceLocation.AgentDetails  = agentDetail;
+            agentDetail.ServiceLocations.Add(addServiceLocation);
+
+           /* var agentTimeSlots = serviceLocationDto.TimeSlotIds.Select(timeSlotId => new AgentTimeSlot
+            {
+                IsActive = true,
+                TimeSlotId = timeSlotId,
+                ServiceLocationId = addServiceLocation.Id,
+                ServiceLocation = addServiceLocation
+            }).ToList();
+
+            .AgentTimeSlots.AddRange(agentTimeSlots);*/
+            foreach (var timeSlotId in serviceLocationDto.TimeSlotIds)
+            {
+                var slot = new AgentTimeSlot
+                {
+                    IsActive = true,
+                    TimeSlotId = timeSlotId,
+                    ServiceLocationId = addServiceLocation.Id,
+                    ServiceLocation = addServiceLocation
+                };
+                addServiceLocation.AgentTimeSlots.Add(slot);
+            }
+
+            await unitOfWork.ServiceLocationRepository.AddAsync(addServiceLocation);
             bool saveResult = await unitOfWork.SaveAsync();
        
             return new ResponseDto
             {
                 StatusCode  = 200,
                 Success     = true,
-                Data        = addNewWorkingLocation,
+                Data        = addServiceLocation,
                 Message     = saveResult ? StringConstant.AddedMessage : StringConstant.DatabaseMessage
             };
         }

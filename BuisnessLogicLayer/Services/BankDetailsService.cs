@@ -5,11 +5,6 @@ using EntityLayer.Common;
 using EntityLayer.Dtos;
 using EntityLayer.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.Services
 {
@@ -24,7 +19,7 @@ namespace BusinessLogicLayer.Services
             this.mapper = mapper;
         }
 
-        public async Task<BankDetailsDto?> GetAsync(long agentId)
+        public async Task<BankDetailResponseDto?> GetAsync(long agentId)
         {
             var agentDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable()
             .FirstOrDefaultAsync(u => u.AgentId == agentId);
@@ -34,20 +29,20 @@ namespace BusinessLogicLayer.Services
                 return null;
             }
             var bankDetails = agentDetail.BankDetails;
-            var response = new BankDetailsDto();
+            var response = new BankDetailResponseDto();
             mapper.Map(bankDetails, response);
             return response;
         }
 
         public async Task<ResponseDto?> AddDetailsAsync(BankDetailsDto bankDetailsDto)
         {
-            var personalDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable()
+            var agentDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable()
             .FirstOrDefaultAsync(u => u.AgentId == bankDetailsDto.AgentId);
-            if(personalDetail== null)
+            if(agentDetail== null)
             {
                 return null;
             }
-            var existingDetails = personalDetail.BankDetails;
+            var existingDetails = agentDetail.BankDetails;
 
             if (existingDetails != null)
             {
@@ -55,8 +50,8 @@ namespace BusinessLogicLayer.Services
             }
             var bankDetails = new BankDetail();
             mapper.Map(bankDetailsDto, bankDetails);
-            bankDetails.AgentDetailId = personalDetail.Id;
-            bankDetails.AgentDetail   = personalDetail;
+            bankDetails.AgentDetailId = agentDetail.Id;
+            bankDetails.AgentDetail   = agentDetail;
             bankDetails.CreatedOn = DateTime.Now;
             bankDetails.UpdatedOn = DateTime.Now;
 

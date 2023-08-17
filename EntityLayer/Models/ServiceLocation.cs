@@ -25,12 +25,6 @@ namespace EntityLayer.Models
 
         public double Longitude { get; set; }
 
-       /* [Required]
-        public TimeSpan StartTime { get; set; } 
-
-        [Required]
-        public TimeSpan EndTime { get; set; }*/
-
         // Represent Active Working Location 
         [Required]
         public bool IsActive { get; set; }                                

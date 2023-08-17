@@ -13,8 +13,8 @@ namespace BusinessLogicLayer.IServices
     public interface IAgentDetailsService
     {
         public Task<AgentDetailResponseDto?> GetPersonalDetailsAsync(long agentId);
-        public Task<ResponseDto?> AddDetailsAsync(AgentDetailsDto personalDetailsDto);
-        public Task<ResponseDto?> UpdateDetailsAsync(long id, AgentDetailsDto agentDetailsDto);
+        public Task<ResponseDto> AddDetailsAsync(AgentDetailsDto personalDetailsDto);
+        public Task<ResponseDto> UpdateDetailsAsync(long id, AgentDetailsDto agentDetailsDto);
         public Task<ResponseDto?> GetAllDetailsAsync(string? filterQuery, int? agentStatus
          , int pageNumber = 1, int limit = 10);
         public Task<ResponseDto?> GetDetailByAgentId(long agentId);

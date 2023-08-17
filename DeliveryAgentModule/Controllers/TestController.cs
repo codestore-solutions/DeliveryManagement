@@ -1,17 +1,13 @@
-﻿using BusinessLogicLayer.IServices;
+﻿using DeliveryAgentModule.CustomActionFilter;
+using EntityLayer.Common;
 using EntityLayer.Dtos;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Net.Http;
-using DeliveryAgentModule.CustomActionFilter;
-using Newtonsoft.Json.Linq;
-using EntityLayer.Common;
-using System.ComponentModel.DataAnnotations;
 
 namespace DeliveryAgentModule.Controllers
 {
@@ -21,7 +17,7 @@ namespace DeliveryAgentModule.Controllers
     [ApiVersion("2.0")]
     public class TestController : ControllerBase
     {
-        
+
         private readonly HttpClient httpClient;
 
         public TestController(HttpClient httpClient)
@@ -35,38 +31,35 @@ namespace DeliveryAgentModule.Controllers
         public async Task<IActionResult> Login([FromBody][Required] LoginRequestDto loginRequestDto)
         {
             var microserviceResponse = await httpClient.GetAsync("https://order-processing-dev.azurewebsites.net/api/v1/users/listAllUsers");
-            if(!microserviceResponse.IsSuccessStatusCode)
+            if (!microserviceResponse.IsSuccessStatusCode)
             {
-                return BadRequest(new { message = StringConstant.MicroserviceError});
+                return BadRequest(new { message = StringConstant.MicroserviceError });
             }
             var content = await microserviceResponse.Content.ReadAsStringAsync();
-            var data = JsonConvert.DeserializeObject <MyDataClass>(content);
-            if(data == null)
+            var data = JsonConvert.DeserializeObject<MyDataClass>(content);
+            if (data == null)
             {
                 return NotFound(new { message = StringConstant.ResourceNotFoundError });
             }
-  
-              foreach (var item in data.Data)
-              {
-                Console.WriteLine(item.Email);
+
+            foreach (var item in data.Data)
+            {
                 if (IsValidCredentials(item.Email, item.Password, loginRequestDto))
                 {
-                    
-                    var jwtToken = GenerateJwtToken(item.Email, item.Role, item.Id, item.BusinessCategory);
-
+                    var jwtToken = GenerateJwtToken(item);
                     var responseDto = new LoginResponseDto
                     {
-                        JwtToken         = jwtToken,
-                        Name             = item.Name,
-                        Id               = item.Id,
-                        Email            = item.Email,
+                        JwtToken = jwtToken,
+                        Name = item.Name,
+                        Id = item.Id,
+                        Email = item.Email,
                         BusinessCategory = item.BusinessCategory,
                     };
                     // Return the JWT token to the client 
                     return Ok(responseDto);
                 }
-              }
-            return BadRequest(new {message = StringConstant.InvalidCredentialError});         
+            }
+            return BadRequest(new { message = StringConstant.InvalidCredentialError });
         }
         private bool IsValidCredentials(string email, string password, LoginRequestDto loginRequestDto)
         {
@@ -76,27 +69,28 @@ namespace DeliveryAgentModule.Controllers
             }
             return false;
         }
-        private string GenerateJwtToken(string email, string role, string id, string businessCategory)
-        {    
+        private string GenerateJwtToken(DataClass item)
+        {
             // Set the secret key used to sign the JWT token 
             var secretKey = "safmdknfsdDKFKN122sdnmkfnsJDKNF23234Sssds";
             var keyBytes = Encoding.UTF8.GetBytes(secretKey);
             var signingKey = new SymmetricSecurityKey(keyBytes);
 
             // Create the claims for the token
-            if(role == "2")
+            if (item.Role == "2")
             {
                 var claims = new[]
                 {
-                new Claim("email", email),
-                new Claim("role", role),
-                new Claim("id", id),
-                new Claim("businessCategory", businessCategory)
+                new Claim("email", item.Email),
+                new Claim("role", item.Role),
+                new Claim("id", item.Id),
+                new Claim("businessCategory", item.BusinessCategory),
+                new Claim("name" , item.Name)
                 };
                 // Create the JWT token
                 var token = new JwtSecurityToken(
                     claims: claims,
-                    expires: DateTime.UtcNow.AddMonths(2),                 
+                    expires: DateTime.UtcNow.AddMonths(2),
                     signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
                 );
 
@@ -109,9 +103,10 @@ namespace DeliveryAgentModule.Controllers
             {
                 var claims = new[]
                 {
-                new Claim("email", email),
-                new Claim("role", role),
-                new Claim("id", id),
+                new Claim("email", item.Email),
+                new Claim("role", item.Role),
+                new Claim("id", item.Id),
+                new Claim("name" , item.Name)
                 };
                 // Create the JWT token
                 var token = new JwtSecurityToken(
@@ -128,7 +123,6 @@ namespace DeliveryAgentModule.Controllers
 
         }
 
-
-}
+    }
 
 }

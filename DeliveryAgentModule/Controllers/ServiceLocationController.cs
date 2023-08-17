@@ -41,7 +41,7 @@ namespace DeliveryAgent.API.Controllers
         /// <returns></returns>
         [HttpPost]
         [ValidateModel]
-        public async Task<IActionResult> AddNewWorkingLocationAsync([FromBody][Required] AddServiceLocationDto workingLocationDto)
+        public async Task<IActionResult> AddNewWorkingLocationAsync([FromBody][Required] ServiceLocationDto workingLocationDto)
         {
             var result = await workingLocationService.AddNewWorkingLocationAsync(workingLocationDto);
             return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);

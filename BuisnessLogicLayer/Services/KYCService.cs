@@ -26,8 +26,12 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto?> GetAsync(long agentId)
         {
-            var personalDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == agentId);
-            var kycDetail = personalDetail.KYCs;
+            var agent = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == agentId);
+            if(agent == null)
+            {
+                return null;
+            }
+            var kycDetail = agent.KYCs;
             if(kycDetail == null)
             {
                 return null;

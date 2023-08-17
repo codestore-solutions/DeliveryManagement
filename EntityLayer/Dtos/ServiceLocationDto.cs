@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EntityLayer.Dtos
 {
-    public class AddServiceLocationDto
+    public class ServiceLocationDto
     {
         [Required]
         [Range(1, long.MaxValue)]
@@ -26,14 +26,7 @@ namespace EntityLayer.Dtos
         public string Address { get; set; } = null!;
 
         [Required]
-        [DataType(DataType.Time)]
-        [RegularExpression(@"^[0-2][0-9]:00$")]
-        public string FromTime { get; set; } = null!;
-
-        [Required]
-        [DataType(DataType.Time)]
-        [RegularExpression(@"^[0-2][0-9]:00$")]
-        public string ToTime { get; set; } = null!;
+        public List<long> TimeSlotIds { get; set; } = new List<long>();
          
         [Required]
         public List<string> SelectedDays { get; set; } = null!;

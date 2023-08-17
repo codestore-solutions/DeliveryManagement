@@ -18,7 +18,7 @@ namespace EntityLayer.Dtos
 
         [Required]
         [StringLength(50, MinimumLength = 1)]
-        [RegularExpression(@"^[A-Za-z0-9.:,/ -]+$", ErrorMessage = StringConstant.FullNameError)]
+        [RegularExpression(@"^[A-Za-z -]+$", ErrorMessage = StringConstant.FullNameError)]
         public string FullName { get; set; } = null!;
 
         [Required]
@@ -30,7 +30,7 @@ namespace EntityLayer.Dtos
         [DataType(DataType.PhoneNumber)]
         [StringLength(15, MinimumLength = 10)]
         [Phone]
-        public string PhoneNumber { get; set; } = null!;
+        public string PhoneNumber { get; set; } = null!; 
 
         [Required]
         [DataType(DataType.EmailAddress)]

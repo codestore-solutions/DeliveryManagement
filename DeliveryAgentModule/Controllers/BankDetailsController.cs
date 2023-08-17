@@ -29,7 +29,8 @@ namespace DeliveryAgent.API.Controllers
         public async Task<ActionResult<ResponseDto>> GetBankDetailAsync([FromQuery][Required] long agentId)
         {
             var result = await bankDetailsService.GetAsync(agentId);
-            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : new ResponseDto { StatusCode = 200,Data = result, Success =true,Message = StringConstant.SuccessMessage};
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) 
+                : new ResponseDto { StatusCode = 200, Data = result, Success = true, Message = StringConstant.SuccessMessage};
         }
 
         /// <summary>

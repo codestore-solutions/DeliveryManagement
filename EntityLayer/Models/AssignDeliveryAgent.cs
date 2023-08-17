@@ -29,7 +29,6 @@ namespace EntityLayer.Models
 
         [Required]
         public DateTime UpdatedOn { get; set; }
-
       
         [Required]
         public long DeliveryAddressId { get; set; }

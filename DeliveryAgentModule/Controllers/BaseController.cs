@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using EntityLayer.Common;
+using EntityLayer.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace DeliveryAgent.API.Controllers
 {
@@ -8,6 +10,35 @@ namespace DeliveryAgent.API.Controllers
     public class BaseController : ControllerBase
     {
         public IEnumerable<object> UserClaims => HttpContext.User.Claims.Select(c => new { c.Type, c.Value }).ToList();
-
+        protected UserClaimDto GetUserClaimDto()
+        {
+            try
+            {
+                var token = HttpContext.Request.Headers[AuthConstants.Authorization].ToString().Replace("Bearer ", "");
+                if (string.IsNullOrWhiteSpace(token))
+                {
+                    throw new UnauthorizedAccessException(StringConstant.TokenMissing);
+                }
+                var user = User;
+                if (user != null && user.FindFirst(AuthConstants.Id) != null)
+                {
+                    var id = user.FindFirstValue(AuthConstants.Id);
+                    // Verify with user Module Needs to be integrated.
+                    return new UserClaimDto
+                    {
+                        Token = token,
+                        UserId = Convert.ToUInt64(id),
+                        Email = user.FindFirstValue(AuthConstants.Email),
+                        Name = user.FindFirstValue(AuthConstants.Name),
+                        Role = user.FindFirstValue(AuthConstants.Role)
+                    };
+                }
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                throw ex;
+            }
+            return null;
+        }
     }
 }
