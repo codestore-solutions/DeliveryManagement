@@ -46,13 +46,13 @@ const DeliveryAgents: React.FC<Props> = ({ searchInput, filters }) => {
   const [pagination, setPagination] = useState<pagination>({
     pageNumber: 1,
     total: agentList?.total,
-    pageSize: 6,
+    pageSize: 2,
     showTotal: (total: any, range: any) =>
       `${range[0]}-${range[1]} of ${total} items`,
   });
   const handleClick = (state: any) => {
     navigate(
-      `/dashboard/agent-details/${state?.personalDetails?.agentId}`,
+      `/dashboard/agent-details/${state?.agentId}`,
       { state }
     );
   };
@@ -69,34 +69,34 @@ const DeliveryAgents: React.FC<Props> = ({ searchInput, filters }) => {
     },
     {
       title: "Email Id",
-      dataIndex: "personalDetails",
-      key: "personalDetails",
-      render: (personalDetails: any) => (
-        <p className="col-text">{personalDetails?.email}</p>
+      dataIndex: "email",
+      key: "email",
+      render: (email: string) => (
+        <p className="col-text">{email}</p>
       ),
     },
     {
       title: "Name",
-      dataIndex: "personalDetails",
-      key: "personalDetails",
-      render: (personalDetails: any) => (
-        <p className="highlighted-col-text">{personalDetails?.fullName}</p>
+      dataIndex: "fullName",
+      key: "fullName",
+      render: (fullName: string) => (
+        <p className="highlighted-col-text">{fullName}</p>
       ),
     },
     {
       title: "Mobile Number",
-      dataIndex: "personalDetails",
-      key: "personalDetails",
-      render: (personalDetails:any) => <p className="col-text">{personalDetails?.phoneNumber}</p>,
+      dataIndex: "phoneNumber",
+      key: "phoneNumber",
+      render: (phoneNumber:string) => <p className="col-text">{phoneNumber}</p>,
     },
     {
       title: "Status",
-      key: "serviceLocation",
-      dataIndex: "serviceLocation",
-      render: (_, { serviceLocation }:any) => (
+      key: "agentStatus",
+      dataIndex: "agentStatus",
+      render: (_, { agentStatus }:any) => (
         <>
           <span>
-            {serviceLocation?.agentStatus === 1 ? (
+            {agentStatus === 1 ? (
               <p className="available">Available</p>
             ) : (
               <p className="offline">offline</p>
@@ -107,17 +107,17 @@ const DeliveryAgents: React.FC<Props> = ({ searchInput, filters }) => {
     },
     {
       title: "Region",
-      dataIndex: "serviceLocation",
-      key: "serviceLocation",
-      render: (serviceLocation: any) => CustomizeText(serviceLocation?.address),
+      dataIndex: "address",
+      key: "address",
+      render: (address: string) => CustomizeText(address),
     },
     {
       title: "Date",
-      dataIndex: "personalDetails",
+      dataIndex: "dateOfBirth",
       key: "personalDetails",
 
-      render: (data: any) => (
-        <p className="col-text"> {CustomizeDate.getDate(data?.dateOfBirth)} </p>
+      render: (dateOfBirth: any) => (
+        <p className="col-text"> {CustomizeDate.getDate(dateOfBirth)} </p>
       ),
     },
     {

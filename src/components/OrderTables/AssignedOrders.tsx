@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { CustomTable } from "..";
 import OrderService from "../../services/OrderService";
-import { ApiContants } from "../../constants/ApiContants";
+import { ApiConstants } from "../../constants/ApiConstants";
 import CustomizeDate from "../../utils/helpers/CustomizeDate";
 import { pagination } from "../../utils/types";
 // import {RightOutlined, LeftOutlined} from "@ant-design/icons";
@@ -21,24 +21,24 @@ export interface DataType {
   assigned_agent: string;
 }
 
-interface Props{
-  activeTab:string
+interface Props {
+  activeTab: string
 }
 
-const AssignedOrders: React.FC<Props> = ({activeTab}) => {
+const AssignedOrders: React.FC<Props> = ({ activeTab }) => {
   const navigate = useNavigate();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [pagination, setPagination] = useState<pagination>({
     showLessItems: true,
     hideOnSinglePage: true,
-    simple:true,
+    simple: true,
     pageNumber: 1,
     total: data?.total,
     pageSize: 6,
     showTotal: (total: any, range: any) =>
       `${range[0]}-${range[1]} of ${total} items`,
-   });
+  });
   const handleTableChange = (pagination: any) => {
     console.log("pag", pagination);
     const { current, pageSize } = pagination;
@@ -67,7 +67,7 @@ const AssignedOrders: React.FC<Props> = ({activeTab}) => {
       render: (deliveryAgent: any) => (
         <p
           className="tableTxt"
-          // onClick={() => navigate("/dashboard/agent-details")}
+        // onClick={() => navigate("/dashboard/agent-details")}
         >
           {deliveryAgent?.fullName}
         </p>
@@ -97,7 +97,7 @@ const AssignedOrders: React.FC<Props> = ({activeTab}) => {
       title: "Order Status",
       dataIndex: "orderStatus",
       key: "orderStatus",
-      render: (orderStatus:any) => <p className="tableTxt">{orderStatus === 6 ? 'Accepted' : 'Assigned'}</p>,
+      render: (orderStatus: any) => <p className="tableTxt">{orderStatus === 6 ? 'Accepted' : 'Assigned'}</p>,
     },
     {
       title: "Date",
@@ -118,9 +118,9 @@ const AssignedOrders: React.FC<Props> = ({activeTab}) => {
 
   const fetchOrder = () => {
     setLoading(true);
-    OrderService.getAssignedOrdersList(pagination, [5,6])
+    OrderService.getAssignedOrdersList(pagination, [5, 6])
       .then((res: any) => {
-        if (res?.status === ApiContants.successCode) {
+        if (res?.status === ApiConstants.successCode) {
           setData(res?.data);
           setLoading(false);
         }
@@ -131,9 +131,9 @@ const AssignedOrders: React.FC<Props> = ({activeTab}) => {
       });
   };
 
-  useEffect(() =>{
-      fetchOrder();
-  }, [activeTab,pagination.pageNumber])
+  useEffect(() => {
+    fetchOrder();
+  }, [activeTab, pagination.pageNumber])
   useEffect(() => {
     setPagination({ ...pagination, total: data?.total });
   }, [data]);

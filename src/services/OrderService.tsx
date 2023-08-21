@@ -1,5 +1,5 @@
 import API from "./ApiService";
-import { ApiContants } from '../constants/ApiContants';
+import { ApiConstants } from '../constants/ApiConstants';
 import { storesIds } from "../../dummyData";
 import { message } from "antd";
 
@@ -13,19 +13,19 @@ const getAvailableOrdersList = async (pagination: any) => {
     vendorIds: storesIds,
     page: pageNumber,
     pageSize: pageSize,
-    orderStatus:[4,7]
+    orderStatus: [4, 7]
   };
-  let url = `${ApiContants.orderProcessingbaseUrl}${ApiContants.getAvailableOrders}`;
+  let url = `${ApiConstants.orderProcessingbaseUrl}${ApiConstants.getAvailableOrders}`;
 
   let res = await API({}, url, "GET", params);
   let count = 1;
-  
-  let fromattedList = res?.data?.data?.list?.map((item:any) =>{
-        return {...item, key: count++}
+
+  let fromattedList = res?.data?.data?.list?.map((item: any) => {
+    return { ...item, key: count++ }
   });
   const response = {
-      total: res?.data?.data?.total,
-      list: fromattedList
+    total: res?.data?.data?.total,
+    list: fromattedList
   }
   return response;
 };
@@ -34,28 +34,28 @@ const getAvailableOrdersList = async (pagination: any) => {
  * @param pagination
  * @returns array of available orders
  */
-const getAssignedOrdersList = async (pagination: any, status:any) => {
+const getAssignedOrdersList = async (pagination: any, status: any) => {
   const { pageNumber, pageSize } = pagination;
   let params = {
     vendorIds: storesIds,
     page: pageNumber,
     pageSize: pageSize,
-    orderStatus:status
+    orderStatus: status
   };
-  let url = `${ApiContants.orderProcessingbaseUrl}${ApiContants.getAvailableOrders}`;
+  let url = `${ApiConstants.orderProcessingbaseUrl}${ApiConstants.getAvailableOrders}`;
 
   let res = await API({}, url, "GET", params);
   let count = 1;
   console.log("ReactData", res?.data);
-  let fromattedList = res?.data?.data?.list?.map((item:any) =>{
-        return {...item, key: count++}
+  let fromattedList = res?.data?.data?.list?.map((item: any) => {
+    return { ...item, key: count++ }
   });
   const response = {
-      status: res?.status,
-      data:{
-        total: res?.data?.data?.total,
-        list: fromattedList
-      }
+    status: res?.status,
+    data: {
+      total: res?.data?.data?.total,
+      list: fromattedList
+    }
   }
   return response;
 };
@@ -66,7 +66,7 @@ const getAssignedOrdersList = async (pagination: any, status:any) => {
  * @returns object of OrderDteails
  */
 const getOrderDetailsById = async (id: string | undefined) => {
-  let url = `${ApiContants.orderProcessingbaseUrl}${ApiContants.getOrderDetailsById}/${id}`;
+  let url = `${ApiConstants.orderProcessingbaseUrl}${ApiConstants.getOrderDetailsById}/${id}`;
   let res = await API({}, url, "GET");
   return res?.data;
 };
@@ -76,22 +76,22 @@ const getOrderDetailsById = async (id: string | undefined) => {
  * @returns object of OrderDteails
  */
 const updateOrder = async (payload: any) => {
-  let url = `${ApiContants.orderProcessingbaseUrl}${ApiContants.updateOrder}`;
+  let url = `${ApiConstants.orderProcessingbaseUrl}${ApiConstants.updateOrder}`;
   let res = await API(payload, url, "PUT");
-  if(res?.status === ApiContants.successCode){
+  if (res?.status === ApiConstants.successCode) {
     message.success("Agent Assigned Sucessfully");
   }
   let response = {
-     status: res.status,
-     data: res.data
+    status: res.status,
+    data: res.data
   }
   console.log("Res", res);
   return response;
 };
 
 
-const getOrderTimeline  = async (id: number) =>{
-  let url = `${ApiContants.orderProcessingbaseUrl}${ApiContants.getOrderTimeLine}/${id}`;
+const getOrderTimeline = async (id: number) => {
+  let url = `${ApiConstants.orderProcessingbaseUrl}${ApiConstants.getOrderTimeLine}/${id}`;
   let res = await API({}, url, "GET");
   return res?.data;
 }

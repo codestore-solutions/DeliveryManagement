@@ -12,27 +12,23 @@ import {
   StatusTick,
   TimeTick,
 } from "../../assets";
-import { Col, Row } from "antd";
+import { Row , Col, Typography} from "antd";
 import AgentService from "../../services/AgentService";
 import Spinner from "../Spinner/Spinner";
-import CustomizeDate from "../../utils/helpers/CustomizeDate";
-
+import { getVehicleLabel } from "../../utils/helpers/GetLabelByValue";
+import AgentInfoCard from "../../components/AgentInfoCard/AgentInfoCard";
+import DeliveryStatusCard from "../../components/AgentStatusCard/AgentStatusCard";
+import AgentVerifyCard from "../../components/AgentVerifyCard/AgentVerifyCard";
+const {Text}  = Typography;
 // const antIcon = <LoadingOutlined style={{ color: "#fff" }} spin />;
 const AgentDetails: React.FC = () => {
   const navigate = useNavigate();
   const [data, setData] = useState<any>(null);
-  console.log('data', data);
+  console.log("data", data);
   const [loading, setLoading] = useState<boolean>(false);
   const location = useLocation();
-  const id = location.state?.personalDetails?.agentId;
-  // console.log("Dey", state)
-  // const verifyAgentHandler = async () => {
-  //   let instance = AgentServices.getInstance();
-  //   setLoading(true);
-  //   instance.verifyAgent(state.deliveryAgentId, 1).then((res) => {
-  //     if (res) setLoading(false);
-  //   });
-  // };
+  const id = location.state?.agentId;
+
   const fetchAgentDetails = async (id: number) => {
     try {
       setLoading(true);
@@ -50,17 +46,17 @@ const AgentDetails: React.FC = () => {
   useEffect(() => {
     fetchAgentDetails(Number(id));
   }, []);
-  
-   if(loading){
-     return <Spinner />
-   }
+
+  if (loading) {
+    return <Spinner />;
+  }
   return (
     <div id="agent-details">
       <div className="agent-header">
         <div className="left">
-        <span onClick={goBack}>
+          <span onClick={goBack}>
             <img src={LeftArrowIcon} alt="" />
-            </span>
+          </span>
           <h3>Delivery Partner Details </h3>
         </div>
         <div className="right">
@@ -77,144 +73,94 @@ const AgentDetails: React.FC = () => {
       </div>
       <div className="agent-details-content">
         <Row gutter={[16, 16]}>
-          <Col xs={24} sm={24} md={12} lg={8} xl={8}>
-            <div className="card-container">
-              <h3>Personal Details</h3>
-              <div className="container-content">
-                <div className="container-row">
-                  <span className="container-col">Name</span>
-                  <span className="container-col dark">{data?.personalDetails?.fullName}</span>
-                </div>
-                <div className="container-row">
-                  <span className="container-col">Email Id</span>
-                  <span className="container-col dark">{data?.personalDetails?.email}</span>
-                </div>
-                <div className="container-row">
-                  <span className="container-col">Mobile Number</span>
-                  <span className="container-col dark">{data?.personalDetails?.phoneNumber}</span>
-                </div>
-                <div className="container-row">
-                  <span className="container-col">Res. Address</span>
-                  <span className="container-col dark">
-                   {data?.personalDetails?.address}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </Col>
-          <Col xs={24} sm={24} md={12} lg={8} xl={8}>
-            {/* Content for column 2 */}
-            <div className="card-container">
-              <h3>Joining Details</h3>
-              <div className="container-content">
-                <div className="container-row">
-                  <span className="container-col">Unique ID</span>
-                  <span className="container-col dark">{data?.personalDetails?.deliveryAgentId}</span>
-                </div>
-                <div className="container-row">
-                  <span className="container-col">Joining Date</span>
-                  <span className="container-col dark">{CustomizeDate.getDate(data?.personalDetails?.dateOfBirth)}</span>
-                </div>
-                <div className="container-row">
-                  <span className="container-col">DL Number</span>
-                  <span className="container-col dark">GARSK12746239DH</span>
-                </div>
-                
-              </div>
-            </div>
-          </Col>
-          <Col xs={24} sm={24} md={12} lg={8} xl={8}>
-            {/* Content for column 3 */}
-            <div className="card-container">
-              <h3>Bank Details</h3>
-              <div className="container-content">
-                <div className="container-row">
-                  <span className="container-col">IFSC</span>
-                  <span className="container-col dark">{data?.bankDetails?.ifscCode}</span>
-                </div>
-                <div className="container-row">
-                  <span className="container-col">A/C Number</span>
-                  <span className="container-col dark">{data?.bankDetails?.accountNumber}</span>
-                </div>
-                <div className="container-row">
-                  <span className="container-col">Branch</span>
-                  <span className="container-col dark">{data?.bankDetails?.bankName}</span>
-                </div>
-               
-              </div>
-            </div>
-          </Col>                                                    
+          <AgentInfoCard
+            title="Personal Details"
+            data={{
+              Name: data?.fullName,
+              "Email Id": data?.email,
+              "Mobile Number": data?.phoneNumber,
+              "Res. Address": data?.address,
+            }}
+          />
+          <AgentInfoCard
+            title="Vehicle Details"
+            data={{
+              "Registration Number": data?.vehicleDetails.registrationNumber,
+              "Vehicle Model": data?.vehicleDetails.vehicleModel,
+              "Vehicle Comapny": data?.vehicleDetails.company,
+              "Manufactured Year": data?.vehicleDetails.manufacturedYear,
+              "Vehicle Type": getVehicleLabel(
+                data?.vehicleDetails?.vehicleType
+              ),
+            }}
+          />
+          <AgentInfoCard
+            title="Bank Details"
+            data={{
+              "AccountHolder Name": data?.bankDetails?.accountHolderName,
+              IFSC: data?.bankDetails?.ifscCode,
+              "A/C Number": data?.bankDetails?.accountNumber,
+              Bank: data?.bankDetails?.bankName,
+            }}
+          />
         </Row>
         {/* Add Vechile Details Container */}
-        <div className="vechile-details">
-          <h3>Vehicle Details</h3>
-          <div className="details">
-            <span className="details-item">
-            ManufacturedYear : <span className="dark">{data?.vehicleDetails?.manufacturedYear}</span>{" "}
-            </span>
-            <span className="details-item">
-              Registration Number : <span className="dark">{data?.vehicleDetails?.registrationNumber}</span>{" "}
-            </span>
-            <span className="details-item">
-             VehicleType : <span className="dark">{data?.vehicleDetails?.vehicleType}</span>{" "}
-            </span>
-            <span className="details-item">
-              Vehicle Model : <span className="dark">{data?.vehicleDetails?.vehicleModel}</span>{" "}
-            </span>
-            <span className="details-item">
-              Vehicle Company : <span className="dark">{data?.vehicleDetails?.company}</span>{" "}
-            </span>
-          </div>
-        </div>
+        <Row gutter={[16, 16]} style={{paddingTop:'10px', paddingBottom:'10px'}} >
+          <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+            <div className="card-container">
+              <h3>Other Details</h3>
+              <div className="container-content">
+                <div className="container-row">
+                  <Text className="container-col">Region</Text>
+                  <span className="container-col dark">Delhi</span>
+                </div>
+                <div className="container-row">
+                  <Text className="container-col">Total Earning</Text>
+                  <Text type="success">14580</Text>
+                </div>
+                <div className="container-row">
+                  <span className="container-col">Status</span>
+                  <Text type="warning">Busy</Text>
+                </div>
+              </div>
+            </div>
+          </Col>
+          <AgentVerifyCard agentId={id} />
+        </Row>
+        
         <div className="delivery-report">
           <h3>Delivery Status</h3>
           <div className="conatiner-content">
             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-              <Col xs={24} sm={12} md={8} lg={8} xl={6}>
-                <div className="container">
-                  <img src={CheckTick} alt="" />
-                  <div className="details">
-                    <h3>300</h3>
-                    <span>Delivered</span>
-                  </div>
-                </div>
-              </Col>
-              <Col xs={24} sm={12} md={8} lg={8} xl={6}>
-                <div className="container">
-                  <img src={StatusTick} alt="" className="status-tick" />
-                  <div className="details">
-                    <h3>300</h3>
-                    <span>Cancelled</span>
-                  </div>
-                </div>
-              </Col>
-              <Col xs={24} sm={12} md={8} lg={8} xl={6}>
-                <div className="container">
-                  <img src={RejectedIcon} alt="" className="reject-tick" />
-                  <div className="details">
-                    <h3>300</h3>
-                    <span>Rejected</span>
-                  </div>
-                </div>
-              </Col>
-              <Col xs={24} sm={12} md={8} lg={8} xl={6}>
-                <div className="container">
-                  <img src={TimeTick} alt="" className="time-tick" />
-                  <div className="details">
-                    <h3>7 hrs</h3>
-                    <span>Online Hours</span>
-                  </div>
-                </div>
-              </Col>
-              <Col xs={24} sm={12} md={8} lg={8} xl={6}>
-                <div className="container">
-                  <img src={TimeTick} alt="" className="time-tick" />
-                  <div className="details">
-                    <h3>1500</h3>
-                    <span>Feedback Received</span>
-                  </div>
-                </div>
-              </Col>
+              <DeliveryStatusCard
+                icon={CheckTick}
+                value="300"
+                label="Delivered"
+              />
+              <DeliveryStatusCard
+                icon={StatusTick}
+                value="300"
+                label="Cancelled"
+                iconClassName="status-tick"
+              />
+              <DeliveryStatusCard
+                icon={RejectedIcon}
+                value="300"
+                label="Rejected"
+                iconClassName="reject-tick"
+              />
+              <DeliveryStatusCard
+                icon={TimeTick}
+                value="7 hrs"
+                label="Online Hours"
+                iconClassName="time-tick"
+              />
+              <DeliveryStatusCard
+                icon={TimeTick}
+                value="1500"
+                label="Feedback Received"
+                iconClassName="time-tick"
+              />
             </Row>
           </div>
         </div>

@@ -1,24 +1,24 @@
-import { ApiContants } from "../../constants/ApiContants";
-const setUser =  (userData: any) => {
+import { ApiConstants } from "../../constants/ApiConstants";
+const setUser = (userData: any) => {
   const data = JSON.stringify(userData);
-  localStorage.setItem(ApiContants.user, data);
+  localStorage.setItem(ApiConstants.user, data);
 };
 
-const getUser =  () => {
-  const data = localStorage.getItem(ApiContants.user);
+const getUser = () => {
+  const data = localStorage.getItem(ApiConstants.user);
   // console.log("data",data)
   return data ? JSON.parse(data)?.jwtToken : null;
 };
 
-const getUserDetails =  () => {
-  const data = localStorage.getItem(ApiContants.user);
+const getUserDetails = () => {
+  const data = localStorage.getItem(ApiConstants.user);
   // console.log("data",data)
   return data ? JSON.parse(data) : null;
 };
 
 function logout() {
   try {
-    localStorage.removeItem(ApiContants.user);
+    localStorage.removeItem(ApiConstants.user);
     return true;
   } catch (error) {
     // console.error('Error removing user from localStorage:', error);
@@ -28,7 +28,7 @@ function logout() {
 
 function CheckTokenAndRedirect() {
   const jwtToken = getUser();
-  return jwtToken || jwtToken !== null ? true: false;
+  return jwtToken || jwtToken !== null ? true : false;
 }
 
 

@@ -1,4 +1,4 @@
-import React, { useState ,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import type { ColumnsType } from "antd/es/table";
 import "./style.scss";
 import { CustomTable } from "../../components";
@@ -6,7 +6,7 @@ import { Space } from "antd";
 import { useNavigate } from "react-router-dom";
 import { DetailsIcon } from "../../assets";
 import OrderService from "../../services/OrderService";
-import { ApiContants } from "../../constants/ApiContants";
+import { ApiConstants } from "../../constants/ApiConstants";
 import { pagination } from "../../utils/types";
 import CustomizeDate from "../../utils/helpers/CustomizeDate";
 
@@ -18,10 +18,10 @@ export interface DataType {
   orderId: string;
 }
 
-interface Props{
-  activeTab?:string
+interface Props {
+  activeTab?: string
 }
-const AssignedAgents: React.FC<Props> = ({activeTab}) => {
+const AssignedAgents: React.FC<Props> = ({ activeTab }) => {
   const navigate = useNavigate();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -29,13 +29,13 @@ const AssignedAgents: React.FC<Props> = ({activeTab}) => {
   const [pagination, setPagination] = useState<pagination>({
     showLessItems: true,
     hideOnSinglePage: true,
-    simple:true,
+    simple: true,
     pageNumber: 1,
     total: data?.total,
     pageSize: 6,
     showTotal: (total: any, range: any) =>
       `${range[0]}-${range[1]} of ${total} items`,
-   });
+  });
   const handleTableChange = (pagination: any) => {
     const { current, pageSize } = pagination;
     setPagination({ ...pagination, pageNumber: current, limit: pageSize });
@@ -68,14 +68,14 @@ const AssignedAgents: React.FC<Props> = ({activeTab}) => {
       key: "vendor",
       render: (vendor) => <p className="tableId">{vendor?.business?.name}</p>,
     },
-    
+
     {
       title: "Order Status",
       dataIndex: "orderStatus",
       key: "orderStatus",
       render: (orderStatus) => <p className="tableTxt">
-        {orderStatus === 5 ? 'Assgined' :( orderStatus === 6 ? 'Aceepted': 'Rejected')}
-        </p>,
+        {orderStatus === 5 ? 'Assgined' : (orderStatus === 6 ? 'Aceepted' : 'Rejected')}
+      </p>,
     },
     {
       title: "Date",
@@ -99,9 +99,9 @@ const AssignedAgents: React.FC<Props> = ({activeTab}) => {
 
   const fetchOrder = () => {
     setLoading(true);
-    OrderService.getAssignedOrdersList(pagination, [5,6])
+    OrderService.getAssignedOrdersList(pagination, [5, 6])
       .then((res: any) => {
-        if (res?.status === ApiContants.successCode) {
+        if (res?.status === ApiConstants.successCode) {
           setData(res?.data);
           setLoading(false);
         }
@@ -112,12 +112,12 @@ const AssignedAgents: React.FC<Props> = ({activeTab}) => {
       });
   };
 
-  useEffect(() =>{
+  useEffect(() => {
     fetchOrder();
-}, [activeTab,pagination.pageNumber])
-useEffect(() => {
-  setPagination({ ...pagination, total: data?.total });
-}, [data]);
+  }, [activeTab, pagination.pageNumber])
+  useEffect(() => {
+    setPagination({ ...pagination, total: data?.total });
+  }, [data]);
   return (
     <div id="delivery-agent">
       <CustomTable
