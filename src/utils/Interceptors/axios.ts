@@ -1,6 +1,6 @@
 import axios from "axios";
 import { message } from "antd";
-import { ApiContants } from "../../constants/ApiContants";
+import { ApiConstants } from "../../constants/ApiConstants";
 
 const instance = axios.create();
 
@@ -24,25 +24,25 @@ instance.interceptors.response.use(
   },
   (error) => {
     let apiData = {
-      status: ApiContants.errorCode,
+      status: ApiConstants.errorCode,
       data: "Service Unavailable"
-    } as {status :any, data:any};
+    } as { status: any, data: any };
     if (error && error.response) {
       // Request made and server responded
       console.log(error.response.data);
       console.log(error.response.status);
       console.log(error.response.headers);
-      if(error.response.status === ApiContants.internalServerError){
+      if (error.response.status === ApiConstants.internalServerError) {
         apiData = {
           status: error.response.status,
           data: error.response.data?.message,
         };
-      }else if(error.response.status === ApiContants?.badRequest){
+      } else if (error.response.status === ApiConstants?.badRequest) {
         apiData = {
           status: error.response.status,
           data: error.response.data
-       }
-      } else if (error.response.status?.statusCode === ApiContants?.badRequest) {
+        }
+      } else if (error.response.status?.statusCode === ApiConstants?.badRequest) {
         // Handle validation errors
         const validationErrors = error.response.data;
         let errorMessages = new Array<any>();
@@ -62,7 +62,7 @@ instance.interceptors.response.use(
           message.error(errorMessages[1]);
           // apiData?.data = errorMessages;
         }
-      }else if (error.response.status === ApiContants?.badRequest) {
+      } else if (error.response.status === ApiConstants?.badRequest) {
         // Handle validation errors
         const validationErrors = error.response.data;
         let errorMessages = new Array<any>();
@@ -80,15 +80,15 @@ instance.interceptors.response.use(
           // Display error messages to the user
           console.log('err', errorMessages)
           apiData = {
-             status: error.response.status,
-             data: errorMessages[1]
+            status: error.response.status,
+            data: errorMessages[1]
           }
         }
-      } else if(error.response.status === ApiContants.notFound){
+      } else if (error.response.status === ApiConstants.notFound) {
         apiData = {
           status: error.response.status,
           data: 'Not Found'
-       }
+        }
       }
 
       else {
@@ -97,7 +97,7 @@ instance.interceptors.response.use(
           status: error.response.status,
           data: error.response.data,
         };
-        if (error.response?.status === ApiContants.unAuthorizedCode) {
+        if (error.response?.status === ApiConstants.unAuthorizedCode) {
           // unAuthorized();
           // navigate('/');
         }

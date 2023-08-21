@@ -7,7 +7,7 @@ import { DetailsIcon } from "../../assets";
 import { useNavigate } from "react-router-dom";
 import { CustomTable } from "..";
 import OrderService from "../../services/OrderService";
-import { ApiContants } from "../../constants/ApiContants";
+import { ApiConstants } from "../../constants/ApiConstants";
 import CustomizeDate from "../../utils/helpers/CustomizeDate";
 import { pagination } from "../../utils/types";
 
@@ -92,7 +92,7 @@ const CompletedOrders: React.FC<Props> = ({ activeTab }) => {
       title: "Date",
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (text: any) => <p className="tableId">{ CustomizeDate.getDate(text)}</p>,
+      render: (text: any) => <p className="tableId">{CustomizeDate.getDate(text)}</p>,
     },
     {
       title: "Order Details",
@@ -109,7 +109,7 @@ const CompletedOrders: React.FC<Props> = ({ activeTab }) => {
     setLoading(true);
     OrderService.getAssignedOrdersList(pagination, [11])
       .then((res: any) => {
-        if (res?.status === ApiContants.successCode) {
+        if (res?.status === ApiConstants.successCode) {
           setData(res?.data);
           setLoading(false);
         }
@@ -123,8 +123,8 @@ const CompletedOrders: React.FC<Props> = ({ activeTab }) => {
   useEffect(() => {
     fetchOrder();
   }, [activeTab, pagination.pageNumber]);
-  useEffect(() =>{
-    setPagination({...pagination, total: data?.total});
+  useEffect(() => {
+    setPagination({ ...pagination, total: data?.total });
   }, [data])
   return (
     <CustomTable

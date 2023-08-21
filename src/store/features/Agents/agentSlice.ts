@@ -31,12 +31,12 @@ export const getAllAgents = createAsyncThunk(
   }
 );
 
-// Get avialable Agents List
+// Get available Agents List
 export const getAvailableAgent = createAsyncThunk(
   "agents/getAvailableAgent",
   async ({ payload,searchInput }: { payload: pagination,searchInput:any }, thunkAPI) => {
     try {
-      const res = await AgentService.getAvialableAgents(payload,searchInput);
+      const res = await AgentService.getAvailableAgents(payload,searchInput);
       return res;
     } catch (error) {
       return thunkAPI.rejectWithValue(error);

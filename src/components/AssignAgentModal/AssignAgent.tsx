@@ -5,7 +5,7 @@ import "./style.scss";
 // import date from "../../utils/helpers/CustomizeDate";
 import CustomizeData from "../../utils/helpers/CustomizeData";
 import AgentService from "../../services/AgentService";
-import { ApiContants } from "../../constants/ApiContants";
+import { ApiConstants } from "../../constants/ApiConstants";
 // import OrderService from "../../services/OrderService";
 import CustomizeText from "../../utils/helpers/CustomizeText";
 import { TableRowSelection } from "antd/es/table/interface";
@@ -104,7 +104,7 @@ const AssignAgent: React.FC<Props> = ({
         const { statusCode, message } = await AgentService.assignAgentManually(
           payload
         );
-        if (statusCode === ApiContants.successCode) {
+        if (statusCode === ApiConstants.successCode) {
           onClose();
           fetchAgents();
           message.success(message);
@@ -114,10 +114,10 @@ const AssignAgent: React.FC<Props> = ({
           selectedOrderData,
           values?.personalDetails?.agentId
         );
-        // console.log("Manual Automatic Values", payload);
+
         AgentService.assignAgentManually(payload)
           .then((res: any) => {
-            if (res.statusCode === ApiContants.successCode) {
+            if (res.statusCode === ApiConstants.successCode) {
               fetch();
               handleResetSelectionForOrder();
               onClose();
@@ -137,25 +137,25 @@ const AssignAgent: React.FC<Props> = ({
   const columns: ColumnsType<DataType> = [
     {
       title: "Name",
-      dataIndex: "personalDetails",
-      render: (personalDetails: any) => (
-        <p className="highlighted-col-text">{personalDetails?.fullName}</p>
+      dataIndex: "fullName",
+      render: (fullName: string) => (
+        <p className="highlighted-col-text">{fullName}</p>
       ),
     },
 
     {
       title: "Address",
-      dataIndex: "serviceLocation",
-      render: (serviceLocation: any) => CustomizeText(serviceLocation?.address),
+      dataIndex: "address",
+      render: (address: any) => CustomizeText(address),
     },
     {
       title: "Status",
-      key: "serviceLocation",
-      dataIndex: "serviceLocation",
-      render: (_, { serviceLocation }: any) => (
+      key: "agentStatus",
+      dataIndex: "agentStatus",
+      render: (_, { agentStatus }: any) => (
         <>
           <span>
-            {serviceLocation?.agentStatus === 1 ? (
+            {agentStatus === 1 ? (
               <p className="available">Available</p>
             ) : (
               <p className="offline">offline</p>
@@ -176,9 +176,9 @@ const AssignAgent: React.FC<Props> = ({
     let payload = pagination;
     try {
       setLoading(true);
-      const data = await AgentService.getAvialableAgents(payload, searchInput);
+      const data = await AgentService.getAvailableAgents(payload, searchInput);
       if (data?.statusCode === 200) {
-         console.log('data', data);
+        console.log('data', data);
         setData(data);
       }
     } catch (err) {
