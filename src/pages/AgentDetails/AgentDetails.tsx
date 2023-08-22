@@ -19,11 +19,13 @@ import { getVehicleLabel } from "../../utils/helpers/GetLabelByValue";
 import AgentInfoCard from "../../components/AgentInfoCard/AgentInfoCard";
 import DeliveryStatusCard from "../../components/AgentStatusCard/AgentStatusCard";
 import AgentVerifyCard from "../../components/AgentVerifyCard/AgentVerifyCard";
+import { ApiConstants } from "../../constants/ApiConstants";
 const {Text}  = Typography;
 // const antIcon = <LoadingOutlined style={{ color: "#fff" }} spin />;
 const AgentDetails: React.FC = () => {
   const navigate = useNavigate();
   const [data, setData] = useState<any>(null);
+  const [orderStatusCount, setOrderStatusCount] = useState<any>(null);
   console.log("data", data);
   const [loading, setLoading] = useState<boolean>(false);
   const location = useLocation();
@@ -43,8 +45,20 @@ const AgentDetails: React.FC = () => {
   function goBack() {
     navigate(-1); // This will navigate one step back in the history stack.
   }
+
+  const getOrderStatusCount = async(id: number)=>{
+    try {
+      const {statusCode, data} = await AgentService.acceptRejectOrders(id);
+      if(statusCode === ApiConstants.successCode){
+         setOrderStatusCount(data);
+      }
+    } catch (err) {
+       console.log('Order Status Count Error', err)
+    }
+  }
   useEffect(() => {
     fetchAgentDetails(Number(id));
+    getOrderStatusCount(Number(id));
   }, []);
 
   if (loading) {
@@ -87,7 +101,7 @@ const AgentDetails: React.FC = () => {
             data={{
               "Registration Number": data?.vehicleDetails.registrationNumber,
               "Vehicle Model": data?.vehicleDetails.vehicleModel,
-              "Vehicle Comapny": data?.vehicleDetails.company,
+              "Vehicle Company": data?.vehicleDetails.company,
               "Manufactured Year": data?.vehicleDetails.manufacturedYear,
               "Vehicle Type": getVehicleLabel(
                 data?.vehicleDetails?.vehicleType
@@ -104,7 +118,7 @@ const AgentDetails: React.FC = () => {
             }}
           />
         </Row>
-        {/* Add Vechile Details Container */}
+        {/* Add Vehicle Details Container */}
         <Row gutter={[16, 16]} style={{paddingTop:'10px', paddingBottom:'10px'}} >
           <Col xs={24} sm={24} md={12} lg={12} xl={12}>
             <div className="card-container">
@@ -134,18 +148,18 @@ const AgentDetails: React.FC = () => {
             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
               <DeliveryStatusCard
                 icon={CheckTick}
-                value="300"
+                value={orderStatusCount?.deliveredOrdersCount}
                 label="Delivered"
               />
               <DeliveryStatusCard
                 icon={StatusTick}
-                value="300"
+                value='300'
                 label="Cancelled"
                 iconClassName="status-tick"
               />
               <DeliveryStatusCard
                 icon={RejectedIcon}
-                value="300"
+                value={orderStatusCount?.rejectedOrdersCount}
                 label="Rejected"
                 iconClassName="reject-tick"
               />

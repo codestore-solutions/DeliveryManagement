@@ -46,7 +46,7 @@ const DeliveryAgents: React.FC<Props> = ({ searchInput, filters }) => {
   const [pagination, setPagination] = useState<pagination>({
     pageNumber: 1,
     total: agentList?.total,
-    pageSize: 2,
+    pageSize: 7,
     showTotal: (total: any, range: any) =>
       `${range[0]}-${range[1]} of ${total} items`,
   });
@@ -106,7 +106,23 @@ const DeliveryAgents: React.FC<Props> = ({ searchInput, filters }) => {
       ),
     },
     {
-      title: "Region",
+      title: "Verification Status",
+      key: "verificationStatus",
+      dataIndex: "verificationStatus",
+      render: (_, { verificationStatus }:any) => (
+        <>
+          <span>
+            {verificationStatus === 1 ? (
+              <p className="available">Verified</p>
+            ) : (
+              <p className="offline">Not Verified</p>
+            )}{" "}
+          </span>
+        </>
+      ),
+    },
+    {
+      title: "Address",
       dataIndex: "address",
       key: "address",
       render: (address: string) => CustomizeText(address),
