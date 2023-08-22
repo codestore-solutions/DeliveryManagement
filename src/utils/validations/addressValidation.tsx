@@ -6,8 +6,7 @@ export const addAddresschema = Yup.object().shape({
   dayAndtime: Yup.object()
     .shape({
       days: Yup.array().of(Yup.string()).required(),
-      fromTime: Yup.string().required(),
-      toTime: Yup.string().required(),
+      timeSlotIds:Yup.array().of(Yup.string()).required(),
     })
     .required(),
 });

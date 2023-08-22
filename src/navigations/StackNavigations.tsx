@@ -17,28 +17,34 @@ import DrawerNavigation from './DrawerNavigation';
 import {TabHeader} from '../components';
 import {constant} from '../constant/GenralConstant';
 import {useAppDispatch, useAppSelector} from '../store/hooks';
-import {AuthStateInterface, initializeAuthStateUser, userSelector} from '../store/features/authSlice';
+import {AuthStateInterface, getAgentProfileStatus, initializeAuthStateUser, userSelector} from '../store/features/authSlice';
 const RootStack = createStackNavigator<RootStackParamList>();
 
 const StackNavigations = () => {
   const dispatch = useAppDispatch();
   const navigation =
     useNavigation<NavigationProps>();
-  const {isAuthenticated, loading, data} = useAppSelector(
+  const {isAuthenticated, loading, profileStatus, data} = useAppSelector(
     userSelector,
   ) as AuthStateInterface;
   console.log("A", data);
   // Initalize the state
   useEffect(() => {
+    dispatch(getAgentProfileStatus(data?.id))
     dispatch(initializeAuthStateUser());
   }, [dispatch]);
 
   useEffect(() => {
-    console.log('Init Value', isAuthenticated);
+    
+    console.log('Init Value', isAuthenticated, profileStatus);
     if (isAuthenticated) {
-      navigation.navigate('Home', {
-        screen: 'Dashboard',
-      });
+       if(profileStatus){
+         navigation.navigate('Home', {
+           screen: 'Dashboard',
+         });
+       }else{
+          navigation.navigate('CreateProfile');
+       }
     } else {
       navigation.navigate('Login');
     }

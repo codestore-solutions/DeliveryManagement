@@ -2,8 +2,12 @@ import {StyleSheet} from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 15,
+    flex:1,
+    height:'100%',
+    paddingVertical: 8,
     paddingHorizontal: 10,
+    
+   
   },
   drawerHeader: {
     display: 'flex',
@@ -57,6 +61,10 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginLeft:6,
   },
+  logoutContainer:{
+    paddingTop:8,
+    paddingLeft:13    
+  }
 });
 
 export default styles;

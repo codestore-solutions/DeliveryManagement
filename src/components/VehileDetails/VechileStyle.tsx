@@ -12,6 +12,9 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     marginBottom: 15,
   },
+  dropDown:{
+    
+  },
   row: {
     marginVertical: 10,
   },

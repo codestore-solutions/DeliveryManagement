@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import React, { useState } from 'react'
 import { TabBar, TabView } from 'react-native-tab-view';
 import VendorFeedback from './VendorFeedback';
@@ -8,7 +8,7 @@ import ToUserFeedBack from './ToUserFeedBack';
 const FeedBackTabs = () => {
     const [index, setIndex] = useState(0);
     const [routes] = useState([
-      {key: '1', title: 'From Vedor'},
+      {key: '1', title: 'From Vendor'},
       {key: '2', title: 'From User'},
       {key: '3', title: 'To User'},
 
@@ -17,9 +17,10 @@ const FeedBackTabs = () => {
       switch (route.key) {
         case '1':
           return (
-            <View style={styles.sceneContainer}>
+            <ScrollView style={styles.sceneContainer}>
               <VendorFeedback />
-            </View>
+             <Text>Hello World</Text>
+           </ScrollView>
           );
         case '2':
           return (

@@ -14,7 +14,7 @@ import {useAppDispatch, useAppSelector} from '../../store/hooks';
 import {RootState} from '../../store';
 import {loginUser} from '../../store/features/authSlice';
 import {loginPayload} from '../../utils/types/UserTypes';
-import { Pressable } from 'react-native';
+import {Pressable} from 'react-native';
 
 const LoginScreen = () => {
   const dispatch = useAppDispatch();
@@ -25,7 +25,7 @@ const LoginScreen = () => {
       username: values?.email,
       password: values?.password,
     };
-    console.log("p", payload);
+    console.log('p', payload);
     dispatch(loginUser(payload));
   };
 
@@ -37,7 +37,7 @@ const LoginScreen = () => {
       }}
       validationSchema={loginValidationSchema}
       onSubmit={loginHandler}>
-      {({handleChange, handleBlur, handleSubmit, values, errors}) => (
+      {({handleChange, handleBlur, handleSubmit, values, errors, touched}) => (
         <View style={styles.container}>
           <View style={styles.header}>
             <View style={styles.icon}>
@@ -56,7 +56,9 @@ const LoginScreen = () => {
               />
               <InputEmailIcon width={20} height={20} />
             </View>
-            {errors && <Text style={styles.errorMessage}>{errors.email}</Text>}
+            {touched.email && errors.email && (
+              <Text style={styles.errorMessage}>{errors.email}</Text>
+            )}
             <View style={styles.formElement}>
               <TextInput
                 style={styles.formInput}
@@ -70,7 +72,7 @@ const LoginScreen = () => {
                 <InputEyeOffIcon width={20} height={20} />
               </Pressable>
             </View>
-            {errors && (
+            {touched.password && errors.password && (
               <Text style={styles.errorMessage}>{errors.password}</Text>
             )}
             <View style={styles.formtag}>

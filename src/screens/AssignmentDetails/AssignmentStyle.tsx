@@ -4,7 +4,7 @@ import globalStyle from '../../global/globalStyle';
 
 
 const styles = StyleSheet.create({
-    conatiner:{
+    container:{
         backgroundColor:'#fff',
         paddingHorizontal:10,
         paddingVertical:15,
@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
         fontSize:16,
         lineHeight:24,
     },
-    valueConatiner:{
+    valueContainer:{
         display:'flex',
         flexDirection:'row',
         alignItems:'center',
@@ -103,6 +103,9 @@ const styles = StyleSheet.create({
     btnContainer:{
         width:'100%',
         marginVertical:20
+    },
+    btnContainerDel:{
+       
     }
 });
 

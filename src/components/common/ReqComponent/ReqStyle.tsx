@@ -13,6 +13,11 @@ const styles = StyleSheet.create({
         borderRadius:15,
         elevation:1,
       },
+      selected:{
+        borderWidth:1,
+        borderColor: globalStyle.colors.baseColor,
+        borderRadius:10,
+      },
       requstCardRow: {
         marginVertical:5,
         display: 'flex',

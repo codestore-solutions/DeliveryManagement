@@ -1,4 +1,5 @@
 import {StyleSheet} from 'react-native';
+import globalStyle from '../../../global/globalStyle';
 
 
 const styles = StyleSheet.create({
@@ -17,6 +18,13 @@ const styles = StyleSheet.create({
         borderWidth:1,
         borderRadius:10,
       },
+       inputContainermob:{
+        paddingHorizontal:2,
+        
+      },
+      inputBox:{
+         color:globalStyle.colors.labelColor
+      }, 
       errorMessage:{
          fontSize:13,
          color:'red',

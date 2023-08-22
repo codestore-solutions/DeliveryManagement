@@ -1,5 +1,5 @@
-import {View, Text, SafeAreaView, FlatList} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import {View, Text, SafeAreaView, FlatList, RefreshControl} from 'react-native';
+import React, {useEffect, useState, useCallback} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {RootStackParamList} from '../../navigations/types';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -42,23 +42,40 @@ const data = [
     destination: '4653 Clearview Drive USA',
     clientName: 'David Vese',
     earning: ' $ 10',
-  }, 
+  },
 ];
 
 interface Props {
   userData: any;
+  index: any;
 }
 
-const AssignmentScreen: React.FC<Props> = ({userData}) => {
+const AssignmentScreen: React.FC<Props> = ({userData, index}) => {
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [orderList, setOrderList] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
+
+  const refresh = () => {
+    setRefreshing(true);
+  };
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const navigate = () => {
-    navigation.navigate('AssignmentDetail');
+  const navigate = (item: Object) => {
+    navigation.navigate('AssignmentDetail', {item});
   };
+
+  const handleRefresh = useCallback(() => {
+    setRefreshing(true);
+    // Call the function to fetch the updated data here
+    fetchAcceptedRequestList(userData).finally(() => setRefreshing(false));
+  }, [userData]);
   const renderItem = ({item}: any) => (
-    <ReqComponent item={item} onPress={navigate} />
+    <ReqComponent
+      handleRefresh={fetchAcceptedRequestList}
+      type={1}
+      item={item}
+      onPress={() => navigate(item)}
+    />
   );
 
   const fetchAcceptedRequestList = async (userData: any) => {
@@ -67,9 +84,9 @@ const AssignmentScreen: React.FC<Props> = ({userData}) => {
       let payload = {
         page: 1,
         pageSize: 10,
-        status: [5],
+        status: [6, 8, 9],
       };
-      const {data, statusCode} = await OrderServices.getDeliveryRquests(
+      const {data, statusCode} = await OrderServices.getDeliveryRequests(
         payload,
         userData,
       );
@@ -81,30 +98,36 @@ const AssignmentScreen: React.FC<Props> = ({userData}) => {
       console.log('Fexthing Pending Request Error', err);
     } finally {
       setLoading(false);
-    }   
+    }
   };
 
   useEffect(() => {
     fetchAcceptedRequestList(userData);
-  }, []);
+  }, [userData, handleRefresh, index]);
   return (
     <SafeAreaView style={{flex: 1}}>
       {loading ? (
         <Loader />
+      ) : orderList?.totalOrders === 0 ? (
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <Text style={{fontSize: 20, color: 'black'}}>
+            No Avialable Orders.
+          </Text>
+        </View>
       ) : (
         <View style={styles.container}>
-          <View style={styles.header}>
-            <Text style={styles.pageHeading}>Ongoing Request</Text>
-            <View style={styles.menuIcon}>
-              <VericalMenuIcon width={20} height={20} />
-            </View>
-          </View>
           <FlatList
             data={orderList?.list}
             showsVerticalScrollIndicator={false}
             renderItem={renderItem}
             keyExtractor={item => item.id}
             style={styles.content}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+              />
+            }
           />
         </View>
       )}

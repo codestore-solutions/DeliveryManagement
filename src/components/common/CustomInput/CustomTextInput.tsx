@@ -11,6 +11,7 @@ interface CustomTextInputProps  {
   errors?: any;
   onChangeText: (text: string) => void;
   disabled?: boolean;
+  touched?: any;
 }
 
 const CustomTextInput: React.FC<CustomTextInputProps> = ({
@@ -21,13 +22,16 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
   name,
   label,
   disabled,
+  touched,
   ...rest
 }) => {
   return (
     <View style={styles.conatiner}>
-      <Text style={styles.inputlabel}>{label}</Text>
-      <View style={styles.inputContainer}>
+     { name !== 'mobileNo' && <Text style={styles.inputlabel}>{label}</Text>}
+    
+      <View style={name !== 'mobileNo'?styles.inputContainer : styles.inputContainermob}>
         <TextInput
+          style={styles.inputBox}
           value={value}
           onChangeText={(text:any) =>onChangeText(text) }
           placeholder={placeholder}
@@ -35,7 +39,7 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
           {...rest}
         />
       </View>
-      {errors && <Text style={styles.errorMessage}>{errors[name]}</Text>}
+      {touched[name] && errors[name] && <Text style={styles.errorMessage}>{errors[name]}</Text>}
     </View>
   );
 };

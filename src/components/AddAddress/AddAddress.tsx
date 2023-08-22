@@ -8,20 +8,26 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
-import {AddIcon, CheckedRadioIcon, ReadioIcon} from '../../assets';
+import {AddIcon, CheckedRadioIcon, RadioIcon} from '../../assets';
 import globalStyle from '../../global/globalStyle';
-import SelectTimeScreen from '../DayandTime/SelectTimeScreen';
 import AddNewAddress from '../AddNewAddress/AddNewAddress';
-import AddressService from '../../services/AddressSevice';
-import {useAppSelector} from '../../store/hooks';
+import AddressService from '../../services/AddressService';
+import {useAppDispatch, useAppSelector} from '../../store/hooks';
 import {RootState} from '../../store/index';
-import {AuthStateInterface} from '../../store/features/authSlice';
-import { setLocationIntrface } from '../../utils/types/addressTypes';
+import {
+  AuthStateInterface,
+  updateAgentProfileStatus,
+} from '../../store/features/authSlice';
+import {setLocationInterface} from '../../utils/types/addressTypes';
+import {updateProfileInterface} from '../../utils/types/UserTypes';
 
-const AddAddress = () => {
-  const {data} = useAppSelector(
+
+const AddAddress: React.FC<{index?: number}> = ({index}) => {
+  const dispatch = useAppDispatch();
+  const {data, profileStatus} = useAppSelector(
     (state: RootState) => state.auth,
   ) as AuthStateInterface;
+  console.log('profileStatus', profileStatus);
   const [selectedIndex, setIndex] = React.useState(0);
   const [locations, setLocations] = React.useState<any>(null);
   const [edit, setEdit] = useState<boolean>(false);
@@ -32,31 +38,40 @@ const AddAddress = () => {
   const isEditCancel = () => {
     setEdit(false);
   };
-  // Set Working Loation
-  const setActiveLoation = async(item:any) =>{
-      let payload: setLocationIntrface ={
-        serviceLocationId: item?.serviceLocationId,
-        deliveryAgentId: Number(data?.id),
-        isActive: true
+  // Set Working Location
+  const setActiveLocation = async (item: any) => {
+    let payload: setLocationInterface = {
+      serviceLocationId: item?.serviceLocationId,
+      agentId: Number(data?.id),
+      isActive: true,
+    };
+    try {
+      const {statusCode} = await AddressService.setWorkingLocation(payload);
+      if (statusCode === 200) {
+        await fetchLocations(Number(data?.id));
       }
-      try {
-        const {statusCode} = await AddressService.setWorkingLocation(payload);
-        if(statusCode === 200){
-          await fetchloactions(Number(data?.id));
-        }
-      } catch (err) {
-          console.log('Error op setting working location', err);
-      }
-  }
+    } catch (err) {
+      console.log('Error op setting working location', err);
+    }
+  };
 
   const renderItem = (item: any) => {
+    let arr = item?.selectedDays.split(' ');
+    const getFirstThreeChars = (selectedDays: string[]) => {
+      return selectedDays.map(day => day.substring(0, 3));
+    };
+
+    const firstThreeCharsOfSelectedDays = getFirstThreeChars(arr);
     return (
-      <Pressable style={styles.card} key={item.id} onPress={() => setActiveLoation(item)}>
+      <Pressable
+        style={styles.card}
+        key={item.id}
+        onPress={() => setActiveLocation(item)}>
         <View style={styles.cardLeft}>
           {item?.isActive ? (
             <CheckedRadioIcon width={20} height={20} />
           ) : (
-            <ReadioIcon width={20} height={20} />
+            <RadioIcon width={20} height={20} />
           )}
         </View>
         <View style={styles.cardRight}>
@@ -64,13 +79,17 @@ const AddAddress = () => {
           <Text style={styles.carddesc}>{item.address}</Text>
           <View style={styles.cardFooter}>
             <View style={styles.cardFooterLeft}>
-              <Text style={styles.time}>{item?.selectedDays}</Text>
+              <Text style={styles.time}>
+                {firstThreeCharsOfSelectedDays.join(', ')}
+              </Text>
               <Text style={styles.time}>
                 {item?.startTime + '-' + item?.endTime}
               </Text>
             </View>
             <View style={styles.cardFooterRight}>
-              <TouchableOpacity style={styles.btn} onPress={() => deleteLocation(Number(item?.serviceLocationId))}>
+              <TouchableOpacity
+                style={styles.btn}
+                onPress={() => deleteLocation(Number(item?.serviceLocationId))}>
                 <Text style={styles.btnTxt}>Delete</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.btn}>
@@ -83,34 +102,18 @@ const AddAddress = () => {
     );
   };
 
-  // const dataArr = [
-  //   {
-  //     id: '1',
-  //     title: 'Home',
-  //     description:
-  //       'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis eius commodi saepe.',
-  //     time: 'Mon-Wed (9:00 - 15:00)',
-  //     checked: true,
-  //   },
-  //   {
-  //     id: '2',
-  //     title: 'Work',
-  //     description:
-  //       'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis eius commodi saepe.',
-  //     time: 'Mon-Wed (9:00 - 15:00)',
-  //     checked: false,
-  //   },
-  // ];
-  const deleteLocation = async (id:number) =>{
-    console.log('id', id);
+  const deleteLocation = async (id: number) => {
     try {
       setLoading(true);
-      const {data, statusCode} = await AddressService.deleteWorkingLocations(id);
-      console.log('data', data, statusCode)
-      if (statusCode === 200){
-         let filterloc = locations?.filter((item:any) => item?.serviceLocationId !== id);
-         setLocations(filterloc);
-      } 
+      const {data, statusCode} = await AddressService.deleteWorkingLocations(
+        id,
+      );
+      if (statusCode === 200) {
+        let filterLoc = locations?.filter(
+          (item: any) => item?.serviceLocationId !== id,
+        );
+        setLocations(filterLoc);
+      }
     } catch (err) {
       console.log('Location fetching error', err);
     } finally {
@@ -118,11 +121,23 @@ const AddAddress = () => {
     }
   };
 
-  const fetchloactions = async (id: number) => {
+  const fetchLocations = async (id: number) => {
     try {
       setLoading(true);
       const {data, statusCode} = await AddressService.getWorkingLocations(id);
-      if (statusCode === 200) setLocations(data);
+      if (statusCode === 200) {
+        setLocations(data);
+        if (data?.length > 0) {
+          // Update Profile Status Completed
+          if (!profileStatus) {
+            let payload: updateProfileInterface = {
+              agentId: id,
+              isProfileCompleted: true,
+            };
+            dispatch(updateAgentProfileStatus(payload));
+          }
+        }
+      }
     } catch (err) {
       console.log('Location fetching error', err);
     } finally {
@@ -131,8 +146,8 @@ const AddAddress = () => {
   };
 
   useEffect(() => {
-    fetchloactions(Number(data?.id));
-  }, []);
+    fetchLocations(Number(data?.id));
+  }, [index, data?.id]);
 
   if (edit) {
     return <AddNewAddress onCancel={isEditCancel} />;
@@ -229,7 +244,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  cardFooterLeft: {},
+  cardFooterLeft: {
+    width: '60%',
+  },
   cardFooterRight: {
     display: 'flex',
     flexDirection: 'row',
@@ -243,6 +260,7 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     paddingHorizontal: 10,
     marginHorizontal: 5,
+    height: 30,
   },
   btnTxt: {
     color: globalStyle.colors.labelColor,

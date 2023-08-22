@@ -7,14 +7,18 @@ import VechileDetailsForm from './VechileDetailsForm';
 import AgentServices from '../../services/AgentServices';
 import {ApiConstant} from '../../constant/ApiConstant';
 import Loader from '../common/Loader/Loader';
+import {getVehicleLabel} from '../../utils/helpers/GetLabelByValue';
 
 interface Props {
   data: any;
+  index: number;
+  goToNextIndex: any;
 }
 
-const VehileDetails: React.FC<Props> = ({data}) => {
+const VehileDetails: React.FC<Props> = ({data, index, goToNextIndex}) => {
   const [vechileDetails, setVechileDetails] = useState<any>(null);
-  const [edit, setEdit] = useState<boolean>(true);
+  const [notFound, setNotFound] = useState<boolean>(false);
+  const [edit, setEdit] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const updateDetails = (data: any) => {
     setVechileDetails(data);
@@ -41,7 +45,11 @@ const VehileDetails: React.FC<Props> = ({data}) => {
         setEdit(false);
       }
       setLoading(false);
-    } catch (err) {
+    } catch (err: any) {
+      if (err?.status === ApiConstant.notFound) {
+        setEdit(false);
+        setNotFound(true);
+      }
       console.log('Vechile Detail Fetching Error', err);
       setLoading(false);
     }
@@ -51,22 +59,22 @@ const VehileDetails: React.FC<Props> = ({data}) => {
     {
       key: 1,
       label: 'Vehicle Type',
-      value: vechileDetails?.vehicleType,
+      value: getVehicleLabel(vechileDetails?.vehicleType),
     },
     {
       key: 2,
       label: 'Brand',
-      value: vechileDetails?.companyName,
+      value: vechileDetails?.company,
     },
     {
       key: 3,
-      label: 'Model',
-      value: vechileDetails?.model,
+      label: 'ManufacturedYear',
+      value: vechileDetails?.manufacturedYear,
     },
     {
       key: 4,
-      label: 'Number Plate',
-      value: vechileDetails?.numberPlate,
+      label: 'Model',
+      value: vechileDetails?.vehicleModel,
     },
     {
       key: 5,
@@ -75,8 +83,13 @@ const VehileDetails: React.FC<Props> = ({data}) => {
     },
   );
   useEffect(() => {
-    fetchVechileDetails(data?.id);
-  }, []);
+    if (index === 2) {
+      fetchVechileDetails(data?.id);
+      if (notFound) {
+        setEdit(false);
+      }
+    }
+  }, [data?.id, index]);
 
   if (loading) {
     return <Loader />;
@@ -89,6 +102,7 @@ const VehileDetails: React.FC<Props> = ({data}) => {
             data={data}
             vechileDetails={vechileDetails}
             updateDetails={updateDetails}
+            goToNextIndex={goToNextIndex}
           />
         ) : (
           <>

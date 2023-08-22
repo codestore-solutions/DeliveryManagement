@@ -5,13 +5,13 @@ import {StarIcon, StarWhiteIcon} from '../../../assets';
 const FeedbackCard = () => {
   return (
     <View style={styles.card}>
-      <View style={styles.stars}>
+      {/* <View style={styles.stars}>
         <StarIcon width={25} height={25} />
         <StarIcon width={25} height={25} />
         <StarIcon width={25} height={25} />
         <StarIcon width={25} height={25} />
         <StarWhiteIcon width={25} height={25} />
-      </View>
+      </View> */}
 
       <Text>
         Lorem Ipsum is simply dummy text of the printing and typesetting

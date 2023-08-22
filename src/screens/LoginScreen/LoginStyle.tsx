@@ -47,6 +47,7 @@ const styles = StyleSheet.create({
     formInput:{
         width:'80%',
         fontSize:18,
+        color: globalStyle.colors.labelColor
     },
     btn:{
         display:'flex',

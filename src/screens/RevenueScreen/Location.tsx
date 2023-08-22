@@ -15,7 +15,7 @@ const Location = () => {
   return (
     <SafeAreaView>
          <Pressable style={styles.container} onPress={openModal}>
-            <Text>View</Text>
+            <Text style={styles.textColor}>View</Text>
          </Pressable>
       <BottomSheet visibility={visible} closeModel={closeModal} element={   <AddAddress/>} />
     </SafeAreaView>

@@ -1,12 +1,13 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import {RootState} from '..';
-import {loginPayload} from '../../utils/types/UserTypes';
+import {loginPayload, updateProfileInterface} from '../../utils/types/UserTypes';
 import UserService from '../../services/UserService';
 import UserHepler from '../../utils/helpers/user';
 
 export interface AuthStateInterface {
   isAuthenticated: boolean | Promise<boolean>;
   data: any;
+  profileStatus:boolean;
   loading: boolean;
   isSuccess: boolean;
   error: any;
@@ -25,6 +26,7 @@ export const getUserDetails = async () => {
 const initialState: AuthStateInterface = {
   isAuthenticated: false,
   data: null,
+  profileStatus: false,
   loading: false,
   isSuccess: false,
   error: null,
@@ -36,6 +38,7 @@ const initializeAuthState = async (): Promise<AuthStateInterface> => {
   return {
     isAuthenticated: isAuthenticated,
     data: data,
+    profileStatus: false,
     loading: false,
     isSuccess: false,
     error: null,
@@ -56,6 +59,30 @@ export const loginUser = createAsyncThunk(
   async (payload: loginPayload, thunkAPI) => {
     try {
       const res = await UserService.loginUser(payload);
+      return res;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  },
+);
+// Agent ProfileStatus
+export const getAgentProfileStatus = createAsyncThunk(
+  'auth/profileStatus',
+  async (id: number, thunkAPI) => {
+    try {
+      const res = await UserService.getUserProfileStatus(id);
+      return res;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  },
+);
+// Update Agent ProfileStatus
+export const updateAgentProfileStatus = createAsyncThunk(
+  'auth/updateprofileStatus',
+  async (payload: updateProfileInterface, thunkAPI) => {
+    try {
+      const res = await UserService.updateProfileStatus(payload);
       return res;
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
@@ -97,7 +124,31 @@ const authSlice = createSlice({
         state.isSuccess = false;
         state.error = action.payload;
         state.isAuthenticated = false;
-      });
+      })
+      .addCase(getAgentProfileStatus.pending, state => {
+        state.loading = true;
+      })
+      .addCase(getAgentProfileStatus.fulfilled, (state, action) => {
+        state.loading = false;
+        state.profileStatus = action.payload?.data?.isProfileCompleted;
+      })
+      .addCase(getAgentProfileStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.profileStatus= false;
+        state.error = action.payload;
+      })
+      .addCase(updateAgentProfileStatus.pending, state => {
+        state.loading = true;
+      })
+      .addCase(updateAgentProfileStatus.fulfilled, (state, action) => {
+        state.loading = false;
+        state.profileStatus = action.payload?.data?.isProfileCompleted;
+      })
+      .addCase(updateAgentProfileStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      ;
   },
 });
 

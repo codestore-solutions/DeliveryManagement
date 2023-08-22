@@ -16,22 +16,35 @@ export const ApiConstant = {
     // Agents EndPoints
     agentDetails: 'agentDetail',
     verifyAgent:'businessAdmin/verify-new-agent-request',
+    agentProfileStatus: 'personal-details/getProfileCompletedStatus',
+    updateProfileStatus:'personal-details/updateProfileCompletedStatus',
     // Address Api EndPoints
-    changeWorkiingLocation:'working-location/updateActiveStatus',
+    changeWorkingLocation:'working-location/updateActiveStatus',
     addNewWorkingLocationEndpoint:'working-location',
+    getAgentStatus:'working-location/getAvailabilityStatus',
     updateAgentStatus:'working-location/updateAgentStatus',
     // Agent Onboarding Api Enpoints
     personalDetailendpoint:'personal-details/get',
     addpersonalDetailendpoint:'personal-details/add',
     updatepersonalDetailendpoint:'personal-details/update',
     kycDetailendpoint:'KYC',
-    addvechileDetailendpoint:'vehicle-details/add',
+    addvehicleDetailendpoint:'vehicle-details/add',
     getvechileDetailendpoint:'vehicle-details/get',
     updatevechileDetailendpoint:'vehicle-details/update',
     getbankdetailEndpoint:'bank-details/get',
     addbankdetailEndpoint:'bank-details/add',
     updatebankdetailEndpoint:'bank-details/update',
      // Orders Requets Endpoints
-     getOrderRequest:'delivery/getOrdersByDeliveryAgentId'
+    getOrderRequest:'delivery/getOrdersByDeliveryAgentId',
+    acceptAndRejectOrderRequest:'assignAgent/acceptOrReject',
+    pickupAndDelivery: 'assignAgent/updatePickupOrDeliveryStatus',
+    getOrderTimeLine:'order/getOrderTimeline',
+    getOrderDetailsById:'business/getOrderDetailsByOrderId',
+    // Upload Service
+    uploadImage:'images/upload',
+    //Time Slots
+    getTimeSlots:'TimeSlot/getAllTimeSlots',
+    getActiveTimeSlots:'TimeSlot/getAllActiveTimeSlots',
+    updateTimeSlots:'TimeSlot/updateSlotsStatus'
     
   };
