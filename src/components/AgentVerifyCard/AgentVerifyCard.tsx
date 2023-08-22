@@ -17,6 +17,7 @@ interface Props {
 const AgentVerifyCard: React.FC<Props> = ({ agentId }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isVerified, setIsVerified] = useState<boolean>(false);
+  const [cardDetails, setCardDetails] = useState<any>();
   console.log('isVerified', isVerified)
   const cardData = [
     {
@@ -36,8 +37,9 @@ const AgentVerifyCard: React.FC<Props> = ({ agentId }) => {
     },
   ];
 
-  const handleOpenModal = () => {
+  const handleOpenModal = (item:any) => {
     setIsOpen(true);
+    setCardDetails(item);
   };
 
   const handleCloseModal = () => {
@@ -114,7 +116,7 @@ const AgentVerifyCard: React.FC<Props> = ({ agentId }) => {
                   </div>
                 </Col>
                 <Col className="container-col dark">
-                  <img src={DetailsIcon} alt="" onClick={handleOpenModal} />
+                  <img src={DetailsIcon} alt="" onClick={() =>handleOpenModal(item)} />
                 </Col>
               </Row>
             ))}
@@ -124,8 +126,8 @@ const AgentVerifyCard: React.FC<Props> = ({ agentId }) => {
       <CustomModal
         isOpen={isOpen}
         onClose={handleCloseModal}
-        component={<AgentDocument data={cardData} />}
-        width={'80%'}
+        component={<AgentDocument data={[cardDetails]} />}
+        
       />
     </Col>
   );

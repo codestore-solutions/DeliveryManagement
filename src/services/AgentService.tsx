@@ -108,6 +108,15 @@ const getFeedbackDetails = async (id: any) => {
   return res?.data;
 };
 
+const acceptRejectOrders = async (id:number) =>{
+  let params = {
+     agentId: id
+  }
+  let url = `${ApiConstants.baseUrl}${ApiConstants.getAcceptRejectOrders}`;
+  const res = await API({}, url, "GET", params);
+  return res?.data;
+}
+
 const AgentService = {
   getAllAgents,
   getAgentDetails,
@@ -116,7 +125,8 @@ const AgentService = {
   assignAgentAutomatically,
   getFeedbackDetails,
   verifyAgentKyc,
-  getVerificationStatus
+  getVerificationStatus,
+  acceptRejectOrders
 };
 
 export default AgentService;

@@ -12,7 +12,7 @@ const AgentDocument: React.FC<Props> = ({ data }) => {
   return (
     <>
       <Title level={4}>Agent Documents</Title>
-      <div style={{ textAlign: "center" }}>
+      <div style={{ textAlign: "center", display:'flex', justifyContent:'center' }}>
         <Row gutter={[16, 16]} justify="space-between">
           {data?.map((item) => (
             <Col span={8} key={item.key}>

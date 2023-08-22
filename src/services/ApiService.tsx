@@ -1,3 +1,4 @@
+import { ApiConstants } from "../constants/ApiConstants";
 import axios from "../utils/Interceptors/axios";
 import UserStorage from "../utils/helpers/UserStorage";
 
@@ -12,7 +13,8 @@ export default async function API(
   payload: Object,
   endpoint: string,
   apiMethod: string,
-  params?: any
+  params?: any,
+  formData?: any
 ) {
   let auth = UserStorage.getUser();
   let init: Object = {};
@@ -53,15 +55,27 @@ export default async function API(
       break;
 
     case "POST":
+     if(endpoint !== ApiConstants.baseUrl + ApiConstants.uploadImage){
+       init = {
+         method: apiMethod,
+         url: `${endpoint}`,
+         headers: {
+           "Content-Type": "application/json",
+           Authorization: auth ? "Bearer " + auth : "",
+         },
+         data: JSON.stringify(payload),
+       };
+     }else{
       init = {
-        method: apiMethod,
-        url: `${endpoint}`,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: auth ? "Bearer " + auth : "",
-        },
-        data: JSON.stringify(payload),
+          method: apiMethod, 
+          url: `${endpoint}`,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: auth ? "Bearer " + auth : "",
+          },
+          data: formData,
       };
+     }
       break;
   }
   console.log("Api URL ::" , `${endpoint}`, init);

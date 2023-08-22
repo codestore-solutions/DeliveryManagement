@@ -35,4 +35,8 @@ export const ApiConstants = {
      getOrderTimeLine:'order/getOrderTimeline',
      //feedback endpoints
      getAgentFeedback:'feedback/deliveryAgentFeedback/',
+     //Image Service
+     uploadImage: 'images/upload',
+     // Count Apis
+     getAcceptRejectOrders:'assignAgent/CountDeliveredOrRejectedOrders'
 }
