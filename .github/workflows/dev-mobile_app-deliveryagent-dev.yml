@@ -6,7 +6,7 @@ name: Build and deploy ASP.Net Core app to Azure Web App - app-deliveryagent-dev
 on:
   push:
     branches:
-      - dev-mobile
+      - main-mobile
 jobs:
   install-and-test:
     runs-on: ubuntu-latest
