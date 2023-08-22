@@ -16,6 +16,7 @@ interface Props {
   addUrl?: any;
 }
 
+
 const SingleDetail: React.FC<Props> = ({label, value, type, addUrl}) => {
   const [selectedImage, setSelectedImage] = useState<CropImage | null>(null);
   const [visible, setVisible] = useState<boolean>(false);
