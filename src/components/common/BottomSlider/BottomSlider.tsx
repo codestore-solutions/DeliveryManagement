@@ -13,7 +13,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 const {height: SCREEN_HEIGHT} = Dimensions.get('window');
-const MAX_SLIDE_DISTANCE = 600;
+const MAX_SLIDE_DISTANCE = 700;
 
 interface bottomSheetProps {
   element: JSX.Element;
@@ -39,7 +39,7 @@ const BottomSlider: React.FC<bottomSheetProps> = ({element}) => {
     };
   });
   useEffect(() => {
-    translateY.value = withTiming(-SCREEN_HEIGHT / 2);
+    translateY.value = withTiming(-SCREEN_HEIGHT / 1.3);
   }, []);
 
   return (

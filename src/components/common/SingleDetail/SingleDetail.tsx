@@ -1,19 +1,22 @@
 import {StyleSheet, Text, View, Pressable, Image} from 'react-native';
-import React, {useState} from 'react';
+import React, { useState} from 'react';
 import  {Image as CropImage} from 'react-native-image-crop-picker';
 import globalStyle from '../../../global/globalStyle';
 import {DetailEditIcon, UploadIcon} from '../../../assets';
 import CustomModal from '../CustomModal/CustomModal';
 import UploadImage from '../../UploadImage/UploadImage';
+import UploadService from '../../../services/UploadService';
+import { ApiConstant } from '../../../constant/ApiConstant';
 
 interface Props {
   label: string;
   value: any;
   type?: number;
   image?: any;
+  addUrl?: any;
 }
 
-const SingleDetail: React.FC<Props> = ({label, value, type}) => {
+const SingleDetail: React.FC<Props> = ({label, value, type, addUrl}) => {
   const [selectedImage, setSelectedImage] = useState<CropImage | null>(null);
   const [visible, setVisible] = useState<boolean>(false);
   const openModal = () => {
@@ -22,6 +25,21 @@ const SingleDetail: React.FC<Props> = ({label, value, type}) => {
   const closeModal = () => {
     setVisible(false);
   };
+
+
+  const uploadImage = async(selectedImage:any) =>{
+      const {statusCode, data} = await UploadService.uploadImage(selectedImage);
+      if(statusCode === ApiConstant.successCode){
+        let url = '';
+        if(data.urlFilePath){
+          url = data?.urlFilePath
+          addUrl(url);
+        }
+      }
+  }
+ 
+ 
+
   return (
     <View style={styles.container}>
       <View style={styles.containerLeft}>
@@ -35,8 +53,8 @@ const SingleDetail: React.FC<Props> = ({label, value, type}) => {
                 source={{uri: selectedImage?.path}}
                 style={{
                   width: 50,
-                  height: 30,
-                  borderRadius: 10,
+                  height: 33,
+                  borderRadius: 5,
                   marginHorizontal: 5,
                 }}
               />
@@ -60,6 +78,8 @@ const SingleDetail: React.FC<Props> = ({label, value, type}) => {
           <UploadImage
             setSelectedImage={setSelectedImage}
             closeModal={closeModal}
+            selectedImage={selectedImage}
+            uploadImage={uploadImage}
           />
         }
       />

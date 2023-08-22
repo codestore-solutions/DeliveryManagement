@@ -3,7 +3,7 @@ import {
   bankDetailInterface,
   personalDetailInterface,
   updateAgentStatus,
-  vechleDteailInterface,
+  vehicleDetailInterface,
 } from '../utils/types/UserTypes';
 import API from './ApiBase';
 import Toast from 'react-native-toast-message';
@@ -59,8 +59,8 @@ const AgentServices = {
   },
    // Vechile Details  Services
 
-  addVechileDetails: async (payload: vechleDteailInterface) => {
-    const url = `${ApiConstant.baseUrl}${ApiConstant.addvechileDetailendpoint}`;
+  addVehicleDetails: async (payload: vehicleDetailInterface) => {
+    const url = `${ApiConstant.baseUrl}${ApiConstant.addvehicleDetailendpoint}`;
     console.log('p', payload);
     const res = await API(payload, url, 'POST');
     if (res?.data.statusCode === ApiConstant.successCode) {
@@ -71,7 +71,7 @@ const AgentServices = {
     }
     return res?.data;
   },
-  updateVechileDetail: async (payload: vechleDteailInterface, id: number) => {
+  updateVechileDetail: async (payload: vehicleDetailInterface, id: number) => {
     const url = `${ApiConstant.baseUrl}${ApiConstant.updatevechileDetailendpoint}?id=${id}`;
     const res = await API(payload, url, 'PUT');
     if (res?.data.statusCode === ApiConstant.successCode) {
@@ -113,8 +113,16 @@ const AgentServices = {
     const res = await API(payload, url, 'PUT');
     return res?.data;
   },
+  getAgentStatus: async (id: any) =>{
+    const url = `${ApiConstant.baseUrl}${ApiConstant.getAgentStatus}`;
+    let params = {
+      agentId: Number(id)
+    }
+    const res = await API({}, url, 'GET', params);
+    return res?.data;
+  },
 
-  verifyAgent: async (params: any) => {},
+  
   
 };
 

@@ -88,7 +88,9 @@ const styles = StyleSheet.create({
     marginVertical: 4,
   },
   requestListContainer: {
-    marginVertical: 5,
+    marginVertical: 10,
+    paddingHorizontal:3,
+    flex:1,
   },
   requestListContainerHeader: {
     marginBottom:15,
@@ -100,6 +102,7 @@ const styles = StyleSheet.create({
   heading: {
     color: globalStyle.colors.labelColor,
     fontWeight: '600',
+    fontSize:20,
   },
   btnText: {
     color: globalStyle.colors.baseColor,

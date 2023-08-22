@@ -1,8 +1,6 @@
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
-import { useDispatch } from 'react-redux';
-// import { showToast } from '../../store/toastSlice';
-import { ApiConstant } from '../../constant/ApiConstant';
+import {ApiConstant} from '../../constant/ApiConstant';
 
 const instance = axios.create();
 
@@ -17,8 +15,6 @@ instance.interceptors.request.use(
       type: 'error',
       text1: 'Request Error: Please check your request',
     });
-    // const dispatch = useDispatch();
-    // dispatch(showToast({ type: 'fail', message: 'Fail message!' }));
     return Promise.reject(error);
   },
 );
@@ -30,24 +26,89 @@ instance.interceptors.response.use(
     return response;
   },
   error => {
-   
+    console.log('errr', error);
     let apiData = {
-      status: ApiConstant.errorCode,
-      data: 'Network Error',
-    };
+        status: 503,
+        data: "Service Unavilable"
+    }as any;
     if (error && error.response) {
       // Request made and server responded
-      console.log("Errorsavc", error);
-      console.log("Errorsavc",error.response.data.errors);
-      console.log(error.response.status);
+      console.log(error.response.data);
+      console.log('ststus', error.response.status);
       console.log(error.response.headers);
-      apiData = {
-        status: error.response.status,
-        data: error.response.data.errors?.agentId ? error.response.data.errors?.agentId : error.response.data,
-      };
-      if (error.response?.status === ApiConstant.unAuthorizedCode) {
+
+      if (error.response.status === ApiConstant?.badRequest) {
+        // Handle validation errors
+        if(error.response.data?.message){
+          Toast.show({
+            type: 'error',
+            text1:error.response.data?.message ,
+          });
+        }else{
+          const validationErrors = error.response.data;
+          let errorMessages = new Array<any>();
+          // Loop through the error object and extract error messages
+          for (const key in validationErrors) {
+            if (Array.isArray(validationErrors[key])) {
+              errorMessages = errorMessages.concat(validationErrors[key]);
+            } else if (typeof validationErrors[key] === 'string') {
+              errorMessages.push(validationErrors[key]);
+            }
+          }
+          if (errorMessages.length > 0) {
+            // Display error messages to the user
+            Toast.show({
+              type: 'error',
+              text1: `${errorMessages[1]}`,
+            });
+            // apiData?.data = errorMessages;
+          }
+        }
+      } else if (error.response.status === ApiConstant.notFound) {
+         apiData = {
+          status: error.response.status,
+          data: error.response.data.message,
+        };
+        // Toast.show({
+        //   type: 'error',
+        //   text1: `${apiData.status} ${apiData?.data}`,
+        // });
+      }else if (error.response.status === ApiConstant.internalServerError) {
+         apiData = {
+          status: error.response.status,
+          data: error.response.data,
+        };
+        Toast.show({
+          type: 'error',
+          text1: `${apiData.status} ${apiData?.data}`,
+        });
+      }
+      else if (error.response?.status === ApiConstant.unAuthorizedCode) {
         // unAuthorized();
         // navigate('/');
+        apiData = {
+          status: error.response.status,
+          data: "Unauthorized",
+        };
+        Toast.show({
+          type: 'error',
+          text1: `${apiData.status} ${apiData?.data}`,
+        });
+      }else
+       {
+        // Handle other types of errors
+        //  apiData = {
+        //   status: error.response.status,
+        //   data: error.response.data,
+        // };
+        // if (error.response?.status === ApiConstant.unAuthorizedCode) {
+        //   // unAuthorized();
+        //   // navigate('/');
+        // }
+        Toast.show({
+          type: 'error',
+          text1: `${apiData.status} ${apiData?.data}`,
+        });
       }
     } else if (error.request) {
       console.info(
@@ -60,14 +121,7 @@ instance.interceptors.response.use(
         error.message,
       );
     }
-    // Handle request error here
-    Toast.show({
-      type: 'error',
-      text1: `${apiData?.data} ${apiData.status}`,
-    });
-    // const dispatch = useDispatch();
-    // dispatch(showToast({ type: 'fail', message: apiData?.data }));
-    return Promise.reject(apiData);
+   return Promise.reject(apiData);
   },
 );
 

@@ -7,10 +7,22 @@ import {
   DrawerItemList,
 } from '@react-navigation/drawer';
 import { NavigationProps } from './types';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { AuthStateInterface, reset, userSelector } from '../store/features/authSlice';
+import { RootState } from '../store';
+
 
 const CustomDrawerMenu = (props: any) => {
+  const dispatch = useAppDispatch();
+  const {data} = useAppSelector(
+    userSelector,
+    ) as AuthStateInterface;
+    console.log('data', data)
   const navigation =
     useNavigation<NavigationProps>();
+    const logoutHandler = () =>{
+      dispatch(reset());
+  }
   return (
     <DrawerContentScrollView {...props} style={styles.container}>
       <View style={styles.drawerHeader}>
@@ -21,14 +33,18 @@ const CustomDrawerMenu = (props: any) => {
           />
         </Pressable>
         <View style={styles.info}>
-          <Text style={styles.name}>Agent Name</Text>
+          <Text style={styles.name}>{data?.name}</Text>
           <View style={styles.statusContainer}>
-            <Switch />
-           <Text style={styles.company}>OnDuty</Text>
+           <Text style={styles.company}>
+              Rating: 4.5
+           </Text>
           </View>
         </View>
       </View>
       <DrawerItemList {...props} />
+      <Pressable style={styles.logoutContainer} onPress={logoutHandler}>
+          <Text style={styles.logout}>Logout</Text>
+      </Pressable>
     </DrawerContentScrollView>
   );
 };

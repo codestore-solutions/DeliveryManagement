@@ -11,6 +11,7 @@ import UserHelper from '../utils/helpers/user'
  * @param apiMethod Http Method Type
  * @param params  Params Object for Api Params
  * @param auth Token for User Validation
+ * @param payloadType Differtiate the form data type multipart/application-json
  * @returns Genric http methods response
  */
 export default async function API(
@@ -18,7 +19,7 @@ export default async function API(
   endpoint: string,
   apiMethod: string,
   params?: Object,
-  auth?: string
+  auth?: string,
 ) {
   let init: Object = {};
   switch (apiMethod) {
@@ -46,6 +47,7 @@ export default async function API(
       break;
 
     case "PUT":
+     
       init = {
         method: "PUT",
         url: `${endpoint}`,
@@ -58,18 +60,18 @@ export default async function API(
       break;
 
     case "POST":
-      init = {
-        method: apiMethod,
-        url: `${endpoint}`,
-        headers: {
-          "Content-Type": "application/json",
-          // Authorization: auth ? "Bearer " + auth : "",
-        },
-        data: JSON.stringify(payload),
-      };
+        init = {
+          method: apiMethod,
+          url: `${endpoint}`,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: auth ? "Bearer " + auth : "",
+          },
+          data: JSON.stringify(payload),
+        };
       break;
   }
-  console.log("Api URL ::" , `${endpoint}`);
+  console.log("Api URL ::" ,init, `${endpoint}`);
 
   return axios(init)
     .then((res) => {

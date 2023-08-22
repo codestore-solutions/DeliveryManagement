@@ -12,6 +12,7 @@ const globalStyle = {
        titleColor:'#fff',
        greenStatusColor:'#4CD964',
        labelColor:'#000000',
+       borderColor: '#CCCCCC'
       
      },
      inputBox: {

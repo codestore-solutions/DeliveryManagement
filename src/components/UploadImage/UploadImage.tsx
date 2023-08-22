@@ -6,6 +6,7 @@ import {
   Platform,
   PermissionsAndroid,
   Alert,
+  Image
 } from 'react-native';
 import React from 'react';
 import {CameraIcon, GalleryIcon} from '../../assets';
@@ -15,9 +16,12 @@ import ImagePicker, {Image as CropImage} from 'react-native-image-crop-picker';
 interface Props {
   setSelectedImage: Function;
   closeModal: () => void;
+  selectedImage:any;
+  addUrl?: () => void;
+  uploadImage: (selectedImage: any) => void;
 }
 
-const UploadImage: React.FC<Props> = ({setSelectedImage, closeModal}) => {
+const UploadImage: React.FC<Props> = ({setSelectedImage, closeModal , selectedImage, addUrl, uploadImage}) => {
   const selectImage = () => {
     ImagePicker.openPicker({
       width: 70,
@@ -26,6 +30,7 @@ const UploadImage: React.FC<Props> = ({setSelectedImage, closeModal}) => {
     })
       .then((image: CropImage) => {
         setSelectedImage(image);
+        uploadImage(image);
         closeModal();
       })
       .catch((error: any) => {
@@ -36,11 +41,13 @@ const UploadImage: React.FC<Props> = ({setSelectedImage, closeModal}) => {
     ImagePicker.openCamera({
       width: 70,
       height: 50,
-      cropping: true,
+      cropping:  true,
     })
       .then((image: CropImage) => {
         setSelectedImage(image);
+        uploadImage(image);
         closeModal();
+       
       })
       .catch((error: any) => {
         console.log(error);
@@ -63,14 +70,14 @@ const UploadImage: React.FC<Props> = ({setSelectedImage, closeModal}) => {
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           const data = {
             status: 1,
-            messaage: 'Camera permission granted',
+            message: 'Camera permission granted',
           };
           console.log(data);
           return data;
         } else {
           const data = {
             status: 2,
-            messaage: 'Camera permission denied',
+            message: 'Camera permission denied',
           };
           Alert.alert(
             'Camera Permission Denied',
@@ -81,7 +88,7 @@ const UploadImage: React.FC<Props> = ({setSelectedImage, closeModal}) => {
       } catch (error) {
         const data = {
           status: 1,
-          messaage: 'Error' + error,
+          message: 'Error' + error,
         };
         return data;
       }
@@ -89,9 +96,7 @@ const UploadImage: React.FC<Props> = ({setSelectedImage, closeModal}) => {
   };
 
   const takePhotoWithCamera = () => {
-    console.log('Sele');
     requestCameraPermission().then(res => {
-      console.log('Sele', res);
       if (res?.status === 1) {
         takePicture();
       }
@@ -102,6 +107,19 @@ const UploadImage: React.FC<Props> = ({setSelectedImage, closeModal}) => {
       <View style={styles.content}>
         <Text style={styles.heading}>Choose Option</Text>
       </View>
+       <View style={styles.image}>
+       {selectedImage && (
+              <Image
+                source={{uri: selectedImage?.path}}
+                style={{
+                  width: 100,
+                  height: 100,
+                  borderRadius: 10,
+                  marginHorizontal: 5,
+                }}
+              />
+            )}
+       </View>
       <View style={styles.content}>
         <Pressable style={styles.iconStyle} onPress={takePhotoWithCamera}>
           <CameraIcon width={55} height={55} />
@@ -110,6 +128,7 @@ const UploadImage: React.FC<Props> = ({setSelectedImage, closeModal}) => {
           <GalleryIcon width={55} height={55} />
         </Pressable>
       </View>
+
     </View>
   );
 };
@@ -128,6 +147,11 @@ const styles = StyleSheet.create({
     color: globalStyle.colors.labelColor,
     fontSize: 20,
     fontWeight: '500',
+  },
+  image:{
+      display:'flex',
+      flexDirection:'row',
+      justifyContent:'center'
   },
   content: {
     marginVertical: 10,

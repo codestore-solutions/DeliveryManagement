@@ -34,12 +34,12 @@ const Timeline: React.FC<Props> = ({data, currentIndex}) => {
                   {item?.title}
                 </Text>
                 {isCompleted && (
-                  <Text style={styles.desc}>Sell All Updates</Text>
+                  <Text style={styles.desc}>{item?.description}</Text>
                 )}
               </View>
-              <View style={styles.tagContentRight}>
+              {/* <View style={styles.tagContentRight}>
                 <UploadIcon width={35} height={35} />
-              </View>
+              </View> */}
             </View>
           </View>
           {index !== data.length - 1 && (
@@ -64,7 +64,7 @@ const Timeline: React.FC<Props> = ({data, currentIndex}) => {
     <SafeAreaView style={styles.container}>
       <FlatList
         data={data}
-        keyExtractor={(item: any) => item.id}
+        keyExtractor={(item: any) => item.key}
         renderItem={renderItem}
         contentContainerStyle={styles.innerContainer}
       />

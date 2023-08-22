@@ -1,6 +1,6 @@
 import {Toast} from 'react-native-toast-message/lib/src/Toast';
 import {ApiConstant} from '../constant/ApiConstant';
-import {addNewWorkingLocationInterface, setLocationIntrface} from '../utils/types/addressTypes';
+import {addNewWorkingLocationInterface, setLocationInterface} from '../utils/types/addressTypes';
 import API from './ApiBase';
 
 const AddressService = {
@@ -36,13 +36,18 @@ const AddressService = {
     }
     return data;
   },
-  setWorkingLocation: async (payload: setLocationIntrface) =>{
-    const url = `${ApiConstant.baseUrl}${ApiConstant.changeWorkiingLocation}`;
+  setWorkingLocation: async (payload: setLocationInterface) =>{
+    const url = `${ApiConstant.baseUrl}${ApiConstant.changeWorkingLocation}`;
     const {data, status} = await API(payload, url, 'PUT');
     Toast.show({
       type: 'success',
       text2: data?.message,
     });
+    return data;
+  },
+  getTimeSlots: async() =>{
+    const url = `${ApiConstant.baseUrl}${ApiConstant.getTimeSlots}`;
+    const {data, status} = await API({}, url, 'GET');
     return data;
   }
 };

@@ -10,7 +10,6 @@ interface AccordionProps {
 
 const Accordion: React.FC<AccordionProps> = ({title, content}) => {
   const [expanded, setExpanded] = useState<boolean>(false);
-
   const toggleAccordion = (): void => {
     setExpanded(!expanded);
   };

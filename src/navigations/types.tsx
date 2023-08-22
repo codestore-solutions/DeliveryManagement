@@ -21,7 +21,7 @@ export type RootStackParamList = {
   TandC: undefined;
   About: undefined;
   Policy: undefined;
-  AssignmentDetail: undefined;
+  AssignmentDetail: { item?: Object };
 };
 
 

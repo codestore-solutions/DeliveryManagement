@@ -10,7 +10,7 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import {RootStackParamList} from '../../navigations/types';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useState, useEffect} from 'react';
 import styles from './DashboardStyle';
 import {DashboardCard, DropDownComponent} from '../../components';
 import RenderItem from '../../components/common/ReqComponent/ReqComponent';
@@ -19,69 +19,110 @@ import {updateAgentStatus} from '../../utils/types/UserTypes';
 import {useAppSelector} from '../../store/hooks';
 import {RootState} from '../../store';
 import {AuthStateInterface} from '../../store/features/authSlice';
+import OrderServices from '../../services/OrderServices';
+import {ApiConstant} from '../../constant/ApiConstant';
+import Loader from '../../components/common/Loader/Loader';
 
-const dataArr = [
-  {
-    key: 1,
-    requestId: '#HDYWFG28472CVSX',
-    pickup: '4653 Clearview Drive Englewood',
-    destination: '4653 Clearview Drive USA',
-  },
-  {
-    key: 2,
-    requestId: '#HDYWFG28472CVSX',
-    pickup: '4653 Clearview Drive Englewood',
-    destination: '4653 Clearview Drive USA',
-  },
-  {
-    key: 3,
-    requestId: '#HDYWFG28472CVSX',
-    pickup: '4653 Clearview Drive Englewood',
-    destination: '4653 Clearview Drive USA',
-  },
-  {
-    key: 4,
-    requestId: '#HDYWFG28472CVSX',
-    pickup: '4653 Clearview Drive Englewood',
-    destination: '4653 Clearview Drive USA',
-  },
+const Adddata = [
+  {label: 'Home', value: '1'},
+  {label: 'Office', value: '2'},
+  {label: 'Other', value: '3'},
+  {label: 'Current Location', value: '4'},
 ];
 
+
 const HomeScreen = () => {
+  const [orderList, setOrderList] = useState<any>(null);
+  const [dropDownValue, setDropDownValue] = useState<any>('');
+  const [loading, setLoading] = useState<boolean>(false);
   const {data} = useAppSelector(
     (state: RootState) => state.auth,
   ) as AuthStateInterface;
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const navigate = () => {
-    navigation.navigate('AssignmentDetail');
+  const navigate = (item: any) => {
+    navigation.navigate('AssignmentDetail', {item});
   };
+  const updateDropDown = (value:any) =>{
+     setDropDownValue(value)
+  }
   const [isEnabled, setIsEnabled] = useState<boolean>(false);
   // Toggle Switch handler
   const toggleSwitch = () => {
     let payload: updateAgentStatus = {
-      deliveryAgentId: data?.id,
-      agentStatus: isEnabled ? 1 : 0,
+      agentId: data?.id,
+      agentStatus: isEnabled? 0: 1,
     };
+    // console.log('payload', payload)
     updateAgentStatus(payload);
   };
   // Update Agent Status function
   const updateAgentStatus = async (payload: updateAgentStatus) => {
     try {
-      const {statusCode} = await AgentServices.updateAgentStatus(payload);
+      const {statusCode, data} = await AgentServices.updateAgentStatus(payload);
       if (statusCode === 200) {
-        setIsEnabled(previousState => !previousState);
+        console.log('data', data)
+        if(data?.agentStatus === 1){
+            setIsEnabled(true);
+        }else{
+           setIsEnabled(false);
+        }
       }
     } catch (err) {
       console.log('Error on updating agent Status', err);
     }
   };
+  const getAgentStatus = async (id: number) => {
+    try {
+      setLoading(true);
+      const {statusCode, data} = await AgentServices.getAgentStatus(id);
+      if (statusCode === 200) {
+        console.log('sta', data)
+        if(data?.agentStatus === 1){
+          setIsEnabled(true);
+        }
+        // setIsEnabled(previousState => !previousState);
+      }
+    } catch (err) {
+      console.log('Error on updating agent Status', err);
+    }finally{
+       setLoading(false);
+    }
+  };
+  const fetchAcceptedRequestList = async (userData: any) => {
+    try {
+      setLoading(true);
+      let payload = {
+        page: 1,
+        pageSize: 10,
+        status: [8,9],
+      };
+      const {data, statusCode} = await OrderServices.getDeliveryRequests(
+        payload,
+        userData,
+      );
+      if (statusCode === ApiConstant.successCode) {
+        console.log('data', data);
+        setOrderList(data);
+      }
+    } catch (err) {
+      console.log('Fetching Pending Request Error', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAcceptedRequestList(data);
+    getAgentStatus(data?.id)
+  }, [data]);
+
   return (
     <SafeAreaView style={[styles.dashboard]}>
       <ScrollView>
         <View style={styles.header}>
           <View style={styles.dropdown}>
-            <DropDownComponent />
+            <DropDownComponent value={dropDownValue}  data={ Adddata} onChange={updateDropDown} />
           </View>
           <View style={styles.switchBox}>
             <Text style={styles.statusTag}>
@@ -129,7 +170,7 @@ const HomeScreen = () => {
               cardBackground={'#4285F4'}
               iconBackground={'#77A8F8'}
               cardIconType={1}
-              cardDesc={'Total Tip Recieved'}
+              cardDesc={'Total Tip Received'}
               cardHeading={'$200'}
             />
           </View>
@@ -152,18 +193,19 @@ const HomeScreen = () => {
               <Text style={styles.btnText}>View All</Text>
             </TouchableOpacity>
           </View>
-          {dataArr?.map((item: any) => {
-            return (
-              <View key={item?.key}>
-                <RenderItem item={item} onPress={navigate} />
-              </View>
-            );
-          })}
-          {/* <FlatList
-            data={data}
-            keyExtractor={(item: any) => item.key}
-            renderItem={renderItem}
-          /> */}
+          {loading ? (
+            <View style={{flex: 1, height: 300, backgroundColor:"#fff"}}>
+            <Loader />
+            </View>
+          ) : (
+            orderList?.list?.map((item: any) => {
+              return (
+                <View key={item?.id}>
+                  <RenderItem item={item} onPress={() => navigate(item)} />
+                </View>
+              );
+            })
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>

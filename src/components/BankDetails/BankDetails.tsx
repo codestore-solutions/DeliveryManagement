@@ -9,11 +9,15 @@ import Loader from '../common/Loader/Loader';
 
 interface Props {
   data: any;
+  index:number;
+  goToPrevIndex:any;
+  goToNextIndex:any
 }
-const BankDetails: React.FC<Props> = ({data}) => {
+const BankDetails: React.FC<Props> = ({data, index, goToPrevIndex, goToNextIndex}) => {
   const [bankDetails, setBankDetails] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [edit, setEdit] = useState<boolean>(true);
+  const [edit, setEdit] = useState<boolean>(false);
+  const [notFound, setNotFound] = useState<boolean>(false);
 
   const updateDetails = (data: any) => {
     setBankDetails(data);
@@ -33,7 +37,7 @@ const BankDetails: React.FC<Props> = ({data}) => {
     {
       key: 1,
       label: 'Your Name',
-      value: bankDetails?.yourName,
+      value: bankDetails?.accountHolderName,
       imageUrl: '',
     },
     {
@@ -71,15 +75,24 @@ const BankDetails: React.FC<Props> = ({data}) => {
         setEdit(false);
       }
       setLoading(false);
-    } catch (err) {
+    } catch (err:any) {
+      if(err?.status === ApiConstant.notFound){
+         setEdit(false);
+         setNotFound(true);
+      }
       console.log('personal details data fetching err', err);
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchbankDetails(data?.id);
-  }, []);
+    if(index === 3){
+      fetchbankDetails(data?.id);
+      if(notFound){
+          setEdit(false);
+      }
+    }
+  }, [data?.id, index]);
 
   if (loading) {
     return <Loader />;
@@ -92,6 +105,9 @@ const BankDetails: React.FC<Props> = ({data}) => {
             onCancel={onCancel}
             bankDetails={bankDetails}
             updateDetails={updateDetails}
+            notFound={notFound}
+            goToPrevIndex={goToPrevIndex}
+            goToNextIndex={goToNextIndex}
           />
         ) : (
           <>

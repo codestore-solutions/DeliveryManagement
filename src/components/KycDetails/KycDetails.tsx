@@ -35,6 +35,7 @@ const dataArr = Array<{key: number; label: string; value: any; imageUrl: any}>(
 
 interface Props {
   data: any;
+  goToNextIndex:any
 }
 
 const KycDetails: React.FC<Props> = ({data}) => {
@@ -43,7 +44,7 @@ const KycDetails: React.FC<Props> = ({data}) => {
   const [loading, setLoading] = useState<boolean>();
   
   const addUrl = (url: string) =>{
-       
+      setFormData([...fromData, url]);
   }
   const fetchKycDetails = (id: string) => {
     setLoading(true);
@@ -58,19 +59,23 @@ const KycDetails: React.FC<Props> = ({data}) => {
         setLoading(false);
       });
   };
+
+  const addKycHandler = () =>{
+     console.log("formData", fromData)
+  }
   return (
     <View style={[styles.container]}>
       <View>
         {dataArr?.map(item => (
           <View style={styles.row} key={item.key}>
-            <SingleDetail type={1} label={item.label} value={item.value} />
-          </View>
+            <SingleDetail type={1} label={item.label} value={item.value} addUrl={addUrl} />
+          </View> 
         ))}
       </View>
       <View style={styles.lower}>
         <CustomButton
           title={'Upload Document'}
-          onPress={() => console.log('pressed')}
+          onPress={addKycHandler}
         />
       </View>
     </View>

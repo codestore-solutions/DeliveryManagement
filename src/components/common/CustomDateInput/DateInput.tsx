@@ -10,6 +10,7 @@ import {
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 import {CalenderIcon} from '../../../assets';
+import globalStyle from '../../../global/globalStyle';
 
 interface Props {
   label: string;
@@ -49,7 +50,7 @@ const DateInput: React.FC<Props> = ({label, value, onChange, handleChange, type}
     <View style={styles.conatinerMain}>
       <Text style={styles.inputlabel}>{label}</Text>
       <View style={styles.conatiner}>
-        <TextInput placeholder={ type ? "Eg: yyyy" : "Eg: dd/mm/yyyy"} value={value} />
+        <TextInput style={styles.inputBox} placeholder={ type ? "Eg: yyyy" : "Eg: dd/mm/yyyy"} value={value} />
         <Pressable onPress={showDatePicker}>
           <CalenderIcon width={25} height={25} />
         </Pressable>
@@ -86,4 +87,7 @@ const styles = StyleSheet.create({
     color: '#7E8299',
     fontWeight: '500',
   },
+  inputBox:{
+    color:globalStyle.colors.labelColor
+  }
 });

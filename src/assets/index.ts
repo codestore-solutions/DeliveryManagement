@@ -1,6 +1,6 @@
 export {default as AddIcon} from './svgs/addIcon.svg';
 export {default as CheckedRadioIcon} from './svgs/selected-radio.svg';
-export {default as ReadioIcon} from './svgs/inselected.svg';
+export {default as RadioIcon} from './svgs/inselected.svg';
 export {default as DeliveryImg} from './svgs/landing-img.svg';
 export {default as LogoImg} from './svgs/logo.jpg';
 export {default as LogoDark} from './svgs/logodark.svg';

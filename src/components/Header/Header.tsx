@@ -3,6 +3,7 @@ import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProps} from '../../navigations/types';
 import styles from './HeaderStyles';
+import { useRoute } from '@react-navigation/native';
 import {LeftArrowIconHeader, MenuIcon, NotificationIcon} from '../../assets';
 
 interface TabHeaderProps {
@@ -11,11 +12,22 @@ interface TabHeaderProps {
 }
 
 const TabHeader: React.FC<TabHeaderProps> = ({title, type}) => {
+  const route = useRoute();
+  console.log('route', route)
+  const { params } = route;
   const navigation = useNavigation<NavigationProps>();
+
+  const goBackHandler = () =>{
+      if(route.name === 'CreateProfile'){
+          navigation.navigate('Home', {screen: 'Dashboard'})
+      }else{
+         navigation.goBack();
+      }
+  }
   return (
     <View style={styles.container}>
       {type === 0 ? (
-        <Pressable style={styles.left} onPress={() => navigation.navigate('Home', {screen:'Dashboard'})}>
+        <Pressable style={styles.left} onPress={goBackHandler}>
           <LeftArrowIconHeader width={30} height={30} />
         </Pressable>
       ) : (

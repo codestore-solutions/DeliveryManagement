@@ -1,6 +1,6 @@
 import UserHelper from './../utils/helpers/user';
 import {ApiConstant} from '../constant/ApiConstant';
-import {loginPayload} from '../utils/types/UserTypes';
+import {loginPayload, updateProfileInterface} from '../utils/types/UserTypes';
 import API from './ApiBase';
 
 const UserService = {
@@ -22,6 +22,20 @@ const UserService = {
     const res = await API({}, url, 'GET', params);
     return res?.data;
   },
+  getUserProfileStatus: async (id: number) =>{
+    const url = `${ApiConstant.baseUrl}${ApiConstant.agentProfileStatus}`;
+    let params = {
+      agentId: id,
+    };
+    const res = await API({}, url, 'GET', params);
+    return res?.data;
+  },
+  updateProfileStatus: async(payload: updateProfileInterface) =>{
+    const url = `${ApiConstant.baseUrl}${ApiConstant.updateProfileStatus}`;
+    const res = await API(payload, url, 'PUT');
+    console.log('UPDATEdata', res?.data)
+    return res?.data;
+  }
 };
 
 export default UserService;
