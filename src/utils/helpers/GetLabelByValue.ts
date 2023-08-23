@@ -24,7 +24,7 @@ export function generateLabelArray(dataArray: Array<any>) {
   const resultArray = [];
 
   for (const data of dataArray) {
-    const label = `${data.startTime} - ${data.endTime}`;
+    const label = `${data.slotName}`;
     const newObj = {
       label,
       value: data.id,

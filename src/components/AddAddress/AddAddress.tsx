@@ -21,7 +21,6 @@ import {
 import {setLocationInterface} from '../../utils/types/addressTypes';
 import {updateProfileInterface} from '../../utils/types/UserTypes';
 
-
 const AddAddress: React.FC<{index?: number}> = ({index}) => {
   const dispatch = useAppDispatch();
   const {data, profileStatus} = useAppSelector(
@@ -31,6 +30,7 @@ const AddAddress: React.FC<{index?: number}> = ({index}) => {
   const [selectedIndex, setIndex] = React.useState(0);
   const [locations, setLocations] = React.useState<any>(null);
   const [edit, setEdit] = useState<boolean>(false);
+  const [editAddress, setEditAddress] = useState<any>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const isEdit = () => {
     setEdit(true);
@@ -41,7 +41,7 @@ const AddAddress: React.FC<{index?: number}> = ({index}) => {
   // Set Working Location
   const setActiveLocation = async (item: any) => {
     let payload: setLocationInterface = {
-      serviceLocationId: item?.serviceLocationId,
+      serviceLocationId: item?.id,
       agentId: Number(data?.id),
       isActive: true,
     };
@@ -53,6 +53,11 @@ const AddAddress: React.FC<{index?: number}> = ({index}) => {
     } catch (err) {
       console.log('Error op setting working location', err);
     }
+  };
+
+  const updateWorkingLocations = async (item: any) => {
+    setEditAddress(item);
+    isEdit();
   };
 
   const renderItem = (item: any) => {
@@ -75,24 +80,26 @@ const AddAddress: React.FC<{index?: number}> = ({index}) => {
           )}
         </View>
         <View style={styles.cardRight}>
-          <Text style={styles.cardheading}>{item?.locationName}</Text>
-          <Text style={styles.carddesc}>{item.address}</Text>
+          <Text style={styles.cardHeading}>{item?.locationName}</Text>
+          <Text style={styles.cardDesc}>{item.address}</Text>
           <View style={styles.cardFooter}>
             <View style={styles.cardFooterLeft}>
               <Text style={styles.time}>
                 {firstThreeCharsOfSelectedDays.join(', ')}
               </Text>
               <Text style={styles.time}>
-                {item?.startTime + '-' + item?.endTime}
+                {item?.agentTimeSlots[0]?.timeSlotId}
               </Text>
             </View>
             <View style={styles.cardFooterRight}>
               <TouchableOpacity
                 style={styles.btn}
-                onPress={() => deleteLocation(Number(item?.serviceLocationId))}>
+                onPress={() => deleteLocation(Number(item?.id))}>
                 <Text style={styles.btnTxt}>Delete</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.btn}>
+              <TouchableOpacity
+                style={styles.btn}
+                onPress={() => updateWorkingLocations(item)}>
                 <Text style={styles.btnTxt}>Edit</Text>
               </TouchableOpacity>
             </View>
@@ -109,9 +116,7 @@ const AddAddress: React.FC<{index?: number}> = ({index}) => {
         id,
       );
       if (statusCode === 200) {
-        let filterLoc = locations?.filter(
-          (item: any) => item?.serviceLocationId !== id,
-        );
+        let filterLoc = locations?.filter((item: any) => item?.id !== id);
         setLocations(filterLoc);
       }
     } catch (err) {
@@ -150,7 +155,9 @@ const AddAddress: React.FC<{index?: number}> = ({index}) => {
   }, [index, data?.id]);
 
   if (edit) {
-    return <AddNewAddress onCancel={isEditCancel} />;
+    return (
+      <AddNewAddress onCancel={isEditCancel} addressDetail={editAddress} />
+    );
   } else {
     return (
       <View style={styles.container}>
@@ -222,7 +229,7 @@ const styles = StyleSheet.create({
     flex: 10,
     flexDirection: 'column',
   },
-  cardheading: {
+  cardHeading: {
     color: globalStyle.colors.labelColor,
     fontWeight: '600',
     fontSize: 16,
@@ -232,7 +239,7 @@ const styles = StyleSheet.create({
     color: globalStyle.colors.labelColor,
     letterSpacing: 0.02,
   },
-  carddesc: {
+  cardDesc: {
     fontSize: 12,
     lineHeight: 20,
     color: '#777777',

@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
   row: {
     marginVertical: 10,
   },
-  btnConatiner: {
+  btnContainer: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
@@ -27,8 +27,8 @@ const styles = StyleSheet.create({
   image: {
     marginVertical: 5,
   },
-  imageConatiner: {
-    height: 100,
+  imageContainer: {
+    height: 130,
     width: '100%',
     display: 'flex',
     padding:15,

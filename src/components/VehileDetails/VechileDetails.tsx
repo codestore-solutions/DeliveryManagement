@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, Image} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import globalStyle from '../../global/globalStyle';
 import SingleDetail from '../common/SingleDetail/SingleDetail';
@@ -16,12 +16,13 @@ interface Props {
 }
 
 const VehileDetails: React.FC<Props> = ({data, index, goToNextIndex}) => {
-  const [vechileDetails, setVechileDetails] = useState<any>(null);
+  const [vehicleDetails, setVehicleDetails] = useState<any>(null);
+  console.log('vechileDetails', vehicleDetails);
   const [notFound, setNotFound] = useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const updateDetails = (data: any) => {
-    setVechileDetails(data);
+    setVehicleDetails(data);
   };
   const onEdit = () => {
     setEdit(false);
@@ -35,11 +36,11 @@ const VehileDetails: React.FC<Props> = ({data, index, goToNextIndex}) => {
       setLoading(true);
       const {data} = await AgentServices.getAgentDetails(
         id,
-        ApiConstant.getvechileDetailendpoint,
+        ApiConstant.getVehicleDetailEndPoint,
       );
       // console.log("Vex data", data);
       if (data) {
-        setVechileDetails(data);
+        setVehicleDetails(data);
         setEdit(true);
       } else {
         setEdit(false);
@@ -50,7 +51,7 @@ const VehileDetails: React.FC<Props> = ({data, index, goToNextIndex}) => {
         setEdit(false);
         setNotFound(true);
       }
-      console.log('Vechile Detail Fetching Error', err);
+      console.log('Vehicle Detail Fetching Error', err);
       setLoading(false);
     }
   };
@@ -59,27 +60,27 @@ const VehileDetails: React.FC<Props> = ({data, index, goToNextIndex}) => {
     {
       key: 1,
       label: 'Vehicle Type',
-      value: getVehicleLabel(vechileDetails?.vehicleType),
+      value: getVehicleLabel(vehicleDetails?.vehicleType),
     },
     {
       key: 2,
       label: 'Brand',
-      value: vechileDetails?.company,
+      value: vehicleDetails?.company,
     },
     {
       key: 3,
       label: 'ManufacturedYear',
-      value: vechileDetails?.manufacturedYear,
+      value: vehicleDetails?.manufacturedYear,
     },
     {
       key: 4,
       label: 'Model',
-      value: vechileDetails?.vehicleModel,
+      value: vehicleDetails?.vehicleModel,
     },
     {
       key: 5,
       label: 'Registration Number',
-      value: vechileDetails?.registrationNumber,
+      value: vehicleDetails?.registrationNumber,
     },
   );
   useEffect(() => {
@@ -100,7 +101,7 @@ const VehileDetails: React.FC<Props> = ({data, index, goToNextIndex}) => {
           <VechileDetailsForm
             onCancel={onCancel}
             data={data}
-            vechileDetails={vechileDetails}
+            vechileDetails={vehicleDetails}
             updateDetails={updateDetails}
             goToNextIndex={goToNextIndex}
           />
@@ -112,6 +113,9 @@ const VehileDetails: React.FC<Props> = ({data, index, goToNextIndex}) => {
                 <SingleDetail label={item.label} value={item.value} />
               </View>
             ))}
+            <View style={styles.imageContainer}>
+              <Image source={{uri: "https://app-deliveryagent-dev.azurewebsites.net/Images/image.jpg"}} />
+            </View>
             <View style={styles.lower}>
               <CustomButton title={'Edit Details'} onPress={onEdit} />
             </View>
@@ -135,6 +139,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     flex: 1,
   },
+  imageContainer: {
+    height: 130,
+    width: '100%',
+  },
   lower: {
     width: '100%',
     position: 'absolute',
@@ -145,7 +153,7 @@ const styles = StyleSheet.create({
   row: {
     marginVertical: 10,
   },
-  btnConatiner: {
+  btnContainer: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',

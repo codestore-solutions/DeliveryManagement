@@ -12,7 +12,7 @@ const removeUser = async () => {
 
 const getUser = async () => {
   const userString = await AsyncStorage.getItem('user');
-  const data = userString ? JSON.parse(userString) : null
+  const data = userString ? JSON.parse(userString) : null;
   return data ? data : null;
 };
 

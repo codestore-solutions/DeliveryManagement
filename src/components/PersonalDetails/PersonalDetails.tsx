@@ -53,6 +53,8 @@ const PersonalDetails: React.FC<Props> = ({data, index, goToNextIndex}) => {
       setLoading(false);
     }
   };
+
+  
   const dataArr = Array<{key: number; label: string; value: string}>(
     {
       key: 1,
@@ -115,6 +117,7 @@ const PersonalDetails: React.FC<Props> = ({data, index, goToNextIndex}) => {
               <SingleDetail label={item.label} value={item.value} />
             </View>
           ))}
+
           <View style={styles.lower}>
             <CustomButton title={'Edit Details'} onPress={onEdit} />
           </View>

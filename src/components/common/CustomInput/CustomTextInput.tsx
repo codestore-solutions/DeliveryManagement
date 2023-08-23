@@ -29,7 +29,7 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
     <View style={styles.conatiner}>
      { name !== 'mobileNo' && <Text style={styles.inputlabel}>{label}</Text>}
     
-      <View style={name !== 'mobileNo'?styles.inputContainer : styles.inputContainermob}>
+      <View style={styles.inputContainer}>
         <TextInput
           style={styles.inputBox}
           value={value}

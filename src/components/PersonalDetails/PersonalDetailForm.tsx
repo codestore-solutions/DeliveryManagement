@@ -1,4 +1,10 @@
-import {StyleSheet, Text, View, Pressable} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  KeyboardAvoidingView,
+  Pressable,
+} from 'react-native';
 import React, {useState} from 'react';
 import {Formik} from 'formik';
 import globalStyle from '../../global/globalStyle';
@@ -11,6 +17,11 @@ import AgentServices from '../../services/AgentServices';
 import moment from 'moment';
 import CountryPickerInput from '../common/PickerInput/CountryPickerInput';
 import DropDownComponent from '../common/DropDown/DropDownComponent';
+import {ApiConstant} from '../../constant/ApiConstant';
+import UploadService from '../../services/UploadService';
+import ImagePicker from 'react-native-image-crop-picker';
+import {Image} from 'react-native';
+import {UploadIcon} from '../../assets';
 
 interface Props {
   onCancel: () => void;
@@ -42,11 +53,12 @@ const PersonalDetailForm: React.FC<Props> = ({
       agentId: Number(data?.id),
       fullName: values?.name,
       phoneNumber: values?.mobileNo,
-      countryCode:values?.code ,
+      countryCode: values?.code,
       email: values?.email,
       gender: values?.gender,
       dateOfBirth: values?.dob,
       address: values?.address,
+      profileImage: values?.profileImage,
     };
     console.log('payload', payload);
     try {
@@ -73,6 +85,27 @@ const PersonalDetailForm: React.FC<Props> = ({
     }
   };
 
+  const selectImage = (setFeildValue: any) => {
+    ImagePicker.openPicker({
+      cropping: false,
+    })
+      .then((image: any) => {
+        uploadImage(image, setFeildValue);
+      })
+      .catch((error: any) => {
+        console.log(error);
+      });
+  };
+
+  const uploadImage = async (image: any, setFieldValue: any) => {
+    const {statusCode, data} = await UploadService.uploadImage(image);
+    if (statusCode === ApiConstant.successCode) {
+      if (data.urlFilePath) {
+        setFieldValue('profileImage', data.urlFilePath);
+        console.log('data.urlFilePath', data.urlFilePath);
+      }
+    }
+  };
   return (
     <Formik
       initialValues={{
@@ -83,10 +116,18 @@ const PersonalDetailForm: React.FC<Props> = ({
         dob: moment(personalDetails?.dateOfBirth).format('YYYY-MM-DD') ?? '',
         gender: personalDetails?.gender ?? '',
         address: personalDetails?.address ?? '',
+        profileImage: personalDetails?.profileImage ?? '',
       }}
       validationSchema={personaDetailsValidation}
       onSubmit={values => submitHandler(values)}>
-      {({handleChange, handleSubmit, values, errors, touched}) => (
+      {({
+        handleChange,
+        handleSubmit,
+        values,
+        errors,
+        touched,
+        setFieldValue,
+      }) => (
         <View style={[globalStyle.container, styles.formContainer]}>
           <CustomTextInput
             placeholder={'Enter your name..'}
@@ -109,7 +150,7 @@ const PersonalDetailForm: React.FC<Props> = ({
             touched={touched}
           />
           <Text style={styles.inputlabel}>{'Phone No'}</Text>
-          <View style={styles.phoneConatiner}>
+          <View style={styles.phoneContainer}>
             <View style={styles.countryCode}>
               <CountryPickerInput
                 countryCode={values?.code}
@@ -152,8 +193,16 @@ const PersonalDetailForm: React.FC<Props> = ({
             errors={errors}
             touched={touched}
           />
+          <View style={styles.image}>
+            <Text style={styles.label}>Profile Image</Text>
+            <Pressable
+              style={styles.imageContainer}
+              onPress={() => selectImage(setFieldValue)}>
+              <UploadIcon width={70} height={70} />
+            </Pressable>
+          </View>
           <View style={styles.lower}>
-            <View style={styles.btnConatiner}>
+            <View style={styles.btnContainer}>
               <View style={{width: '50%'}}>
                 <CustomButton
                   title={personalDetails ? 'Update' : 'Save & Next'}
@@ -184,30 +233,54 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   dropDown: {},
+  image: {
+    marginVertical: 5,
+  },
+  imageContainer: {
+    height: 50,
+    width: '100%',
+    display: 'flex',
+    padding: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: 10,
+    backgroundColor: '#CCCCCC',
+    borderStyle: 'dotted',
+  },
+  label: {
+    paddingLeft: 3,
+    paddingBottom: 5,
+    color: '#7E8299',
+    fontWeight: '500',
+  },
   inputlabel: {
     paddingLeft: 3,
     paddingBottom: 5,
     color: '#7E8299',
     fontWeight: '500',
   },
-  phoneConatiner: {
+  phoneContainer: {
     height: 50,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 10,
-    borderColor: '#CCCCCC',
     verticalAlign: 'middle',
-    borderWidth: 1,
-    borderRadius: 10,
-    gap: 0,
+    gap: 10,
   },
   countryCode: {
     flex: 2,
+    paddingVertical: 10,
+    borderColor: '#CCCCCC',
+    borderWidth: 1,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   number: {
     flex: 10,
-    paddingTop: 7,
   },
   lower: {
     width: '100%',
@@ -219,7 +292,7 @@ const styles = StyleSheet.create({
   row: {
     marginVertical: 10,
   },
-  btnConatiner: {
+  btnContainer: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',

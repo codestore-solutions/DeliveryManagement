@@ -1,129 +1,136 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { MultiSelect } from 'react-native-element-dropdown';
+import {StyleSheet, Text, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {MultiSelect} from 'react-native-element-dropdown';
 import CustomTextInput from '../common/CustomInput/CustomTextInput';
 import SelectTimeScreen from '../DayandTime/SelectTimeScreen';
 import globalStyle from '../../global/globalStyle';
 import CustomButton from '../common/CustomButton/CustomButton';
-import { Formik } from 'formik';
-import { addAddresschema } from '../../utils/validations/addressValidation';
-import { addNewWorkingLocationInterface } from '../../utils/types/addressTypes';
-import { useAppSelector } from '../../store/hooks';
-import { RootState } from '../../store';
+import {Formik} from 'formik';
+import {addAddresschema} from '../../utils/validations/addressValidation';
+import {addNewWorkingLocationInterface} from '../../utils/types/addressTypes';
+import {useAppSelector} from '../../store/hooks';
+import {RootState} from '../../store';
 import AddressService from '../../services/AddressService';
-import { ScrollView } from 'react-native';
-import { TouchableOpacity } from 'react-native';
-import { getHoursList } from '../../utils/helpers/helperfunctions';
-import DropDownComponent from '../common/DropDown/DropDownComponent';
-import { ApiConstant } from '../../constant/ApiConstant';
-import { generateLabelArray } from '../../utils/helpers/GetLabelByValue';
+import {ScrollView} from 'react-native';
+import {TouchableOpacity} from 'react-native';
+import {ApiConstant} from '../../constant/ApiConstant';
+import {generateLabelArray} from '../../utils/helpers/GetLabelByValue';
 
 interface Props {
   onCancel: () => void;
+  addressDetail: any;
 }
 // const timeSlots = [
-//   { 
+//   {
 //     label: '12:00 AM',
 //     value: '00:00'
 //   },
-//   { 
+//   {
 //     label: '01:00 AM',
 //     value: '01:00'
 //   },
-//   { 
+//   {
 //     label: '02:00 AM',
 //     value: '02:00'
 //   },
-//   { 
+//   {
 //     label: '03:00 AM',
 //     value: '03:00'
 //   },
-//   { 
+//   {
 //     label: '04:00 AM',
 //     value: '04:00'
 //   },
-//   { 
+//   {
 //     label: '05:00 AM',
 //     value: '05:00'
 //   },
-//   { 
+//   {
 //     label: '06:00 AM',
 //     value: '06:00'
 //   },
-//   { 
+//   {
 //     label: '07:00 AM',
 //     value: '07:00'
 //   },
-//   { 
+//   {
 //     label: '08:00 AM',
 //     value: '08:00'
 //   },
-//   { 
+//   {
 //     label: '09:00 AM',
 //     value: '09:00'
 //   },
-//   { 
+//   {
 //     label: '10:00 AM',
 //     value: '10:00'
 //   },
-//   { 
+//   {
 //     label: '11:00 AM',
 //     value: '11:00'
 //   },
-//   { 
+//   {
 //     label: '12:00 PM',
 //     value: '12:00'
 //   },
-//   { 
+//   {
 //     label: '01:00 PM',
 //     value: '13:00'
 //   },
-//   { 
+//   {
 //     label: '02:00 PM',
 //     value: '14:00'
 //   },
-//   { 
+//   {
 //     label: '03:00 PM',
 //     value: '15:00'
 //   },
-//   { 
+//   {
 //     label: '04:00 PM',
 //     value: '16:00'
 //   },
-//   { 
+//   {
 //     label: '05:00 PM',
 //     value: '17:00'
 //   },
-//   { 
+//   {
 //     label: '06:00 PM',
 //     value: '18:00'
 //   },
-//   { 
+//   {
 //     label: '07:00 PM',
 //     value: '19:00'
 //   },
-//   { 
+//   {
 //     label: '08:00 PM',
 //     value: '20:00'
 //   },
-//   { 
+//   {
 //     label: '09:00 PM',
 //     value: '21:00'
 //   },
-//   { 
+//   {
 //     label: '10:00 PM',
 //     value: '22:00'
 //   },
-//   { 
+//   {
 //     label: '11:00 PM',
 //     value: '23:00'
 //   }
 // ];
 
-const allDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const allDays = [
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday',
+];
 
-const AddNewAddress: React.FC<Props> = ({ onCancel }) => {
-  const { data } = useAppSelector((state: RootState) => state.auth);
+const AddNewAddress: React.FC<Props> = ({onCancel, addressDetail}) => {
+  const {data} = useAppSelector((state: RootState) => state.auth);
   const [selectedDays, setSelectedDays] = useState<Array<any>>([]);
   const [timeSlots, setTimeSlots] = useState<Array<any>>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -137,8 +144,10 @@ const AddNewAddress: React.FC<Props> = ({ onCancel }) => {
     };
     try {
       setLoading(true);
-      const { data } = await AddressService.addNewWorkingLocation(payload);
-      console.log('data');
+      const {statusCode} = await AddressService.addNewWorkingLocation(payload);
+      if (statusCode === ApiConstant.successCode) {
+        onCancel();
+      }
     } catch (err) {
       console.log('err', err);
     } finally {
@@ -147,7 +156,6 @@ const AddNewAddress: React.FC<Props> = ({ onCancel }) => {
   };
 
   const addValue = (value: any, setFieldValue: any, formTag: any) => {
-    // Set the value of the number field here...
     setFieldValue(formTag, value);
   };
 
@@ -160,34 +168,40 @@ const AddNewAddress: React.FC<Props> = ({ onCancel }) => {
     addValue(updatedDays, setFeildValue, 'dayAndtime.days');
   };
 
-  const getTimeSlots = async() =>{
-      try {
-         const {statusCode, data} = await AddressService.getTimeSlots();
-         if(statusCode === ApiConstant.successCode){
-          const dropDownData = generateLabelArray(data);
-          setTimeSlots(dropDownData)
-         } ;
-      } catch (err) {
-        console.log('TimeSlots Fetching Error', err);
+  const getTimeSlots = async () => {
+    try {
+      const {statusCode, data} = await AddressService.getTimeSlots();
+      if (statusCode === ApiConstant.successCode) {
+        const dropDownData = generateLabelArray(data);
+        setTimeSlots(dropDownData);
       }
-  }
-
-  useEffect(() =>{
-   getTimeSlots()
-  }, [])
+    } catch (err) {
+      console.log('TimeSlots Fetching Error', err);
+    }
+  };
+  useEffect(() => {
+    getTimeSlots();
+  }, []);
   return (
     <Formik
       initialValues={{
-        location: '',
-        address: '',
+        location: addressDetail?.locationName ?? '',
+        address: addressDetail?.address ?? '',
         dayAndtime: {
           days: [],
-          timeSlotIds:[]
+          timeSlotIds: [],
         },
       }}
       validationSchema={addAddresschema}
       onSubmit={addAddressHandler}>
-      {({ handleChange, handleSubmit, setFieldValue, values, errors, touched }) => (
+      {({
+        handleChange,
+        handleSubmit,
+        setFieldValue,
+        values,
+        errors,
+        touched,
+      }) => (
         <View style={styles.container}>
           <Text style={styles.heading}>Please fill the following details</Text>
           <View style={styles.form}>
@@ -218,7 +232,7 @@ const AddNewAddress: React.FC<Props> = ({ onCancel }) => {
               <ScrollView
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
-                style={{ flexGrow: 1 }}>
+                style={{flexGrow: 1}}>
                 <View style={styles.timeLine}>
                   {allDays?.map(item => (
                     <TouchableOpacity
@@ -227,12 +241,12 @@ const AddNewAddress: React.FC<Props> = ({ onCancel }) => {
                         styles.timeLintBtn,
                         selectedDays.includes(item) && styles.activeBtn,
                       ]}
-                      onPress={() => handleDayPress(item, setFieldValue)}
-                    >
-                      <Text style={[
-                        styles.timeLintBtnText,
-                        selectedDays.includes(item) && styles.activeText,
-                      ]}>
+                      onPress={() => handleDayPress(item, setFieldValue)}>
+                      <Text
+                        style={[
+                          styles.timeLintBtnText,
+                          selectedDays.includes(item) && styles.activeText,
+                        ]}>
                         {item}
                       </Text>
                     </TouchableOpacity>
@@ -244,29 +258,30 @@ const AddNewAddress: React.FC<Props> = ({ onCancel }) => {
               <Text style={styles.label}>Select Time Slot</Text>
               <View style={styles.timeRow}>
                 <View style={styles.col}>
-                <MultiSelect
-                  style={styles.dropdown} // Add the appropriate styles
-                  data={timeSlots}
-                  labelField="label"
-                  valueField="value"
-                  placeholder="Select time slot"
-                  value={values.dayAndtime.timeSlotIds}
-                  onChange={(selectedItems:any) => setFieldValue('dayAndtime.timeSlotIds', selectedItems)}
-                />
+                  <MultiSelect
+                    style={styles.dropdown} // Add the appropriate styles
+                    data={timeSlots}
+                    labelField="label"
+                    valueField="value"
+                    placeholder="Select time slot"
+                    value={values.dayAndtime.timeSlotIds}
+                    onChange={(selectedItems: any) =>
+                      setFieldValue('dayAndtime.timeSlotIds', selectedItems)
+                    }
+                  />
                 </View>
-                
               </View>
             </View>
           </View>
           <View style={styles.btnConatiner}>
-            <View style={{ width: '50%' }}>
+            <View style={{width: '50%'}}>
               <CustomButton
                 disabled={loading}
                 title={'Add Details'}
                 onPress={handleSubmit}
               />
             </View>
-            <View style={{ width: '50%' }}>
+            <View style={{width: '50%'}}>
               <CustomButton
                 title={'Cancel'}
                 outline={true}
@@ -289,8 +304,8 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     height: 50,
-    paddingHorizontal:5,
-    borderRadius:5,
+    paddingHorizontal: 5,
+    borderRadius: 5,
     backgroundColor: 'transparent',
     borderColor: 'gray',
     borderWidth: 0.5,
@@ -305,17 +320,15 @@ const styles = StyleSheet.create({
     paddingLeft: 3,
     paddingBottom: 5,
     color: '#7E8299',
-    fontWeight: '500'
+    fontWeight: '500',
   },
   days: {},
-  time: {
-
-  },
+  time: {},
   timeRow: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10
+    gap: 10,
   },
   col: {
     flex: 6,

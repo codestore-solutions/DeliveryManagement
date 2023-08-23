@@ -43,6 +43,7 @@ const AddressService = {
       type: 'success',
       text2: data?.message,
     });
+    console.log('update', data)
     return data;
   },
   getTimeSlots: async() =>{
