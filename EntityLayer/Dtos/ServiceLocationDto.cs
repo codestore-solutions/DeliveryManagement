@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace EntityLayer.Dtos
 {
@@ -27,10 +20,10 @@ namespace EntityLayer.Dtos
 
         [Required]
         public List<long> TimeSlotIds { get; set; } = new List<long>();
-         
+
         [Required]
         public List<string> SelectedDays { get; set; } = null!;
-       
+
         public double Latitude { get; set; }
 
         public double Longitude { get; set; }

@@ -10,6 +10,8 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 
+// Commented code for User Register and login using DeliveryAuthDbContext
+
 namespace DeliveryAgentModule.Controllers
 {
   /*  [Route("api/v{version:apiVersion}/authentication")]

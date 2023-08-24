@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EntityLayer\EntityLayer.csproj" />
+    <ProjectReference Include="..\EntityLayer\DeliveryAgent.Entities.csproj" />
   </ItemGroup>
 
 </Project>

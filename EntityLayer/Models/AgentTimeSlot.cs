@@ -1,12 +1,4 @@
-﻿using Castle.Components.DictionaryAdapter;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace EntityLayer.Models
 {
@@ -22,6 +14,6 @@ namespace EntityLayer.Models
 
         // References to Service Location Table
         public long ServiceLocationId { get; set; }
-        public virtual ServiceLocation? ServiceLocation { get; set; } 
+        public virtual ServiceLocation? ServiceLocation { get; set; }
     }
 }

@@ -29,6 +29,15 @@ namespace EntityLayer.Common
             Verified = 1
         }
 
+        public enum OrderStatus
+        {
+            Assigned = 5,
+            Accepted = 6,
+            Rejected = 7,
+            Ongoing = 8,
+            Delivered = 9,
+        }
+
         public enum DeliveryStatus
         {
             Assigned = 5,

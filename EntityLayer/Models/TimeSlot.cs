@@ -12,7 +12,7 @@ namespace EntityLayer.Models
         [Key]
         public long Id { get; set; }
         public long? BusinessId { get; set; }
-        public string? SlotName { get; set; }       // 9-10
+        public string? SlotName { get; set; }       // 09-10 hrs
 
         [Required]
         [DataType(DataType.Time)]

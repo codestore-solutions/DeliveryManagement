@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BusinessLogicLayer.IServices;
 using DataAccessLayer.IRepository;
+using DeliveryAgent.Entities.Common;
 using EntityLayer.Common;
 using EntityLayer.Dtos;
 using EntityLayer.Models;
@@ -31,6 +32,8 @@ namespace BusinessLogicLayer.Services
             var bankDetails = agentDetail.BankDetails;
             var response = new BankDetailResponseDto();
             mapper.Map(bankDetails, response);
+            response.IFSCCode = CommonFunctions.MaskData(bankDetails.IFSCCode);
+            response.AccountNumber = CommonFunctions.MaskData(bankDetails.AccountNumber);
             return response;
         }
 
@@ -51,7 +54,7 @@ namespace BusinessLogicLayer.Services
             var bankDetails = new BankDetail();
             mapper.Map(bankDetailsDto, bankDetails);
             bankDetails.AgentDetailId = agentDetail.Id;
-            bankDetails.AgentDetail   = agentDetail;
+            //bankDetails.AgentDetail   = agentDetail;
             bankDetails.CreatedOn = DateTime.Now;
             bankDetails.UpdatedOn = DateTime.Now;
 
@@ -82,7 +85,7 @@ namespace BusinessLogicLayer.Services
             {
                 StatusCode      = saveResult ? 200 : 500,
                 Success         = saveResult,
-                Data            = saveResult ? bankDetails : StringConstant.DatabaseMessage,
+                Data            = bankDetails,
                 Message         = saveResult ? StringConstant.UpdatedMessage : StringConstant.DatabaseMessage
             };
         }

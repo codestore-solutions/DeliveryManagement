@@ -20,6 +20,11 @@ namespace DataAccessLayer.Repository
         {
             return _dbSet.AsQueryable();
         }
+        public IQueryable<T> GetByCondition(Expression<Func<T, bool>> predicate)
+        {
+            return _dbSet.AsQueryable().Where(predicate);
+        }
+
         public async Task<T?> GetByIdAsync(long id)
         {
             var entity = await _dbSet.FindAsync(id);
@@ -32,6 +37,11 @@ namespace DataAccessLayer.Repository
         public async Task AddAsync(T entity) 
         {
           await _dbSet.AddAsync(entity);   
+        }
+        public async Task<bool> AddRangeAsync(IEnumerable<T> entities)
+        {
+            await _dbSet.AddRangeAsync(entities);
+            return true;
         }
         public async Task<T?> DeleteAsync(long id)
         {
@@ -47,6 +57,12 @@ namespace DataAccessLayer.Repository
         {
             _dbSet.Remove(entity);
         }
+        public bool DeleteRange(IEnumerable<T> entities)
+        {
+            _dbSet.RemoveRange(entities);
+            return true;
+        }
 
+      
     }
 }

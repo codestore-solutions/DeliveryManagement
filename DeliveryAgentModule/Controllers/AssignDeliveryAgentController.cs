@@ -14,7 +14,7 @@ namespace DeliveryAgentModule.Controllers
     [ApiController]
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
-   // [Authorize]
+    // [Authorize]
     public class AssignDeliveryAgentController : ControllerBase
     {
         private readonly IAssignDeliveryAgentService deliveryAgentService;
@@ -30,9 +30,10 @@ namespace DeliveryAgentModule.Controllers
         /// Get all assigned agent list with orderId
         /// </summary>
         [HttpGet("get-all")]
-        public async Task<IActionResult> GetAllAssignedAgent([FromQuery] int pageNumber=1, [FromQuery] int limit=10)
+        // [Authorize(Roles = "2")]
+        public async Task<IActionResult> GetAllAssignedAgent([FromQuery] int pageNumber = 1, [FromQuery] int limit = 10)
         {
-            return Ok(await deliveryAgentService.GetAllAsync(pageNumber,limit));
+            return Ok(await deliveryAgentService.GetAllAsync(pageNumber, limit));
         }
 
 
@@ -43,6 +44,7 @@ namespace DeliveryAgentModule.Controllers
         /// <returns></returns>
         [HttpPost("automatically-assign-preview")]
         [ValidateModel]
+        // [Authorize(Roles = "2")]
         public async Task<IActionResult> AssignAgentAutomaticallyAsync(AssignAgentAutomaticallyDto assignAgentAutomaticallyDto)
         {
             return Ok(await deliveryAgentService.AssignAgentAutomaticallyAsync(assignAgentAutomaticallyDto));
@@ -62,86 +64,55 @@ namespace DeliveryAgentModule.Controllers
         /// <returns></returns>
         [HttpPost("assign-manually")]
         [ValidateModel]
+        // [Authorize(Roles = "2")]
         public async Task<IActionResult> AssignAgentManuallyAsync(AssignManuallyDto assignManuallyDto)
         {
             var response = await deliveryAgentService.AssignAgentManuallyAsync(assignManuallyDto);
-
-            using var client = new HttpClient();
-
-            var requestBody = new UpdateOrderStatus();
-
-            requestBody.orderStatus = 5;
-            foreach (var obj in assignManuallyDto.List)
-            {
-                var order = new Order
-                {
-                    orderId         = obj.OrderId,
-                    deliveryAgentId = obj.AgentId,
-                };
-                requestBody.orders.Add(order);
-            }
-
-            HttpContent requestJson = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json");
-            // Add the authorization header with the token
-            string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFtYW4uc2hhaEBleGFtcGxlLmNvbSIsInJvbGUiOiIyIiwiaWQiOiIyIiwiYnVzaW5lc3NDYXRlZ29yeSI6IjEiLCJleHAiOjE2OTQ2Njg1NTd9.5o0-bpi-JluyVoztkzksonQRmCINzYjPYle6xVu4HHo";
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
-            var microserviceResponse =  client.PutAsync("https://order-processing-dev.azurewebsites.net/api/v1/order/updateOrderWithAgent", requestJson).Result;
-            if (microserviceResponse.IsSuccessStatusCode)
+            if (response.Success)
             {
                 return Ok(response);
             }
-            else
-            {          
-                return NotFound(response);
-            }
+            return StatusCode(response.StatusCode, response);
         }
 
-        
+
         /// <summary>
         /// Accept or Reject Order by agent through Mobile App.
         /// </summary>
         /// <param name="acceptRejectOrderDto"></param>
         /// <returns></returns>
         [HttpPost("acceptOrReject")]
-        public async Task<IActionResult> AcceptOrder([FromBody] AcceptRejectOrderDto acceptRejectOrderDto )
+        // [Authorize(Roles = "5")]
+        public async Task<IActionResult> AcceptOrder([FromBody] AcceptRejectOrderDto acceptRejectOrderDto)
         {
             var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-          /*  var claims = User.Claims;
-
-            // Find the claim with the "id" type
-            var idClaim = claims.FirstOrDefault(c => c.Type == "id");
-
-            if (idClaim == null)
-            {
-                // The "id" claim was not found in the token
-                return BadRequest("User ID not found in token.");
-            }
-
-            // Access the user ID from the claim
-            var userId = idClaim.Value;*/
-            var result = await deliveryAgentService.AcceptOrderAsync(acceptRejectOrderDto,token);
-            if(result.Success == false)
+            var result = await deliveryAgentService.AcceptOrderAsync(acceptRejectOrderDto, token);
+            if (result.Success == false)
             {
                 return BadRequest(result);
             }
             return StatusCode(StatusCodes.Status200OK, result);
         }
 
+
         [HttpGet("CountDeliveredOrRejectedOrders")]
+        // [Authorize(Roles = "2,5")]
         public async Task<IActionResult> GetRejectedOrdersAsync([FromQuery][Required] long agentId)
         {
             var result = await deliveryAgentService.GetDeliveredOrRejectedOrdersCountAsync(agentId);
             return result == null ? NotFound(StringConstant.ResourceNotFoundError) : Ok(result);
         }
 
+
         [HttpPut("updatePickupOrDeliveryStatus")]
+        // [Authorize(Roles = "5")]
         public async Task<IActionResult> UpdatePickupOrDeliveryStatusAsync(UpdatePickupOrDeliveryStatusDto pickupOrDeliveryStatusDto)
         {
             var result = await deliveryAgentService.UpdatePickupOrDeliveryStatusAsync(pickupOrDeliveryStatusDto);
-            return result == null ? NotFound(StringConstant.ResourceNotFoundError): Ok(result);
+            return result == null ? NotFound(StringConstant.ResourceNotFoundError) : Ok(result);
         }
 
-    }    
-    
+    }
+
 }
 

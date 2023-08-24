@@ -109,6 +109,7 @@ namespace DeliveryAgentModule
 
             builder.Services.AddDbContext<DeliveryDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString(StringConstant.ConnectionStringPath)));
+
             /*            builder.Services.AddDbContext<DeliveryAuthDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DeliveryAgentAuthConnectionString")));*/
             builder.Services.AddCors(options =>

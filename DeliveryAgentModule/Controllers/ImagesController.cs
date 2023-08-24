@@ -26,6 +26,7 @@ namespace DeliveryAgentModule.Controllers
         // POST: /api/images/upload
         [HttpPost("upload")]
         [ValidateModel]
+        // [Authorize(Roles = "5")]
         public async Task<IActionResult> Upload([FromForm] ImageUploadRequestDto requestDto)
         {
             // Validate Extension & Size
@@ -57,7 +58,6 @@ namespace DeliveryAgentModule.Controllers
                 ModelState.AddModelError("file", "file size more than 2 MB, please upload a smaller file");
             }
         }
-
 
     }
 }

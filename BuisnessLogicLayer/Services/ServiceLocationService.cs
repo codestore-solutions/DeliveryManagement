@@ -7,7 +7,6 @@ using EntityLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
-
 namespace BusinessLogicLayer.Services
 {
     public class ServiceLocationService : IServiceLocationService
@@ -36,6 +35,7 @@ namespace BusinessLogicLayer.Services
             string concatenatedSelectedDays = string.Join(" ", serviceLocationDto.SelectedDays);
             addServiceLocation.SelectedDays = concatenatedSelectedDays;
 
+            // Core Logic to set first working location as active.
             if (agentDetail.ServiceLocations.IsNullOrEmpty())
             {
                 addServiceLocation.IsActive = true;
@@ -49,15 +49,6 @@ namespace BusinessLogicLayer.Services
             addServiceLocation.AgentDetails  = agentDetail;
             agentDetail.ServiceLocations.Add(addServiceLocation);
 
-           /* var agentTimeSlots = serviceLocationDto.TimeSlotIds.Select(timeSlotId => new AgentTimeSlot
-            {
-                IsActive = true,
-                TimeSlotId = timeSlotId,
-                ServiceLocationId = addServiceLocation.Id,
-                ServiceLocation = addServiceLocation
-            }).ToList();
-
-            .AgentTimeSlots.AddRange(agentTimeSlots);*/
             foreach (var timeSlotId in serviceLocationDto.TimeSlotIds)
             {
                 var slot = new AgentTimeSlot
@@ -65,14 +56,12 @@ namespace BusinessLogicLayer.Services
                     IsActive = true,
                     TimeSlotId = timeSlotId,
                     ServiceLocationId = addServiceLocation.Id,
-                    ServiceLocation = addServiceLocation
                 };
                 addServiceLocation.AgentTimeSlots.Add(slot);
             }
-
             await unitOfWork.ServiceLocationRepository.AddAsync(addServiceLocation);
             bool saveResult = await unitOfWork.SaveAsync();
-       
+            
             return new ResponseDto
             {
                 StatusCode  = 200,
@@ -119,20 +108,28 @@ namespace BusinessLogicLayer.Services
         public async Task<ResponseDto?> UpdateWorkingLocationAsync(long serviceLocationId, UpdateWorkingLocationDto updateWorkingLocationDto)
         {
             var serviceLocation = await unitOfWork.ServiceLocationRepository.GetByIdAsync(serviceLocationId);
-
             if(serviceLocation == null) 
             {
                 return null;
             }
-
             mapper.Map(updateWorkingLocationDto, serviceLocation);
-            TimeSpan fromTime = TimeSpan.Parse(updateWorkingLocationDto.FromTime);
-            TimeSpan toTime = TimeSpan.Parse(updateWorkingLocationDto.ToTime);
             string concatenatedSelectedDays = string.Join(" ", updateWorkingLocationDto.SelectedDays);
-
-           /* serviceLocation.StartTime = fromTime;
-            serviceLocation.EndTime = toTime;*/
             serviceLocation.SelectedDays = concatenatedSelectedDays;
+
+            foreach (var timeSlotId in updateWorkingLocationDto.TimeSlotIds)
+            {
+                if(serviceLocation.AgentTimeSlots.Any(u => u.TimeSlotId == timeSlotId))
+                {
+                    continue;
+                }
+                var slot = new AgentTimeSlot
+                {
+                    IsActive = true,
+                    TimeSlotId = timeSlotId,
+                    ServiceLocationId = serviceLocation.Id,
+                };
+                serviceLocation.AgentTimeSlots.Add(slot);
+            }
             bool saveResult = await unitOfWork.SaveAsync();
 
             return new ResponseDto
@@ -244,7 +241,6 @@ namespace BusinessLogicLayer.Services
             };
             return new ResponseDto {Success = true, StatusCode = 200, Data = response, Message = StringConstant.SuccessMessage };
         }
-       
     }
 
 }

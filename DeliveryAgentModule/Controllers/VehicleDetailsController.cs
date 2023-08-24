@@ -27,6 +27,7 @@ namespace DeliveryAgent.API.Controllers
         /// <param name="agentId" example ="4001"></param>
         /// <returns></returns>
         [HttpGet("get")]
+        // [Authorize(Roles = "2,5")]
         public async Task<ActionResult<ResponseDto>> GetAgentDetailAsync([FromQuery][Required] long agentId)
         {
             var result = await vehicleDetailsService.GetAsync(agentId);
@@ -41,14 +42,15 @@ namespace DeliveryAgent.API.Controllers
         /// <returns></returns>
         [HttpPost("add")]
         [ValidateModel]
+        // [Authorize(Roles = "5")]
         public async Task<IActionResult> AddVehicleDetailsAsync([FromBody][Required] VehicleDetailsDto vehicleDetailsDto)
         {
             var result = await vehicleDetailsService.AddDetailsAsync(vehicleDetailsDto);
-            if (result.StatusCode == (int)HttpStatusCode.NotFound)
+            if (result != null)
             {
-                return NotFound(result);
+                return Ok(result);
             }
-            return result == null ? BadRequest(new { message = StringConstant.ExistingMessage }) : Ok(result);
+            return BadRequest(new { message = StringConstant.ExistingMessage });
         }
 
         /// <summary>
@@ -59,6 +61,7 @@ namespace DeliveryAgent.API.Controllers
         /// <returns></returns>
         [HttpPut("update")]
         [ValidateModel]
+        // [Authorize(Roles = "5")]
         public async Task<IActionResult> UpdateDetailsAsync([FromQuery][Required] long id, [FromBody] VehicleDetailsDto vehicleDetailsDto)
         {
             var result = await vehicleDetailsService.UpdateDetailsAsync(id, vehicleDetailsDto);

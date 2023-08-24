@@ -46,6 +46,7 @@ namespace EntityLayer.Models
 
         public AvailabilityStatus AgentStatus { get; set; }
         public VerificationStatus verificationStatus { get; set; }
+        public bool IsDeleted { get; set; }
 
         // Navigation to references
         public virtual BankDetail? BankDetails { get; set; }

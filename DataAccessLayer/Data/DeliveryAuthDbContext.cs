@@ -1,4 +1,7 @@
-﻿/*using Microsoft.AspNetCore.Identity;
+﻿                                 // Db Context for authentication 
+
+
+/*using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;

@@ -8,6 +8,11 @@ using static EntityLayer.Common.EnumConstants;
 
 namespace EntityLayer.Dtos
 {
+    public class KYCListDto
+    {
+        [Required]
+        public List<KYCDto> List { get; set; } = null!;
+    }
     public class KYCDto
     {
         [Required]

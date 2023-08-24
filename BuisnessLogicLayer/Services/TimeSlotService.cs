@@ -43,5 +43,10 @@ namespace BusinessLogicLayer.Services
             return timeSlots;
         }
 
+        public async Task<IEnumerable<TimeSlot>> GetByIds(List<long> slotIds)
+        {
+            var timeSlots = await unitOfWork.TimeSlotRepository.GetAllAsQueryable().Where(u => slotIds.Contains(u.Id) && u.IsActive).ToListAsync();
+            return timeSlots;
+        }
     }
 }

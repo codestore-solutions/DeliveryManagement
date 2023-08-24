@@ -25,12 +25,13 @@ namespace DeliveryAgent.API.Controllers
         /// <summary>
         /// Get all Working Locations of a delivery agent
         /// </summary>
-        /// <param name="deliveryAgentId" example="4001"></param>
+        /// <param name="agentId" example="4001"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetAllWorkingLocationsAsync([FromQuery][Required] long deliveryAgentId)
+        // [Authorize(Roles = "2,5")]
+        public async Task<IActionResult> GetAllWorkingLocationsAsync([FromQuery][Required] long agentId)
         {
-            var result = await workingLocationService.GetAllWorkingLocationsAsync(deliveryAgentId);
+            var result = await workingLocationService.GetAllWorkingLocationsAsync(agentId);
             return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
 
@@ -41,6 +42,7 @@ namespace DeliveryAgent.API.Controllers
         /// <returns></returns>
         [HttpPost]
         [ValidateModel]
+        // [Authorize(Roles = "5")]
         public async Task<IActionResult> AddNewWorkingLocationAsync([FromBody][Required] ServiceLocationDto workingLocationDto)
         {
             var result = await workingLocationService.AddNewWorkingLocationAsync(workingLocationDto);
@@ -54,6 +56,7 @@ namespace DeliveryAgent.API.Controllers
         /// <param name="serviceLocationId"></param>
         /// <returns></returns>
         [HttpDelete]
+        // [Authorize(Roles = "5")]
         public async Task<IActionResult> DeleteWorkingLocationAsync([FromQuery][Required] long serviceLocationId)
         {
             var result = await workingLocationService.DeleteWorkingLocationAsync(serviceLocationId);
@@ -68,6 +71,7 @@ namespace DeliveryAgent.API.Controllers
         /// <returns></returns>
         [HttpPut]
         [ValidateModel]
+        // [Authorize(Roles = "5")]
         public async Task<IActionResult> UpdateWorkingLocationAsync([Required] long serviceLocationId, [FromBody][Required] UpdateWorkingLocationDto updateWorkingLocationDto)
         {
             var result = await workingLocationService.UpdateWorkingLocationAsync(serviceLocationId, updateWorkingLocationDto);
@@ -81,6 +85,7 @@ namespace DeliveryAgent.API.Controllers
         /// <returns></returns>
         [HttpPut("updateActiveStatus")]
         [ValidateModel]
+        // [Authorize(Roles = "5")]
         public async Task<IActionResult> UpdateActiveAddressAsync(UpdateActiveAddressDto activeAddressDto)
         {
             var result = await workingLocationService.UpdateActiveAddressAsync(activeAddressDto);
@@ -93,6 +98,7 @@ namespace DeliveryAgent.API.Controllers
         /// <param name="agentId"></param>
         /// <returns></returns>
         [HttpGet("getAvailabilityStatus")]
+        // [Authorize(Roles = "2,5")]
         public async Task<IActionResult> GetAgentAvailabilityStatusAsync([Required] long agentId)
         {
             var result = await workingLocationService.GetAgentAvailabilityStatusAsync(agentId);
@@ -106,6 +112,7 @@ namespace DeliveryAgent.API.Controllers
         /// <returns></returns>
         [HttpPut("updateAgentStatus")]
         [ValidateModel]
+        // [Authorize(Roles = "5")]
         public async Task<IActionResult> UpdateAgentAvailabilityStatusAsync([FromBody][Required] UpdateAgentAvailabilityStatusDto statusDto)
         {
             var result = await workingLocationService.UpdateAgentAvailabilityStatusAsync(statusDto);
@@ -114,6 +121,7 @@ namespace DeliveryAgent.API.Controllers
 
         [HttpPost("VerifyAgentKycDocuments")]
         [ValidateModel]
+        // [Authorize(Roles = "2")]
         public async Task<IActionResult> UpdateVerificationStatusAsync(UpdateVerificationStatusDto updateVerificationStatusDto)
         {
             var result = await workingLocationService.UpdateVerificationStatusAsync(updateVerificationStatusDto);
@@ -121,6 +129,7 @@ namespace DeliveryAgent.API.Controllers
         }
 
         [HttpGet("getVerificationStatus")]
+        // [Authorize(Roles = "2,5")]
         public async Task<IActionResult> GetVerificationStatusAsync([FromQuery][Required] long agentId)
         {
             var result = await workingLocationService.GetVerificationStatusAsync(agentId);

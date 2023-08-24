@@ -10,7 +10,7 @@ namespace DeliveryAgent.API.Controllers
 {
     [Route("api/v{version:apiVersion}/personal-details")]
     [ApiController]
-    public class AgentDetailsController : ControllerBase
+    public class AgentDetailsController : BaseController
     {
         private readonly IAgentDetailsService agentDetailsService;
 
@@ -18,6 +18,13 @@ namespace DeliveryAgent.API.Controllers
         {
             this.agentDetailsService = agentDetailsService;
         }
+
+        /*  [HttpGet]
+          public IActionResult Get(string key)
+          {
+              var encryptedKey = EncryptDecryptManager.Encrypt(key);
+              return Ok(encryptedKey);
+          }*/
 
         /// <summary>
         /// Get Agent details by agent Id.
@@ -28,7 +35,7 @@ namespace DeliveryAgent.API.Controllers
         // [Authorize(Roles = "2,5")]
         public async Task<ActionResult<ResponseDto>> GetAgentDetailAsync([FromQuery][Required] long agentId)
         {
-            var result = await agentDetailsService.GetPersonalDetailsAsync(agentId);
+            var result = await agentDetailsService.GetAgentDetailsAsync(agentId);
             if (result != null)
             {
                 return new ResponseDto { StatusCode = (int)HttpStatusCode.OK, Success = true, Data = result, Message = StringConstant.SuccessMessage };
@@ -110,6 +117,7 @@ namespace DeliveryAgent.API.Controllers
         /// <param name="agentIds"></param>
         /// <returns></returns>
         [HttpGet("getMultipleAgent")]
+        // [Authorize(Roles = "2")]
         public async Task<IActionResult> GetMultipleAgentsList([FromQuery] List<long> agentIds)
         {
             var result = await agentDetailsService.GetMultipleAgentsList(agentIds);
@@ -117,17 +125,38 @@ namespace DeliveryAgent.API.Controllers
         }
 
         [HttpPut("updateProfileCompletedStatus")]
-        public async Task<IActionResult> AddProfileCompletedStatusAsync(UpdateProfileCompletedDto updateProfileCompletedDto)
+        // [Authorize(Roles = "2,5")]
+        public async Task<IActionResult> UpdateProfileCompletedStatusAsync(UpdateProfileCompletedDto updateProfileCompletedDto)
         {
-            var result = await agentDetailsService.AddProfileCompletedStatusAsync(updateProfileCompletedDto);
+            var result = await agentDetailsService.UpdateProfileCompletedStatusAsync(updateProfileCompletedDto);
             return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
 
         [HttpGet("getProfileCompletedStatus")]
+        // [Authorize(Roles = "2,5")]
         public async Task<IActionResult> GetProfileCompletedStatusAsync([FromQuery] long agentId)
         {
             var result = await agentDetailsService.GetProfileCompletedStatusAsync(agentId);
             return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
+
+        /// <summary>
+        /// Soft delete agent from Business Admin portal.
+        /// </summary>
+        /// <param name="agentId"></param>
+        /// <param name="isDeleted"></param>
+        /// <returns></returns>
+        // [Authorize(Roles = "2")]
+        [HttpPut("markAgentAsInactive")]
+        public async Task<IActionResult> SoftDeleteAgentAsync([FromQuery][Required]long agentId, [FromQuery][Required]bool isDeleted)
+        {
+            var result = await agentDetailsService.SoftDeleteAgentAsync(agentId, isDeleted);
+            if (result)
+            {
+                return Ok(new { message = StringConstant.DeletedMessage});
+            }
+            return NotFound(new {message = StringConstant.ResourceNotFoundError});
+        }
+
     }
 }

@@ -23,17 +23,4 @@
         public string Message { get; set; }
       
     }
-
-    public class Order
-    {
-        public long orderId { get; set; }
-        public long deliveryAgentId { get; set; }
-    }
-    public class UpdateOrderStatus
-    {
-        public int orderStatus { get; set; }
-        public List<Order> orders { get; set; } = new List<Order>();
-    }
-
-
 }

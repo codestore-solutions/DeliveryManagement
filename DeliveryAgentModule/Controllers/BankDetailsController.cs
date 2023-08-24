@@ -26,6 +26,7 @@ namespace DeliveryAgent.API.Controllers
         /// <param name="agentId"></param>
         /// <returns></returns>
         [HttpGet("get")]
+        // [Authorize(Roles = "2,5")]
         public async Task<ActionResult<ResponseDto>> GetBankDetailAsync([FromQuery][Required] long agentId)
         {
             var result = await bankDetailsService.GetAsync(agentId);
@@ -40,6 +41,7 @@ namespace DeliveryAgent.API.Controllers
         /// <returns></returns>
         [HttpPost("add")]
         [ValidateModel]
+        // [Authorize(Roles = "5")]
         public async Task<IActionResult> AddBankDetailsAsync([FromBody][Required] BankDetailsDto bankDetailsDto)
         {
             var result = await bankDetailsService.AddDetailsAsync(bankDetailsDto);
@@ -54,6 +56,7 @@ namespace DeliveryAgent.API.Controllers
         /// <returns></returns>
         [HttpPut("update")]
         [ValidateModel]
+        // [Authorize(Roles = "5")]
         public async Task<IActionResult> UpdateDetailsAsync([FromQuery][Required] long id, [FromBody][Required] BankDetailsDto bankDetailsDto)
         {
             var result = await bankDetailsService.UpdateDetailsAsync(id, bankDetailsDto);

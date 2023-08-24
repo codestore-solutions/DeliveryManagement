@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace EntityLayer.Dtos
 {
     public class UpdateWorkingLocationDto
     {
-
         [Required]
         [StringLength(50, MinimumLength = 1)]
         [RegularExpression(@"^[A-Za-z0-9.:,/ -]+$")]
@@ -21,14 +15,7 @@ namespace EntityLayer.Dtos
         public string Address { get; set; } = null!;
 
         [Required]
-        [DataType(DataType.Time)]
-        [RegularExpression(@"^[0-2][0-9]:00$")]
-        public string FromTime { get; set; } = null!;
-
-        [Required]
-        [DataType(DataType.Time)]
-        [RegularExpression(@"^[0-2][0-9]:00$")]
-        public string ToTime { get; set; } = null!;
+        public List<long> TimeSlotIds { get; set; } = new List<long>();
 
         [Required]
         public List<string> SelectedDays { get; set; } = null!;

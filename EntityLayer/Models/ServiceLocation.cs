@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EntityLayer.Models
 {
@@ -15,6 +12,8 @@ namespace EntityLayer.Models
         [Required]
         [StringLength(50)]
         public string LocationName { get; set; } = null!;
+
+        [ForeignKey("AgentDetail")]
         public long AgentDetailId { get; set; }
 
         [Required]
@@ -27,14 +26,15 @@ namespace EntityLayer.Models
 
         // Represent Active Working Location 
         [Required]
-        public bool IsActive { get; set; }                                
+        public bool IsActive { get; set; }
 
         [Required]
         public string SelectedDays { get; set; } = null!;
 
+        public virtual ICollection<AgentTimeSlot> AgentTimeSlots { get; set; } = new List<AgentTimeSlot>();
+
         // References
         public virtual AgentDetail AgentDetails { get; set; } = null!;
-        public virtual ICollection<AgentTimeSlot> AgentTimeSlots { get; set;} = new List<AgentTimeSlot>(); 
-       
+
     }
 }

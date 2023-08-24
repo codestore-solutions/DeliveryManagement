@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using BusinessLogicLayer.IServices;
 using DataAccessLayer.IRepository;
-using DataAccessLayer.Migrations;
 using EntityLayer.Common;
 using EntityLayer.Dtos;
 using EntityLayer.Models;
@@ -21,7 +20,7 @@ namespace BusinessLogicLayer.Services
             this.mapper = mapper;
         }
 
-        public async Task<AgentDetailResponseDto?> GetPersonalDetailsAsync(long agentId)
+        public async Task<AgentDetailResponseDto?> GetAgentDetailsAsync(long agentId)
         {
             var agentDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == agentId);
             if (agentDetail == null)
@@ -41,7 +40,7 @@ namespace BusinessLogicLayer.Services
             // Handling Duplicate Record 
             if (existingDetails != null)
             {
-                return new ErrorResponseDto { StatusCode = 400, Success = false, Message = StringConstant.ExistingMessage};
+                return new ErrorResponseDto { StatusCode = 400, Success = false, Message = StringConstant.ExistingMessage };
             }
             var addNewDetails = new AgentDetail();
             mapper.Map(agentDetailsDto, addNewDetails);
@@ -53,7 +52,7 @@ namespace BusinessLogicLayer.Services
 
             return new ResponseDto
             {
-                StatusCode = saveResult? 200 : 500,
+                StatusCode = saveResult ? 200 : 500,
                 Success    = saveResult,
                 Data       = addNewDetails,
                 Message    = saveResult ? StringConstant.AddedMessage : StringConstant.DatabaseMessage
@@ -65,7 +64,7 @@ namespace BusinessLogicLayer.Services
             var agentDetail = await unitOfWork.AgentDetailsRepository.GetByIdAsync(id);
             if (agentDetail == null)
             {
-                return new ErrorResponseDto { StatusCode = 404, Message = StringConstant.ResourceNotFoundError, Success = false};
+                return new ErrorResponseDto { StatusCode = 404, Message = StringConstant.ResourceNotFoundError, Success = false };
             }
             mapper.Map(agentDetailsDto, agentDetail);
             agentDetail.UpdatedOn = DateTime.Now;
@@ -73,25 +72,25 @@ namespace BusinessLogicLayer.Services
 
             return new ResponseDto
             {
-                StatusCode  = saveResult ? 200 : 500 ,
-                Success     = saveResult,
-                Data        = agentDetail,
-                Message     = saveResult ? StringConstant.UpdatedMessage : StringConstant.DatabaseMessage
+                StatusCode = saveResult ? 200 : 500,
+                Success = saveResult,
+                Data = agentDetail,
+                Message = saveResult ? StringConstant.UpdatedMessage : StringConstant.DatabaseMessage
             };
         }
 
-        public async Task<ResponseDto?> GetAllDetailsAsync( string? filterQuery, int? agentStatus,
+        public async Task<ResponseDto?> GetAllDetailsAsync(string? filterQuery, int? agentStatus,
         int pageNumber = 1, int limit = 10)
         {
             var agentDetailsQuery = unitOfWork.AgentDetailsRepository.GetAllAsQueryable();
 
             if (!string.IsNullOrWhiteSpace(filterQuery))
             {
-               agentDetailsQuery = agentDetailsQuery.Where(u => u.Email.Contains(filterQuery) || u.FullName.Contains(filterQuery));
+                agentDetailsQuery = agentDetailsQuery.Where(u => u.Email.Contains(filterQuery) || u.FullName.Contains(filterQuery));
             }
-            var filteredDetails = agentDetailsQuery.Where(u => u.IsProfileCompleted
+            var filteredDetails = agentDetailsQuery.Where(u => u.IsProfileCompleted && !u.IsDeleted
             && (agentStatus == null || u.AgentStatus == (EnumConstants.AvailabilityStatus)agentStatus));
-          
+
             var totalCount = await filteredDetails.CountAsync();
             var pagedDetails = await filteredDetails.Skip((pageNumber - 1) * limit).Take(limit).ToListAsync();
 
@@ -104,57 +103,47 @@ namespace BusinessLogicLayer.Services
                 List = pagedDetails,
                 Total = totalCount
             };
-
+            // need to update responseDto
             return new ResponseDto
             {
                 StatusCode = 200,
-                Success    = true,
-                Data       = response,
-                Message    = StringConstant.SuccessMessage
+                Success = true,
+                Data = response,
+                Message = StringConstant.SuccessMessage
             };
-        } 
+        }
 
         public async Task<ResponseDto?> GetDetailByAgentId(long agentId)
         {
             var agentDetails = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == agentId);
-            if(agentDetails == null) 
-            { 
+            if (agentDetails == null)
+            {
                 return null;
             }
-
             return new ResponseDto
             {
-                StatusCode  = 200,
-                Success     = true,
-                Data        = agentDetails,
-                Message     = StringConstant.SuccessMessage
+                StatusCode = 200,
+                Success = true,
+                Data = agentDetails,
+                Message = StringConstant.SuccessMessage
             };
         }
 
         public async Task<ResponseDto> GetMultipleAgentsList(List<long> agentIds)
         {
-            var listOfAgents = new List<Object>();
-
-            foreach (var agentId in agentIds)
-            {
-                var agent = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == agentId);
-                if (agent == null)
-                {                  
-                    continue;
-                }                
-                listOfAgents.Add(agent);
-            }
+            var listOfAgents = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable()
+            .Where(u => agentIds.Contains(u.AgentId)).ToListAsync();
 
             return new ResponseDto
             {
-                Success    = true,
+                Success = true,
                 StatusCode = 200,
-                Data       = listOfAgents,
-                Message    = StringConstant.SuccessMessage
+                Data = listOfAgents,
+                Message = StringConstant.SuccessMessage
             };
         }
 
-        public async Task<ResponseDto?> AddProfileCompletedStatusAsync(UpdateProfileCompletedDto updateProfileCompletedDto)
+        public async Task<ResponseDto?> UpdateProfileCompletedStatusAsync(UpdateProfileCompletedDto updateProfileCompletedDto)
         {
             var agent = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == updateProfileCompletedDto.AgentId);
 
@@ -184,6 +173,18 @@ namespace BusinessLogicLayer.Services
                 IsProfileCompleted = agent.IsProfileCompleted,
             };
             return new ResponseDto { StatusCode = 200, Success = true, Data = response, Message = StringConstant.SuccessMessage };
+        }
+
+        public async Task<bool> SoftDeleteAgentAsync(long agentId , bool isDeleted)
+        {
+            var agent = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId ==agentId);
+            if (agent != null)
+            {
+                agent.IsDeleted = isDeleted;
+                await unitOfWork.SaveAsync();
+                return true;
+            }
+            return false;
         }
     }
 }

@@ -1,12 +1,8 @@
 ﻿using BusinessLogicLayer.IServices;
-using BusinessLogicLayer.Services;
 using DeliveryAgentModule.CustomActionFilter;
 using EntityLayer.Common;
 using EntityLayer.Dtos;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 
 namespace DeliveryAgent.API.Controllers
@@ -28,6 +24,7 @@ namespace DeliveryAgent.API.Controllers
         /// <param name="agentId"></param>
         /// <returns></returns>
         [HttpGet("get")]
+        // [Authorize(Roles = "2,5")]
         public async Task<IActionResult> GetAgentDetailAsync([FromQuery][Required] long agentId)
         {
             var result = await kYCService.GetAsync(agentId);
@@ -41,7 +38,8 @@ namespace DeliveryAgent.API.Controllers
         /// <returns></returns>
         [HttpPost("add")]
         [ValidateModel]
-        public async Task<IActionResult> AddKYCDetailsAsync([FromBody] KYCDto kYCDto)
+        // [Authorize(Roles = "5")]
+        public async Task<IActionResult> AddKYCDetailsAsync([FromBody] KYCListDto kYCDto)
         {
             var result = await kYCService.AddDetailsAsync(kYCDto);
             return result == null ? NotFound(new { message = StringConstant.ExistingMessage }) : Ok(result);
@@ -54,6 +52,7 @@ namespace DeliveryAgent.API.Controllers
         /// <param name="kYCDto"></param>
         /// <returns></returns>
         [HttpPut("update")]
+        // [Authorize(Roles = "5")]
         [ValidateModel]
         public async Task<IActionResult> UpdateDetailsAsync([FromQuery][Required] long id, [FromBody] KYCDto kYCDto)
         {
