@@ -5,7 +5,6 @@ import { CustomTable } from "../../components";
 import { DeleteIcon, DetailsIcon } from "../../assets";
 import CustomizeText from "../../utils/helpers/CustomizeText";
 import CustomizeDate from "../../utils/helpers/CustomizeDate";
-
 import useDeliveryAgents from "./Hook";
 
 export interface DataType {
@@ -23,7 +22,7 @@ interface Props {
 }
 
 const DeliveryAgents: React.FC<Props> = ({ searchInput, filters }) => {
-  const { loading, agentList, pagination, handleTableChange, handleClick, deleteAgent } =
+  const { loading, agentList, pagination, handleTableChange, handleClick, showDeleteConfirm } =
     useDeliveryAgents({ searchInput, filters });
   const scrollConfig = {
     x: 900,
@@ -115,7 +114,7 @@ const DeliveryAgents: React.FC<Props> = ({ searchInput, filters }) => {
       render: (_, record: any) => (
         <Space size="middle">
           <img src={DetailsIcon} alt=""  onClick={() => handleClick(record)} />
-          <img src={DeleteIcon} alt="" onClick={() => deleteAgent(record?.agentId)} />
+          <img src={DeleteIcon} alt="" onClick={() => showDeleteConfirm(record?.agentId)} />
         </Space>
       ),
     },

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { useAppDispatch, useAppSelector } from "../../store/hooks/app";
 import {
     AgentStateInterface,
@@ -8,8 +9,11 @@ import {
 } from "../../store/features/Agents/agentSlice";
 import { pagination } from "../../utils/types";
 import AgentService from "../../services/AgentService";
-import { ApiConstants } from "../../constants/ApiConstants";
-import { message } from "antd";
+import { message ,Modal} from "antd";
+
+const { confirm } = Modal;
+
+
 
 interface DeliveryAgentHookProps {
   searchInput?: string;
@@ -23,6 +27,7 @@ interface DeliveryAgentHookResult {
   handleTableChange: (pagination: any) => void;
   handleClick: (state: any) => void;
   deleteAgent: (id: number) => void;
+  showDeleteConfirm: (id: number) => void;
 }
 
 const useDeliveryAgents = ({
@@ -43,7 +48,26 @@ const useDeliveryAgents = ({
   const handleClick = (state: any) => {
     navigate(`/dashboard/agent-details/${state?.agentId}`, { state });
   };
-
+  const navigateToAgents = () => {
+    navigate("/dashboard/agents"); // Use navigate function to navigate
+  };
+  const showDeleteConfirm = (id: number) => {
+    confirm({
+      title: "Are you sure you want to delete this task?",
+      content: "The agent will be removed from your list.",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      async onOk() {
+        console.log("OK");
+        await deleteAgent(id);
+        navigateToAgents(); 
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
   
 
   const handleTableChange = (pagination: any) => {
@@ -55,6 +79,7 @@ const useDeliveryAgents = ({
     let payload = pagination;
     dispatch(getAllAgents({ payload, filters, searchInput }));
   };
+  
   
   const deleteAgent = (id: number) =>{
     let payload = {
@@ -84,7 +109,8 @@ const useDeliveryAgents = ({
     pagination,
     handleTableChange,
     handleClick,
-    deleteAgent
+    deleteAgent,
+    showDeleteConfirm
   };
 };
 

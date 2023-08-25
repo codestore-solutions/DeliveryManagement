@@ -9,7 +9,7 @@ import {  DeliveryUserIcon, DetailsIcon } from "../../assets";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks/app";
 import {
-  OrderStateInerface,
+  OrderStateInerface as OrderStateInterface,
   getAvailableOrders,
   orderSelector,
 } from "../../store/features/Orders/ordersSlice";
@@ -51,10 +51,10 @@ const AvailableOrders: React.FC<Props> = ({
   const [selectedRow, setSelectedRow] = useState<any>(null);
   const { loading, orderslist } = useAppSelector(
     orderSelector
-  ) as OrderStateInerface;
+  ) as OrderStateInterface;
   const data = orderslist?.list;
   const [pagination, setPagination] = useState<pagination>({
-    simple: true,
+    simple: false,
     pageNumber: 1,
     total: orderslist?.total,
     pageSize: 5,
@@ -143,17 +143,6 @@ const AvailableOrders: React.FC<Props> = ({
           <div onClick={() => handleClick(record)}>
             <img src={DetailsIcon} alt="" />
           </div>
-          {/* <Tooltip
-            placement="right"
-            title={isApiCall ? "Assigning.." : "Assign Agent"}
-          >
-            <img
-              src={AutomaticUser}
-              alt=""
-              className="icon-style"
-              onClick={() => !isApiCall && autoAssignAgent(record)}
-            />
-          </Tooltip> */}
         </Space>
       ),
     },

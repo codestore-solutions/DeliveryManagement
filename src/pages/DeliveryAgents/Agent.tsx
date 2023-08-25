@@ -54,9 +54,6 @@ const Agent = () => {
               onChange={(e) => setSearchInput(e.target.value)}
             />
           </form>
-          {/* <div className="add-btn">
-                <img src={AddIcon}  alt=''/>
-             </div> */}
           <div className="filter-btn" onClick={handleOpenModal}>
             <img src={FilterIcon} alt="" />
           </div>
@@ -68,7 +65,7 @@ const Agent = () => {
             <DeliveryAgents searchInput={debouncedSearchTerm} filters={filters} />
           </TabPane>
           <TabPane tab="Assigned Agents" key="1">
-            <AssignedAgents activeTab={activeTab} />
+            <AssignedAgents activeTab={activeTab} searchInput={debouncedSearchTerm} filters={filters} />
           </TabPane>
         </Tabs>
       </div>

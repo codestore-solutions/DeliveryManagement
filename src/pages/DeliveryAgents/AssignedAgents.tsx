@@ -19,17 +19,17 @@ export interface DataType {
 }
 
 interface Props {
-  activeTab?: string
+  activeTab?: string;
+  searchInput?: string;
+  filters?: any;
 }
-const AssignedAgents: React.FC<Props> = ({ activeTab }) => {
+const AssignedAgents: React.FC<Props> = ({ activeTab}) => {
   const navigate = useNavigate();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   console.log('data', data);
   const [pagination, setPagination] = useState<pagination>({
-    showLessItems: true,
-    hideOnSinglePage: true,
-    simple: true,
+    simple: false,
     pageNumber: 1,
     total: data?.total,
     pageSize: 6,
@@ -107,7 +107,7 @@ const AssignedAgents: React.FC<Props> = ({ activeTab }) => {
         }
       })
       .catch((err) => {
-        console.log("Assignd Order Fetching Error", err);
+        console.log("Assigned Order Fetching Error", err);
         setLoading(false);
       });
   };
