@@ -2,18 +2,19 @@
 using DeliveryAgentModule.CustomActionFilter;
 using EntityLayer.Common;
 using EntityLayer.Dtos;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections;
 using System.ComponentModel.DataAnnotations;
+using static System.Net.Mime.MediaTypeNames;
+using System.Text;
+using Newtonsoft.Json;
 
 namespace DeliveryAgentModule.Controllers
 {
-    [Route("api/v{version:apiVersion}/agent")]
+    [Route("api/v{version:apiVersion}/assignAgent")]
     [ApiController]
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
-    [Authorize]
+    // [Authorize]
     public class AssignDeliveryAgentController : ControllerBase
     {
         private readonly IAssignDeliveryAgentService deliveryAgentService;
@@ -25,133 +26,93 @@ namespace DeliveryAgentModule.Controllers
             this.httpClient = httpClient;
         }
 
-        // GET: /api/agent/GetAllAgents?pageNumber=1&limit=10
         /// <summary>
         /// Get all assigned agent list with orderId
         /// </summary>
         [HttpGet("get-all")]
-        [MapToApiVersion("1.0")]
-        public async Task<IActionResult> GetAllAssignedAgent([FromQuery] int pageNumber=1, [FromQuery] int limit=10)
+        // [Authorize(Roles = "2")]
+        public async Task<IActionResult> GetAllAssignedAgent([FromQuery] int pageNumber = 1, [FromQuery] int limit = 10)
         {
-            return Ok(await deliveryAgentService.GetAllAsync(pageNumber,limit));
+            return Ok(await deliveryAgentService.GetAllAsync(pageNumber, limit));
         }
 
-        // POST: /api/v1/agent/assign-manually
+
+        /// <summary>
+        /// Assign agent automatically according to the preffered working location by delivery Agent .
+        /// </summary>
+        /// <param name="assignAgentAutomaticallyDto"></param>
+        /// <returns></returns>
+        [HttpPost("automatically-assign-preview")]
+        [ValidateModel]
+        // [Authorize(Roles = "2")]
+        public async Task<IActionResult> AssignAgentAutomaticallyAsync(AssignAgentAutomaticallyDto assignAgentAutomaticallyDto)
+        {
+            return Ok(await deliveryAgentService.AssignAgentAutomaticallyAsync(assignAgentAutomaticallyDto));
+        }
+
+
         /// <summary>
         /// Assign agent manually
         /// </summary>
         /// <remarks>
         /// Sample request:
         ///
-        ///      POST: /api/v1/agent/assign-manually
-        ///     {
-        ///        "deliveryAgentId"     : long,
-        ///        "orderIds"            : [long,long,long..],
-        ///        "buisnessId"          : long,
-        ///        "PickupLat"           : double
-        ///        "PickupLong"          : double
-        ///        "DeliveryAddressLa"   : double
-        ///        "DeliveryAddressLong" : double
-        ///        "BuisnessId"          : double
-        ///     }
+        ///      POST: /api/v1/assignAgent/assign-manually
+        ///      
         /// </remarks>
         /// <param name="assignManuallyDto"></param>
         /// <returns></returns>
         [HttpPost("assign-manually")]
-        [MapToApiVersion("1.0")]
         [ValidateModel]
+        // [Authorize(Roles = "2")]
         public async Task<IActionResult> AssignAgentManuallyAsync(AssignManuallyDto assignManuallyDto)
         {
-            return Ok(await deliveryAgentService.AssignAgentManuallyAsync(assignManuallyDto));
-         /*   var requestBody = new
+            var response = await deliveryAgentService.AssignAgentManuallyAsync(assignManuallyDto);
+            if (response.Success)
             {
-                AgentId = "John Doe",
-                Status = "agent_Assigned",
-                Order = new
-                {
-                    OrderId = "1",
-                   Timestamp = DateTime.Now.ToString(),
-                }      
-            };
-            var todoItemJson = new StringContent(
-                 JsonSerializer.Serialize(requestBody),
-                 Encoding.UTF8,
-                 Application.Json);
-            var microserviceResponse = await httpClient.PutAsync("https://order-processing-dev.azurewebsites.net/api/order/updateOrder", todoItemJson);*/
-        }
-
-        // POST: 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="bulkAssignManuallyDto"></param>
-        /// <returns></returns>
-        [HttpPost("bulk-assign-manually")]
-        [MapToApiVersion("1.0")]
-        [ValidateModel]
-        public async Task<IActionResult> BulkAgentAssignManuallyAsync(BulkAssignManuallyDto bulkAssignManuallyDto)
-        {
-            return Ok(await deliveryAgentService.BulkAgentAssignManuallyAsync(bulkAssignManuallyDto));
-        }
-
-        // Post: /api/agent/assign-agent
-        /// <summary>
-        /// Assign delivery agent nearest to Business/Seller location for a individual order Id
-        /// </summary>
-        /// <remarks>
-        /// Sample Request:
-        /// {
-        /// 
-        /// }
-        /// </remarks>
-        [HttpPost("assign-agent")]
-        [ValidateModel]
-        [MapToApiVersion("1.0")]
-        public async Task<IActionResult> AddAssignDeliveryAgent([FromBody] AssignAgentAutomaticallyDto automaticallyDto)
-        {
-            return Ok(await deliveryAgentService.SingleAgentAssignAutomaticallyAsync(automaticallyDto));
-        }
-
-        //Post: /api/agent/assign-agent-bulk
-        /// <summary>
-        /// Assign delivery agents nearest to seller/Business location for multiple orders
-        /// </summary>
-        [HttpPost("assign-agent-bulk")]
-        [ValidateModel]
-        [MapToApiVersion("1.0")]
-        public async Task<IActionResult> BulkAgentAssignAutomaticallyAsync(OrderAssingInBulkRequestDto orderAssingInBulkRequestDto)
-        {
-            return Ok(await deliveryAgentService.BulkAgentAssignAutomaticallyAsync(orderAssingInBulkRequestDto));
-        }
-
-        // DELETE: /api/delete
-        /// <summary>
-        /// Remove assigned order to agent by agent Id
-        /// </summary>
-        [HttpDelete("delete")]
-        [MapToApiVersion("1.0")]
-        public async Task<ActionResult> RemoveOrderAssigned([FromQuery][Required] int agentId)
-        {
-            await deliveryAgentService.RemoveOrderAssignedAsync(agentId);
-            return Ok(StringConstant.SuccessMessage);
-        }
-
-        /// <summary>
-        /// Reassign new delivery agent : Update agentId or orderId
-        /// </summary>
-        [HttpPut("{id}")]
-        [MapToApiVersion("1.0")]
-        public async Task<IActionResult> UpdateAgentOrOrderId([FromRoute] int id,[FromBody] UpdateAgentRequestDto updateOrderAssignDto)
-        {
-            var updatedOrder = await deliveryAgentService.UpdateAsync(id, updateOrderAssignDto);
-            if(updatedOrder == null)
-            {
-                return NotFound(StringConstant.InvalidInputError);
+                return Ok(response);
             }
-            return Ok(updatedOrder);
+            return StatusCode(response.StatusCode, response);
         }
 
-    }    
-    
+
+        /// <summary>
+        /// Accept or Reject Order by agent through Mobile App.
+        /// </summary>
+        /// <param name="acceptRejectOrderDto"></param>
+        /// <returns></returns>
+        [HttpPost("acceptOrReject")]
+        // [Authorize(Roles = "5")]
+        public async Task<IActionResult> AcceptOrder([FromBody] AcceptRejectOrderDto acceptRejectOrderDto)
+        {
+            var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var result = await deliveryAgentService.AcceptOrderAsync(acceptRejectOrderDto, token);
+            if (result.Success == false)
+            {
+                return BadRequest(result);
+            }
+            return StatusCode(StatusCodes.Status200OK, result);
+        }
+
+
+        [HttpGet("CountDeliveredOrRejectedOrders")]
+        // [Authorize(Roles = "2,5")]
+        public async Task<IActionResult> GetRejectedOrdersAsync([FromQuery][Required] long agentId)
+        {
+            var result = await deliveryAgentService.GetDeliveredOrRejectedOrdersCountAsync(agentId);
+            return result == null ? NotFound(StringConstant.ResourceNotFoundError) : Ok(result);
+        }
+
+
+        [HttpPut("updatePickupOrDeliveryStatus")]
+        // [Authorize(Roles = "5")]
+        public async Task<IActionResult> UpdatePickupOrDeliveryStatusAsync(UpdatePickupOrDeliveryStatusDto pickupOrDeliveryStatusDto)
+        {
+            var result = await deliveryAgentService.UpdatePickupOrDeliveryStatusAsync(pickupOrDeliveryStatusDto);
+            return result == null ? NotFound(StringConstant.ResourceNotFoundError) : Ok(result);
+        }
+
+    }
+
 }
 

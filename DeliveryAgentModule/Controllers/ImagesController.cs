@@ -2,34 +2,48 @@
 using DeliveryAgentModule.CustomActionFilter;
 using EntityLayer.Common;
 using EntityLayer.Dtos;
+using EntityLayer.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DeliveryAgentModule.Controllers
 {
-    [Route("api/images")]
+    [Route("api/v{version:apiVersion}/images")]
     [ApiController]
     public class ImagesController : ControllerBase
     {
         private readonly IImageService imageService;
         private readonly IWebHostEnvironment webHostEnvironment;
+        private readonly IHttpContextAccessor httpContextAccessor;
 
-        public ImagesController(IImageService imageService, IWebHostEnvironment webHostEnvironment)
+        public ImagesController(IImageService imageService, IWebHostEnvironment webHostEnvironment, IHttpContextAccessor httpContextAccessor)
         {
             this.imageService = imageService;
             this.webHostEnvironment = webHostEnvironment;
+            this.httpContextAccessor = httpContextAccessor;
         }
 
         // POST: /api/images/upload
         [HttpPost("upload")]
         [ValidateModel]
+        // [Authorize(Roles = "5")]
         public async Task<IActionResult> Upload([FromForm] ImageUploadRequestDto requestDto)
         {
             // Validate Extension & Size
             ValidateFileUpload(requestDto);
-            //var localFilePath = Path.Combine(webHostEnvironment.ContentRootPath,"Images",)   
-            await imageService.Upload(requestDto);
-            return Ok(StringConstant.SuccessMessage);       
+            if (ModelState.IsValid)
+            {
+                var fileName = requestDto.File.FileName;
+                //var fileExtension = Path.GetExtension(requestDto.File.FileName);
+                var localFilePath = Path.Combine(webHostEnvironment.ContentRootPath, "Images", $"{fileName}");
+                using var stream = new FileStream(localFilePath, FileMode.Create);
+                await requestDto.File.CopyToAsync(stream);
+                var urlFilePath = $"{httpContextAccessor.HttpContext.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}" +
+                    $"{httpContextAccessor.HttpContext.Request.PathBase}/Images/{fileName}";
+
+                return Ok(new ResponseDto { StatusCode = 200 , Success = true, Data= new {urlFilePath = urlFilePath}, Message = StringConstant.SuccessMessage});
+            }
+            return BadRequest(ModelState);
         }
 
         private void ValidateFileUpload(ImageUploadRequestDto requestDto)
@@ -44,5 +58,6 @@ namespace DeliveryAgentModule.Controllers
                 ModelState.AddModelError("file", "file size more than 2 MB, please upload a smaller file");
             }
         }
+
     }
 }

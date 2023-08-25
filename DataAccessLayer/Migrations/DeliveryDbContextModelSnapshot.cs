@@ -17,10 +17,102 @@ namespace DataAccessLayer.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.5")
+                .HasAnnotation("ProductVersion", "7.0.9")
+                .HasAnnotation("Proxies:ChangeTracking", false)
+                .HasAnnotation("Proxies:CheckEquality", false)
+                .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("EntityLayer.Models.AgentDetail", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("AgentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("AgentStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CountryCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsProfileCompleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProfileImage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("verificationStatus")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AgentDetails");
+                });
+
+            modelBuilder.Entity("EntityLayer.Models.AgentTimeSlot", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("ServiceLocationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("TimeSlotId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ServiceLocationId");
+
+                    b.ToTable("AgentTimeSlots");
+                });
 
             modelBuilder.Entity("EntityLayer.Models.AssignDeliveryAgent", b =>
                 {
@@ -30,7 +122,13 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("BusinessId")
+                    b.Property<long>("AgentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("DeliveryAddressId")
                         .HasColumnType("bigint");
 
                     b.Property<double>("DeliveryAddressLatitude")
@@ -39,11 +137,19 @@ namespace DataAccessLayer.Migrations
                     b.Property<double>("DeliveryAddressLongitude")
                         .HasColumnType("float");
 
-                    b.Property<long>("DeliveryAgentId")
+                    b.Property<string>("DeliveryImage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DeliveryStatus")
+                        .HasColumnType("int");
+
+                    b.Property<long>("OrderId")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("OrdersCount")
-                        .HasColumnType("int");
+                    b.Property<string>("PickupImage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("PickupLatitude")
                         .HasColumnType("float");
@@ -51,9 +157,56 @@ namespace DataAccessLayer.Migrations
                     b.Property<double>("PickupLongitude")
                         .HasColumnType("float");
 
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("VendorAddressId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
                     b.ToTable("AssignDeliveryAgents");
+                });
+
+            modelBuilder.Entity("EntityLayer.Models.BankDetail", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("AccountHolderName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AccountNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("AgentDetailId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("BankName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("IFSCCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AgentDetailId")
+                        .IsUnique();
+
+                    b.ToTable("BankDetails");
                 });
 
             modelBuilder.Entity("EntityLayer.Models.BusinessAdmin", b =>
@@ -64,45 +217,18 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("AgentEmailId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("AgentLatitude")
-                        .HasColumnType("float");
-
-                    b.Property<double>("AgentLongitude")
-                        .HasColumnType("float");
-
-                    b.Property<int>("AgentStatus")
-                        .HasColumnType("int");
-
                     b.Property<long>("BusinessId")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("DeliveryAgentAddress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<long>("DeliveryAgentId")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("DeliveryAgentName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("MaxDistance")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OrderAssignStatus")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.ToTable("BusinessAdmin");
+                    b.ToTable("BusinessAdmins");
                 });
 
-            modelBuilder.Entity("EntityLayer.Models.DeliveryAgentDetail", b =>
+            modelBuilder.Entity("EntityLayer.Models.KYCDetail", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -110,257 +236,156 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("AadharCardUrl")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                    b.Property<long>("AgentDetailId")
+                        .HasColumnType("bigint");
 
-                    b.Property<string>("AccountNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BankName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("DateOfBirth")
+                    b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<long>("DeliveryAgentId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("DrivingLicenseUrl")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("Email")
+                    b.Property<string>("DocumentImage")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IFSCCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Model")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NumberPlate")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("PancardUrl")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhotoUrl")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("RegistrationNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Status")
+                    b.Property<int>("DocumentType")
                         .HasColumnType("int");
 
-                    b.Property<string>("VehicleCompanyName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("VehicleImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VehicleModel")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("VehicleType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("YourName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.ToTable("DeliveryAgentDetails");
-                });
+                    b.HasIndex("AgentDetailId");
 
-            modelBuilder.Entity("EntityLayer.Models.Image", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("FileDescription")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FileExtension")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FilePath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("FileSizeInBytes")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Images");
-                });
-
-            modelBuilder.Entity("EntityLayer.Models.Order", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("AssignDeliveryAgentId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("OrderId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("ShippingAddress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AssignDeliveryAgentId");
-
-                    b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("EntityLayer.Models.SelectedDay", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("SelectDay")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("ServiceLocationId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ServiceLocationId");
-
-                    b.ToTable("SelectedDay");
+                    b.ToTable("KYCDetails");
                 });
 
             modelBuilder.Entity("EntityLayer.Models.ServiceLocation", b =>
                 {
-                    b.Property<long>("ServiceLocationId")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ServiceLocationId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                    b.Property<long>("DeliveryAgentId")
+                    b.Property<long>("AgentDetailId")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime2");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<double>("Latitude")
                         .HasColumnType("float");
 
                     b.Property<string>("LocationName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<double>("Longitude")
                         .HasColumnType("float");
 
-                    b.Property<int>("MaxDistance")
-                        .HasColumnType("int");
+                    b.Property<string>("SelectedDays")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2");
+                    b.HasKey("Id");
 
-                    b.Property<long>("WorkingLocationId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("ServiceLocationId");
-
-                    b.HasIndex("WorkingLocationId");
+                    b.HasIndex("AgentDetailId");
 
                     b.ToTable("ServiceLocations");
                 });
 
-            modelBuilder.Entity("EntityLayer.Models.WorkingLocation", b =>
+            modelBuilder.Entity("EntityLayer.Models.TimeSlot", b =>
                 {
-                    b.Property<long>("WorkingLocationId")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("WorkingLocationId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("DeliveryAgentId")
+                    b.Property<long?>("BusinessId")
                         .HasColumnType("bigint");
 
-                    b.HasKey("WorkingLocationId");
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
 
-                    b.ToTable("WorkingLocation");
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SlotName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TimeSlots");
                 });
 
-            modelBuilder.Entity("EntityLayer.Models.Order", b =>
+            modelBuilder.Entity("EntityLayer.Models.VehicleDetail", b =>
                 {
-                    b.HasOne("EntityLayer.Models.AssignDeliveryAgent", "AssignDeliveryAgent")
-                        .WithMany("Orders")
-                        .HasForeignKey("AssignDeliveryAgentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
 
-                    b.Navigation("AssignDeliveryAgent");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("AgentDetailId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Company")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ManufacturedYear")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegistrationNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("VehicleImage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VehicleModel")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VehicleType")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AgentDetailId")
+                        .IsUnique();
+
+                    b.ToTable("VehicleDetails");
                 });
 
-            modelBuilder.Entity("EntityLayer.Models.SelectedDay", b =>
+            modelBuilder.Entity("EntityLayer.Models.AgentTimeSlot", b =>
                 {
                     b.HasOne("EntityLayer.Models.ServiceLocation", "ServiceLocation")
-                        .WithMany("SelectedDays")
+                        .WithMany("AgentTimeSlots")
                         .HasForeignKey("ServiceLocationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -368,30 +393,64 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("ServiceLocation");
                 });
 
-            modelBuilder.Entity("EntityLayer.Models.ServiceLocation", b =>
+            modelBuilder.Entity("EntityLayer.Models.BankDetail", b =>
                 {
-                    b.HasOne("EntityLayer.Models.WorkingLocation", "WorkingLocation")
-                        .WithMany("ServiceLocations")
-                        .HasForeignKey("WorkingLocationId")
+                    b.HasOne("EntityLayer.Models.AgentDetail", "AgentDetail")
+                        .WithOne("BankDetails")
+                        .HasForeignKey("EntityLayer.Models.BankDetail", "AgentDetailId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("WorkingLocation");
+                    b.Navigation("AgentDetail");
                 });
 
-            modelBuilder.Entity("EntityLayer.Models.AssignDeliveryAgent", b =>
+            modelBuilder.Entity("EntityLayer.Models.KYCDetail", b =>
                 {
-                    b.Navigation("Orders");
+                    b.HasOne("EntityLayer.Models.AgentDetail", "AgentDetails")
+                        .WithMany("KYCs")
+                        .HasForeignKey("AgentDetailId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AgentDetails");
                 });
 
             modelBuilder.Entity("EntityLayer.Models.ServiceLocation", b =>
                 {
-                    b.Navigation("SelectedDays");
+                    b.HasOne("EntityLayer.Models.AgentDetail", "AgentDetails")
+                        .WithMany("ServiceLocations")
+                        .HasForeignKey("AgentDetailId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AgentDetails");
                 });
 
-            modelBuilder.Entity("EntityLayer.Models.WorkingLocation", b =>
+            modelBuilder.Entity("EntityLayer.Models.VehicleDetail", b =>
                 {
+                    b.HasOne("EntityLayer.Models.AgentDetail", "AgentDetails")
+                        .WithOne("VehicleDetails")
+                        .HasForeignKey("EntityLayer.Models.VehicleDetail", "AgentDetailId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AgentDetails");
+                });
+
+            modelBuilder.Entity("EntityLayer.Models.AgentDetail", b =>
+                {
+                    b.Navigation("BankDetails");
+
+                    b.Navigation("KYCs");
+
                     b.Navigation("ServiceLocations");
+
+                    b.Navigation("VehicleDetails");
+                });
+
+            modelBuilder.Entity("EntityLayer.Models.ServiceLocation", b =>
+                {
+                    b.Navigation("AgentTimeSlots");
                 });
 #pragma warning restore 612, 618
         }

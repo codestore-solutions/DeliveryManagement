@@ -5,7 +5,6 @@ namespace EntityLayer.Models
     public class BusinessAdmin
     {
         [Key]
-        [Required]
         public long Id { get; set; }
 
         [Required]
@@ -13,27 +12,5 @@ namespace EntityLayer.Models
 
         [Required]
         public long DeliveryAgentId  { get; set; }
-        public string DeliveryAgentName { get; set; } = null!;
-        public string DeliveryAgentAddress { get; set; } = null!;
-        public double AgentLatitude { get; set; }                            
-        public double AgentLongitude { get; set; }
-        public int MaxDistance { get; set; }
-
-        [DataType(DataType.EmailAddress)]
-        public string AgentEmailId { get; set; } = null!;
-        public enum DeliveryAgentStatus
-        {
-            Offline = 0,
-            Availale =1,
-            Busy =2,
-        }
-        public enum OrderAssignedStatus
-        {
-            Assigned=1,
-            NotAssigned=0
-        }
-        public OrderAssignedStatus OrderAssignStatus { get; set; }    
-        public DeliveryAgentStatus AgentStatus { get; set; }
-
     }
 }

@@ -1,4 +1,6 @@
-﻿using EntityLayer.Dtos;
+﻿using EntityLayer.Common;
+using EntityLayer.Dtos;
+using EntityLayer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +11,6 @@ namespace BusinessLogicLayer.IServices
 {
     public interface IImageService
     {
-       Task Upload(ImageUploadRequestDto requestDto);
+       Task<ResponseDto> Upload(Image image);
     }
 }

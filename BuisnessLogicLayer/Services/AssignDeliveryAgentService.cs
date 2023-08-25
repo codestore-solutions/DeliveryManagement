@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
-using Azure.Core;
 using BusinessLogicLayer.IServices;
 using DataAccessLayer.IRepository;
 using EntityLayer.Common;
 using EntityLayer.Dtos;
 using EntityLayer.Models;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace BusinessLogicLayer.Services
 {
@@ -13,15 +14,19 @@ namespace BusinessLogicLayer.Services
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
-        public AssignDeliveryAgentService(IUnitOfWork unitOfWork,IMapper mapper)
+        private readonly HttpClient httpClient;
+        private readonly Dictionary<long, long> _assignedAgents = new Dictionary<long, long>();
+
+        public AssignDeliveryAgentService(IUnitOfWork unitOfWork, IMapper mapper, HttpClient httpClient)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
+            this.httpClient = httpClient;
         }
 
-        public async Task<ResponseDto> GetAllAsync(int pageNumber=1, int limit=10)
+        public async Task<ResponseDto> GetAllAsync(int pageNumber = 1, int limit = 10)
         {
-            var allItems = await unitOfWork.AssignDeliveryAgentRepository.GetAll().Include(c=> c.Orders).Skip((pageNumber - 1) * limit).Take(limit).ToListAsync();    
+            var allItems = await unitOfWork.AssignDeliveryAgentRepository.GetAllAsQueryable().Skip((pageNumber - 1) * limit).Take(limit).ToListAsync();
             return new ResponseDto
             {
                 StatusCode = 200,
@@ -30,517 +35,199 @@ namespace BusinessLogicLayer.Services
                 Message = StringConstant.SuccessMessage
             };
         }
+
         public async Task<ResponseDto> AssignAgentManuallyAsync(AssignManuallyDto assignManuallyDto)
         {
-          
-            foreach (var orderId in assignManuallyDto.OrderIds)
+            var responseObject = new List<object>();
+            bool saveResult = false;
+            foreach (var obj in assignManuallyDto.List)
             {
-                // Edge Case : When delivery agent has already assigned order  
-                var assignedAgent = await unitOfWork.AssignDeliveryAgentRepository.GetAll()
-                .FirstOrDefaultAsync(id => id.DeliveryAgentId == assignManuallyDto.DeliveryAgentId);
+                var assignNewAgent = new AssignDeliveryAgent();
+                mapper.Map(obj, assignNewAgent);
+                assignNewAgent.CreatedOn = DateTime.Now;
+                assignNewAgent.UpdatedOn = DateTime.Now;
 
-                // If delivery agent is present in db , then directly add new orderId to his orders list.
-                // Otherwise create a new object of assign delivery agent and input values to it.
-                if (assignedAgent != null)
-                {
-                    var newOrder = new Order()
-                    {
-                        OrderId = orderId,
-                        AssignDeliveryAgentId = assignedAgent.Id
-                    };
-                    // Adding Orders to agent list
-                    assignedAgent.Orders.Add(newOrder);
-
-                    if (assignedAgent != null && assignedAgent.Orders.Count >= 5)
-                    {
-                        // set its status to busy
-                        var getAgent = await unitOfWork.BusinessAdminRepository.GetAll().FirstOrDefaultAsync(c => c.DeliveryAgentId == assignedAgent.DeliveryAgentId);
-                        getAgent.AgentStatus = BusinessAdmin.DeliveryAgentStatus.Busy;
-                    }
-                    await unitOfWork.SaveAsync();
-                }
-                else
-                {
-                    // creating new object of assign delivery agent
-                    assignedAgent = new AssignDeliveryAgent();
-                    assignedAgent.DeliveryAgentId = assignManuallyDto.DeliveryAgentId;
-                    assignedAgent.BusinessId = assignManuallyDto.BuisnessId;
-                    assignedAgent.PickupLatitude = assignManuallyDto.PickupLat;
-                    assignedAgent.PickupLongitude = assignManuallyDto.PickupLong;
-                    assignedAgent.DeliveryAddressLatitude = assignManuallyDto.DeliveryAddressLat;
-                    assignedAgent.DeliveryAddressLongitude = assignManuallyDto.DeliveryAddressLong;
-
-
-                    var newOrder = new Order()
-                    {
-                        OrderId = orderId,
-                        AssignDeliveryAgentId = assignedAgent.Id
-                    };
-                    assignedAgent.Orders.Add(newOrder);
-
-                    await unitOfWork.AssignDeliveryAgentRepository.AddAsync(assignedAgent);
-                    if (assignedAgent != null && assignedAgent.Orders.Count >= 5)
-                    {
-                        // set its status to busy
-                        var getAgent = await unitOfWork.BusinessAdminRepository.GetAll().FirstOrDefaultAsync(c => c.DeliveryAgentId == assignedAgent.DeliveryAgentId);
-                        getAgent.AgentStatus = BusinessAdmin.DeliveryAgentStatus.Busy;
-                    }
-                    await unitOfWork.SaveAsync();
-
-                }
+                await unitOfWork.AssignDeliveryAgentRepository.AddAsync(assignNewAgent);
+                //  _assignedAgents.Add(obj.OrderId, obj.AgentId);
+                /*  var timer = new Timer(30000);
+                  timer.Elapsed += (sender, e) => HandleTimeout(obj.OrderId);
+                  Console.WriteLine("Timer started. Waiting for 30 seconds...");
+                  timer.Start();*/
+                saveResult = await unitOfWork.SaveAsync();
+                responseObject.Add(assignNewAgent);
             }
 
-            var response = new ResponseDto()
+            // Updating order status in order-processing module.
+            var requestBody = new UpdateOrderStatus();
+            requestBody.orderStatus = 5;
+            foreach (var obj in assignManuallyDto.List)
             {
-                StatusCode = 200,
-                Success    = true,
-               // Data       = assignedAgent,
-                Message    = StringConstant.SuccessMessage
-            };
-            return response;
-        }
-        public async Task<ResponseDto> BulkAgentAssignManuallyAsync(BulkAssignManuallyDto bulkAssignManuallyDto)
-        {
-            List<long> deliveryAgentIds      = bulkAssignManuallyDto.DeliveryAgentId;
-            List<long> orderIds              = bulkAssignManuallyDto.OrderIds;
-            List<double> latitudes           = bulkAssignManuallyDto.DeliveryAddressLatitudes;
-            List<double> longitudes          = bulkAssignManuallyDto.DeliveryAddressLongitudes;
-            List<double> pickupLatitudes     = bulkAssignManuallyDto.PickupLatitudes;
-            List<double> pickupLongitudes    = bulkAssignManuallyDto.PickupLongitudes;
-
-            // Handling the case where the count of orderIds ,latitudes and longitudes are not equal.
-            if (orderIds.Count != latitudes.Count || orderIds.Count != longitudes.Count || orderIds.Count != deliveryAgentIds.Count )
-            {
-                return new ResponseDto
+                var order = new Order
                 {
-                    StatusCode = 400,
-                    Success = false,
-                    Data = StringConstant.CountsUnequalMessage,
-                    Message = StringConstant.ErrorMessage,
+                    orderId = obj.OrderId,
+                    deliveryAgentId = obj.AgentId,
                 };
+                requestBody.orders.Add(order);
             }
 
-            var bulkAssignResponse = new BulkAssignResponseDto();
-
-            int i = 0;
-            foreach (var orderId in bulkAssignManuallyDto.OrderIds)
+            HttpContent requestJson = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json");
+            // Add the authorization header with the token
+            string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFtYW4uc2hhaEBleGFtcGxlLmNvbSIsInJvbGUiOiIyIiwiaWQiOiIyIiwiYnVzaW5lc3NDYXRlZ29yeSI6IjEiLCJleHAiOjE2OTQ2Njg1NTd9.5o0-bpi-JluyVoztkzksonQRmCINzYjPYle6xVu4HHo";
+            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            var microserviceResponse = httpClient.PutAsync("https://order-processing-dev.azurewebsites.net/api/v1/order/updateOrderWithAgent", requestJson).Result;
+            if (microserviceResponse.IsSuccessStatusCode)
             {
-               var assignedAgent = await unitOfWork.AssignDeliveryAgentRepository.GetAll().Include(c => c.Orders).FirstOrDefaultAsync(c =>
-               c.PickupLatitude == pickupLatitudes[i] && c.PickupLongitude == pickupLongitudes[i]);
-
-                if (assignedAgent != null)
+                return new ResponseDto()
                 {
-                    var newOrder = new Order()
-                    {
-                        OrderId = orderId,
-                        AssignDeliveryAgentId = assignedAgent.Id
-                    };
-                    // Adding Orders to agent list
-                    assignedAgent.Orders.Add(newOrder);
-                    assignedAgent.OrdersCount = assignedAgent.Orders.Count;
-                    // Changing status in delivery agent list if any agent has already 5 orders 
-                    var getAgent = await unitOfWork.BusinessAdminRepository.GetAll().FirstOrDefaultAsync(c => c.DeliveryAgentId == assignedAgent.DeliveryAgentId);
-                    if (getAgent == null)
-                    {
-                        return new ResponseDto
-                        {
-                            StatusCode = 404,
-                            Success = false,
-                            Data = StringConstant.InvalidInputError,
-                            Message = StringConstant.ErrorMessage,
-                        };
-                    }
-
-                    if (assignedAgent.OrdersCount >= 5)
-                    {
-                        // set its status to busy
-                        getAgent.AgentStatus = BusinessAdmin.DeliveryAgentStatus.Busy;
-                    }
-                    await unitOfWork.SaveAsync();
-                    // response to frontend
-                    bulkAssignResponse.AgentId.Add(assignedAgent.DeliveryAgentId);
-                    bulkAssignResponse.AgentName.Add(getAgent.DeliveryAgentName);
-                    bulkAssignResponse.Status      = "agent_assigned";
-                    bulkAssignResponse.Orders.Add(orderId);
-                    bulkAssignResponse.Timestamp   = DateTime.Now;
-                }
-                else
-                {
-                    assignedAgent = new AssignDeliveryAgent();                
-                    var newOrder = new Order()
-                    {
-                        OrderId = orderId,
-                        AssignDeliveryAgentId = assignedAgent.Id
-                    };
-                    // Adding Orders to agent list
-                    assignedAgent.Orders.Add(newOrder);
-                    assignedAgent.DeliveryAgentId           = deliveryAgentIds[i];
-                    assignedAgent.BusinessId                = bulkAssignManuallyDto.BusinessId;
-                    assignedAgent.PickupLatitude            = pickupLatitudes[i];
-                    assignedAgent.PickupLongitude           = pickupLongitudes[i];
-                    assignedAgent.DeliveryAddressLatitude   = latitudes[i];
-                    assignedAgent.DeliveryAddressLongitude  = longitudes[i];
-                    await unitOfWork.AssignDeliveryAgentRepository.AddAsync(assignedAgent);
-                    assignedAgent.OrdersCount               = assignedAgent.Orders.Count;
-                    var getAgent = await unitOfWork.BusinessAdminRepository.GetAll().FirstOrDefaultAsync(c => c.DeliveryAgentId == assignedAgent.DeliveryAgentId);
-                    if (getAgent == null)
-                    {
-                        return new ResponseDto
-                        {
-                            StatusCode = 404,
-                            Success = false,
-                            Data = StringConstant.InvalidInputError,
-                            Message = StringConstant.ErrorMessage,
-                        };
-                    }
-
-                    if (assignedAgent.OrdersCount >= 5)
-                    {
-                        // set its status to busy
-                        getAgent.AgentStatus = BusinessAdmin.DeliveryAgentStatus.Busy;
-                    }
-                    await unitOfWork.SaveAsync();
-                    // response to frontend
-                    bulkAssignResponse.AgentId.Add(assignedAgent.DeliveryAgentId);
-                    bulkAssignResponse.AgentName.Add(getAgent.DeliveryAgentName);
-                    bulkAssignResponse.Status = "agent_assigned";
-                    bulkAssignResponse.Orders.Add(orderId);
-                    bulkAssignResponse.Timestamp = DateTime.Now;
-                }
-                i++;
-            }
-            var response = new ResponseDto()
-            {
-                StatusCode = 200,
-                Success = true,
-                Data = bulkAssignResponse,
-                Message = StringConstant.SuccessMessage
-            };
-            return response;
-        }
-        public async Task<ResponseDto> SingleAgentAssignAutomaticallyAsync(AssignAgentAutomaticallyDto automaticallyDto)
-        {
-            // check whether delivery agent assigned or not with the same pickup location
-            // if yes, then assign order to same delivery agent 
-            // if no , then assign new agent to that order
-            var assignedAgent = await unitOfWork.AssignDeliveryAgentRepository.GetAll().Include(c=>c.Orders).FirstOrDefaultAsync(c => c.PickupLatitude == automaticallyDto.PickupLat
-            && c.PickupLongitude == automaticallyDto.PickupLong);
-
-            var singleAssignResponse = new singleAssignResponse();
-
-            if (assignedAgent != null && IsAgentAvailableForAnotherOrder(assignedAgent, automaticallyDto))
-            {
-                // Assigning order within the same locality
-                var anotherOrderInSameLocality = new Order()
-                {
-                    OrderId = automaticallyDto.OrderId,
-                    AssignDeliveryAgentId = assignedAgent.Id
+                    StatusCode = 200,
+                    Success = true,
+                    Data = responseObject,
+                    Message = saveResult ? StringConstant.AssignedSuccessMessage : StringConstant.DatabaseMessage
                 };
-
-                assignedAgent.Orders.Add(anotherOrderInSameLocality);
-                assignedAgent.OrdersCount = assignedAgent.Orders.Count;
-                if (assignedAgent.OrdersCount >= 5)
-                {
-                    // set its status to busy
-                    var getAgent = await unitOfWork.BusinessAdminRepository.GetAll().FirstOrDefaultAsync(c => c.DeliveryAgentId == assignedAgent.DeliveryAgentId);
-                    getAgent.AgentStatus = BusinessAdmin.DeliveryAgentStatus.Busy;
-                }
-                bool res = await unitOfWork.SaveAsync();
-
-                singleAssignResponse.AgentId = assignedAgent.DeliveryAgentId;
-                singleAssignResponse.Status = "agent_assigned";
-                singleAssignResponse.Timestamp = DateTime.Now;
-                singleAssignResponse.OrderId = automaticallyDto.OrderId;
-
-                var response = new ResponseDto()
-                {
-                    StatusCode = res ? 200 : 500,
-                    Success = res,
-                    Data = res ? singleAssignResponse : StringConstant.ErrorMessage,
-                    Message = res ? StringConstant.SuccessMessage : StringConstant.ErrorMessage
-                };
-                return response;
             }
             else
             {
-                // Search for nearest delivery agent in database
-                var getNearestDeliveryAgentId = await GetDeliveryAgentsWithinDistance(automaticallyDto.PickupLat, automaticallyDto.PickupLong, 5);
-                // If we didn't get any agent nearby , push notification .i.e, No delivery agent is available nearby
-                if (getNearestDeliveryAgentId == null)
-                {
-                    return new ResponseDto
-                    {
-                        StatusCode = 404,
-                        Success = false,
-                        Data = StringConstant.NotAvailableMessage,
-                        Message = StringConstant.ErrorMessage,                     
-                    };
-                }
-                // If we get agent nearby , then assign agent to that order
-                var newAgent = new AssignDeliveryAgent();             
-                var newOrder = new Order()
-                {
-                    OrderId = automaticallyDto.OrderId,
-                    AssignDeliveryAgentId = newAgent.Id
-                };
-                newAgent.Orders.Add(newOrder);
-                newAgent.BusinessId                = automaticallyDto.BusinessId;
-                newAgent.DeliveryAgentId           = (long)getNearestDeliveryAgentId;
-                newAgent.PickupLatitude            = automaticallyDto.PickupLat;
-                newAgent.PickupLongitude           = automaticallyDto.PickupLong;
-                newAgent.DeliveryAddressLatitude   = automaticallyDto.DeliveryAddressLat;
-                newAgent.DeliveryAddressLongitude  = automaticallyDto.DeliveryAddressLong;
-
-                await unitOfWork.AssignDeliveryAgentRepository.AddAsync(newAgent);
-                newAgent.OrdersCount = newAgent.Orders.Count;
-                if(newAgent.OrdersCount >= 2)
-                {
-                    var getAgent = await unitOfWork.BusinessAdminRepository.GetAll().FirstOrDefaultAsync(c => c.DeliveryAgentId == newAgent.DeliveryAgentId);
-                    getAgent.AgentStatus = BusinessAdmin.DeliveryAgentStatus.Busy;
-                }
-                bool res = await unitOfWork.SaveAsync();
-
-                // response to frontend
-                singleAssignResponse.AgentId = newAgent.DeliveryAgentId;
-                singleAssignResponse.Status = "agent_assigned";
-                singleAssignResponse.Timestamp = DateTime.Now;
-                singleAssignResponse.OrderId = automaticallyDto.OrderId;
-
-                var response = new ResponseDto()
-                {
-                    StatusCode = res ? 200 : 500,
-                    Success = res,
-                    Data = res ? singleAssignResponse : StringConstant.ErrorMessage,
-                    Message = res ? StringConstant.SuccessMessage : StringConstant.ErrorMessage
-                };
-                return response;
-            }               
-        }
-        public async Task<ResponseDto> BulkAgentAssignAutomaticallyAsync(OrderAssingInBulkRequestDto orderAssingInBulkRequestDto)
-        {          
-            List<long>   orderIds           = orderAssingInBulkRequestDto.OrderIds;
-            List<double> latitudes          = orderAssingInBulkRequestDto.DeliveryAddressLatitudes;
-            List<double> longitudes         = orderAssingInBulkRequestDto.DeliveryAddressLongitudes;
-            List<double> pickupLatitudes    = orderAssingInBulkRequestDto.PickupLatitudes;
-            List<double> pickupLongitudes   = orderAssingInBulkRequestDto.PickupLongitudes;
-
-            // Handling the case where the count of orderIds ,latitudes and longitudes are not equal.
-            if (orderIds.Count != latitudes.Count || orderIds.Count != longitudes.Count)
-            {             
-                return new ResponseDto
+                return new ResponseDto()
                 {
                     StatusCode = 400,
                     Success = false,
-                    Data = StringConstant.CountsUnequalMessage,
-                    Message = StringConstant.ErrorMessage,
+                    Message = StringConstant.MicroserviceError
                 };
             }
+        }
 
-            var bulkAssignResponse = new BulkAssignResponseDto();
-            
-            int i = 0;
-            // Searching a suitable agent for each orderId
-            foreach (var orderId in orderAssingInBulkRequestDto.OrderIds)
+        private void HandleTimeout(long orderId)
+        {
+            if (_assignedAgents.ContainsKey(orderId))
             {
-                var assignedAgent = await unitOfWork.AssignDeliveryAgentRepository.GetAll().Include(c =>c.Orders).FirstOrDefaultAsync(c =>
-                c.PickupLatitude == pickupLatitudes[i]
-                && c.PickupLongitude == pickupLongitudes[i]);
+                // Order was not accepted within the timeout
+                _assignedAgents.Remove(orderId);
+            }
+        }
 
-                if (assignedAgent != null && IsAgentAvailableForAnotherOrder(assignedAgent, latitudes[i], longitudes[i]))
+        public void AcceptOrder(int orderId)
+        {
+            if (_assignedAgents.ContainsKey(orderId))
+            {
+                // The assigned agent accepted the order
+                // Handle the accepted order logic here
+            }
+        }
+
+        public void RejectOrder(int orderId)
+        {
+            if (_assignedAgents.ContainsKey(orderId))
+            {
+                // The assigned agent rejected the order
+                // Handle the rejected order logic here
+                _assignedAgents.Remove(orderId);
+            }
+        }
+
+        public async Task<ResponseDto?> AssignAgentAutomaticallyAsync(AssignAgentAutomaticallyDto assignAgentAutomaticallyDto)
+        {
+            var responseObjectList = new List<AutomaticallyAssignResponseDto>();
+            foreach (var obj in assignAgentAutomaticallyDto.List)
+            {
+                // Search for suitable delivery agent within 5 km radius in Database.
+                var getNearestDeliveryAgentId = await NearestAgentWithinRange(obj.DeliveryAddressLatitude, obj.DeliveryAddressLongitude,
+                    obj.PickupLatitude, obj.PickupLongitude, 5, 9);
+
+                // If we didn't get any agent nearby , push notification .i.e, No delivery agent is available nearby
+                if (getNearestDeliveryAgentId == null)
                 {
-                    // Assigning order within the same locality
-                    var newOrder = new Order()
+                    var notAvailableResponse = new AutomaticallyAssignResponseDto
                     {
-                        OrderId = orderId,
-                        AssignDeliveryAgentId = assignedAgent.Id
+                        DeliveryAgentId = null,
+                        DeliveryAgentName = StringConstant.NotAvailableMessage,
+                        OrderId = obj.OrderId
                     };
-                    // Adding Orders to agent list
-                    assignedAgent.Orders.Add(newOrder);
-                    assignedAgent.OrdersCount = assignedAgent.Orders.Count;
-                    var getAgent = await unitOfWork.BusinessAdminRepository.GetAll().FirstOrDefaultAsync(c => c.DeliveryAgentId == assignedAgent.DeliveryAgentId);
-                    if(getAgent == null)
-                    {
-                        return new ResponseDto
-                        {
-                            StatusCode = 404,
-                            Success = false,
-                            Data = StringConstant.InvalidInputError,
-                            Message = StringConstant.ErrorMessage,
-                        };
-                    }
 
-                    if (assignedAgent.OrdersCount >= 2)
-                    {
-                        // set its status to busy
-                        getAgent.AgentStatus = BusinessAdmin.DeliveryAgentStatus.Busy;                      
-                    }
-                    //await unitOfWork.SaveAsync();
-                    // response to frontend
-                    bulkAssignResponse.AgentId.Add(assignedAgent.DeliveryAgentId);
-                    bulkAssignResponse.AgentName.Add(getAgent.DeliveryAgentName);
-                    bulkAssignResponse.Status = "pending";
-                    bulkAssignResponse.Orders.Add(orderId);
-                    bulkAssignResponse.Timestamp = DateTime.Now;
+                    responseObjectList.Add(notAvailableResponse);
+                    continue;
                 }
-                else
+                // If we get agent nearby , then assign order to that agent
+
+                var agent = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == getNearestDeliveryAgentId);
+                if (agent == null)
                 {
-                    var getNearestDeliveryAgentId = await GetDeliveryAgentsWithinDistance(pickupLatitudes[i], pickupLongitudes[i], 10);
-                    // If Delivery Agent is not present nearby
-                    if (getNearestDeliveryAgentId == null)
-                    {
-                        bulkAssignResponse.AgentId.Add(null);
-                        bulkAssignResponse.Orders.Add(orderId);
-                        bulkAssignResponse.AgentName.Add(StringConstant.NotAvailableMessage);
-                        i++;
-                        break;
-                    }
-
-                    var existingAgent = await unitOfWork.AssignDeliveryAgentRepository.GetAll().Include(c => c.Orders).FirstOrDefaultAsync(u =>
-                    u.DeliveryAgentId == getNearestDeliveryAgentId);
-
-                    if(existingAgent != null)
-                    {
-                        var createNewOrder = new Order()
-                        {
-                            OrderId = orderId,
-                            AssignDeliveryAgentId = existingAgent.Id
-                        };
-                        // Adding Orders to agent list
-                        existingAgent.Orders.Add(createNewOrder);
-                        existingAgent.OrdersCount = existingAgent.Orders.Count;
-                        var getAgent = await unitOfWork.BusinessAdminRepository.GetAll().FirstOrDefaultAsync(c => c.DeliveryAgentId == existingAgent.DeliveryAgentId);
-                        if (getAgent == null)
-                        {
-                            return new ResponseDto
-                            {
-                                StatusCode = 404,
-                                Success = false,
-                                Data = StringConstant.InvalidInputError,
-                                Message = StringConstant.ErrorMessage,
-                            };
-                        }
-
-                        if (existingAgent.OrdersCount >= 2)
-                        {
-                            // set its status to busy
-                            getAgent.AgentStatus = BusinessAdmin.DeliveryAgentStatus.Busy;
-                        }
-                        //await unitOfWork.SaveAsync();
-                        // response to frontend
-                        bulkAssignResponse.AgentId.Add(existingAgent.DeliveryAgentId);
-                        bulkAssignResponse.AgentName.Add(getAgent.DeliveryAgentName);
-                        bulkAssignResponse.Status = "pending";
-                        bulkAssignResponse.Orders.Add(orderId);
-                        bulkAssignResponse.Timestamp = DateTime.Now;
-                    }
-                    else
-                    {
-                        assignedAgent = new AssignDeliveryAgent();
-                        assignedAgent.DeliveryAgentId = (long)getNearestDeliveryAgentId;                    
-                        assignedAgent.BusinessId = orderAssingInBulkRequestDto.BusinessId;
-
-                        var newOrder = new Order()
-                        {
-                            OrderId = orderId,
-                            AssignDeliveryAgentId = assignedAgent.Id
-                        };
-
-                        // Adding Orders to agent list
-                        assignedAgent.Orders.Add(newOrder);                  
-                        assignedAgent.PickupLatitude             = pickupLatitudes[i];
-                        assignedAgent.PickupLongitude            = pickupLongitudes[i];
-                        assignedAgent.DeliveryAddressLatitude    = latitudes[i];
-                        assignedAgent.DeliveryAddressLongitude   = longitudes[i];
-                        await unitOfWork.AssignDeliveryAgentRepository.AddAsync(assignedAgent);
-                        assignedAgent.OrdersCount = assignedAgent.Orders.Count;
-                        var getAgent = await unitOfWork.BusinessAdminRepository.GetAll().FirstOrDefaultAsync(c => c.DeliveryAgentId == assignedAgent.DeliveryAgentId);
-                        if (getAgent == null)
-                        {
-                            return new ResponseDto
-                            {
-                                StatusCode = 404,
-                                Success = false,
-                                Data = StringConstant.InvalidInputError,
-                                Message = StringConstant.ErrorMessage,
-                            };
-                        }
-
-                        if (assignedAgent.OrdersCount >= 5)
-                        {
-                            // set its status to busy
-                            getAgent.AgentStatus = BusinessAdmin.DeliveryAgentStatus.Busy;
-                        }
-                        //await unitOfWork.SaveAsync();
-                        // response to frontend
-                        bulkAssignResponse.AgentId.Add(assignedAgent.DeliveryAgentId);
-                        bulkAssignResponse.AgentName.Add(getAgent.DeliveryAgentName);
-                        bulkAssignResponse.Status = "pending";
-                        bulkAssignResponse.Orders.Add(orderId);
-                        bulkAssignResponse.Timestamp = DateTime.Now;
-                    }                
+                    return null;
                 }
-                i++;
+
+                var responseObj = new AutomaticallyAssignResponseDto
+                {
+                    DeliveryAgentName = agent.FullName,
+                    DeliveryAgentId = getNearestDeliveryAgentId,
+                    OrderId = obj.OrderId
+                };
+                responseObjectList.Add(responseObj);
             }
 
-            var response = new ResponseDto()
+            return new ResponseDto
             {
                 StatusCode = 200,
                 Success = true,
-                Data = bulkAssignResponse,
-                Message = StringConstant.SuccessMessage
+                Data = responseObjectList,
+                Message = StringConstant.AssignedSuccessMessage
             };
-            return response;          
         }
-        public async Task<ResponseDto> UpdateAsync(long id, UpdateAgentRequestDto updateAgentRequestDto)
+
+        /*  private bool IsAgentAvailableForAnotherOrder(long agentId , double deliveryLatitude, double deliveryLongitude, double pickupLatitude , double pickupLongitude)
         {
-            var agentNeedsToBeUpdated = await unitOfWork.AssignDeliveryAgentRepository.GetAll().FirstOrDefaultAsync(id => id.DeliveryAgentId == updateAgentRequestDto.DeliveryAgentId);
-            bool res = false;
-            if (agentNeedsToBeUpdated != null)
-            {
-               // agentNeedsToBeUpdated.OrderId = updateAgentRequestDto.OrderId;
-                agentNeedsToBeUpdated.DeliveryAgentId = updateAgentRequestDto.DeliveryAgentId;
-                await unitOfWork.AssignDeliveryAgentRepository.AddAsync(agentNeedsToBeUpdated);
-                res = await unitOfWork.SaveAsync();
-            }
+            var agent = unitOfWork.ServiceLocationRepository.GetAllAsQueryable().FirstOrDefault(u => u.AgentId == agentId
+            && u.IsActive
+            && u.AgentStatus == ServiceLocation.AvailabilityStatus.OnDuty);
             
-            var response = new ResponseDto()
+            // Check Delivery region is within the range according to the preferences of delivery agent.
+            double deliveryDistance = CalculateDistance(deliveryLatitude, deliveryLongitude, agent.Latitude, agent.Longitude);
+            // Check Pickup region is within the range according to the preferences of delivery agent.
+            double pickupDistance   = CalculateDistance(pickupLatitude, pickupLongitude, agent.Latitude, agent.Longitude);
+
+            if (deliveryDistance <= 5 && pickupDistance <= 5)
             {
-                StatusCode = res ? 200 : 500,
-                Success = res,
-                Data = res ? agentNeedsToBeUpdated : StringConstant.ErrorMessage,
-                Message = res ? StringConstant.SuccessMessage : StringConstant.ErrorMessage
-            };
-            return response;
-        }
-        public async Task RemoveOrderAssignedAsync(long agentId)
-        {
-            var unassignAgent = await unitOfWork.AssignDeliveryAgentRepository.GetAll().FirstOrDefaultAsync(id=>id.DeliveryAgentId== agentId);
-            await unitOfWork.AssignDeliveryAgentRepository.DeleteAsync(unassignAgent.Id);
-            await unitOfWork.SaveAsync();
-        }
-        public async Task<long?> GetDeliveryAgentsWithinDistance(double pickupLatitude, double pickupLongitude, int maxDistance)
-        {
-            if (maxDistance > 10)
-            {
-                return null;// Notify User that Delivery Agent is not available Nearby: Push Notification
+                return true;
             }
+            return false;
+        }*/
 
-            var agents = await unitOfWork.BusinessAdminRepository.GetAll().ToListAsync();
-            long? nearsestDeliveryAgentId = null;
-            double minDistance = double.MaxValue;
-            foreach (var agent in agents)
+        public async Task<long?> NearestAgentWithinRange(double deliveryLatitude, double deliveryLongitude, double pickupLatitude,
+            double pickupLongitude, int maxDistance, long? slotId)
+        {
+            // Find current day in string format
+            DateTime currentTime = DateTime.Now;
+            DayOfWeek currentDayOfWeek = currentTime.DayOfWeek;
+
+            // Current Day in String Format like Monday, Tuesday
+            string currentDay = currentDayOfWeek.ToString();
+
+            // Current Time like 9:00, 17:00
+            TimeSpan currentTimeOfDay = currentTime.TimeOfDay;
+
+            // Fetching available Delivery agents list based on Working location preferences from Db.
+            var availableAgentList = await unitOfWork.ServiceLocationRepository.GetAllAsQueryable().Where(u => u.IsActive
+            && u.AgentDetails.AgentStatus == EnumConstants.AvailabilityStatus.OnDuty
+            && u.AgentDetails.verificationStatus == EnumConstants.VerificationStatus.Verified
+            && u.SelectedDays.Contains(currentDay)
+            && u.AgentTimeSlots.Any(slot => slot.TimeSlotId == slotId)).ToListAsync();
+
+            long? nearsestAgentId = null;
+            foreach (var agent in availableAgentList)
             {
-                double distance = CalculateDistance(pickupLatitude, pickupLongitude, agent.AgentLatitude, agent.AgentLongitude);
+                // Check Delivery region is within the range according to the preferences of delivery agent.
+                double deliveryDistance = CalculateDistance(deliveryLatitude, deliveryLongitude, agent.Latitude, agent.Longitude);
+                // Check Pickup region is within the range according to the preferences of delivery agent.
+                double pickupDistance = CalculateDistance(pickupLatitude, pickupLongitude, agent.Latitude, agent.Longitude);
 
-                if ((distance <= maxDistance) && (distance< minDistance) && agent.AgentStatus == BusinessAdmin.DeliveryAgentStatus.Availale)
+                if (deliveryDistance <= maxDistance && pickupDistance <= maxDistance)
                 {
-                    minDistance = distance;
-                    nearsestDeliveryAgentId = agent.DeliveryAgentId;
+                    nearsestAgentId = agent.AgentDetails.AgentId;
+                    return nearsestAgentId;
                 }
             }
-            return nearsestDeliveryAgentId;
+            return nearsestAgentId;
         }
-        public static double CalculateDistance(double startLatitude, double startLongitude, double endLatitude, double endLongitude)
+
+        private static double CalculateDistance(double startLatitude, double startLongitude, double endLatitude, double endLongitude)
         {
             const double EarthRadius = 6371;
             double dLat = ToRadians(endLatitude - startLatitude);
@@ -553,32 +240,129 @@ namespace BusinessLogicLayer.Services
             double distance = EarthRadius * c;
             return distance;
         }
-        public static double ToRadians(double degrees)
+
+        private static double ToRadians(double degrees)
         {
             return degrees * (Math.PI / 180);
-        }  
-        private bool IsAgentAvailableForAnotherOrder(AssignDeliveryAgent agent, AssignAgentAutomaticallyDto automaticallyDto)
-        {
-            // Check if the order assigned to the agent is within a nearby locality
-            double distance = CalculateDistance(agent.DeliveryAddressLatitude, agent.DeliveryAddressLongitude,
-                                                automaticallyDto.DeliveryAddressLat, automaticallyDto.DeliveryAddressLong);
-            if (distance <= 2)
-            {
-                return true;
-            }
-            return false;             // Agent is available for a nearby order
         }
-        private bool IsAgentAvailableForAnotherOrder(AssignDeliveryAgent agent, double deliveryAddressLatitude, double deliveryAddressLongitude)
-        {
-            // Check if new order is in the same vicinity or not       
-            double distance = CalculateDistance(agent.DeliveryAddressLatitude, agent.DeliveryAddressLongitude,
-                                                   deliveryAddressLatitude, deliveryAddressLongitude);
 
-                if (distance <= 2)
+        public async Task<ResponseDto?> AcceptOrderAsync(AcceptRejectOrderDto acceptRejectOrderDto, string token)
+        {
+            var requestBody = new UpdateOrderStatusDto();
+            requestBody.status = acceptRejectOrderDto.DeliveryStatus;
+            foreach (var orderId in acceptRejectOrderDto.OrderIds)
+            {
+                requestBody.orders.Add(orderId);
+            }
+
+            HttpContent requestJson = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json");
+            string token1 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im9ta2FyLnNoYXJtYUBleGFtcGxlLmNvbSIsInJvbGUiOiI1IiwiaWQiOiI3IiwiZXhwIjoxNjk1NjM4NzU2fQ.igzzKvqwh64yT9dtVwqUfuYC28nkYa-w97TAEJS8P64";
+            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token1}");
+            var microserviceResponse = httpClient.PutAsync("https://order-processing-dev.azurewebsites.net/api/v1/order/updateOrder", requestJson).Result;
+
+            if (microserviceResponse.IsSuccessStatusCode)
+            {
+                foreach (var orderId in acceptRejectOrderDto.OrderIds)
                 {
-                    return true;
+                    var assignedAgent = await unitOfWork.AssignDeliveryAgentRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.OrderId == orderId);
+                    if (assignedAgent == null)
+                    {
+                        continue;
+                    }
+                    assignedAgent.DeliveryStatus = (EnumConstants.DeliveryStatus)acceptRejectOrderDto.DeliveryStatus;
+                    await unitOfWork.SaveAsync();
                 }
-            return false;             // Agent is not available for a nearby order
+
+                return new ResponseDto
+                {
+                    StatusCode = 200,
+                    Success = true,
+                    Data = requestBody,
+                    Message = StringConstant.SuccessMessage
+                };
+            }
+            else
+            {
+                return new ResponseDto
+                {
+                    StatusCode = 400,
+                    Success = false,
+                    Data = requestBody,
+                    Message = StringConstant.MicroserviceError
+                };
+            }
+        }
+
+        public async Task<ResponseDto?> GetDeliveredOrRejectedOrdersCountAsync(long agentId)
+        {
+            var rejectedOrdersCount = await unitOfWork.AssignDeliveryAgentRepository.GetAllAsQueryable().Where(u => u.AgentId == agentId
+            && u.DeliveryStatus == EnumConstants.DeliveryStatus.Rejected).CountAsync();
+
+            var countDeliverd = await unitOfWork.AssignDeliveryAgentRepository.GetAllAsQueryable().Where(u => u.AgentId == agentId
+            && u.DeliveryStatus == (EnumConstants.DeliveryStatus)11).CountAsync();
+
+            var response = new DeliveredOrRejectedOrdersCountDto
+            {
+                DeliveredOrdersCount = countDeliverd,
+                RejectedOrdersCount = rejectedOrdersCount
+            };
+
+            return new ResponseDto { StatusCode = 200, Success = true, Data = response, Message = StringConstant.SuccessMessage };
+        }
+
+        public async Task<ResponseDto?> UpdatePickupOrDeliveryStatusAsync(UpdatePickupOrDeliveryStatusDto pickupOrDeliveryStatusDto)
+        {
+            var requestBody = new UpdateOrderStatusDto();
+            requestBody.status = pickupOrDeliveryStatusDto.DeliveryStatus;
+            foreach (var orderId in pickupOrDeliveryStatusDto.OrderIds)
+            {
+                requestBody.orders.Add(orderId);
+            }
+
+            HttpContent requestJson = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json");
+            string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im9ta2FyLnNoYXJtYUBleGFtcGxlLmNvbSIsInJvbGUiOiI1IiwiaWQiOiI3IiwiZXhwIjoxNjk1NjM4NzU2fQ.igzzKvqwh64yT9dtVwqUfuYC28nkYa-w97TAEJS8P64";
+            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            var microserviceResponse = httpClient.PutAsync("https://order-processing-dev.azurewebsites.net/api/v1/order/updateOrder", requestJson).Result;
+
+            if (microserviceResponse.IsSuccessStatusCode)
+            {
+                foreach (var orderId in pickupOrDeliveryStatusDto.OrderIds)
+                {
+                    var assignedAgent = await unitOfWork.AssignDeliveryAgentRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.OrderId == orderId);
+                    if (assignedAgent == null)
+                    {
+                        return null;
+                    }
+                    assignedAgent.DeliveryStatus = (EnumConstants.DeliveryStatus)pickupOrDeliveryStatusDto.DeliveryStatus;
+                    if (pickupOrDeliveryStatusDto.DeliveryStatus == 8)
+                    {
+                        assignedAgent.DeliveryImage = pickupOrDeliveryStatusDto.Image;
+                    }
+                    else
+                    {
+                        assignedAgent.PickupImage = pickupOrDeliveryStatusDto.Image;
+                    }
+                    await unitOfWork.SaveAsync();
+                }
+
+                return new ResponseDto
+                {
+                    StatusCode = 200,
+                    Success = true,
+                    Data = requestBody,
+                    Message = StringConstant.SuccessMessage
+                };
+            }
+            else
+            {
+                return new ResponseDto
+                {
+                    StatusCode = 400,
+                    Success = false,
+                    Data = requestBody,
+                    Message = StringConstant.MicroserviceError
+                };
+            }
         }
 
     }

@@ -1,5 +1,6 @@
 ﻿using BusinessLogicLayer.IServices;
 using DataAccessLayer.IRepository;
+using EntityLayer.Common;
 using EntityLayer.Dtos;
 using EntityLayer.Models;
 using System;
@@ -20,16 +21,17 @@ namespace BusinessLogicLayer.Services
             this.unitOfWork = unitOfWork;
         }
 
-        public async Task Upload(ImageUploadRequestDto requestDto)
+        public async Task<ResponseDto> Upload(Image image)
         {
             // Create Domain Model
-            var imageDomainModel = new Image
+            await unitOfWork.ImageRepository.AddAsync(image);
+            await unitOfWork.SaveAsync();
+            return new ResponseDto
             {
-                File = requestDto.File,
-                FileDescription = requestDto.FileDescription,
-                FileName = requestDto.FileName,
-                FileSizeInBytes = requestDto.File.Length,
-                FileExtension = Path.GetExtension(requestDto.FileName)
+                StatusCode = 200,
+                Success    = true,
+                Data       = image,
+                Message    = StringConstant.AddedMessage
             };
         }
 

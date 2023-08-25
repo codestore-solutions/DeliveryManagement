@@ -14,8 +14,7 @@ namespace EntityLayer.Models
 
         [NotMapped]
         public IFormFile File { get; set; } = null!;
-        public string FileName { get; set; } = null!;
-        public string? FileDescription { get; set; }
+        public string? FileName { get; set; } = string.Empty;
         public string FileExtension { get; set; } = null!;
         public string FilePath { get; set; } = null!;
         public long FileSizeInBytes { get; set; }

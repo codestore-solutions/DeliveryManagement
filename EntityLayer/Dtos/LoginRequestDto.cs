@@ -10,6 +10,8 @@ namespace EntityLayer.Dtos
     public class LoginRequestDto
     {
         [Required]
+        [DataType(DataType.EmailAddress)]
+        [EmailAddress]
         public string Username { get; set; } = null!;
 
         [Required]

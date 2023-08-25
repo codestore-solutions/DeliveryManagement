@@ -4,7 +4,7 @@
     <TargetFramework>net7.0</TargetFramework>
 	 <GenerateDocumentationFile>true</GenerateDocumentationFile>
 	  <NoWarn>$(NoWarn);1591</NoWarn>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
@@ -31,12 +31,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BuisnessLogicLayer\BusinessLogicLayer.csproj" />
+    <ProjectReference Include="..\BuisnessLogicLayer\DeliveryAgent.BL.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Logs\" />
-    <Folder Include="Images\" />
   </ItemGroup>
 
 </Project>

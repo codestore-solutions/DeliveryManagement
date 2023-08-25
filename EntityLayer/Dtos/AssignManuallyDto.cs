@@ -1,23 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using static EntityLayer.Common.EnumConstants;
 
 namespace EntityLayer.Dtos
 {
+    public class AssignManuallyObjectDto
+    {
+        [Required]
+        [Range(1, long.MaxValue)]
+        public long AgentId { get; set; }
+
+        [Required]
+        [Range(1, long.MaxValue)]
+        public long OrderId { get; set; }
+
+        [Required]
+        [Range(1, long.MaxValue)]
+        public long VendorAddressId { get; set; }
+
+        [Required]
+        [Range(0, double.MaxValue)]
+        public double PickupLatitude { get; set; }
+
+        [Required]
+        [Range(0, double.MaxValue)]
+        public double PickupLongitude { get; set; }
+
+        [Required]
+        public long DeliveryAddressId { get; set; }
+
+        [Required]
+        [Range(0, double.MaxValue)]
+        public double DeliveryAddressLatitude { get; set; }
+
+        [Required]
+        [Range(0, double.MaxValue)]
+        public double DeliveryAddressLongitude { get; set; }
+
+        [Required]
+        public OrderStatus orderStatus { get; set; }
+    }
     public class AssignManuallyDto
     {
-        [DataType(DataType.Text)]
-        [RegularExpression("^[0-9]+$", ErrorMessage = "The property must be a valid long number.")]
-        public long DeliveryAgentId { get; set; }
-        public List<long> OrderIds { get; set; } = null!;
-        public double PickupLat { get; set; }
-        public double PickupLong { get; set; }
-        public double DeliveryAddressLat { get; set; }
-        public double DeliveryAddressLong { get; set; }
-        public long BuisnessId { get; set; }
+        public List<AssignManuallyObjectDto> List { get; set; } = null!;
 
     }
 }

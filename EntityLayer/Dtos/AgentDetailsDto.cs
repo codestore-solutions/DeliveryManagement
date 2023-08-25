@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EntityLayer.Common;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -10,74 +11,48 @@ namespace EntityLayer.Dtos
 {
     public class AgentDetailsDto
     {
+
         [Required]
-        public long DeliveryAgentId { get; set; }
+        [Range(1, long.MaxValue)]
+        public long AgentId { get; set; }
 
         [Required]
         [StringLength(50, MinimumLength = 1)]
-        public string FullName { get; set; } = string.Empty;
+        [RegularExpression(@"^[A-Za-z -]+$", ErrorMessage = StringConstant.FullNameError)]
+        public string FullName { get; set; } = null!;
 
         [Required]
-        [RegularExpression(@"^\d{10}$")]
-        public string PhoneNumber { get; set; } = string.Empty;
+        [StringLength(5)]
+        [RegularExpression(@"^[0-9+ -]+$")]
+        public string CountryCode { get; set; } = null!;
 
         [Required]
+        [DataType(DataType.PhoneNumber)]
+        [StringLength(15, MinimumLength = 10)]
+        [Phone]
+        public string PhoneNumber { get; set; } = null!; 
+
+        [Required]
+        [DataType(DataType.EmailAddress)]
         [EmailAddress]
-        public string Email { get; set; } = string.Empty;
+        public string Email { get; set; } = null!;
 
         [Required]
-        public string Gender { get; set; } = string.Empty;
+        [RegularExpression(@"^[A-Za-z0-9 -]+$")]
+        [StringLength(15)]
+        public string Gender { get; set; } = null!;
 
         [Required]
         [DataType(DataType.Date)]
         [Display(Name = "Date of Birth")]
         public DateTime DateOfBirth { get; set; }
 
-        public enum AvailabilityStatus
-        {
-            OnDuty = 1,
-            OffDuty = 0
-        }
-        public AvailabilityStatus Status { get; set; }
+        [Required]
+        [StringLength(100)]
+        [RegularExpression(@"^[A-Za-z0-9.:,/@*&%#!{} -]+$")]
+        public string Address { get; set; } = null!;
 
-        [StringLength(200)]
-        public string DrivingLicenseUrl { get; set; } = string.Empty;
-
-        [StringLength(200)]
-        public string PhotoUrl { get; set; } = string.Empty;
-
-        [StringLength(200)]
-        public string AadharCardUrl { get; set; } = string.Empty;
-
-        [StringLength(200)]
-        public string PancardUrl { get; set; } = string.Empty;
-
-        [StringLength(50)]
-        public string VehicleType { get; set; } = string.Empty;
-
-     
-        [StringLength(50)]
-        public string VehicleModel { get; set; } = string.Empty;
-
-      
-        [StringLength(50)]
-        public string VehicleCompanyName { get; set; } = string.Empty;
-
-        [StringLength(50)]
-        public string NumberPlate { get; set; } = string.Empty;
-
-        public string Model { get; set; } = string.Empty;
-
-        public string VehicleImageUrl { get; set; } = string.Empty;
-
-
-        public string RegistrationNumber { get; set; } = string.Empty;
-
-
-        public string YourName { get; set; } = string.Empty;
-
-        public string BankName { get; set; } = string.Empty;
-        public string IFSCCode { get; set; } = string.Empty;
-        public string AccountNumber { get; set; } = string.Empty;
+        [Required]
+        public string ProfileImage { get; set; } = string.Empty;
     }
 }

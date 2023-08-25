@@ -10,19 +10,21 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 
+// Commented code for User Register and login using DeliveryAuthDbContext
+
 namespace DeliveryAgentModule.Controllers
 {
-   /* [Route("api/v{version:apiVersion}/authentication")]
+  /*  [Route("api/v{version:apiVersion}/authentication")]
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
         private readonly UserManager<IdentityUser> userManager;
         private readonly ITokenRepository tokenRepository;
 
-        public AuthenticationController(UserManager<IdentityUser> userManager,ITokenRepository tokenRepository)
-        {           
+        public AuthenticationController(UserManager<IdentityUser> userManager, ITokenRepository tokenRepository)
+        {
             this.userManager = userManager;
-            this.tokenRepository = tokenRepository;;
+            this.tokenRepository = tokenRepository; ;
         }
 
         //Post: /api/authentication/register
@@ -53,7 +55,7 @@ namespace DeliveryAgentModule.Controllers
         //POST: /api/authentication/login
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequestDto loginRequestDto)
-        {       
+        {
             var user = await userManager.FindByEmailAsync(loginRequestDto.Username);
 
             if (user != null)
@@ -61,10 +63,10 @@ namespace DeliveryAgentModule.Controllers
                 //Now Check Password
                 var checkPassResult = await userManager.CheckPasswordAsync(user, loginRequestDto.Password);
 
-                if(checkPassResult)
+                if (checkPassResult)
                 {
-                    var roles= await userManager.GetRolesAsync(user);
-                    if(roles != null)
+                    var roles = await userManager.GetRolesAsync(user);
+                    if (roles != null)
                     {
                         // Create Token
                         var jwtToken = tokenRepository.CreateJWTToken(user, roles.ToList());
@@ -76,7 +78,7 @@ namespace DeliveryAgentModule.Controllers
 
                         return Ok(response);
                     }
-                    
+
                 }
             }
 

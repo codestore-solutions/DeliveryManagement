@@ -1,31 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EntityLayer.Models
 {
     public class ServiceLocation
     {
-        public long ServiceLocationId { get; set; }
+        [Key]
+        public long Id { get; set; }
 
         [Required]
-        public long DeliveryAgentId { get; set; }
+        [StringLength(50)]
         public string LocationName { get; set; } = null!;
+
+        [ForeignKey("AgentDetail")]
+        public long AgentDetailId { get; set; }
+
+        [Required]
+        [StringLength(100)]
         public string Address { get; set; } = null!;
+
         public double Latitude { get; set; }
+
         public double Longitude { get; set; }
-        public int MaxDistance { get; set; }
 
-        [DataType(DataType.Time)]
-        public DateTime StartTime { get; set; }
+        // Represent Active Working Location 
+        [Required]
+        public bool IsActive { get; set; }
 
-        [DataType(DataType.Time)]
-        public DateTime EndTime { get; set; }
-        public long WorkingLocationId { get; set; }
-        public WorkingLocation WorkingLocation { get; set; } = null!;
-        public ICollection<SelectedDay> SelectedDays { get; set; } = new List<SelectedDay>(); 
+        [Required]
+        public string SelectedDays { get; set; } = null!;
+
+        public virtual ICollection<AgentTimeSlot> AgentTimeSlots { get; set; } = new List<AgentTimeSlot>();
+
+        // References
+        public virtual AgentDetail AgentDetails { get; set; } = null!;
+
     }
 }

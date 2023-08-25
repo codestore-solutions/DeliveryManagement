@@ -24,7 +24,7 @@ namespace DeliveryAgentModule.Middlewares
             catch (Exception ex)
             {
                 var errorId = Guid.NewGuid();
-                logger.LogError(ex, $"{errorId}: {ex.Message}");
+                logger.LogError(ex, $"{errorId} : {ex.Message}");
 
                 httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 httpContext.Response.ContentType = "application/json";
@@ -35,7 +35,7 @@ namespace DeliveryAgentModule.Middlewares
                     Message = "Something Went Wrong, We are looking resolving Soon"
                 };*/
 
-                string error = errorId + " :Something Went Wrong, We are looking resolving Soon";
+                string error = errorId + " : Something went wrong, Please contact to the admininstrator.";
                 await httpContext.Response.WriteAsync(error);
             }
         }

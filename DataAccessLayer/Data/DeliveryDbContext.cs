@@ -10,14 +10,26 @@ namespace DataAccessLayer.Data
 
         }
         public DbSet<AssignDeliveryAgent> AssignDeliveryAgents { get; set; }
-        public DbSet<DeliveryAgentDetail> DeliveryAgentDetails { get; set; }
-        public DbSet<BusinessAdmin> BusinessAdmin { get; set; }
-        public DbSet<ServiceLocation> ServiceLocations { get; set; }  
-        public DbSet<Image> Images { get; set; }    
-        public DbSet<Order> Orders { get; set; }
+        public DbSet<AgentDetail> AgentDetails { get; set; }
+        public DbSet<KYCDetail> KYCDetails { get; set; }
+        public DbSet<BankDetail> BankDetails { get; set; }
+        public DbSet<VehicleDetail> VehicleDetails { get; set; }
+        public DbSet<BusinessAdmin> BusinessAdmins { get; set; }
+        public DbSet<ServiceLocation> ServiceLocations { get; set; }    
+        public DbSet<TimeSlot> TimeSlots { get; set; }  
+        public DbSet<AgentTimeSlot> AgentTimeSlots { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+
+            optionsBuilder
+           .UseLazyLoadingProxies()
+           .UseSqlServer("name=ConnectionStrings:DeliveryAgentConnectionString");
         }
 
     }

@@ -9,7 +9,10 @@ namespace DataAccessLayer.Repository
         public UnitOfWork(DeliveryDbContext dbContext)
         {
             this.dbContext = dbContext;
-            WorkingLocationRepository = new WorkingLocationRepository(dbContext);
+            TimeSlotRepository = new TimeSlotRepository(this.dbContext);
+            VehicleDetailsRepository = new VehicleDetailsRepository(this.dbContext);
+            BankDetailsRepository = new BankDetailsRepository(this.dbContext);
+            KYCRepository = new KYCRepository(this.dbContext);
             AgentDetailsRepository = new AgentDetailsRepository(this.dbContext);
             AssignDeliveryAgentRepository = new AssignDeliveryAgentRepository(this.dbContext);
             ServiceLocationRepository = new ServiceLocationRepository(this.dbContext);
@@ -29,7 +32,14 @@ namespace DataAccessLayer.Repository
 
         public IAgentDetailsRepository AgentDetailsRepository { get; private set; }
 
-        public IWorkingLocationRepository WorkingLocationRepository { get; private set; }
+        public IVehicleDetailsRepository VehicleDetailsRepository { get; private set; }
+
+        public IBankDetailsRepository BankDetailsRepository { get; private set; }
+
+        public IKYCRepository KYCRepository { get; private set; }
+
+        public ITimeSlotRepository TimeSlotRepository { get; private set; }
+
         public void Dispose()
         {
             dbContext.Dispose();

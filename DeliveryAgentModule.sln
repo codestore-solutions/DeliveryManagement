@@ -5,11 +5,11 @@ VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeliveryAgent.API", "DeliveryAgentModule\DeliveryAgent.API.csproj", "{1CBF7F6E-7CC9-43C2-A0F3-F18BE0BA8E8E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityLayer", "EntityLayer\EntityLayer.csproj", "{3B29ADA1-AB81-447C-AA04-78FB5D2C6091}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeliveryAgent.Entities", "EntityLayer\DeliveryAgent.Entities.csproj", "{3B29ADA1-AB81-447C-AA04-78FB5D2C6091}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogicLayer", "BuisnessLogicLayer\BusinessLogicLayer.csproj", "{6B4B6425-1222-492A-B44B-567E6E540D65}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeliveryAgent.BL", "BuisnessLogicLayer\DeliveryAgent.BL.csproj", "{6B4B6425-1222-492A-B44B-567E6E540D65}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccessLayer", "DataAccessLayer\DataAccessLayer.csproj", "{EF55B103-E916-4FFD-B0A5-ABD7E245A7A8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeliveryAgent.DAL", "DataAccessLayer\DeliveryAgent.DAL.csproj", "{EF55B103-E916-4FFD-B0A5-ABD7E245A7A8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
