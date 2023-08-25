@@ -4,6 +4,9 @@ import globalStyle from '../../global/globalStyle';
 
 
 const styles = StyleSheet.create({
+    scrollViewContent: {
+        flexGrow: 1,
+      },
     container:{
         backgroundColor:'#fff',
         paddingHorizontal:10,
@@ -106,6 +109,15 @@ const styles = StyleSheet.create({
     },
     btnContainerDel:{
        
+    },
+    timeLineContainer:{
+        display:'flex',
+        flexDirection:'row' ,
+        justifyContent:'space-between'
+    },
+   
+    imagesButtons:{
+        
     }
 });
 

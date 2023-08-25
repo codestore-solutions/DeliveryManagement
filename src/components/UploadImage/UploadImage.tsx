@@ -14,18 +14,17 @@ import globalStyle from '../../global/globalStyle';
 import ImagePicker, {Image as CropImage} from 'react-native-image-crop-picker';
 
 interface Props {
+  title?:string;
   setSelectedImage: Function;
   closeModal: () => void;
   selectedImage:any;
-  addUrl?: () => void;
   uploadImage: (selectedImage: any) => void;
 }
 
-const UploadImage: React.FC<Props> = ({setSelectedImage, closeModal , selectedImage, addUrl, uploadImage}) => {
+const UploadImage: React.FC<Props> = ({setSelectedImage, title, closeModal , selectedImage, uploadImage}) => {
   const selectImage = () => {
     ImagePicker.openPicker({
-      width: 70,
-      height: 50,
+      
       cropping: true,
     })
       .then((image: CropImage) => {
@@ -39,8 +38,6 @@ const UploadImage: React.FC<Props> = ({setSelectedImage, closeModal , selectedIm
   };
   const takePicture = () => {
     ImagePicker.openCamera({
-      width: 70,
-      height: 50,
       cropping:  true,
     })
       .then((image: CropImage) => {
@@ -105,7 +102,7 @@ const UploadImage: React.FC<Props> = ({setSelectedImage, closeModal , selectedIm
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.heading}>Choose Option</Text>
+        <Text style={styles.heading}>{ title ? title: 'Choose Option'}</Text>
       </View>
        <View style={styles.image}>
        {selectedImage && (

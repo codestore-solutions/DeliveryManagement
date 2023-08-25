@@ -70,7 +70,7 @@ const CompletedAssignment: React.FC<Props> = ({userData, index}) => {
         userData,
       );
       if (statusCode === ApiConstant.successCode) {
-        console.log('data', data);
+        console.log('Complteded', data);
         setOrderList(data);
       }
     } catch (err) {
@@ -91,7 +91,7 @@ const CompletedAssignment: React.FC<Props> = ({userData, index}) => {
       ) : orderList?.totalOrders === 0 ? (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <Text style={{fontSize: 20, color: 'black'}}>
-            No Avialable Orders.
+            No Available Orders.
           </Text>
         </View>
       ) : (

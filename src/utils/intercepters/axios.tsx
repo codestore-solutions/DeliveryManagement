@@ -26,15 +26,15 @@ instance.interceptors.response.use(
     return response;
   },
   error => {
-    console.log('errr', error);
+    console.log('cdvvcvcxvcxv', error);
     let apiData = {
         status: 503,
-        data: "Service Unavilable"
+        data: "Service Unavailable"
     }as any;
     if (error && error.response) {
       // Request made and server responded
       console.log(error.response.data);
-      console.log('ststus', error.response.status);
+      console.log('status', error.response.status);
       console.log(error.response.headers);
 
       if (error.response.status === ApiConstant?.badRequest) {

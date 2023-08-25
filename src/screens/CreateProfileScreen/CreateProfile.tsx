@@ -19,11 +19,10 @@ const CreateProfile = () => {
   ) as AuthStateInterface;
   const [index, setIndex] = useState(0);
   const [routes] = useState([
-    {key: '1', title: 'Pesonal Details'},
-    {key: '2', title: 'KYC'},
-    {key: '3', title: 'Vehicle Details'},
-    {key: '4', title: 'Bank Details'},
-    {key: '5', title: 'Working Location'},
+    {key: '1', title: 'Personal Details'},
+    {key: '2', title: 'Vehicle Details'},
+    {key: '3', title: 'Bank Details'},
+    {key: '4', title: 'Working Location'},
   ]);
 
   const goToNextIndex = () => {
@@ -48,25 +47,25 @@ const CreateProfile = () => {
             <PersonalDetails data={data} index={index} goToNextIndex={goToNextIndex} />
           </View>
         );
+      // case '2':
+      //   return (
+      //     <View style={styles.sceneContainer}>
+      //       <KycDetails data={data} goToNextIndex={goToNextIndex}   />
+      //     </View>
+      //   );
       case '2':
-        return (
-          <View style={styles.sceneContainer}>
-            <KycDetails data={data} goToNextIndex={goToNextIndex}   />
-          </View>
-        );
-      case '3':
         return (
           <View style={styles.sceneContainer}>
             <VechileDetails data={data} index={index} goToNextIndex={goToNextIndex} />
           </View>
         );
-      case '4':
+      case '3':
         return (
           <View style={styles.sceneContainer}>
             <BankDetails data={data} index={index} goToPrevIndex={goToPrevIndex}  goToNextIndex={goToNextIndex} />
           </View>
         );
-      case '5':
+      case '4':
         return (
           <View style={styles.sceneContainer}>
              <WorkingLocation index={index} />

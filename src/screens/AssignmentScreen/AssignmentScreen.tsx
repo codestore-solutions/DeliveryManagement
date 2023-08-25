@@ -91,11 +91,10 @@ const AssignmentScreen: React.FC<Props> = ({userData, index}) => {
         userData,
       );
       if (statusCode === ApiConstant.successCode) {
-        console.log('data', data);
         setOrderList(data);
       }
     } catch (err) {
-      console.log('Fexthing Pending Request Error', err);
+      console.log('Fetching Pending Request Error', err);
     } finally {
       setLoading(false);
     }

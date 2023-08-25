@@ -99,11 +99,10 @@ const PendingAssignment: React.FC<Props> = ({userData, index}) => {
         userData,
       );
       if (statusCode === ApiConstant.successCode) {
-        console.log('penddata', data);
         setOrderList(data);
       }
     } catch (err) {
-      console.log('Fexthing Pending Request Error', err);
+      console.log('Fetching Pending Request Error', err);
     } finally {
       setLoading(false);
     }
@@ -113,8 +112,6 @@ const PendingAssignment: React.FC<Props> = ({userData, index}) => {
     fetchPendingRequestList(userData);
   }, [userData, handleRefresh, index]);
 
-  console.log('first', orderList?.list);
-
   return (
     <SafeAreaView style={{flex: 1}}>
       {loading ? (
@@ -122,7 +119,7 @@ const PendingAssignment: React.FC<Props> = ({userData, index}) => {
       ) : orderList?.totalOrders === 0 ? (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <Text style={{fontSize: 20, color: 'black'}}>
-            No Avialable Orders.
+            No Available Orders.
           </Text>
         </View>
       ) : (

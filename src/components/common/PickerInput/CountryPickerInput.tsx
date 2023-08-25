@@ -21,7 +21,6 @@ const CountryPickerInput: React.FC<Props> = ({ countryCode, onChange }) => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={handleModalClose}>
       <View style={styles.container}>
         <TouchableOpacity onPress={() => setShow(true)}>
           <Text style={{ color: 'black', fontSize: 15 }}>{countryCode}</Text>
@@ -35,10 +34,10 @@ const CountryPickerInput: React.FC<Props> = ({ countryCode, onChange }) => {
             onBackdropPress={() => setShow(false)}
             style={{ modal: { height: 500 } }}
             pickerButtonOnPress={handlePickerButtonPress}
+            inputPlaceholder='+ 91'
           />
         )}
       </View>
-    </TouchableWithoutFeedback>
   );
 };
 

@@ -40,3 +40,5 @@ export {default as InputEmailIcon} from './svgs/mail.svg'
 export {default as InputEyeOffIcon} from './svgs/eye-off.svg'
 export {default as StarIcon} from './svgs/star.svg';
 export {default as StarWhiteIcon} from './svgs/whitestar.svg';
+export {default as PickupImg} from './svgs/pickup.svg';
+export {default as DeliverImg} from './svgs/deliver.svg';

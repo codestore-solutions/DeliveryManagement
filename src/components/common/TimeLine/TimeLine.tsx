@@ -1,73 +1,132 @@
 import React from 'react';
-import { View, StyleSheet, Text, FlatList, SafeAreaView } from 'react-native';
-import Svg, {Line, Circle} from 'react-native-svg';
-import {CheckTimeIcon, UploadIcon} from '../../../assets';
+import {
+  View,
+  StyleSheet,
+  Text,
+  FlatList,
+  SafeAreaView,
+  Pressable,
+  TouchableOpacity,
+} from 'react-native';
+import Svg, {Line} from 'react-native-svg';
+import {
+  CheckTimeIcon,
+  DeliverImg,
+  PickupImg,
+  UploadIcon,
+} from '../../../assets';
 import globalStyle from '../../../global/globalStyle';
 
 interface Props {
   data: Array<Object>;
   currentIndex: any;
+  openPickupModal: () => void;
+  openDeliverModal: () => void;
 }
 
-const Timeline: React.FC<Props> = ({data, currentIndex}) => {
-  const renderItem = ({item, index}: any) => {
+const Timeline: React.FC<Props> = ({
+  data,
+  currentIndex,
+  openPickupModal,
+  openDeliverModal,
+}) => {
+  const openPickup = () => {
+    console.log('Press');
+    openPickupModal();
+  };
+
+  const renderItem = (item: any, index: number) => {
     const isCompleted = index <= currentIndex;
     const circleColor = isCompleted ? '#7E72FF' : '#DADADA';
+
     return (
       <View style={styles.itemContainer}>
-        <Svg height="100" width="100%">
-          <View style={styles.tag}>
-            <View style={isCompleted ? styles.circleStyle : styles.circleNot}>
-              {isCompleted && (
-                <CheckTimeIcon cx="50%" cy="50" r="10" fill={circleColor} />
-              )}
-            </View>
-            <View style={styles.tagContent}>
-              <View style={styles.tagContentLeft}>
-                <Text
-                  style={
-                    isCompleted
-                      ? styles.title
-                      : [styles.title, styles.titleActive]
-                  }>
-                  {' '}
-                  {item?.title}
-                </Text>
+        {/* <TouchableOpacity
+                style={styles.tagContentRight}
+                onPress={() => {
+                  console.log('Pressed the Pickup icon');
+                  openPickupModal();
+                }}>
+                <PickupImg width={20} height={20} />
+                <Text>Pickup</Text>
+              </TouchableOpacity> */}
+
+        <Pressable
+          onPress={() => {
+            if (item.key === 1) {
+              openPickupModal();
+            } else if (item.key === 3) {
+              openDeliverModal();
+            }
+          }}>
+          <Svg height="100" width="100%">
+            <View style={styles.tag}>
+              <View style={isCompleted ? styles.circleStyle : styles.circleNot}>
                 {isCompleted && (
-                  <Text style={styles.desc}>{item?.description}</Text>
+                  <CheckTimeIcon cx="50%" cy="50" r="10" fill={circleColor} />
                 )}
               </View>
-              {/* <View style={styles.tagContentRight}>
-                <UploadIcon width={35} height={35} />
-              </View> */}
+              <View style={styles.tagContent}>
+                <View style={styles.tagContentLeft}>
+                  <Text
+                    style={
+                      isCompleted
+                        ? styles.title
+                        : [styles.title, styles.titleActive]
+                    }>
+                    {' '}
+                    {item?.title}
+                  </Text>
+                  {isCompleted && (
+                    <Text style={styles.desc}>{item?.description}</Text>
+                  )}
+                </View>
+                {item?.key === 1 && (
+                  <TouchableOpacity
+                    style={styles.tagContentRight}
+                    onPress={() => {
+                      console.log('Pressed the Pickup icon');
+                      openPickupModal();
+                    }}>
+                    <PickupImg width={20} height={20} />
+                    <Text>Pickup</Text>
+                  </TouchableOpacity>
+                )}
+
+                {item?.key === 3 && (
+                  <Pressable
+                    style={styles.tagContentRight}
+                    onPress={() => {
+                      console.log('Pressed the Deliver icon');
+                      openDeliverModal();
+                    }}>
+                    <DeliverImg width={20} height={20} />
+                    <Text>Deliver</Text>
+                  </Pressable>
+                )}
+              </View>
             </View>
-          </View>
-          {index !== data.length - 1 && (
-            <View style={isCompleted ? styles.lineStyle : styles.lineNot}>
-              <Line
-                x1="50%"
-                y1="0"
-                x2="50%"
-                y2="100"
-                stroke={isCompleted ? '#7E72FF' : '#DADADA'}
-                strokeWidth="5"
-              />
-            </View>
-          )}
-        </Svg>
+            {index !== data.length - 1 && (
+              <View style={isCompleted ? styles.lineStyle : styles.lineNot}>
+                <Line
+                  x1="50%"
+                  y1="0"
+                  x2="50%"
+                  y2="100"
+                  stroke={isCompleted ? '#7E72FF' : '#DADADA'}
+                  strokeWidth="5"
+                />
+              </View>
+            )}
+          </Svg>
+        </Pressable>
         <Text style={styles.itemText}>{item.title}</Text>
       </View>
     );
   };
-
   return (
     <SafeAreaView style={styles.container}>
-      <FlatList
-        data={data}
-        keyExtractor={(item: any) => item.key}
-        renderItem={renderItem}
-        contentContainerStyle={styles.innerContainer}
-      />
+      {data.map((item, index) => renderItem(item, index))}
     </SafeAreaView>
   );
 };
@@ -75,9 +134,11 @@ const Timeline: React.FC<Props> = ({data, currentIndex}) => {
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 16,
+    flex: 1,
+    overflow:'hidden'
   },
   innerContainer: {
-    flexGrow: 1,
+    // flexGrow: 1,
   },
   tag: {
     display: 'flex',
@@ -96,11 +157,12 @@ const styles = StyleSheet.create({
   },
   tagContentRight: {
     padding: 5,
-    backgroundColor: '#CCCCCC',
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 5,
     borderColor: globalStyle.colors.labelColor,
     borderWidth: 1,
-    borderRadius: 15,
-    borderStyle: 'dotted',
+    borderRadius: 5,
   },
   title: {
     color: globalStyle.colors.labelColor,

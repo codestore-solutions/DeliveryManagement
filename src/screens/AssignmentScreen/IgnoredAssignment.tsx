@@ -45,11 +45,10 @@ const IgnoredAssignment: React.FC<Props> = ({userData, index}) => {
         userData,
       );
       if (statusCode === ApiConstant.successCode) {
-        console.log('data', data);
         setOrderList(data);
       }
     } catch (err) {
-      console.log('Fexthing Pending Request Error', err);
+      console.log('Fetching Rejected Request Error', err);
     } finally {
       setLoading(false);
     }
@@ -65,7 +64,7 @@ const IgnoredAssignment: React.FC<Props> = ({userData, index}) => {
       ) : orderList?.totalOrders === 0 ? (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <Text style={{fontSize: 20, color: 'black'}}>
-            No Avialable Orders.
+            No Available Orders.
           </Text>
         </View>
       ) : (

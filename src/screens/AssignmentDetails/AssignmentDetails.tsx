@@ -21,9 +21,13 @@ import {ApiConstant} from '../../constant/ApiConstant';
 import {getCurrIdx, getTimeLineData} from '../../utils/helpers/CustomizeData';
 import {useAppSelector} from '../../store/hooks';
 import {RootState} from '../../store';
-import {acceptRejectInterface, pickupAndDelivery} from '../../utils/types/deliveryRequestTypes';
+import {
+  acceptRejectInterface,
+  pickupAndDelivery,
+} from '../../utils/types/deliveryRequestTypes';
 import Loader from '../../components/common/Loader/Loader';
 import UploadImage from '../../components/UploadImage/UploadImage';
+import UploadService from '../../services/UploadService';
 
 const AssignmentDetails = () => {
   const userData = useAppSelector((state: RootState) => state.auth) as any;
@@ -53,25 +57,34 @@ const AssignmentDetails = () => {
 
   const route = useRoute();
   const {item}: any = route.params;
-
-  const [selectedImage, setSelectedImage] = useState<any>(null);
+  const [urls, setUrls] = useState<any>({
+    pickupImg: '',
+    deliverImg: '',
+  });
+  const [selectedImagePickup, setSelectedImagePickup] = useState<any>(null);
+  const [selectedImageDeliver, setSelectedImageDeliver] = useState<any>(null);
   const [orderData, setOrderData] = useState<any>(null);
-  const [visible, setVisible] = useState<boolean>(false);
+  const [pickupModal, setPickupModal] = useState<boolean>(false);
+  const [deliverModal, setDeliverModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [delivered, setDelivered] = useState<boolean>(false);
-  const [otpvisible, otpsetVisible] = useState<boolean>(false);
-  const openModal = () => {
-    setVisible(true);
+  const addUrl = (url: string, type: string) => {
+    if (type === 'pickupImg') setUrls({...urls, pickupImg: url});
+    else setUrls({...urls, deliverImg: url});
   };
-  const closeModal = () => {
-    setVisible(false);
+  const openPickupModal = () => {
+    setPickupModal(true);
   };
-  const otpopenModal = () => {
-    otpsetVisible(true);
+  const closePickupModal = () => {
+    setPickupModal(false);
   };
-  const otpcloseModal = () => {
-    otpsetVisible(false);
+  const openDeliverModal = () => {
+    setDeliverModal(true);
   };
+  const closeDeliverModal = () => {
+    setDeliverModal(false);
+  };
+
   const updateTimeLineData = (payload: any): void => {
     setTimeLineData((prevData: any) =>
       prevData.map((item: any) =>
@@ -139,27 +152,65 @@ const AssignmentDetails = () => {
     try {
       setLoading(true);
       let payload: pickupAndDelivery = {
-        image: '',
+        image: urls?.deliverImg,
         orderIds: [item?.id],
         deliveryStatus: 11,
       };
-     
+      console.log('Deliver paylod', payload);
       const res = await OrderServices.pickupAndDeliveryRequest(
         payload,
         userData?.data,
       );
-      console.log('deliverres', res)
       if (res?.statusCode === ApiConstant.successCode) {
-        console.log('Order Delivered');
         getTimeLineDetails(item?.id);
       }
     } catch (err) {
       console.log('Error on delivering Request', err);
-    }finally{
-       setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
 
+  const pickUpRequest = async (item: any) => {
+    // try {
+    //   setLoading(true);
+    //   let payload: pickupAndDelivery = {
+    //     image: '',
+    //     orderIds: [item?.id],
+    //     deliveryStatus: 11,
+    //   };
+    //   const res = await OrderServices.pickupAndDeliveryRequest(
+    //     payload,
+    //     userData?.data,
+    //   );
+    //   if (res?.statusCode === ApiConstant.successCode) {
+    //     getTimeLineDetails(item?.id);
+    //   }
+    // } catch (err) {
+    //   console.log('Error on delivering Request', err);
+    // } finally {
+    //   setLoading(false);
+    // }
+  };
+
+  const uploadDeliverImage = async (image: any) => {
+    const {statusCode, data} = await UploadService.uploadImage(image);
+    if (statusCode === ApiConstant.successCode) {
+      if (data.urlFilePath) {
+        addUrl(data.urlFilePath, 'deliverImg');
+        console.log('data.urlFilePath & deliver quest', data.urlFilePath);
+      }
+    }
+  };
+  const uploadPickupImage = async (image: any) => {
+    const {statusCode, data} = await UploadService.uploadImage(image);
+    if (statusCode === ApiConstant.successCode) {
+      if (data.urlFilePath) {
+        addUrl(data.urlFilePath, 'pickupImg');
+        console.log('data.urlFilePath', data.urlFilePath);
+      }
+    }
+  };
   useEffect(() => {
     getOrderDetails(Number(item.id));
     getTimeLineDetails(Number(item.id));
@@ -169,7 +220,7 @@ const AssignmentDetails = () => {
     return <Loader />;
   }
   return (
-    <ScrollView>
+    <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <SafeAreaView style={styles.container}>
         <View style={styles.details}>
           <View style={styles.detailsRow}>
@@ -234,75 +285,78 @@ const AssignmentDetails = () => {
           </View>
         </View>
 
-        {orderData?.orderStatus===11 ? (
+        {orderData?.orderStatus === 11 ? (
           <FeedBackScreen />
         ) : (
           <View>
-            <Timeline data={timeLinedata} currentIndex={curr} />
-            {orderData?.paymentStatus === 1 ? (
+            <Timeline
+              data={timeLinedata}
+              currentIndex={curr}
+              openDeliverModal={openDeliverModal}
+              openPickupModal={openPickupModal}
+            />
+
+            {orderData?.orderStatus === 9 && (
               <>
-                {orderData?.orderStatus === 9 && (
-                  <>
-                    <View style={styles.btnContainerDel}>
-                      <CustomButton
-                        disabled={delivered}
-                        title={delivered ? 'Delivered' : 'Deliver Order'}
-                        onPress={() =>deliverRequest(orderData)}
-                      />
-                    </View>
-                  </>
-                )}
-                {orderData?.orderStatus === 8 && (
-                  <>
-                    <View style={styles.btnContainerDel}>
-                      <CustomButton
-                        title={'Arrived'}
-                        onPress={() => arrivedRequest(orderData)}
-                      />
-                    </View>
-                  </>
-                )}
-              </>
-            ) : (
-              <View>
-                <View style={styles.qrContainer}>
-                  <TouchableOpacity onPress={otpopenModal}>
-                    <Text style={styles.btntxt}>Submit OTP</Text>
-                  </TouchableOpacity>
-                  <View style={styles.qr}>
-                    <QrCodeIcon width={80} height={80} />
-                  </View>
-                  <View style={styles.btnContainer}>
-                    <CustomButton
-                      title={'Cash Collected'}
-                      onPress={openModal}
-                    />
-                  </View>
+                <View style={styles.btnContainerDel}>
+                  <CustomButton
+                    disabled={delivered}
+                    title={delivered ? 'Delivered' : 'Deliver Order'}
+                    onPress={() => {
+                      if(urls?.deliverImg)
+                         deliverRequest(item)
+                    }}
+                  />
                 </View>
-              </View>
+              </>
+            )}
+            {orderData?.orderStatus === 6 && (
+              <>
+                <View style={styles.btnContainerDel}>
+                  <CustomButton
+                    title={'Arrived'}
+                    onPress={() => arrivedRequest(orderData)}
+                  />
+                </View>
+              </>
+            )}
+            {orderData?.orderStatus === 5 && (
+              <>
+                <View style={styles.btnContainerDel}>
+                  <CustomButton
+                    title={'PickUp Order'}
+                    onPress={() => pickUpRequest(item)}
+                  />
+                </View>
+              </>
             )}
           </View>
         )}
       </SafeAreaView>
       <CustomModal
-        visible={visible}
-        closeModal={closeModal}
+        visible={pickupModal}
+        closeModal={closePickupModal}
         element={
-          <ModalMessage
-            type={1}
-            message={'Are you sure cash has been collected by you?'}
+          <UploadImage
+            title="Upload Pick Up Image"
+            setSelectedImage={setSelectedImagePickup}
+            selectedImage={selectedImagePickup}
+            closeModal={closeDeliverModal}
+            uploadImage={uploadPickupImage}
           />
         }
       />
       <CustomModal
-        visible={otpvisible}
-        closeModal={otpcloseModal}
+        visible={deliverModal}
+        closeModal={closeDeliverModal}
         element={
-            <UploadImage
-               setSelectedImage={setSelectedImage}
-               closeModal={closeModal}
-               selectedImage={selectedImage}
-            />
+          <UploadImage
+            title="Upload Deliver Image"
+            setSelectedImage={setSelectedImageDeliver}
+            selectedImage={selectedImageDeliver}
+            closeModal={closeDeliverModal}
+            uploadImage={uploadDeliverImage}
+          />
         }
       />
     </ScrollView>
