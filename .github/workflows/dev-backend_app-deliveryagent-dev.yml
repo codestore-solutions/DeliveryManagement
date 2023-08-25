@@ -32,7 +32,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: .net-app
-          path: .
+          path:  ${{env.DOTNET_ROOT}}/myapp
 
   deploy:
     runs-on: windows-latest
@@ -55,3 +55,4 @@ jobs:
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_212A1BF96F8F4281B4117DE8307D771E }}
           package: .
+          
