@@ -19,13 +19,13 @@ const getAvailableOrdersList = async (pagination: any) => {
 
   let res = await API({}, url, "GET", params);
   let count = 1;
-
-  let fromattedList = res?.data?.data?.list?.map((item: any) => {
+   console.log('res.data', res.data.data.totalOrders)
+  let formattedList = res?.data?.data?.list?.map((item: any) => {
     return { ...item, key: count++ }
   });
   const response = {
-    total: res?.data?.data?.total,
-    list: fromattedList
+    total: res?.data?.data?.totalOrders,
+    list: formattedList
   }
   return response;
 };
@@ -46,15 +46,14 @@ const getAssignedOrdersList = async (pagination: any, status: any) => {
 
   let res = await API({}, url, "GET", params);
   let count = 1;
-  console.log("ReactData", res?.data);
-  let fromattedList = res?.data?.data?.list?.map((item: any) => {
+  let formattedList = res?.data?.data?.list?.map((item: any) => {
     return { ...item, key: count++ }
   });
   const response = {
     status: res?.status,
     data: {
-      total: res?.data?.data?.total,
-      list: fromattedList
+      total: res?.data?.data?.totalOrders,
+      list: formattedList
     }
   }
   return response;
@@ -63,7 +62,7 @@ const getAssignedOrdersList = async (pagination: any, status: any) => {
 
 /** 
  * @param id OrderId For getting details of given order
- * @returns object of OrderDteails
+ * @returns object of OrderDetails
  */
 const getOrderDetailsById = async (id: string | undefined) => {
   let url = `${ApiConstants.orderProcessingbaseUrl}${ApiConstants.getOrderDetailsById}/${id}`;

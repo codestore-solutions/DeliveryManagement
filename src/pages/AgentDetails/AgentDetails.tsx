@@ -16,7 +16,6 @@ const { Text, Title } = Typography;
 const AgentDetails: React.FC = () => {
   const navigate = useNavigate();
   const [data, setData] = useState<any>(null);
-  const [isVerified, setIsVerified] = useState<boolean>(false);
   const [orderStatusCount, setOrderStatusCount] = useState<any>(null);
   console.log("data", data);
   const [loading, setLoading] = useState<boolean>(false);
@@ -56,7 +55,6 @@ const AgentDetails: React.FC = () => {
     AgentService.verifyAgentKyc(payload).then((res) => {
       if (res?.statusCode === ApiConstants.successCode) {
         message.success(res?.message);
-        setIsVerified(true);
       }
     });
   };
@@ -80,7 +78,7 @@ const AgentDetails: React.FC = () => {
             "Mobile Number": data?.phoneNumber,
             "Res. Address": data?.address,
             "Verify Agent": (
-              <Switch defaultChecked={isVerified} onChange={onChange} />
+              <Switch defaultChecked={data?.verificationStatus === 1 ? true: false} onChange={onChange} />
             ),
           }}
         />

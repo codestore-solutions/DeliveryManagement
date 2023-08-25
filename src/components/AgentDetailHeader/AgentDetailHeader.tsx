@@ -1,10 +1,9 @@
 import React from "react";
-import { Row, Col, Image, Typography, message } from "antd";
+import { Row, Col, Image, Typography } from "antd";
 import { DeleteIcon, LeftArrowIcon } from "../../assets";
-
 import useDeliveryAgents from "../../pages/DeliveryAgents/Hook";
-
 const { Title, Text } = Typography;
+
 
 interface Props {
   data: any;
@@ -12,10 +11,8 @@ interface Props {
 }
 
 const AgentDetailHeader: React.FC<Props> = ({ data, goBack }) => {
-  let searchInput ={};
-  const {deleteAgent} = useDeliveryAgents(searchInput)
-
-  
+  let searchInput = {};
+  const { showDeleteConfirm } = useDeliveryAgents(searchInput);
   return (
     <Row style={{ display: "flex", justifyContent: "space-between" }}>
       <Col>
@@ -50,7 +47,10 @@ const AgentDetailHeader: React.FC<Props> = ({ data, goBack }) => {
             </Row>
           </Col>
           <Col>
-            <div className="badge-icons" onClick={() => deleteAgent(data?.agentId)}>
+            <div
+              className="badge-icons"
+              onClick={() => showDeleteConfirm(data?.agentId)}
+            >
               <Image preview={false} src={DeleteIcon} alt="" />
             </div>
           </Col>

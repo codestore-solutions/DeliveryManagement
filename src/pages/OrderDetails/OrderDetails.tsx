@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./style.scss";
-import { LeftArrowIcon } from "../../assets";
-import { Button, Col, Row } from "antd";
+import { Col, Row } from "antd";
 import { AgentFeedBack, CustomTimeline } from "../../components";
 import { useNavigate, useParams } from "react-router-dom";
 import OrderService from "../../services/OrderService";
