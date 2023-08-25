@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DeliveryAgent.Entities.Dtos;
 using EntityLayer.Dtos;
 using EntityLayer.Models;
 
@@ -21,6 +22,7 @@ namespace BusinessLogicLayer.Mappings
             CreateMap<AgentDetail, BankDetail>().ReverseMap();
             CreateMap<BankDetail, BankDetailResponseDto>().ReverseMap();
             CreateMap<VehicleDetail, VehicleDetailResponseDto>().ReverseMap();
+            CreateMap<AgentDetail , AgentAllDetailsDto>().ReverseMap();
         }
     }
 }

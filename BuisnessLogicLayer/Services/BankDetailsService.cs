@@ -2,6 +2,7 @@
 using BusinessLogicLayer.IServices;
 using DataAccessLayer.IRepository;
 using DeliveryAgent.Entities.Common;
+using DeliveryAgent.Entities.Models;
 using EntityLayer.Common;
 using EntityLayer.Dtos;
 using EntityLayer.Models;
@@ -32,8 +33,10 @@ namespace BusinessLogicLayer.Services
             var bankDetails = agentDetail.BankDetails;
             var response = new BankDetailResponseDto();
             mapper.Map(bankDetails, response);
-            response.IFSCCode = CommonFunctions.MaskData(bankDetails.IFSCCode);
-            response.AccountNumber = CommonFunctions.MaskData(bankDetails.AccountNumber);
+            var decryptedIfsc = EncryptDecryptManager.Decrypt(bankDetails.IFSCCode);
+            var decryptedAccountNumber = EncryptDecryptManager.Decrypt(bankDetails.AccountNumber);
+            response.IFSCCode = CommonFunctions.MaskData(decryptedIfsc);
+            response.AccountNumber = CommonFunctions.MaskData(decryptedAccountNumber);
             return response;
         }
 
@@ -54,7 +57,10 @@ namespace BusinessLogicLayer.Services
             var bankDetails = new BankDetail();
             mapper.Map(bankDetailsDto, bankDetails);
             bankDetails.AgentDetailId = agentDetail.Id;
-            //bankDetails.AgentDetail   = agentDetail;
+            var encryptedIfsc = EncryptDecryptManager.Encrypt(bankDetails.IFSCCode);
+            var encryptedAccountNumber = EncryptDecryptManager.Encrypt(bankDetails.AccountNumber);
+            bankDetails.IFSCCode = encryptedIfsc;
+            bankDetails.AccountNumber = encryptedAccountNumber;
             bankDetails.CreatedOn = DateTime.Now;
             bankDetails.UpdatedOn = DateTime.Now;
 
@@ -78,6 +84,10 @@ namespace BusinessLogicLayer.Services
                 return null;
             }
             mapper.Map(bankDetailsDto, bankDetails);
+            var encryptedIfsc = EncryptDecryptManager.Encrypt(bankDetails.IFSCCode);
+            var encryptedAccountNumber = EncryptDecryptManager.Encrypt(bankDetails.AccountNumber);
+            bankDetails.IFSCCode = encryptedIfsc;
+            bankDetails.AccountNumber = encryptedAccountNumber;
             bankDetails.UpdatedOn = DateTime.Now;
             bool saveResult = await unitOfWork.SaveAsync();
 

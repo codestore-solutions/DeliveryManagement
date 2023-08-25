@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BusinessLogicLayer.IServices;
 using DataAccessLayer.IRepository;
+using DeliveryAgent.Entities.Common;
 using EntityLayer.Common;
 using EntityLayer.Dtos;
 using EntityLayer.Models;
@@ -27,6 +28,7 @@ namespace BusinessLogicLayer.Services
             var vehicleDetail = agentDetail.VehicleDetails;
             var response = new VehicleDetailResponseDto();
             mapper.Map(vehicleDetail, response);
+            response.RegistrationNumber = CommonFunctions.MaskData(vehicleDetail.RegistrationNumber);
             return response;
         }
 
@@ -45,7 +47,6 @@ namespace BusinessLogicLayer.Services
             mapper.Map(vehicleDetailsDto, addVehicleDetails);
 
             addVehicleDetails.AgentDetailId = agentDetails.Id;
-            addVehicleDetails.AgentDetails = agentDetails;
             addVehicleDetails.CreatedOn = DateTime.Now;
             addVehicleDetails.UpdatedOn = DateTime.Now;
 

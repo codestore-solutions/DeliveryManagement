@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using BusinessLogicLayer.IServices;
 using DataAccessLayer.IRepository;
+using DeliveryAgent.Entities.Common;
+using DeliveryAgent.Entities.Dtos;
+using DeliveryAgent.Entities.Models;
 using EntityLayer.Common;
 using EntityLayer.Dtos;
 using EntityLayer.Models;
@@ -120,11 +123,22 @@ namespace BusinessLogicLayer.Services
             {
                 return null;
             }
+            var response = new AgentAllDetailsDto();
+            mapper.Map(agentDetails, response);
+            if(agentDetails.BankDetails != null && agentDetails.VehicleDetails!=null)
+            {
+                var decryptedIfsc = EncryptDecryptManager.Decrypt(agentDetails.BankDetails.IFSCCode);
+                var decryptedAccountNumber = EncryptDecryptManager.Decrypt(agentDetails.BankDetails.AccountNumber);
+                response.BankDetails.IFSCCode = CommonFunctions.MaskData(decryptedIfsc);
+                response.BankDetails.AccountNumber = CommonFunctions.MaskData(decryptedAccountNumber);
+                response.VehicleDetails.RegistrationNumber = CommonFunctions.MaskData(agentDetails.VehicleDetails.RegistrationNumber);
+            }
+            
             return new ResponseDto
             {
                 StatusCode = 200,
                 Success = true,
-                Data = agentDetails,
+                Data = response,
                 Message = StringConstant.SuccessMessage
             };
         }
