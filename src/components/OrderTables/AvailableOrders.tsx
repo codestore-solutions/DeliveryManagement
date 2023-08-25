@@ -54,12 +54,10 @@ const AvailableOrders: React.FC<Props> = ({
   ) as OrderStateInerface;
   const data = orderslist?.list;
   const [pagination, setPagination] = useState<pagination>({
-    showLessItems: true,
-    hideOnSinglePage: true,
     simple: true,
     pageNumber: 1,
     total: orderslist?.total,
-    pageSize: 7,
+    pageSize: 5,
     showTotal: (total: any, range: any) =>
       `${range[0]}-${range[1]} of ${total} items`,
     });

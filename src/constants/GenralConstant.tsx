@@ -1,4 +1,6 @@
-export const GenralContants = {
+export const GeneralConstants = {
     token:"token",
-    loginUserDetail:"loginUserDetail"
+    loginUserDetail:"loginUserDetail",
+    md:756,
+    sm:615
 };

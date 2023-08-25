@@ -8,6 +8,7 @@ import OrderService from "../../services/OrderService";
 import Spinner from "../Spinner/Spinner";
 import date from "../../utils/helpers/CustomizeDate";
 import AgentService from "../../services/AgentService";
+import OrderDetailHeader from "../../components/OrderDetailHeader/OrderDetailHeader";
 
 const OrderDetails: React.FC = () => {
   const navigate = useNavigate();
@@ -54,7 +55,7 @@ const OrderDetails: React.FC = () => {
   } else {
     return (
       <div id="order-details">
-        <div className="order-header">
+        {/* <div className="order-header">
           <div className="left">
             <span onClick={goBack}>
             <img src={LeftArrowIcon} alt="" />
@@ -77,7 +78,8 @@ const OrderDetails: React.FC = () => {
               </Button>
             )}
           </div>
-        </div>
+        </div> */}
+        <OrderDetailHeader goBack={goBack} data={data} />
         <div className="order-details-content">
           <Row gutter={[16, 16]}>
             <Col xs={24} sm={24} md={12} lg={8} xl={8}>

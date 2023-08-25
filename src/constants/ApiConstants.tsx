@@ -21,6 +21,7 @@ export const ApiConstants = {
      getVerificationStatus:'working-location/getVerificationStatus',
      getAgentList: 'personal-details/getAgentsList',
      getAgentDetail:'personal-details/getDetails',
+     deleteAgent:'personal-details/markAgentAsInactive',
      assignAgentAutomatically: 'assignAgent/automatically-assign-preview',
      getAssignedAgent:'agent/GetAll',
      modifyAgentStatus:'business-admin',

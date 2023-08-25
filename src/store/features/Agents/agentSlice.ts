@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import AgentService from "../../../services/AgentService";
 import { pagination } from "../../../utils/types";
 import { RootState } from "../..";
-export interface AgentStateInerface {
+export interface AgentStateInterface {
   loading: boolean;
   isSuccess: boolean;
   error: any;
@@ -10,7 +10,7 @@ export interface AgentStateInerface {
   availableAgent: any;
 }
 
-const initialState: AgentStateInerface = {
+const initialState: AgentStateInterface = {
   loading: false,
   isSuccess: false,
   error: null,

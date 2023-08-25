@@ -10,10 +10,12 @@ import {
   OrderListFilter,
 } from "../../components";
 import { FilterIcon } from "../../assets";
+import useScreenWidth from "../../Hooks/ScreenWidthHook";
 
 interface OrderProps {}
 
 const Orders: FC<OrderProps> = () => {
+  const { isSmallScreen} = useScreenWidth()
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [selectedRowData, setSelectedRowData] = useState<React.Key[]>([]);
   const [activeTab, setActiveTab] = useState("1");
@@ -81,7 +83,7 @@ const Orders: FC<OrderProps> = () => {
   return (
     <div id="available-list">
       <div className="agent-header">
-        <div className="header-left">
+        <div className={isSmallScreen ? "hide": "header-left"}>
           <h3>Delivery Request Management</h3>
         </div>
         <div className="header-right">

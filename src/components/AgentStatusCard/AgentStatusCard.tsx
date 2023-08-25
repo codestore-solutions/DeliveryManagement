@@ -1,6 +1,8 @@
 import React from "react";
-import { Col } from "antd";
+import { Col, Row, Image, Typography } from "antd";
 import "../../pages/AgentDetails/style.scss";
+
+const { Text, Title } = Typography;
 
 interface DeliveryStatusCardProps {
   icon: string;
@@ -15,17 +17,25 @@ const DeliveryStatusCard: React.FC<DeliveryStatusCardProps> = ({
   iconClassName,
   value,
   label,
-  className,
 }) => {
   return (
     <Col xs={24} sm={12} md={8} lg={8} xl={6}>
-      <div className={`container ${className ? className : ""}`}>
-        <img src={icon} alt="" className={iconClassName ? iconClassName : ""} />
-        <div className="details">
-          <h3>{value}</h3>
-          <span>{label}</span>
-        </div>
-      </div>
+      <Row gutter={10} className="status-card">
+        <Col>
+          <Image
+            preview={false}
+            src={icon}
+            alt=""
+            className={iconClassName ? iconClassName : ""}
+          />
+        </Col>
+        <Col>
+          <Title level={5} style={{ display:'flex', flexDirection:'column', paddingTop: "5px" }}>
+            {value}
+            <Text className="container-col">{label}</Text>
+          </Title>
+        </Col>
+      </Row>
     </Col>
   );
 };

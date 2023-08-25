@@ -117,6 +117,12 @@ const acceptRejectOrders = async (id:number) =>{
   return res?.data;
 }
 
+const deleteAgent = async (payload: any) =>{
+  const {agentId, isDeleted} = payload;
+ let url = `${ApiConstants.baseUrl}${ApiConstants.deleteAgent}?agentId=${agentId}&isDeleted=${isDeleted}`;
+ const res = await API({}, url, "PUT");
+ return res?.data;
+}
 const AgentService = {
   getAllAgents,
   getAgentDetails,
@@ -126,7 +132,8 @@ const AgentService = {
   getFeedbackDetails,
   verifyAgentKyc,
   getVerificationStatus,
-  acceptRejectOrders
+  acceptRejectOrders,
+  deleteAgent
 };
 
 export default AgentService;

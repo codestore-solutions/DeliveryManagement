@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Col, Row, Switch, Typography, message } from "antd";
 import "../../pages/AgentDetails/style.scss";
-import { AadhaarImage, DetailsIcon, LicenseImage, PanImage, ProfileImg } from "../../assets";
+import {
+  AadhaarImage,
+  DetailsIcon,
+  LicenseImage,
+  PanImage,
+  ProfileImg,
+} from "../../assets";
 import { verifyAgentKycInterface } from "../../utils/types";
 import AgentService from "../../services/AgentService";
 import { ApiConstants } from "../../constants/ApiConstants";
@@ -18,7 +24,7 @@ const AgentVerifyCard: React.FC<Props> = ({ agentId }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isVerified, setIsVerified] = useState<boolean>(false);
   const [cardDetails, setCardDetails] = useState<any>();
-  console.log('isVerified', isVerified)
+  console.log("isVerified", isVerified);
   const cardData = [
     {
       key: 1,
@@ -37,7 +43,7 @@ const AgentVerifyCard: React.FC<Props> = ({ agentId }) => {
     },
   ];
 
-  const handleOpenModal = (item:any) => {
+  const handleOpenModal = (item: any) => {
     setIsOpen(true);
     setCardDetails(item);
   };
@@ -58,23 +64,22 @@ const AgentVerifyCard: React.FC<Props> = ({ agentId }) => {
     });
   };
 
-  const getVerificationStatus = () =>{
-    let params = { agentId: agentId};
-    AgentService.getVerificationStatus(params).then((res) =>{
-        if(res?.statusCode === ApiConstants.successCode){
-             if(res?.data?.verificationStatus === 1){
-
-                setIsVerified(true);
-             }else{
-                setIsVerified(false);
-             }
+  const getVerificationStatus = () => {
+    let params = { agentId: agentId };
+    AgentService.getVerificationStatus(params).then((res) => {
+      if (res?.statusCode === ApiConstants.successCode) {
+        if (res?.data?.verificationStatus === 1) {
+          setIsVerified(true);
+        } else {
+          setIsVerified(false);
         }
-    })
-  }
-  
-  useEffect(() =>{
-     getVerificationStatus();
-  }, [isVerified])
+      }
+    });
+  };
+
+  useEffect(() => {
+    getVerificationStatus();
+  }, [isVerified]);
 
   return (
     <Col xs={24} sm={24} md={12} lg={12} xl={12}>
@@ -116,7 +121,11 @@ const AgentVerifyCard: React.FC<Props> = ({ agentId }) => {
                   </div>
                 </Col>
                 <Col className="container-col dark">
-                  <img src={DetailsIcon} alt="" onClick={() =>handleOpenModal(item)} />
+                  <img
+                    src={DetailsIcon}
+                    alt=""
+                    onClick={() => handleOpenModal(item)}
+                  />
                 </Col>
               </Row>
             ))}
@@ -127,7 +136,6 @@ const AgentVerifyCard: React.FC<Props> = ({ agentId }) => {
         isOpen={isOpen}
         onClose={handleCloseModal}
         component={<AgentDocument data={[cardDetails]} />}
-        
       />
     </Col>
   );

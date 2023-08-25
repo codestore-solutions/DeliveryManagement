@@ -6,8 +6,10 @@ import { AssignedAgents } from "..";
 import "./style.scss";
 import { FilterIcon } from "../../assets";
 import { AgentListFilter, CustomModal } from "../../components";
+import useScreenWidth from "../../Hooks/ScreenWidthHook";
 const { TabPane } = Tabs;
 const Agent = () => {
+  const {isSmallScreen} = useScreenWidth()
   const [filters, setFilters] = useState<any>();
   const [isOpen, setIsOpen] = useState(false);
   const [searchInput, setSearchInput] = useState<string>();
@@ -38,7 +40,8 @@ const Agent = () => {
   return (
     <div id="available-list">
       <div className="agent-header">
-        <div className="header-left">
+        
+        <div className={ isSmallScreen ? "hide" :"header-left"} >
           <h3>Delivery Partner Management</h3>
         </div>
         <div className="header-right">
