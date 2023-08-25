@@ -1,7 +1,5 @@
 @import "../../App.scss";
 
-
-
 .status-tick{
   padding: 14px;
   object-fit: contain;
@@ -21,121 +19,32 @@
   border-radius: 15px;
 }
 
-#agent-details {
-  width: 100%;
-  scrollbar-width: 3px;
-  .agent-header {
+// #agent-details {
+//   width: 100%;
+//   scrollbar-width: 3px;
+// }
+
+
+.badge-icons {
+  margin: 0 8px;
+  padding: 7px;
+  box-sizing: border-box;
+  background: #ffffff;
+  border: 1px solid #eaeaea;
+  box-shadow: 0px 2px 1px rgba(84, 91, 252, 0.2);
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+.status-card{
+    padding:  0.5rem;
+    flex: 3;
+    margin:10px 0;
+    // margin-right: 0.3rem;
     display: flex;
-    margin-bottom: 10px;
-    justify-content: space-between;
     align-items: center;
-    .left {
-      display: inline-flex;
-      h3 {
-        font-weight: 600;
-        font-size: 25px;
-        line-height: 30px;
-        color: #141c38;
-        padding-left: 10px;
-      }
-    }
-    .right {
-      display: inline-flex;
-      align-items: center;
-      align-items: center;
-      .status {
-        padding: 0 15px;
-        .tag {
-          font-weight: 400;
-          font-size: 22px;
-          line-height: 30px;
-          color: #141c38;
-        }
-        .value {
-          color: #ffb526;
-          padding-left: 3px;
-        }
-      }
-      .icons {
-        padding: 0 15px;
-        .badge-icons {
-          margin: 0 5px;
-          padding: 9px;
-          box-sizing: border-box;
-          background: #ffffff;
-          border: 1px solid #eaeaea;
-          box-shadow: 0px 2px 1px rgba(84, 91, 252, 0.2);
-          border-radius: 15px;
-          cursor: pointer;
-        }
-      }
-    }
-  }
-  .vechile-details {
-    margin: 1rem 0;
-    padding: 0.2rem 0.6rem;
     background: #ffffff;
     border: 1px solid #eaeaea;
     box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.05);
     border-radius: 10px;
-    z-index: 999;
-    h3 {
-      font-weight: 500;
-      font-size: 20px;
-      line-height: 30px;
-      color: #141c38;
-    }
-    .details {
-      display: flex;
-      justify-content: space-between;
-      margin: 1rem 0;
-      .details-item {
-        font-weight: 400;
-        font-size: 14px;
-        line-height: 20px;
-        color: #7e8299;
-        .dark {
-          font-weight: 600;
-        }
-      }
-    }
-  }
-  .delivery-report {
-    h3 {
-      font-weight: 600;
-      font-size: 25px;
-      line-height: 30px;
-      color: #141c38;
-    }
-    .conatiner-content {
-      margin: 1rem 0;
-      .container {
-        padding: 1rem 0.5rem;
-        flex: 3;
-        margin:10px 0;
-        // margin-right: 0.3rem;
-        display: flex;
-        align-items: center;
-        background: #ffffff;
-        border: 1px solid #eaeaea;
-        box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.05);
-        border-radius: 10px;
-        .details {
-          padding-left: 15px;
-          h3 {
-            font-weight: 700;
-            font-size: 25px;
-            line-height: 30px;
-            color: #141c38;
-          }
-          span {
-            font-weight: 400;
-            font-size: 16px;
-            line-height: 24px;
-            color: #7e8299;
-          }
-        }
-      }
-    }
-  }
 }

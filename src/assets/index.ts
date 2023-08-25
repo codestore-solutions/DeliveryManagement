@@ -1,3 +1,4 @@
+
 export  {default as DeliveryImg} from './images/deliverySvg.webp';
 export {default as LogoImg} from './images/logo.png';
 export {default as HidePasswordIcon} from './svgs/EyeClose.svg';
@@ -33,4 +34,4 @@ export {default as LicenseImg} from './images/license.png'
 export {default as AadhaarImage} from './svgs/aadhaar.svg'
 export {default as PanImage} from './svgs/Pan.svg'
 export {default as LicenseImage} from './svgs/License.svg'
-
+export {default as AvatarImage} from './svgs/avatar.svg'

@@ -1,4 +1,4 @@
-import React, { useState, lazy } from "react";
+import React, { useState, lazy, useEffect } from "react";
 import {
   DeliveredProcedureOutlined,
   UserAddOutlined,
@@ -21,12 +21,13 @@ const TrackOrder = lazy(() => import("../TrackOrder/TrackOrder"));
 const OrderDetails = lazy(() => import("../OrderDetails/OrderDetails"));
 
 import { DashboardImg } from "../../assets";
+import useScreenWidth from "../../Hooks/ScreenWidthHook";
 
-const { Header, Content } = Layout;
+const { Content } = Layout;
 
 const Dashboard: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
-
+ const { screenWidth, isMiddleScreen } = useScreenWidth();
   const menuItems = [
     {
       key: "1",
@@ -64,7 +65,13 @@ const Dashboard: React.FC = () => {
       label: "Logout",
     },
   ];
-
+  useEffect(() => {
+    if (isMiddleScreen) {
+      setCollapsed(true);
+    } else {
+      setCollapsed(false);
+    }
+  }, [screenWidth]);
   return (
     <Layout id="dashboard">
       <Sidebar
@@ -73,9 +80,7 @@ const Dashboard: React.FC = () => {
         setCollapsed={setCollapsed}
       />
       <Layout>
-        <Header className="header">
-          <Navbar />
-        </Header>
+        <Navbar />
         <Content className="content">
           <Routes>
             <Route path="/management" element={<Management />} />

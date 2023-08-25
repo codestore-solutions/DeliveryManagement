@@ -1,71 +1,107 @@
 import { FC } from "react";
-import "./style.scss";
 import { DownOutlined } from "@ant-design/icons";
-import { Avatar, Dropdown, MenuProps, Space } from "antd";
-import { NotificationIcon } from "../../assets";
-import { useAppSelector } from "../../store/hooks/app";
+import {
+  Avatar,
+  Dropdown,
+  Image,
+  MenuProps,
+  Badge,
+  Layout,
+  Row,
+  Col,
+  Typography,
+  Space,
+} from "antd";
+import { AvatarImage, NotificationIcon } from "../../assets";
+import { useAppDispatch, useAppSelector } from "../../store/hooks/app";
 import { RootState } from "../../store";
-import { AuthStateInterface } from "../../store/features/Auth/authSlice";
-
+import { AuthStateInterface, reset } from "../../store/features/Auth/authSlice";
+import useScreenWidth from "../../Hooks/ScreenWidthHook";
+import { useNavigate } from "react-router-dom";
+const { Header } = Layout;
+const { Text } = Typography;
 interface NavbarProps {}
 
-const items: MenuProps["items"] = [
-  {
-    label: "1st menu item",
-    key: "1",
-  },
-  {
-    label: "2nd menu item",
-    key: "2",
-  },
-  {
-    label: "3rd menu item",
-    key: "3",
-  },
-];
-
 const Navbar: FC<NavbarProps> = () => {
-  const { data } = useAppSelector((state: RootState) => state.auth) as AuthStateInterface;
-
+  const { isSmallScreen } = useScreenWidth();
+  const navigation = useNavigate();
+  const { data } = useAppSelector(
+    (state: RootState) => state.auth
+  ) as AuthStateInterface;
+  const dispatch = useAppDispatch();
+  const logoutHandler = () => {
+    dispatch(reset());
+  };
+  const goToSetting = () => {
+    navigation("/dashboard/profile");
+  };
+  const items: MenuProps["items"] = [
+    {
+      label: "Profile",
+      key: "1",
+      onClick: goToSetting,
+    },
+    {
+      label: "Logout",
+      key: "2",
+      onClick: logoutHandler,
+    },
+  ];
   return (
-    <div id="navbar">
-      <div className="nav-left">
-        <p>Delivery Partner Management</p>
-      </div>
-      <div className="nav-right">
-        <div className="nav-items">
-          <div className="nav-item">
-            <div className="notification">
-              <img src={NotificationIcon} alt="" />
-              <span className="status"></span>
-            </div>
-          </div>
-          <div className="nav-item">
-            <div className="avatar">
-              <Avatar
-                src={
-                  <img
+    <Header style={{ background: "#fff" }}>
+      <Row style={{ display: "flex", justifyContent: "space-between" }}>
+        <Col>
+          <Text
+            color="#7E8299"
+            style={isSmallScreen ? { display: "none" } : {}}
+          >
+            Delivery Partner Management
+          </Text>
+        </Col>
+        <Col>
+          <Row gutter={10}>
+            <Col>
+              <Badge count={3}>
+                <Image src={NotificationIcon} />
+              </Badge>
+            </Col>
+            <Col>
+              <Row gutter={5} style={{ display: "flex", alignItems: "center" }}>
+                <Col>
+                  <Avatar
+                    size={50}
                     src={
-                      "https://img.freepik.com/premium-vector/man-avatar-profile-round-icon_24640-14044.jpg?w=2000"
+                      <Image preview={false} src={AvatarImage} alt="avatar" />
                     }
-                    alt="avatar"
                   />
-                }
-              />
-              <Dropdown menu={{ items }} className="dropdown">
-                <a onClick={(e) => e.preventDefault()}>
-                  <Space direction="vertical" align="center">
-                    <p className="name">{data?.name}</p>
-                    <p className="email">{data?.email}</p>
-                  </Space>
-                  <DownOutlined className="icon" />
-                </a>
-              </Dropdown>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+                </Col>
+                <Col>
+                  <Dropdown menu={{ items }}>
+                    <Space>
+                      <Text
+                        style={
+                          isSmallScreen
+                            ? { display: "none" }
+                            : {
+                                display: "flex",
+                                flexDirection: "column",
+                                paddingTop: "-5px",
+                              }
+                        }
+                      >
+                        {data?.name}
+                        <Text style={{ fontSize: "12px" }}>{data?.email}</Text>
+                      </Text>
+                      <DownOutlined className="icon" />
+                    </Space>
+                  </Dropdown>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+    </Header>
   );
 };
 

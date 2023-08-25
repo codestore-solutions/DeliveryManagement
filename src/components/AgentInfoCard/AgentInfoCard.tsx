@@ -3,7 +3,7 @@ import { Col } from "antd";
 import '../../pages/AgentDetails/style.scss'
 interface InfoCardProps {
   title: string;
-  data: { [key: string]: string };
+  data: { [key: string]: any };
 }
 
 const AgentInfoCard: React.FC<InfoCardProps> = ({ title, data }) => {
@@ -17,6 +17,7 @@ const AgentInfoCard: React.FC<InfoCardProps> = ({ title, data }) => {
               <span className="container-col">{label}</span>
               <span className="container-col dark">{value}</span>
             </div>
+          
           ))}
         </div>
       </div>
