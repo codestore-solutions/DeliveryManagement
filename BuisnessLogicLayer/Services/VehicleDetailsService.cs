@@ -2,9 +2,8 @@
 using BusinessLogicLayer.IServices;
 using DataAccessLayer.IRepository;
 using DeliveryAgent.Entities.Common;
-using EntityLayer.Common;
-using EntityLayer.Dtos;
-using EntityLayer.Models;
+using DeliveryAgent.Entities.Dtos;
+using DeliveryAgent.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLogicLayer.Services
@@ -28,7 +27,7 @@ namespace BusinessLogicLayer.Services
             var vehicleDetail = agentDetail.VehicleDetails;
             var response = new VehicleDetailResponseDto();
             mapper.Map(vehicleDetail, response);
-            response.RegistrationNumber = CommonFunctions.MaskData(vehicleDetail.RegistrationNumber);
+            response.RegistrationNumber = MaskData.SensitiveInfo(vehicleDetail.RegistrationNumber);
             return response;
         }
 

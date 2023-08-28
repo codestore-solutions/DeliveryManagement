@@ -1,5 +1,5 @@
-﻿using EntityLayer.Common;
-using EntityLayer.Dtos;
+﻿using DeliveryAgent.Entities.Common;
+using DeliveryAgent.Entities.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;

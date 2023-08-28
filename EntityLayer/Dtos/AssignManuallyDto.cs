@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using static EntityLayer.Common.EnumConstants;
+using static DeliveryAgent.Entities.Common.EnumConstants;
 
-namespace EntityLayer.Dtos
+namespace DeliveryAgent.Entities.Dtos
 {
     public class AssignManuallyObjectDto
     {

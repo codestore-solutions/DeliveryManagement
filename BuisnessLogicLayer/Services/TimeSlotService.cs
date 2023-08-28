@@ -1,6 +1,6 @@
 ﻿using BusinessLogicLayer.IServices;
 using DataAccessLayer.IRepository;
-using EntityLayer.Models;
+using DeliveryAgent.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLogicLayer.Services
@@ -22,7 +22,7 @@ namespace BusinessLogicLayer.Services
 
         public async Task<IEnumerable<TimeSlot>> GetAllActiveTimeSlots(long? businessId)
         {
-            var timeSlots = await unitOfWork.TimeSlotRepository.GetAllAsQueryable().Where(u =>((businessId == null) || u.BusinessId == businessId) && u.IsActive).ToListAsync();
+            var timeSlots = await unitOfWork.TimeSlotRepository.GetAllAsQueryable().Where(u => ((businessId == null) || u.BusinessId == businessId) && u.IsActive).ToListAsync();
             return timeSlots;
         }
 
@@ -30,7 +30,7 @@ namespace BusinessLogicLayer.Services
         {
             var timeSlots = await unitOfWork.TimeSlotRepository.GetAllAsQueryable().Where(ts => ids.Contains(ts.Id))
             .ToListAsync();
-            if(timeSlots.Count == 0)
+            if (timeSlots.Count == 0)
             {
                 return null;
             }

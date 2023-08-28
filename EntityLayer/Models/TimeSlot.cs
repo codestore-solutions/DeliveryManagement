@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EntityLayer.Models
+namespace DeliveryAgent.Entities.Models
 {
     public class TimeSlot
     {
@@ -29,6 +29,6 @@ namespace EntityLayer.Models
         public DateTime CreatedOn { get; set; }
 
         [Required]
-        public DateTime UpdatedOn { get; set;}
+        public DateTime UpdatedOn { get; set; }
     }
 }

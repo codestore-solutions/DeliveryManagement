@@ -1,9 +1,7 @@
 ﻿using BusinessLogicLayer.IServices;
-using BusinessLogicLayer.Services;
+using DeliveryAgent.Entities.Common;
+using DeliveryAgent.Entities.Dtos;
 using DeliveryAgentModule.CustomActionFilter;
-using EntityLayer.Common;
-using EntityLayer.Dtos;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
@@ -30,8 +28,8 @@ namespace DeliveryAgent.API.Controllers
         public async Task<ActionResult<ResponseDto>> GetBankDetailAsync([FromQuery][Required] long agentId)
         {
             var result = await bankDetailsService.GetAsync(agentId);
-            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) 
-                : new ResponseDto { StatusCode = 200, Data = result, Success = true, Message = StringConstant.SuccessMessage};
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError })
+                : new ResponseDto { StatusCode = 200, Data = result, Success = true, Message = StringConstant.SuccessMessage };
         }
 
         /// <summary>
@@ -60,7 +58,7 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> UpdateDetailsAsync([FromQuery][Required] long id, [FromBody][Required] BankDetailsDto bankDetailsDto)
         {
             var result = await bankDetailsService.UpdateDetailsAsync(id, bankDetailsDto);
-            return result == null? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
 
     }

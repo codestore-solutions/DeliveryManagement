@@ -1,4 +1,4 @@
-﻿namespace EntityLayer.Common
+﻿namespace DeliveryAgent.Entities.Common
 {
     public class AuthConstants
     {

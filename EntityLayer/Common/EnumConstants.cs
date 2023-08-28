@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EntityLayer.Common
+namespace DeliveryAgent.Entities.Common
 {
     public class EnumConstants
     {

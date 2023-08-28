@@ -1,4 +1,4 @@
-﻿using EntityLayer.Common;
+﻿using DeliveryAgent.Entities.Common;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace EntityLayer.Dtos
+namespace DeliveryAgent.Entities.Dtos
 {
     public class AgentDetailsDto
     {
@@ -30,7 +30,7 @@ namespace EntityLayer.Dtos
         [DataType(DataType.PhoneNumber)]
         [StringLength(15, MinimumLength = 10)]
         [Phone]
-        public string PhoneNumber { get; set; } = null!; 
+        public string PhoneNumber { get; set; } = null!;
 
         [Required]
         [DataType(DataType.EmailAddress)]

@@ -6,9 +6,9 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using static EntityLayer.Common.EnumConstants;
+using static DeliveryAgent.Entities.Common.EnumConstants;
 
-namespace EntityLayer.Models
+namespace DeliveryAgent.Entities.Models
 {
     public class KYCDetail
     {

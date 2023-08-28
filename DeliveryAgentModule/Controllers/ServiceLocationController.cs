@@ -1,13 +1,9 @@
 ﻿using BusinessLogicLayer.IServices;
-using BusinessLogicLayer.Services;
+using DeliveryAgent.Entities.Common;
+using DeliveryAgent.Entities.Dtos;
 using DeliveryAgentModule.CustomActionFilter;
-using EntityLayer.Common;
-using EntityLayer.Dtos;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
-using System.Reflection.Metadata.Ecma335;
 
 namespace DeliveryAgent.API.Controllers
 {

@@ -2,10 +2,8 @@
 using BusinessLogicLayer.IServices;
 using DataAccessLayer.IRepository;
 using DeliveryAgent.Entities.Common;
+using DeliveryAgent.Entities.Dtos;
 using DeliveryAgent.Entities.Models;
-using EntityLayer.Common;
-using EntityLayer.Dtos;
-using EntityLayer.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLogicLayer.Services
@@ -33,10 +31,10 @@ namespace BusinessLogicLayer.Services
             var bankDetails = agentDetail.BankDetails;
             var response = new BankDetailResponseDto();
             mapper.Map(bankDetails, response);
-            var decryptedIfsc = EncryptDecryptManager.Decrypt(bankDetails.IFSCCode);
-            var decryptedAccountNumber = EncryptDecryptManager.Decrypt(bankDetails.AccountNumber);
-            response.IFSCCode = CommonFunctions.MaskData(decryptedIfsc);
-            response.AccountNumber = CommonFunctions.MaskData(decryptedAccountNumber);
+            var decryptedIfsc = AesED.Decrypt(bankDetails.IFSCCode);
+            var decryptedAccountNumber = AesED.Decrypt(bankDetails.AccountNumber);
+            response.IFSCCode = MaskData.SensitiveInfo(decryptedIfsc);
+            response.AccountNumber = MaskData.SensitiveInfo(decryptedAccountNumber);
             return response;
         }
 
@@ -44,7 +42,7 @@ namespace BusinessLogicLayer.Services
         {
             var agentDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable()
             .FirstOrDefaultAsync(u => u.AgentId == bankDetailsDto.AgentId);
-            if(agentDetail== null)
+            if (agentDetail == null)
             {
                 return null;
             }
@@ -57,22 +55,21 @@ namespace BusinessLogicLayer.Services
             var bankDetails = new BankDetail();
             mapper.Map(bankDetailsDto, bankDetails);
             bankDetails.AgentDetailId = agentDetail.Id;
-            var encryptedIfsc = EncryptDecryptManager.Encrypt(bankDetails.IFSCCode);
-            var encryptedAccountNumber = EncryptDecryptManager.Encrypt(bankDetails.AccountNumber);
+            var encryptedIfsc = AesED.Encrypt(bankDetails.IFSCCode);
+            var encryptedAccountNumber = AesED.Encrypt(bankDetails.AccountNumber);
             bankDetails.IFSCCode = encryptedIfsc;
             bankDetails.AccountNumber = encryptedAccountNumber;
-            bankDetails.CreatedOn = DateTime.Now;
-            bankDetails.UpdatedOn = DateTime.Now;
+            bankDetails.CreatedOn = bankDetails.UpdatedOn = DateTime.Now;
 
             await unitOfWork.BankDetailsRepository.AddAsync(bankDetails);
-            bool saveResult = await unitOfWork.SaveAsync();          
+            bool saveResult = await unitOfWork.SaveAsync();
 
             return new ResponseDto
             {
-                StatusCode      = saveResult ? 200 : 500,
-                Success         = saveResult,
-                Data            = bankDetails,
-                Message         = saveResult ? StringConstant.SuccessMessage : StringConstant.DatabaseMessage
+                StatusCode = saveResult ? 200 : 500,
+                Success = saveResult,
+                Data = bankDetails,
+                Message = saveResult ? StringConstant.SuccessMessage : StringConstant.DatabaseMessage
             };
         }
 
@@ -84,8 +81,9 @@ namespace BusinessLogicLayer.Services
                 return null;
             }
             mapper.Map(bankDetailsDto, bankDetails);
-            var encryptedIfsc = EncryptDecryptManager.Encrypt(bankDetails.IFSCCode);
-            var encryptedAccountNumber = EncryptDecryptManager.Encrypt(bankDetails.AccountNumber);
+
+            var encryptedIfsc = AesED.Encrypt(bankDetails.IFSCCode);
+            var encryptedAccountNumber = AesED.Encrypt(bankDetails.AccountNumber);
             bankDetails.IFSCCode = encryptedIfsc;
             bankDetails.AccountNumber = encryptedAccountNumber;
             bankDetails.UpdatedOn = DateTime.Now;
@@ -93,10 +91,10 @@ namespace BusinessLogicLayer.Services
 
             return new ResponseDto
             {
-                StatusCode      = saveResult ? 200 : 500,
-                Success         = saveResult,
-                Data            = bankDetails,
-                Message         = saveResult ? StringConstant.UpdatedMessage : StringConstant.DatabaseMessage
+                StatusCode = saveResult ? 200 : 500,
+                Success = saveResult,
+                Data = bankDetails,
+                Message = saveResult ? StringConstant.UpdatedMessage : StringConstant.DatabaseMessage
             };
         }
 

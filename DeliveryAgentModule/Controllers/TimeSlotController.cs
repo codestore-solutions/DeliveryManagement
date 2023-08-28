@@ -1,5 +1,5 @@
 ﻿using BusinessLogicLayer.IServices;
-using EntityLayer.Common;
+using DeliveryAgent.Entities.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 

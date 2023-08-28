@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using BusinessLogicLayer.IServices;
 using DataAccessLayer.IRepository;
-using EntityLayer.Common;
-using EntityLayer.Dtos;
-using EntityLayer.Models;
+using DeliveryAgent.Entities.Common;
+using DeliveryAgent.Entities.Dtos;
+using DeliveryAgent.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Text;
@@ -14,14 +14,14 @@ namespace BusinessLogicLayer.Services
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
-        private readonly HttpClient httpClient;
+      //  private readonly HttpClient httpClient;
         private readonly Dictionary<long, long> _assignedAgents = new Dictionary<long, long>();
 
-        public AssignDeliveryAgentService(IUnitOfWork unitOfWork, IMapper mapper, HttpClient httpClient)
+        public AssignDeliveryAgentService(IUnitOfWork unitOfWork, IMapper mapper/*, HttpClient httpClient*/)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
-            this.httpClient = httpClient;
+            //this.httpClient = httpClient;
         }
 
         public async Task<ResponseDto> GetAllAsync(int pageNumber = 1, int limit = 10)
@@ -38,15 +38,15 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto> AssignAgentManuallyAsync(AssignManuallyDto assignManuallyDto)
         {
+            using var client = new HttpClient();
             var responseObject = new List<object>();
             bool saveResult = false;
             foreach (var obj in assignManuallyDto.List)
             {
                 var assignNewAgent = new AssignDeliveryAgent();
                 mapper.Map(obj, assignNewAgent);
-                assignNewAgent.CreatedOn = DateTime.Now;
-                assignNewAgent.UpdatedOn = DateTime.Now;
-
+                assignNewAgent.DeliveryStatus = (EnumConstants.DeliveryStatus)obj.orderStatus;
+                assignNewAgent.CreatedOn = assignNewAgent.UpdatedOn = DateTime.Now;
                 await unitOfWork.AssignDeliveryAgentRepository.AddAsync(assignNewAgent);
                 //  _assignedAgents.Add(obj.OrderId, obj.AgentId);
                 /*  var timer = new Timer(30000);
@@ -73,8 +73,8 @@ namespace BusinessLogicLayer.Services
             HttpContent requestJson = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json");
             // Add the authorization header with the token
             string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFtYW4uc2hhaEBleGFtcGxlLmNvbSIsInJvbGUiOiIyIiwiaWQiOiIyIiwiYnVzaW5lc3NDYXRlZ29yeSI6IjEiLCJleHAiOjE2OTQ2Njg1NTd9.5o0-bpi-JluyVoztkzksonQRmCINzYjPYle6xVu4HHo";
-            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
-            var microserviceResponse = httpClient.PutAsync("https://order-processing-dev.azurewebsites.net/api/v1/order/updateOrderWithAgent", requestJson).Result;
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            var microserviceResponse = client.PutAsync("https://order-processing-dev.azurewebsites.net/api/v1/order/updateOrderWithAgent", requestJson).Result;
             if (microserviceResponse.IsSuccessStatusCode)
             {
                 return new ResponseDto()
@@ -131,7 +131,7 @@ namespace BusinessLogicLayer.Services
             {
                 // Search for suitable delivery agent within 5 km radius in Database.
                 var getNearestDeliveryAgentId = await NearestAgentWithinRange(obj.DeliveryAddressLatitude, obj.DeliveryAddressLongitude,
-                    obj.PickupLatitude, obj.PickupLongitude, 5, 9);
+                    obj.PickupLatitude, obj.PickupLongitude, 5, 28);
 
                 // If we didn't get any agent nearby , push notification .i.e, No delivery agent is available nearby
                 if (getNearestDeliveryAgentId == null)
@@ -142,7 +142,6 @@ namespace BusinessLogicLayer.Services
                         DeliveryAgentName = StringConstant.NotAvailableMessage,
                         OrderId = obj.OrderId
                     };
-
                     responseObjectList.Add(notAvailableResponse);
                     continue;
                 }
@@ -207,8 +206,8 @@ namespace BusinessLogicLayer.Services
             var availableAgentList = await unitOfWork.ServiceLocationRepository.GetAllAsQueryable().Where(u => u.IsActive
             && u.AgentDetails.AgentStatus == EnumConstants.AvailabilityStatus.OnDuty
             && u.AgentDetails.verificationStatus == EnumConstants.VerificationStatus.Verified
-            && u.SelectedDays.Contains(currentDay)
-            && u.AgentTimeSlots.Any(slot => slot.TimeSlotId == slotId)).ToListAsync();
+            && u.SelectedDays.Contains(currentDay)).ToListAsync();
+           // && u.AgentTimeSlots.Any(slot => slot.TimeSlotId == slotId)).ToListAsync();
 
             long? nearsestAgentId = null;
             foreach (var agent in availableAgentList)
@@ -248,6 +247,9 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto?> AcceptOrderAsync(AcceptRejectOrderDto acceptRejectOrderDto, string token)
         {
+
+            using var client = new HttpClient();
+
             var requestBody = new UpdateOrderStatusDto();
             requestBody.status = acceptRejectOrderDto.DeliveryStatus;
             foreach (var orderId in acceptRejectOrderDto.OrderIds)
@@ -257,8 +259,8 @@ namespace BusinessLogicLayer.Services
 
             HttpContent requestJson = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json");
             string token1 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im9ta2FyLnNoYXJtYUBleGFtcGxlLmNvbSIsInJvbGUiOiI1IiwiaWQiOiI3IiwiZXhwIjoxNjk1NjM4NzU2fQ.igzzKvqwh64yT9dtVwqUfuYC28nkYa-w97TAEJS8P64";
-            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token1}");
-            var microserviceResponse = httpClient.PutAsync("https://order-processing-dev.azurewebsites.net/api/v1/order/updateOrder", requestJson).Result;
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token1}");
+            var microserviceResponse = client.PutAsync("https://order-processing-dev.azurewebsites.net/api/v1/order/updateOrder", requestJson).Result;
 
             if (microserviceResponse.IsSuccessStatusCode)
             {
@@ -312,6 +314,8 @@ namespace BusinessLogicLayer.Services
 
         public async Task<ResponseDto?> UpdatePickupOrDeliveryStatusAsync(UpdatePickupOrDeliveryStatusDto pickupOrDeliveryStatusDto)
         {
+            using var client = new HttpClient();
+
             var requestBody = new UpdateOrderStatusDto();
             requestBody.status = pickupOrDeliveryStatusDto.DeliveryStatus;
             foreach (var orderId in pickupOrDeliveryStatusDto.OrderIds)
@@ -321,8 +325,8 @@ namespace BusinessLogicLayer.Services
 
             HttpContent requestJson = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json");
             string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im9ta2FyLnNoYXJtYUBleGFtcGxlLmNvbSIsInJvbGUiOiI1IiwiaWQiOiI3IiwiZXhwIjoxNjk1NjM4NzU2fQ.igzzKvqwh64yT9dtVwqUfuYC28nkYa-w97TAEJS8P64";
-            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
-            var microserviceResponse = httpClient.PutAsync("https://order-processing-dev.azurewebsites.net/api/v1/order/updateOrder", requestJson).Result;
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            var microserviceResponse = client.PutAsync("https://order-processing-dev.azurewebsites.net/api/v1/order/updateOrder", requestJson).Result;
 
             if (microserviceResponse.IsSuccessStatusCode)
             {

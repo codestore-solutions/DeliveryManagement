@@ -1,12 +1,10 @@
 ﻿using BusinessLogicLayer.IServices;
+using DeliveryAgent.Entities.Common;
+using DeliveryAgent.Entities.Dtos;
 using DeliveryAgentModule.CustomActionFilter;
-using EntityLayer.Common;
-using EntityLayer.Dtos;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
-using static System.Net.Mime.MediaTypeNames;
-using System.Text;
 using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace DeliveryAgentModule.Controllers
 {

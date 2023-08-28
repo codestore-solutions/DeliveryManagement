@@ -1,12 +1,5 @@
-﻿using EntityLayer.Common;
-using EntityLayer.Dtos;
-using EntityLayer.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static EntityLayer.Models.AgentDetail;
+﻿using DeliveryAgent.Entities.Common;
+using DeliveryAgent.Entities.Dtos;
 
 namespace BusinessLogicLayer.IServices
 {

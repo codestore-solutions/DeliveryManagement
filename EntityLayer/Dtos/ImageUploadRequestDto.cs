@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EntityLayer.Dtos
+namespace DeliveryAgent.Entities.Dtos
 {
     public class ImageUploadRequestDto
     {

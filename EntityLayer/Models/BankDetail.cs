@@ -6,14 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EntityLayer.Models
+namespace DeliveryAgent.Entities.Models
 {
     public class BankDetail
     {
         [Key]
         public long Id { get; set; }
 
-        [Required] 
+        [Required]
         [ForeignKey("AgentDetail")]
         public long AgentDetailId { get; set; }
 
@@ -33,7 +33,7 @@ namespace EntityLayer.Models
         public DateTime CreatedOn { get; set; }
 
         [Required]
-        public DateTime UpdatedOn { get; set; }   
+        public DateTime UpdatedOn { get; set; }
         public virtual AgentDetail AgentDetail { get; set; } = null!;
     }
 }

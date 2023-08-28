@@ -1,13 +1,13 @@
-﻿using EntityLayer.Common;
+﻿using DeliveryAgent.Entities.Common;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static EntityLayer.Common.EnumConstants;
+using static DeliveryAgent.Entities.Common.EnumConstants;
 
-namespace EntityLayer.Dtos
+namespace DeliveryAgent.Entities.Dtos
 {
     public class AgentDetailResponseDto
     {

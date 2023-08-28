@@ -1,5 +1,5 @@
-﻿using EntityLayer.Common;
-using EntityLayer.Dtos;
+﻿using DeliveryAgent.Entities.Common;
+using DeliveryAgent.Entities.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 

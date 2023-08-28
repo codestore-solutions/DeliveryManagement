@@ -1,5 +1,5 @@
 ﻿using BusinessLogicLayer.IServices;
-using EntityLayer.Dtos;
+using DeliveryAgent.Entities.Dtos;
 using Newtonsoft.Json;
 using System.Text;
 

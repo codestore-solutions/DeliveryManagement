@@ -4,9 +4,6 @@ using DataAccessLayer.IRepository;
 using DeliveryAgent.Entities.Common;
 using DeliveryAgent.Entities.Dtos;
 using DeliveryAgent.Entities.Models;
-using EntityLayer.Common;
-using EntityLayer.Dtos;
-using EntityLayer.Models;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -56,9 +53,9 @@ namespace BusinessLogicLayer.Services
             return new ResponseDto
             {
                 StatusCode = saveResult ? 200 : 500,
-                Success    = saveResult,
-                Data       = addNewDetails,
-                Message    = saveResult ? StringConstant.AddedMessage : StringConstant.DatabaseMessage
+                Success = saveResult,
+                Data = addNewDetails,
+                Message = saveResult ? StringConstant.AddedMessage : StringConstant.DatabaseMessage
             };
         }
 
@@ -125,15 +122,15 @@ namespace BusinessLogicLayer.Services
             }
             var response = new AgentAllDetailsDto();
             mapper.Map(agentDetails, response);
-            if(agentDetails.BankDetails != null && agentDetails.VehicleDetails!=null)
+            if (agentDetails.BankDetails != null && agentDetails.VehicleDetails != null)
             {
-                var decryptedIfsc = EncryptDecryptManager.Decrypt(agentDetails.BankDetails.IFSCCode);
-                var decryptedAccountNumber = EncryptDecryptManager.Decrypt(agentDetails.BankDetails.AccountNumber);
-                response.BankDetails.IFSCCode = CommonFunctions.MaskData(decryptedIfsc);
-                response.BankDetails.AccountNumber = CommonFunctions.MaskData(decryptedAccountNumber);
-                response.VehicleDetails.RegistrationNumber = CommonFunctions.MaskData(agentDetails.VehicleDetails.RegistrationNumber);
+                var decryptedIfsc = AesED.Decrypt(agentDetails.BankDetails.IFSCCode);
+                var decryptedAccountNumber = AesED.Decrypt(agentDetails.BankDetails.AccountNumber);
+                response.BankDetails.IFSCCode = MaskData.SensitiveInfo(decryptedIfsc);
+                response.BankDetails.AccountNumber = MaskData.SensitiveInfo(decryptedAccountNumber);
+                response.VehicleDetails.RegistrationNumber = MaskData.SensitiveInfo(agentDetails.VehicleDetails.RegistrationNumber);
             }
-            
+
             return new ResponseDto
             {
                 StatusCode = 200,
@@ -189,9 +186,9 @@ namespace BusinessLogicLayer.Services
             return new ResponseDto { StatusCode = 200, Success = true, Data = response, Message = StringConstant.SuccessMessage };
         }
 
-        public async Task<bool> SoftDeleteAgentAsync(long agentId , bool isDeleted)
+        public async Task<bool> SoftDeleteAgentAsync(long agentId, bool isDeleted)
         {
-            var agent = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId ==agentId);
+            var agent = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == agentId);
             if (agent != null)
             {
                 agent.IsDeleted = isDeleted;

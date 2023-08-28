@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace EntityLayer.Models
+namespace DeliveryAgent.Entities.Models
 {
     public class BusinessAdmin
     {
@@ -11,6 +11,6 @@ namespace EntityLayer.Models
         public long BusinessId { get; set; }
 
         [Required]
-        public long DeliveryAgentId  { get; set; }
+        public long DeliveryAgentId { get; set; }
     }
 }

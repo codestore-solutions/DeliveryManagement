@@ -1,6 +1,6 @@
-﻿using DeliveryAgentModule.CustomActionFilter;
-using EntityLayer.Common;
-using EntityLayer.Dtos;
+﻿using DeliveryAgent.Entities.Common;
+using DeliveryAgent.Entities.Dtos;
+using DeliveryAgentModule.CustomActionFilter;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;

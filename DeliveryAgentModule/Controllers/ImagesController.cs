@@ -1,9 +1,7 @@
 ﻿using BusinessLogicLayer.IServices;
+using DeliveryAgent.Entities.Common;
+using DeliveryAgent.Entities.Dtos;
 using DeliveryAgentModule.CustomActionFilter;
-using EntityLayer.Common;
-using EntityLayer.Dtos;
-using EntityLayer.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DeliveryAgentModule.Controllers
@@ -41,7 +39,7 @@ namespace DeliveryAgentModule.Controllers
                 var urlFilePath = $"{httpContextAccessor.HttpContext.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}" +
                     $"{httpContextAccessor.HttpContext.Request.PathBase}/Images/{fileName}";
 
-                return Ok(new ResponseDto { StatusCode = 200 , Success = true, Data= new {urlFilePath = urlFilePath}, Message = StringConstant.SuccessMessage});
+                return Ok(new ResponseDto { StatusCode = 200, Success = true, Data = new { urlFilePath = urlFilePath }, Message = StringConstant.SuccessMessage });
             }
             return BadRequest(ModelState);
         }
@@ -53,7 +51,7 @@ namespace DeliveryAgentModule.Controllers
             {
                 ModelState.AddModelError("file", "UnSupported File Extenstion");
             }
-            if(requestDto.File.Length> 2000000)
+            if (requestDto.File.Length > 2000000)
             {
                 ModelState.AddModelError("file", "file size more than 2 MB, please upload a smaller file");
             }

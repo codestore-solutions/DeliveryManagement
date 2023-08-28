@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static EntityLayer.Common.EnumConstants;
+using static DeliveryAgent.Entities.Common.EnumConstants;
 
-namespace EntityLayer.Dtos
+namespace DeliveryAgent.Entities.Dtos
 {
     public class KYCListDto
     {
@@ -16,7 +16,7 @@ namespace EntityLayer.Dtos
     public class KYCDto
     {
         [Required]
-        [Range(1, long.MaxValue)]    
+        [Range(1, long.MaxValue)]
         public long AgentId { get; set; }
 
         // Enum For Document Types

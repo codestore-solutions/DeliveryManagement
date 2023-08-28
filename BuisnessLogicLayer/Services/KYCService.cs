@@ -1,15 +1,10 @@
 ﻿using AutoMapper;
 using BusinessLogicLayer.IServices;
 using DataAccessLayer.IRepository;
-using EntityLayer.Common;
-using EntityLayer.Dtos;
-using EntityLayer.Models;
+using DeliveryAgent.Entities.Common;
+using DeliveryAgent.Entities.Dtos;
+using DeliveryAgent.Entities.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.Services
 {
@@ -69,8 +64,8 @@ namespace BusinessLogicLayer.Services
             {
                 StatusCode = 200,
                 Success = true,
-                Data    = kycDto.List,
-                Message =  StringConstant.SuccessMessage
+                Data = kycDto.List,
+                Message = StringConstant.SuccessMessage
             };
         }
         public async Task<ResponseDto?> UpdateDetailsAsync(long id, KYCDto kYCDto)

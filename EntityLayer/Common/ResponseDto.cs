@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EntityLayer.Common
+namespace DeliveryAgent.Entities.Common
 {
 
-    public class ErrorResponseDto :ResponseDto
+    public class ErrorResponseDto : ResponseDto
     {
-     
+
     }
-    public class ResponseDto 
+    public class ResponseDto
     {
         public int StatusCode { get; set; }
         public bool Success { get; set; }
@@ -19,6 +19,6 @@ namespace EntityLayer.Common
         public string Message { get; set; } = null!;
     }
 
-    
+
 
 }

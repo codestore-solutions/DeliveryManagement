@@ -1,11 +1,6 @@
 ﻿using AutoMapper;
 using BusinessLogicLayer.IServices;
 using DataAccessLayer.IRepository;
-using EntityLayer.Common;
-using EntityLayer.Dtos;
-using EntityLayer.Models;
-using Microsoft.EntityFrameworkCore;
-using static EntityLayer.Models.BusinessAdmin;
 
 namespace BusinessLogicLayer.Services
 {
@@ -18,7 +13,7 @@ namespace BusinessLogicLayer.Services
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
         }
-       
-      
+
+
     }
 }
