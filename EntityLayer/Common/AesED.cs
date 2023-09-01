@@ -1,4 +1,5 @@
 ﻿
+using Castle.Core.Configuration;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -6,10 +7,12 @@ namespace DeliveryAgent.Entities.Common
 {
     public class AesED
     {
+        // Encryption key
         protected readonly static string key = "sfcvixkmffm134eASJDNIfdg";
-
+        
         public static string Encrypt(string text)
         {
+            // Initialization vector
             byte[] iv = new byte[16];
             byte[] array;
             using (Aes aes = Aes.Create())
@@ -34,6 +37,7 @@ namespace DeliveryAgent.Entities.Common
 
         public static string Decrypt(string text)
         {
+            // iv - Intialization vector.
             byte[] iv = new byte[16];
             byte[] buffer = Convert.FromBase64String(text);
             using (Aes aes = Aes.Create())

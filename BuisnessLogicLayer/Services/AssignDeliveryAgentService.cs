@@ -226,6 +226,8 @@ namespace BusinessLogicLayer.Services
             return nearsestAgentId;
         }
 
+
+        // Used to calculate distance between two coordinates.
         private static double CalculateDistance(double startLatitude, double startLongitude, double endLatitude, double endLongitude)
         {
             const double EarthRadius = 6371;

@@ -24,6 +24,7 @@ namespace BusinessLogicLayer.Services
         {
             var agentDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable()
             .FirstOrDefaultAsync(u => u.AgentId == serviceLocationDto.AgentId);
+            // If agentId does not exist.
             if (agentDetail == null)
             {
                 return null;
@@ -49,6 +50,7 @@ namespace BusinessLogicLayer.Services
             addServiceLocation.AgentDetails = agentDetail;
             agentDetail.ServiceLocations.Add(addServiceLocation);
 
+            // Adding time slot Ids 
             foreach (var timeSlotId in serviceLocationDto.TimeSlotIds)
             {
                 var slot = new AgentTimeSlot
@@ -60,25 +62,27 @@ namespace BusinessLogicLayer.Services
                 addServiceLocation.AgentTimeSlots.Add(slot);
             }
             await unitOfWork.ServiceLocationRepository.AddAsync(addServiceLocation);
-            bool saveResult = await unitOfWork.SaveAsync();
+            await unitOfWork.SaveAsync();
 
             return new ResponseDto
             {
                 StatusCode = 200,
                 Success = true,
                 Data = addServiceLocation,
-                Message = saveResult ? StringConstant.AddedMessage : StringConstant.DatabaseMessage
+                Message =  StringConstant.AddedMessage
             };
         }
 
         public async Task<ResponseDto?> GetAllWorkingLocationsAsync(long agentId)
         {
             var allLocations = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == agentId);
+
+            // If agentId does not exist.
             if (allLocations == null || allLocations.ServiceLocations.IsNullOrEmpty())
             {
                 return null;
             }
-
+             
             return new ResponseDto
             {
                 StatusCode = 200,
@@ -95,16 +99,10 @@ namespace BusinessLogicLayer.Services
             {
                 return null;
             }
-            bool saveResult = await unitOfWork.SaveAsync();
-            return new ResponseDto
-            {
-                StatusCode = saveResult ? 200 : 500,
-                Success = saveResult,
-                Data = workingLocation,
-                Message = saveResult ? StringConstant.DeletedMessage : StringConstant.DatabaseMessage
-            };
-        }
-
+            await unitOfWork.SaveAsync();
+            return new ResponseDto { StatusCode = 200, Success =true, Data = workingLocation , Message = StringConstant.DeletedMessage };
+        } 
+         
         public async Task<ResponseDto?> UpdateWorkingLocationAsync(long serviceLocationId, UpdateWorkingLocationDto updateWorkingLocationDto)
         {
             var serviceLocation = await unitOfWork.ServiceLocationRepository.GetByIdAsync(serviceLocationId);
@@ -185,16 +183,10 @@ namespace BusinessLogicLayer.Services
             var responseDto = new AvailabilityStatusDto();
 
             agent.AgentStatus = (EnumConstants.AvailabilityStatus)statusDto.AgentStatus;
-            bool saveResult = await unitOfWork.SaveAsync();
+            await unitOfWork.SaveAsync();
             responseDto.AgentStatus = (AvailabilityStatusDto.AvailabilityStatus)statusDto.AgentStatus;
 
-            return new ResponseDto
-            {
-                StatusCode = saveResult ? 200 : 500,
-                Success = saveResult,
-                Data = responseDto,
-                Message = saveResult ? StringConstant.UpdatedMessage : StringConstant.DatabaseMessage,
-            };
+            return new ResponseDto { StatusCode =200, Success = true, Data = responseDto, Message = StringConstant.UpdatedMessage };
         }
 
         public async Task<ResponseDto?> GetAgentAvailabilityStatusAsync(long agentId)
@@ -242,7 +234,6 @@ namespace BusinessLogicLayer.Services
             return new ResponseDto { Success = true, StatusCode = 200, Data = response, Message = StringConstant.SuccessMessage };
         }
     }
-
 }
 
 

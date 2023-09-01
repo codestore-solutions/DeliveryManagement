@@ -105,7 +105,7 @@ namespace DeliveryAgentModule
             builder.Services.AddScoped<ITokenRepository, TokenRepository>();
             builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
             builder.Services.AddScoped<LoggingActionFilter>();
-            builder.Services.AddScoped<IAccountService, AccountService>();  
+            builder.Services.AddScoped<IAccountService, AccountService>();
 
             builder.Services.AddDbContext<DeliveryDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString(StringConstant.ConnectionStringPath)));

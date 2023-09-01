@@ -24,13 +24,16 @@ namespace BusinessLogicLayer.Services
             var agentDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable()
             .FirstOrDefaultAsync(u => u.AgentId == agentId);
 
+            // If agentId does not exist in db.
             if (agentDetail == null || agentDetail.BankDetails == null)
             {
                 return null;
             }
+
             var bankDetails = agentDetail.BankDetails;
             var response = new BankDetailResponseDto();
             mapper.Map(bankDetails, response);
+            // Decrypting sensitive info and sending into mask form in response.
             var decryptedIfsc = AesED.Decrypt(bankDetails.IFSCCode);
             var decryptedAccountNumber = AesED.Decrypt(bankDetails.AccountNumber);
             response.IFSCCode = MaskData.SensitiveInfo(decryptedIfsc);
@@ -42,35 +45,28 @@ namespace BusinessLogicLayer.Services
         {
             var agentDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable()
             .FirstOrDefaultAsync(u => u.AgentId == bankDetailsDto.AgentId);
-            if (agentDetail == null)
-            {
-                return null;
-            }
-            var existingDetails = agentDetail.BankDetails;
 
-            if (existingDetails != null)
+            // Edge Case : agent bank details already exists.
+            if (agentDetail == null || agentDetail.BankDetails != null)
             {
                 return null;
             }
+            
             var bankDetails = new BankDetail();
             mapper.Map(bankDetailsDto, bankDetails);
             bankDetails.AgentDetailId = agentDetail.Id;
+            // Encrypting sensitive info into cipher text.
             var encryptedIfsc = AesED.Encrypt(bankDetails.IFSCCode);
             var encryptedAccountNumber = AesED.Encrypt(bankDetails.AccountNumber);
+            // Adding encrypted info into db.
             bankDetails.IFSCCode = encryptedIfsc;
             bankDetails.AccountNumber = encryptedAccountNumber;
             bankDetails.CreatedOn = bankDetails.UpdatedOn = DateTime.Now;
 
             await unitOfWork.BankDetailsRepository.AddAsync(bankDetails);
-            bool saveResult = await unitOfWork.SaveAsync();
+            await unitOfWork.SaveAsync();
 
-            return new ResponseDto
-            {
-                StatusCode = saveResult ? 200 : 500,
-                Success = saveResult,
-                Data = bankDetails,
-                Message = saveResult ? StringConstant.SuccessMessage : StringConstant.DatabaseMessage
-            };
+            return new ResponseDto { StatusCode = 200, Success = true, Data = bankDetails, Message = StringConstant.AddedMessage };
         }
 
         public async Task<ResponseDto?> UpdateDetailsAsync(long id, BankDetailsDto bankDetailsDto)
@@ -81,21 +77,15 @@ namespace BusinessLogicLayer.Services
                 return null;
             }
             mapper.Map(bankDetailsDto, bankDetails);
-
+            // Adding encryped data in db.
             var encryptedIfsc = AesED.Encrypt(bankDetails.IFSCCode);
             var encryptedAccountNumber = AesED.Encrypt(bankDetails.AccountNumber);
             bankDetails.IFSCCode = encryptedIfsc;
             bankDetails.AccountNumber = encryptedAccountNumber;
             bankDetails.UpdatedOn = DateTime.Now;
-            bool saveResult = await unitOfWork.SaveAsync();
+            await unitOfWork.SaveAsync();
 
-            return new ResponseDto
-            {
-                StatusCode = saveResult ? 200 : 500,
-                Success = saveResult,
-                Data = bankDetails,
-                Message = saveResult ? StringConstant.UpdatedMessage : StringConstant.DatabaseMessage
-            };
+            return new ResponseDto { StatusCode = 200, Success = true, Data = bankDetails, Message = StringConstant.UpdatedMessage };
         }
 
     }
