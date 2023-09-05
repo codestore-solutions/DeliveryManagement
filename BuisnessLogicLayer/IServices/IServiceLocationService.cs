@@ -1,18 +1,19 @@
 ﻿using DeliveryAgent.Entities.Common;
 using DeliveryAgent.Entities.Dtos;
+using DeliveryAgent.Entities.Models;
 
 namespace BusinessLogicLayer.IServices
 {
     public interface IServiceLocationService
     {
-        public Task<ResponseDto?> AddNewWorkingLocationAsync(ServiceLocationDto workingLocationDto);
-        public Task<ResponseDto?> GetAllWorkingLocationsAsync(long deliveryAgentId);
-        public Task<ResponseDto?> DeleteWorkingLocationAsync(long serviceLocationId);
-        public Task<ResponseDto?> UpdateWorkingLocationAsync(long serviceLocationId, UpdateWorkingLocationDto updateWorkingLocationDto);
+        public Task<ServiceLocation?> AddNewWorkingLocationAsync(ServiceLocationDto workingLocationDto);
+        public Task<IEnumerable<ServiceLocation>?> GetAllWorkingLocationsAsync(long deliveryAgentId);
+        public Task<ServiceLocation?> DeleteWorkingLocationAsync(long serviceLocationId);
+        public Task<ServiceLocation?> UpdateWorkingLocationAsync(long serviceLocationId, UpdateWorkingLocationDto updateWorkingLocationDto);
         public Task<ResponseDto?> UpdateActiveAddressAsync(UpdateActiveAddressDto activeAddressDto);
-        public Task<ResponseDto?> UpdateAgentAvailabilityStatusAsync(UpdateAgentAvailabilityStatusDto statusDto);
-        public Task<ResponseDto?> GetAgentAvailabilityStatusAsync(long agentId);
-        public Task<ResponseDto?> UpdateVerificationStatusAsync(UpdateVerificationStatusDto updateVerificationStatusDto);
-        public Task<ResponseDto?> GetVerificationStatusAsync(long agentId);
+        public Task<AvailabilityStatusDto?> UpdateAgentAvailabilityStatusAsync(UpdateAgentAvailabilityStatusDto statusDto);
+        public Task<AvailabilityStatusDto?> GetAgentAvailabilityStatusAsync(long agentId);
+        public Task<UpdateVerificationStatusDto?> UpdateVerificationStatusAsync(UpdateVerificationStatusDto updateVerificationStatusDto);
+        public Task<VerificationStatusDto?> GetVerificationStatusAsync(long agentId);
     }
 }

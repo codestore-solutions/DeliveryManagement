@@ -31,7 +31,7 @@ namespace BusinessLogicLayer.Services
             return response;
         }
 
-        public async Task<ResponseDto?> AddDetailsAsync(VehicleDetailsDto vehicleDetailsDto)
+        public async Task<VehicleDetail?> AddDetailsAsync(VehicleDetailsDto vehicleDetailsDto)
         {
             var agentDetails = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable()
             .FirstOrDefaultAsync(u => u.AgentId == vehicleDetailsDto.AgentId);
@@ -43,43 +43,29 @@ namespace BusinessLogicLayer.Services
             }
 
             var addVehicleDetails = new VehicleDetail();
-            mapper.Map(vehicleDetailsDto, addVehicleDetails);
-
             addVehicleDetails.AgentDetailId = agentDetails.Id;
             addVehicleDetails.CreatedOn = DateTime.Now;
             addVehicleDetails.UpdatedOn = DateTime.Now;
+            mapper.Map(vehicleDetailsDto, addVehicleDetails);
 
             await unitOfWork.VehicleDetailsRepository.AddAsync(addVehicleDetails);
-            bool saveResult = await unitOfWork.SaveAsync();
+            await unitOfWork.SaveAsync();
 
-            return new ResponseDto
-            {
-                StatusCode = 200,
-                Success = true,
-                Data = addVehicleDetails,
-                Message = saveResult ? StringConstant.AddedMessage : StringConstant.DatabaseMessage
-            };
+            return addVehicleDetails;
         }
 
-        public async Task<ResponseDto?> UpdateDetailsAsync(long id, VehicleDetailsDto vehicleDetailsDto)
+        public async Task<VehicleDetail?> UpdateDetailsAsync(long id, VehicleDetailsDto vehicleDetailsDto)
         {
             var vehicleDetails = await unitOfWork.VehicleDetailsRepository.GetByIdAsync(id);
-            if (vehicleDetails == null)
+
+            if (vehicleDetails != null)
             {
-                return null;
+                mapper.Map(vehicleDetailsDto, vehicleDetails);
+                vehicleDetails.UpdatedOn = DateTime.Now;
+                await unitOfWork.SaveAsync();
             }
-            mapper.Map(vehicleDetailsDto, vehicleDetails);
-            vehicleDetails.UpdatedOn = DateTime.Now;
-            bool saveResult = await unitOfWork.SaveAsync();
 
-            return new ResponseDto
-            {
-                StatusCode = 200,
-                Success = true,
-                Data = vehicleDetails,
-                Message = saveResult ? StringConstant.UpdatedMessage : StringConstant.DatabaseMessage
-            };
+            return vehicleDetails;
         }
-
     }
 }

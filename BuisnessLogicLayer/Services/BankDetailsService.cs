@@ -41,51 +41,47 @@ namespace BusinessLogicLayer.Services
             return response;
         }
 
-        public async Task<ResponseDto?> AddDetailsAsync(BankDetailsDto bankDetailsDto)
+        public async Task<BankDetail?> AddDetailsAsync(BankDetailsDto bankDetailsDto)
         {
             var agentDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable()
             .FirstOrDefaultAsync(u => u.AgentId == bankDetailsDto.AgentId);
 
-            // Edge Case : agent bank details already exists.
-            if (agentDetail == null || agentDetail.BankDetails != null)
+            // Edge Case : Check if bank details already exists or not.
+            if (agentDetail != null && agentDetail.BankDetails == null)
             {
-                return null;
+                var bankDetails = new BankDetail();
+                mapper.Map(bankDetailsDto, bankDetails);
+                bankDetails.AgentDetailId = agentDetail.Id;
+                // Encrypting sensitive info into cipher text.
+                var encryptedIfsc = AesED.Encrypt(bankDetails.IFSCCode);
+                var encryptedAccountNumber = AesED.Encrypt(bankDetails.AccountNumber);
+                // Adding encrypted info into db.
+                bankDetails.IFSCCode = encryptedIfsc;
+                bankDetails.AccountNumber = encryptedAccountNumber;
+                bankDetails.CreatedOn = bankDetails.UpdatedOn = DateTime.Now;
+
+                await unitOfWork.BankDetailsRepository.AddAsync(bankDetails);
+                await unitOfWork.SaveAsync();
+                return bankDetails;
             }
-            
-            var bankDetails = new BankDetail();
-            mapper.Map(bankDetailsDto, bankDetails);
-            bankDetails.AgentDetailId = agentDetail.Id;
-            // Encrypting sensitive info into cipher text.
-            var encryptedIfsc = AesED.Encrypt(bankDetails.IFSCCode);
-            var encryptedAccountNumber = AesED.Encrypt(bankDetails.AccountNumber);
-            // Adding encrypted info into db.
-            bankDetails.IFSCCode = encryptedIfsc;
-            bankDetails.AccountNumber = encryptedAccountNumber;
-            bankDetails.CreatedOn = bankDetails.UpdatedOn = DateTime.Now;
-
-            await unitOfWork.BankDetailsRepository.AddAsync(bankDetails);
-            await unitOfWork.SaveAsync();
-
-            return new ResponseDto { StatusCode = 200, Success = true, Data = bankDetails, Message = StringConstant.AddedMessage };
+            return null;
         }
 
-        public async Task<ResponseDto?> UpdateDetailsAsync(long id, BankDetailsDto bankDetailsDto)
+        public async Task<BankDetail?> UpdateDetailsAsync(long id, BankDetailsDto bankDetailsDto)
         {
             var bankDetails = await unitOfWork.BankDetailsRepository.GetByIdAsync(id);
-            if (bankDetails == null)
+            if (bankDetails != null)
             {
-                return null;
+                mapper.Map(bankDetailsDto, bankDetails);
+                // Adding encryped data in db.
+                var encryptedIfsc = AesED.Encrypt(bankDetails.IFSCCode);
+                var encryptedAccountNumber = AesED.Encrypt(bankDetails.AccountNumber);
+                bankDetails.IFSCCode = encryptedIfsc;
+                bankDetails.AccountNumber = encryptedAccountNumber;
+                bankDetails.UpdatedOn = DateTime.Now;
+                await unitOfWork.SaveAsync();
             }
-            mapper.Map(bankDetailsDto, bankDetails);
-            // Adding encryped data in db.
-            var encryptedIfsc = AesED.Encrypt(bankDetails.IFSCCode);
-            var encryptedAccountNumber = AesED.Encrypt(bankDetails.AccountNumber);
-            bankDetails.IFSCCode = encryptedIfsc;
-            bankDetails.AccountNumber = encryptedAccountNumber;
-            bankDetails.UpdatedOn = DateTime.Now;
-            await unitOfWork.SaveAsync();
-
-            return new ResponseDto { StatusCode = 200, Success = true, Data = bankDetails, Message = StringConstant.UpdatedMessage };
+            return bankDetails;
         }
 
     }

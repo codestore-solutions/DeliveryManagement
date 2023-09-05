@@ -20,7 +20,7 @@ namespace BusinessLogicLayer.Services
             this.mapper = mapper;
         }
 
-        public async Task<ResponseDto?> AddNewWorkingLocationAsync(ServiceLocationDto serviceLocationDto)
+        public async Task<ServiceLocation?> AddNewWorkingLocationAsync(ServiceLocationDto serviceLocationDto)
         {
             var agentDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable()
             .FirstOrDefaultAsync(u => u.AgentId == serviceLocationDto.AgentId);
@@ -64,35 +64,23 @@ namespace BusinessLogicLayer.Services
             await unitOfWork.ServiceLocationRepository.AddAsync(addServiceLocation);
             await unitOfWork.SaveAsync();
 
-            return new ResponseDto
-            {
-                StatusCode = 200,
-                Success = true,
-                Data = addServiceLocation,
-                Message =  StringConstant.AddedMessage
-            };
+            return addServiceLocation;
         }
 
-        public async Task<ResponseDto?> GetAllWorkingLocationsAsync(long agentId)
+        public async Task<IEnumerable<ServiceLocation>?> GetAllWorkingLocationsAsync(long agentId)
         {
-            var allLocations = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == agentId);
+            var agentDetails = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == agentId);
 
             // If agentId does not exist.
-            if (allLocations == null || allLocations.ServiceLocations.IsNullOrEmpty())
+            if (agentDetails == null || agentDetails.ServiceLocations.IsNullOrEmpty())
             {
                 return null;
             }
-             
-            return new ResponseDto
-            {
-                StatusCode = 200,
-                Success = true,
-                Data = allLocations.ServiceLocations,
-                Message = StringConstant.SuccessMessage
-            };
+
+            return agentDetails.ServiceLocations;
         }
 
-        public async Task<ResponseDto?> DeleteWorkingLocationAsync(long serviceLocationId)
+        public async Task<ServiceLocation?> DeleteWorkingLocationAsync(long serviceLocationId)
         {
             var workingLocation = await unitOfWork.ServiceLocationRepository.DeleteAsync(serviceLocationId);
             if (workingLocation == null)
@@ -100,10 +88,11 @@ namespace BusinessLogicLayer.Services
                 return null;
             }
             await unitOfWork.SaveAsync();
-            return new ResponseDto { StatusCode = 200, Success =true, Data = workingLocation , Message = StringConstant.DeletedMessage };
+            return workingLocation;
+            
         } 
-         
-        public async Task<ResponseDto?> UpdateWorkingLocationAsync(long serviceLocationId, UpdateWorkingLocationDto updateWorkingLocationDto)
+        
+        public async Task<ServiceLocation?> UpdateWorkingLocationAsync(long serviceLocationId, UpdateWorkingLocationDto updateWorkingLocationDto)
         {
             var serviceLocation = await unitOfWork.ServiceLocationRepository.GetByIdAsync(serviceLocationId);
             if (serviceLocation == null)
@@ -128,15 +117,9 @@ namespace BusinessLogicLayer.Services
                 };
                 serviceLocation.AgentTimeSlots.Add(slot);
             }
-            bool saveResult = await unitOfWork.SaveAsync();
+            await unitOfWork.SaveAsync();
 
-            return new ResponseDto
-            {
-                StatusCode = 200,
-                Success = true,
-                Data = serviceLocation,
-                Message = saveResult ? StringConstant.UpdatedMessage : StringConstant.DatabaseMessage
-            };
+            return serviceLocation;
         }
 
         public async Task<ResponseDto?> UpdateActiveAddressAsync(UpdateActiveAddressDto activeAddressDto)
@@ -162,65 +145,60 @@ namespace BusinessLogicLayer.Services
                     serviceLocation.IsActive = false;
                 }
             }
-
-            bool saveResult = await unitOfWork.SaveAsync();
+            await unitOfWork.SaveAsync();
 
             return new ResponseDto
             {
                 StatusCode = 200,
                 Success = true,
                 Data = responseObject,
-                Message = saveResult ? StringConstant.UpdatedMessage : StringConstant.DatabaseMessage
+                Message = StringConstant.UpdatedMessage
             };
         }
 
-        public async Task<ResponseDto?> UpdateAgentAvailabilityStatusAsync(UpdateAgentAvailabilityStatusDto statusDto)
+        public async Task<AvailabilityStatusDto?> UpdateAgentAvailabilityStatusAsync(UpdateAgentAvailabilityStatusDto statusDto)
         {
             var agent = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable()
             .FirstOrDefaultAsync(u => u.AgentId == statusDto.AgentId);
 
             if (agent == null) { return null; }
-            var responseDto = new AvailabilityStatusDto();
+            var response = new AvailabilityStatusDto();
 
             agent.AgentStatus = (EnumConstants.AvailabilityStatus)statusDto.AgentStatus;
             await unitOfWork.SaveAsync();
-            responseDto.AgentStatus = (AvailabilityStatusDto.AvailabilityStatus)statusDto.AgentStatus;
+            response.AgentStatus = (AvailabilityStatusDto.AvailabilityStatus)statusDto.AgentStatus;
 
-            return new ResponseDto { StatusCode =200, Success = true, Data = responseDto, Message = StringConstant.UpdatedMessage };
+            return response;
         }
 
-        public async Task<ResponseDto?> GetAgentAvailabilityStatusAsync(long agentId)
+        public async Task<AvailabilityStatusDto?> GetAgentAvailabilityStatusAsync(long agentId)
         {
             var agent = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == agentId);
             if (agent == null)
             {
                 return null;
             }
-            var responseDto = new AvailabilityStatusDto
+            var response = new AvailabilityStatusDto
             {
                 AgentStatus = (AvailabilityStatusDto.AvailabilityStatus)agent.AgentStatus
             };
 
-            return new ResponseDto
-            {
-                StatusCode = 200,
-                Success = true,
-                Data = responseDto,
-                Message = StringConstant.SuccessMessage,
-            };
+            return response;
         }
 
-        public async Task<ResponseDto?> UpdateVerificationStatusAsync(UpdateVerificationStatusDto updateVerificationStatusDto)
+        public async Task<UpdateVerificationStatusDto?> UpdateVerificationStatusAsync(UpdateVerificationStatusDto updateVerificationStatusDto)
         {
-            var agent = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == updateVerificationStatusDto.AgentId);
+            var agent = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable()
+            .FirstOrDefaultAsync(u => u.AgentId == updateVerificationStatusDto.AgentId);
+
             if (agent == null) { return null; }
 
             agent.verificationStatus = (EnumConstants.VerificationStatus)updateVerificationStatusDto.verificationStatus;
             await unitOfWork.SaveAsync();
-            return new ResponseDto { StatusCode = 200, Success = true, Data = updateVerificationStatusDto, Message = StringConstant.UpdatedMessage };
+            return updateVerificationStatusDto;
         }
 
-        public async Task<ResponseDto?> GetVerificationStatusAsync(long agentId)
+        public async Task<VerificationStatusDto?> GetVerificationStatusAsync(long agentId)
         {
             var agent = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == agentId);
             if (agent == null)
@@ -231,8 +209,9 @@ namespace BusinessLogicLayer.Services
             {
                 verificationStatus = (VerificationStatusDto.VerificationStatus)agent.verificationStatus
             };
-            return new ResponseDto { Success = true, StatusCode = 200, Data = response, Message = StringConstant.SuccessMessage };
+            return response;
         }
+
     }
 }
 

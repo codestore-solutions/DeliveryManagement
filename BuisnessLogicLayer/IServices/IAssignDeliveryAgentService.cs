@@ -7,9 +7,9 @@ namespace BusinessLogicLayer.IServices
     {
         public Task<ResponseDto> GetAllAsync(int pageNumber = 1, int limit = 10);
         public Task<ResponseDto> AssignAgentManuallyAsync(AssignManuallyDto assignManuallyDto);
-        public Task<ResponseDto?> AssignAgentAutomaticallyAsync(AssignAgentAutomaticallyDto assignAgentAutomaticallyDto);
+        public Task<IEnumerable<AutomaticallyAssignResponseDto>?> AssignAgentAutomaticallyAsync(AssignAgentAutomaticallyDto assignAgentAutomaticallyDto);
         public Task<ResponseDto?> AcceptOrderAsync(AcceptRejectOrderDto acceptRejectOrderDto, string token);
-        public Task<ResponseDto?> GetDeliveredOrRejectedOrdersCountAsync(long agentId);
+        public Task<DeliveredOrRejectedOrdersCountDto?> GetDeliveredOrRejectedOrdersCountAsync(long agentId);
         public Task<ResponseDto?> UpdatePickupOrDeliveryStatusAsync(UpdatePickupOrDeliveryStatusDto pickupOrDeliveryStatusDto);
     }
 }

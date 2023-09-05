@@ -24,5 +24,6 @@ namespace DeliveryAgent.Entities.Common
         public const string LogPath = "Logs/log-.txt";
         public const string ConnectionStringPath = "DeliveryAgentConnectionString";
         public const string TokenMissing = "Authorization token is missing.";
+        public const string AgentNotFound = "No agent available nearby.";
     }
 }

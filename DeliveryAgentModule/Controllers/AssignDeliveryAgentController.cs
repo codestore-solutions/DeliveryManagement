@@ -1,8 +1,10 @@
-﻿using BusinessLogicLayer.IServices;
+﻿using Azure;
+using BusinessLogicLayer.IServices;
 using DeliveryAgent.Entities.Common;
 using DeliveryAgent.Entities.Dtos;
 using DeliveryAgentModule.CustomActionFilter;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
@@ -45,9 +47,13 @@ namespace DeliveryAgentModule.Controllers
         // [Authorize(Roles = "2")]
         public async Task<IActionResult> AssignAgentAutomaticallyAsync(AssignAgentAutomaticallyDto assignAgentAutomaticallyDto)
         {
-            return Ok(await deliveryAgentService.AssignAgentAutomaticallyAsync(assignAgentAutomaticallyDto));
+            var result = await deliveryAgentService.AssignAgentAutomaticallyAsync(assignAgentAutomaticallyDto);
+            if(result.IsNullOrEmpty())
+            {
+                return NotFound(new { message = StringConstant.AgentNotFound });
+            }
+            return Ok(new ResponseDto { StatusCode = 200, Success = true, Data = result, Message = StringConstant.AssignedSuccessMessage });
         }
-
 
         /// <summary>
         /// Assign agent manually
@@ -73,7 +79,6 @@ namespace DeliveryAgentModule.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
-
         /// <summary>
         /// Accept or Reject Order by agent through Mobile App.
         /// </summary>
@@ -98,7 +103,8 @@ namespace DeliveryAgentModule.Controllers
         public async Task<IActionResult> GetRejectedOrdersAsync([FromQuery][Required] long agentId)
         {
             var result = await deliveryAgentService.GetDeliveredOrRejectedOrdersCountAsync(agentId);
-            return result == null ? NotFound(StringConstant.ResourceNotFoundError) : Ok(result);
+            return result == null ? NotFound(StringConstant.ResourceNotFoundError)
+                : Ok(new ResponseDto { StatusCode = 200, Success = true, Data = result, Message = StringConstant.SuccessMessage });
         }
 
 

@@ -45,7 +45,7 @@ namespace DeliveryAgent.API.Controllers
             var result = await vehicleDetailsService.AddDetailsAsync(vehicleDetailsDto);
             if (result != null)
             {
-                return Ok(result);
+                return Ok(new ResponseDto { StatusCode = 200, Success = true, Data = result, Message = StringConstant.AddedMessage});
             }
             return BadRequest(new { message = StringConstant.ExistingMessage });
         }
@@ -62,7 +62,8 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> UpdateDetailsAsync([FromQuery][Required] long id, [FromBody] VehicleDetailsDto vehicleDetailsDto)
         {
             var result = await vehicleDetailsService.UpdateDetailsAsync(id, vehicleDetailsDto);
-            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError })
+                : Ok(new ResponseDto { StatusCode = 200, Success = true, Data = result, Message = StringConstant.UpdatedMessage });
         }
 
     }

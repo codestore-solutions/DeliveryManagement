@@ -5,6 +5,7 @@ using DeliveryAgent.Entities.Common;
 using DeliveryAgent.Entities.Dtos;
 using DeliveryAgent.Entities.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.Text;
 
@@ -14,14 +15,13 @@ namespace BusinessLogicLayer.Services
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
-      //  private readonly HttpClient httpClient;
+      
         private readonly Dictionary<long, long> _assignedAgents = new Dictionary<long, long>();
 
-        public AssignDeliveryAgentService(IUnitOfWork unitOfWork, IMapper mapper/*, HttpClient httpClient*/)
+        public AssignDeliveryAgentService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
-            //this.httpClient = httpClient;
         }
 
         public async Task<ResponseDto> GetAllAsync(int pageNumber = 1, int limit = 10)
@@ -96,79 +96,35 @@ namespace BusinessLogicLayer.Services
             }
         }
 
-        private void HandleTimeout(long orderId)
+        public async Task<IEnumerable<AutomaticallyAssignResponseDto>?> AssignAgentAutomaticallyAsync(AssignAgentAutomaticallyDto assignAgentAutomaticallyDto)
         {
-            if (_assignedAgents.ContainsKey(orderId))
-            {
-                // Order was not accepted within the timeout
-                _assignedAgents.Remove(orderId);
-            }
-        }
-
-        public void AcceptOrder(int orderId)
-        {
-            if (_assignedAgents.ContainsKey(orderId))
-            {
-                // The assigned agent accepted the order
-                // Handle the accepted order logic here
-            }
-        }
-
-        public void RejectOrder(int orderId)
-        {
-            if (_assignedAgents.ContainsKey(orderId))
-            {
-                // The assigned agent rejected the order
-                // Handle the rejected order logic here
-                _assignedAgents.Remove(orderId);
-            }
-        }
-
-        public async Task<ResponseDto?> AssignAgentAutomaticallyAsync(AssignAgentAutomaticallyDto assignAgentAutomaticallyDto)
-        {
-            var responseObjectList = new List<AutomaticallyAssignResponseDto>();
+            var responseList = new List<AutomaticallyAssignResponseDto>();
             foreach (var obj in assignAgentAutomaticallyDto.List)
             {
                 // Search for suitable delivery agent within 5 km radius in Database.
                 var getNearestDeliveryAgentId = await NearestAgentWithinRange(obj.DeliveryAddressLatitude, obj.DeliveryAddressLongitude,
-                    obj.PickupLatitude, obj.PickupLongitude, 5, 28);
+                    obj.PickupLatitude, obj.PickupLongitude, 5);
 
                 // If we didn't get any agent nearby , push notification .i.e, No delivery agent is available nearby
                 if (getNearestDeliveryAgentId == null)
                 {
-                    var notAvailableResponse = new AutomaticallyAssignResponseDto
-                    {
-                        DeliveryAgentId = null,
-                        DeliveryAgentName = StringConstant.NotAvailableMessage,
-                        OrderId = obj.OrderId
-                    };
-                    responseObjectList.Add(notAvailableResponse);
                     continue;
                 }
                 // If we get agent nearby , then assign order to that agent
-
                 var agent = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == getNearestDeliveryAgentId);
                 if (agent == null)
                 {
                     return null;
                 }
-
-                var responseObj = new AutomaticallyAssignResponseDto
+                var response = new AutomaticallyAssignResponseDto
                 {
                     DeliveryAgentName = agent.FullName,
                     DeliveryAgentId = getNearestDeliveryAgentId,
                     OrderId = obj.OrderId
                 };
-                responseObjectList.Add(responseObj);
+                responseList.Add(response);
             }
-
-            return new ResponseDto
-            {
-                StatusCode = 200,
-                Success = true,
-                Data = responseObjectList,
-                Message = StringConstant.AssignedSuccessMessage
-            };
+            return responseList;
         }
 
         /*  private bool IsAgentAvailableForAnotherOrder(long agentId , double deliveryLatitude, double deliveryLongitude, double pickupLatitude , double pickupLongitude)
@@ -190,7 +146,7 @@ namespace BusinessLogicLayer.Services
         }*/
 
         public async Task<long?> NearestAgentWithinRange(double deliveryLatitude, double deliveryLongitude, double pickupLatitude,
-            double pickupLongitude, int maxDistance, long? slotId)
+            double pickupLongitude, int maxDistance)
         {
             // Find current day in string format
             DateTime currentTime = DateTime.Now;
@@ -297,7 +253,7 @@ namespace BusinessLogicLayer.Services
             }
         }
 
-        public async Task<ResponseDto?> GetDeliveredOrRejectedOrdersCountAsync(long agentId)
+        public async Task<DeliveredOrRejectedOrdersCountDto?> GetDeliveredOrRejectedOrdersCountAsync(long agentId)
         {
             var rejectedOrdersCount = await unitOfWork.AssignDeliveryAgentRepository.GetAllAsQueryable().Where(u => u.AgentId == agentId
             && u.DeliveryStatus == EnumConstants.DeliveryStatus.Rejected).CountAsync();
@@ -310,8 +266,8 @@ namespace BusinessLogicLayer.Services
                 DeliveredOrdersCount = countDeliverd,
                 RejectedOrdersCount = rejectedOrdersCount
             };
-
-            return new ResponseDto { StatusCode = 200, Success = true, Data = response, Message = StringConstant.SuccessMessage };
+            return response;
+           
         }
 
         public async Task<ResponseDto?> UpdatePickupOrDeliveryStatusAsync(UpdatePickupOrDeliveryStatusDto pickupOrDeliveryStatusDto)
@@ -371,5 +327,32 @@ namespace BusinessLogicLayer.Services
             }
         }
 
+        private void HandleTimeout(long orderId)
+        {
+            if (_assignedAgents.ContainsKey(orderId))
+            {
+                // Order was not accepted within the timeout
+                _assignedAgents.Remove(orderId);
+            }
+        }
+
+        public void AcceptOrder(int orderId)
+        {
+            if (_assignedAgents.ContainsKey(orderId))
+            {
+                // The assigned agent accepted the order
+                // Handle the accepted order logic here
+            }
+        }
+
+        public void RejectOrder(int orderId)
+        {
+            if (_assignedAgents.ContainsKey(orderId))
+            {
+                // The assigned agent rejected the order
+                // Handle the rejected order logic here
+                _assignedAgents.Remove(orderId);
+            }
+        }
     }
 }
