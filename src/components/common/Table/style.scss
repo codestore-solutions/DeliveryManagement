@@ -1,5 +1,8 @@
 @import "../../../App.scss";
 
+  .ant-pagination-item-link {
+  font-size: 12px; 
+}
 #custom-table {
   table {
     // background: #FFFFFF;
@@ -14,4 +17,5 @@
     font-size: 15px;
     letter-spacing: 0.03em;
   }
+
 }

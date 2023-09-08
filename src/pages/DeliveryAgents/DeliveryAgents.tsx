@@ -1,4 +1,5 @@
-import { Space } from "antd";
+import { Select, Space } from "antd";
+import { useState } from "react";
 import type { ColumnsType } from "antd/es/table";
 import "./style.scss";
 import { CustomTable } from "../../components";
@@ -6,6 +7,7 @@ import { DeleteIcon, DetailsIcon } from "../../assets";
 import CustomizeText from "../../utils/helpers/CustomizeText";
 import CustomizeDate from "../../utils/helpers/CustomizeDate";
 import useDeliveryAgents from "./Hook";
+
 
 export interface DataType {
   key: React.Key;
@@ -19,16 +21,18 @@ export interface DataType {
 interface Props {
   searchInput?: string;
   filters?: any;
+  setFiltersInput?: any
 }
 
-const DeliveryAgents: React.FC<Props> = ({ searchInput, filters }) => {
+const DeliveryAgents: React.FC<Props> = ({ searchInput, filters, setFiltersInput }) => {
+  const [statusFilter, setStatusFilter] = useState<any>(); 
   const { loading, agentList, pagination, handleTableChange, handleClick, showDeleteConfirm } =
     useDeliveryAgents({ searchInput, filters });
   const scrollConfig = {
     x: 900,
   };
 
-  
+ 
   /**
    * Columns For The Table
    */
@@ -65,13 +69,32 @@ const DeliveryAgents: React.FC<Props> = ({ searchInput, filters }) => {
       title: "Status",
       key: "agentStatus",
       dataIndex: "agentStatus",
+      filterDropdown: () => (
+        <div style={{ padding: 8 }}>
+          <Select
+            style={{ width: 120 }}
+            value={statusFilter}
+            onChange={(value) => {
+              setStatusFilter(value);
+              setFiltersInput(value)
+            }}
+          >
+            <Select.Option value="1">Available</Select.Option>
+            <Select.Option value="0">Offline</Select.Option>
+            <Select.Option value="2">All</Select.Option>
+          </Select>
+        </div>
+      ),
+      onFilter: (value, record) => {
+        return record.agentStatus === Number(value);
+      },
       render: (_, { agentStatus }: any) => (
         <>
           <span>
             {agentStatus === 1 ? (
               <p className="available">Available</p>
             ) : (
-              <p className="offline">offline</p>
+              <p className="offline">Offline</p>
             )}{" "}
           </span>
         </>

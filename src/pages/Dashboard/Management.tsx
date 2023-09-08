@@ -55,8 +55,6 @@ const Management: React.FC = () => {
               cardImage={AgentsIcon}
             />
           </Col>
-          
-          
         </Row>
       </div>
     </div>

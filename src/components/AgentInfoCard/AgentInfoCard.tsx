@@ -8,7 +8,7 @@ interface InfoCardProps {
 
 const AgentInfoCard: React.FC<InfoCardProps> = ({ title, data }) => {
   return (
-    <Col xs={24} sm={24} md={12} lg={8} xl={8}>
+    <Col xs={24} sm={24} md={12} lg={12} xl={12}>
       <div className="card-container">
         <h3>{title}</h3>
         <div className="container-content">

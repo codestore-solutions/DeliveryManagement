@@ -1,5 +1,12 @@
 @import "../../App.scss";
 
+
+.hidden{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 14px;
+}
 #order-details {
   .order-header {
     display: flex;
@@ -41,6 +48,7 @@
           padding: 1rem 0;
           display: flex;
           justify-content: space-between;
+          gap:1rem;
           .container-col {
             font-weight: 400;
             font-size: 16px;

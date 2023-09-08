@@ -19,7 +19,7 @@ const initialState: OrderStateInerface = {
 
 // Get Orders List
 export const getAvailableOrders = createAsyncThunk(
-  "orders/avialableOrders",
+  "orders/availableOrders",
   async ({payload}:{payload:pagination}, thunkAPI) => {
     try {
       const res = await OrderService.getAvailableOrdersList(payload);

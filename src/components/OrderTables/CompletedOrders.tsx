@@ -27,7 +27,7 @@ const CompletedOrders: React.FC<Props> = ({ activeTab }) => {
   const [data, setData] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
   const [pagination, setPagination] = useState<pagination>({
-    simple: true,
+    simple: false,
     pageNumber: 1,
     total: data?.total,
     pageSize: 7,

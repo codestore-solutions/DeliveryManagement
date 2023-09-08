@@ -3,6 +3,7 @@ import { FC } from "react";
 
 import "./style.scss";
 
+
 interface customTableProps {
   rowSelection?: any;
   columns: Array<any>;
@@ -35,6 +36,7 @@ const CustomTable: FC<customTableProps> = ({
       loading={loading}
       scroll={scroll ? { ...defaultScroll, ...scroll } : defaultScroll}
       id="custom-table"
+      
     />
   );
 };

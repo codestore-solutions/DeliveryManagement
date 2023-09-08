@@ -86,7 +86,7 @@ const AutomaticAssign: React.FC<Props> = ({
       setLoading(true);
       AgentService.assignAgentAutomatically(payload).then((res) => {
         if (res.statusCode === ApiConstants.successCode) {
-          console.log('res?.data', res?.data)
+          console.log('res?.data assi', res?.data)
           setPreviewData(res?.data);
           setLoading(false);
         }
@@ -123,7 +123,7 @@ const AutomaticAssign: React.FC<Props> = ({
   return (
     <div id="automatic-assign">
       <div className="automatic-assign-header">
-        <h3 className="tableTxt">Selected Agnets Preview</h3>
+        <h3 className="tableTxt">Selected Agents Preview</h3>
         <Button
           type="default"
           className="custom-button"
@@ -179,19 +179,6 @@ const BuilkAssign: React.FC<Props> = ({
   const items: TabsProps["items"] = [
     {
       key: "1",
-      label: `Automatic Assign`,
-      children: (
-        <AutomaticAssign
-          orders={orders}
-          onClose={onClose}
-          fetch={fetch}
-          isOpen={isOpen}
-          handleResetSelectionForOrder={handleResetSelectionForOrder}
-        />
-      ),
-    },
-    {
-      key: "2",
       label: `Manual Assign`,
       children: (
         <AssignAgent
@@ -203,6 +190,19 @@ const BuilkAssign: React.FC<Props> = ({
           isOpen={isOpen}
           handleResetSelectionForOrder={handleResetSelectionForOrder}
         />
+      ),
+    },
+    {
+      key: "2",
+      label: `Automatic Assign`,
+      children: (
+        <AutomaticAssign
+          orders={orders}
+          onClose={onClose}
+          fetch={fetch}
+          isOpen={isOpen}
+          handleResetSelectionForOrder={handleResetSelectionForOrder}
+          />
       ),
     },
   ];

@@ -51,12 +51,6 @@ const Navbar: FC<NavbarProps> = () => {
     <Header style={{ background: "#fff" }}>
       <Row style={{ display: "flex", justifyContent: "space-between" }}>
         <Col>
-          <Text
-            color="#7E8299"
-            style={isSmallScreen ? { display: "none" } : {}}
-          >
-            Delivery Partner Management
-          </Text>
         </Col>
         <Col>
           <Row gutter={10}>

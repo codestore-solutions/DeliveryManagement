@@ -23,11 +23,11 @@ interface Props {
   searchInput?: string;
   filters?: any;
 }
-const AssignedAgents: React.FC<Props> = ({ activeTab}) => {
+const AssignedAgents: React.FC<Props> = ({ activeTab }) => {
   const navigate = useNavigate();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  console.log('data', data);
+  console.log("data", data);
   const [pagination, setPagination] = useState<pagination>({
     simple: false,
     pageNumber: 1,
@@ -60,7 +60,9 @@ const AssignedAgents: React.FC<Props> = ({ activeTab}) => {
       title: "Agent Name",
       dataIndex: "deliveryAgent",
       key: "deliveryAgent",
-      render: (deliveryAgent) => <p className="tableTxt">{deliveryAgent?.fullName}</p>,
+      render: (deliveryAgent) => (
+        <p className="tableTxt">{deliveryAgent?.fullName}</p>
+      ),
     },
     {
       title: "Store Name",
@@ -73,15 +75,23 @@ const AssignedAgents: React.FC<Props> = ({ activeTab}) => {
       title: "Order Status",
       dataIndex: "orderStatus",
       key: "orderStatus",
-      render: (orderStatus) => <p className="tableTxt">
-        {orderStatus === 5 ? 'Assgined' : (orderStatus === 6 ? 'Aceepted' : 'Rejected')}
-      </p>,
+      render: (orderStatus) => (
+        <p className="tableTxt">
+          {orderStatus === 5
+            ? "Assgined"
+            : orderStatus === 6
+            ? "Aceepted"
+            : "Rejected"}
+        </p>
+      ),
     },
     {
       title: "Date",
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (text: any) => <p className="tableTxt">{CustomizeDate.getDate(text)}</p>,
+      render: (text: any) => (
+        <p className="tableTxt">{CustomizeDate.getDate(text)}</p>
+      ),
     },
     {
       title: "Action",
@@ -114,7 +124,7 @@ const AssignedAgents: React.FC<Props> = ({ activeTab}) => {
 
   useEffect(() => {
     fetchOrder();
-  }, [activeTab, pagination.pageNumber])
+  }, [activeTab, pagination.pageNumber]);
   useEffect(() => {
     setPagination({ ...pagination, total: data?.total });
   }, [data]);

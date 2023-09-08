@@ -12,12 +12,24 @@ const getAllAgents = async (
   searchInput: any
 ) => {
   const { pageNumber, pageSize } = pagination;
-  let params = {
-    pageNumber: pageNumber,
-    limit: pageSize,
-    agentStatus: filters?.status,
-    filterQuery: searchInput,
-  };
+  let params;
+  if(filters == 2){
+    params = {
+      pageNumber: pageNumber,
+      limit: pageSize,
+      filterQuery: searchInput,
+    };
+  }else{
+    params = {
+      pageNumber: pageNumber,
+      limit: pageSize,
+      agentStatus:  filters,
+      filterQuery: searchInput,
+    };
+    
+  }
+ 
+
   let url = `${ApiConstants.baseUrl}${ApiConstants.getAgentList}`;
   const { data } = await API({}, url, "GET", params);
   let count = 1;

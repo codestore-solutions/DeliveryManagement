@@ -84,12 +84,7 @@ instance.interceptors.response.use(
             data: errorMessages[1]
           }
         }
-      } else if (error.response.status === ApiConstants.notFound) {
-        apiData = {
-          status: error.response.status,
-          data: 'Not Found'
-        }
-      }
+      } 
 
       else {
         // Handle other types of errors
@@ -113,7 +108,10 @@ instance.interceptors.response.use(
         error.message
       );
     }
-    message.error(apiData?.data);
+    if(error.response.status !== ApiConstants.notFound){
+      message.error(apiData?.data);
+    }
+
     return Promise.reject(apiData);
   }
 );

@@ -1,12 +1,15 @@
 import React from "react";
 import { Row, Col, Image, Button, Typography } from "antd";
 import { LeftArrowIcon } from "../../assets";
+import useScreenWidth from "../../Hooks/ScreenWidthHook";
 const { Title } = Typography;
 interface Props {
   goBack: () => void;
   data: any;
+  handleOpenModal: (data: any) => void;
 }
-const OrderDetailHeader: React.FC<Props> = ({ goBack, data }) => {
+const OrderDetailHeader: React.FC<Props> = ({ goBack, data, handleOpenModal }) => {
+  const {isSmallScreen} = useScreenWidth()
   return (
     <Row style={{ display: "flex", justifyContent: "space-between", padding:"10px 0" }}>
       <Col>
@@ -20,7 +23,7 @@ const OrderDetailHeader: React.FC<Props> = ({ goBack, data }) => {
             />
           </Col>
           <Col>
-            <Title level={4}>Order Details</Title>
+           {!isSmallScreen && <Title level={4}>Order Details</Title>}
           </Col>
         </Row>
       </Col>
@@ -35,6 +38,7 @@ const OrderDetailHeader: React.FC<Props> = ({ goBack, data }) => {
               fontWeight: "600",
               borderRadius: "15px",
             }}
+            onClick={() => handleOpenModal(data)}
           >
             Assign Agent
           </Button>

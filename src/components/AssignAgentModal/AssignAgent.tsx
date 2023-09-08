@@ -11,7 +11,8 @@ import CustomizeText from "../../utils/helpers/CustomizeText";
 import { TableRowSelection } from "antd/es/table/interface";
 // import CustomizeDate from "../../utils/helpers/CustomizeDate";
 import { manualAssignAgentInterface } from "../../utils/types";
-import { useDebounce } from 'use-debounce';
+import { useDebounce } from "use-debounce";
+import useScreenWidth from "../../Hooks/ScreenWidthHook";
 
 interface DataType {
   key: React.Key;
@@ -40,14 +41,13 @@ const AssignAgent: React.FC<Props> = ({
   handleResetSelectionForOrder,
 }) => {
   const [data, setData] = useState<any>(null);
-  const [searchInput, setSearchInput] = useState<string>();
-  const [debouncedSearchTerm] = useDebounce(searchInput, 500);
+  const [searchInput, setSearchInput] = useState<string>("");
+  const [debouncedSearchTerm] = useDebounce(searchInput.trim(), 500);
   const [loading, setLoading] = useState<boolean>(false);
   const [apiCalling, setApiCalling] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [selectedRowData, setSelectedRowData] = useState<any>();
-
-  // console.log("Dtaa", selectedOrderData);
+  const {isSmallScreen} = useScreenWidth()
   const [pagination, setPagination] = useState({
     pageNumber: 1,
     total: data?.total,
@@ -69,8 +69,6 @@ const AssignAgent: React.FC<Props> = ({
   };
   const searchHandler = (e: any) => {
     e.preventDefault();
-
-    console.log("Search Hnadler", searchInput);
     setSearchInput(searchInput);
   };
   const AgentAssignHandler = async (values: any) => {
@@ -86,7 +84,7 @@ const AssignAgent: React.FC<Props> = ({
         setData(updatedArray);
         let payload: Array<manualAssignAgentInterface> = [
           {
-            agentId: values?.personalDetails?.agentId,
+            agentId: values?.agentId,
             orderId: selectedOrderData?.id,
             vendorAddressId: selectedOrderData?.vendor?.business?.address_id,
             pickupLatitude:
@@ -101,6 +99,7 @@ const AssignAgent: React.FC<Props> = ({
             orderStatus: 5,
           },
         ];
+       
         const { statusCode, message } = await AgentService.assignAgentManually(
           payload
         );
@@ -112,7 +111,7 @@ const AssignAgent: React.FC<Props> = ({
       } else {
         let payload = CustomizeData.getOrdersArray(
           selectedOrderData,
-          values?.personalDetails?.agentId
+          values?.agentId
         );
 
         AgentService.assignAgentManually(payload)
@@ -176,13 +175,19 @@ const AssignAgent: React.FC<Props> = ({
     let payload = pagination;
     try {
       setLoading(true);
-      const data = await AgentService.getAvailableAgents(payload, searchInput);
-      if (data?.statusCode === 200) {
-        console.log('data', data);
-        setData(data);
+      const response = await AgentService.getAvailableAgents(
+        payload,
+        searchInput
+      );
+      if (response?.statusCode === 200) {
+        setData(response);
+      } 
+
+    } catch (err:any) {
+      console.log("err fetching", err?.message);
+      if(err?.status === 404){
+            setData(null)
       }
-    } catch (err) {
-      console.log("err", err);
     } finally {
       setLoading(false);
     }
@@ -200,7 +205,7 @@ const AssignAgent: React.FC<Props> = ({
   }, [isOpen, pagination.pageNumber, key, debouncedSearchTerm]);
 
   return (
-    <div id="assign-agent">
+    <div id="assign-agent" >
       <div className="assign-agent-header">
         <form className="search-box" onSubmit={searchHandler}>
           <input
@@ -210,7 +215,7 @@ const AssignAgent: React.FC<Props> = ({
             onChange={(e) => setSearchInput(e.target.value)}
           />
         </form>
-        <div className="header-btns">
+        <div className="header-btns" style={ isSmallScreen ? { display:'flex', overflow:'scroll' }:{}}>
           <Button
             type="default"
             onClick={handleResetSelection}

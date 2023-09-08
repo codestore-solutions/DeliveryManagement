@@ -3,17 +3,15 @@ import { useNavigate } from "react-router-dom";
 
 import { useAppDispatch, useAppSelector } from "../../store/hooks/app";
 import {
-    AgentStateInterface,
+  AgentStateInterface,
   agentSelector,
   getAllAgents,
 } from "../../store/features/Agents/agentSlice";
 import { pagination } from "../../utils/types";
 import AgentService from "../../services/AgentService";
-import { message ,Modal} from "antd";
+import { message, Modal } from "antd";
 
 const { confirm } = Modal;
-
-
 
 interface DeliveryAgentHookProps {
   searchInput?: string;
@@ -22,7 +20,7 @@ interface DeliveryAgentHookProps {
 
 interface DeliveryAgentHookResult {
   loading: boolean;
-  agentList: any; // Update this with the actual type
+  agentList: any;
   pagination: pagination;
   handleTableChange: (pagination: any) => void;
   handleClick: (state: any) => void;
@@ -36,7 +34,9 @@ const useDeliveryAgents = ({
 }: DeliveryAgentHookProps): DeliveryAgentHookResult => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { loading, agentList } = useAppSelector(agentSelector) as AgentStateInterface;
+  const { loading, agentList } = useAppSelector(
+    agentSelector
+  ) as AgentStateInterface;
   const [pagination, setPagination] = useState({
     pageNumber: 1,
     pageSize: 7,
@@ -49,11 +49,11 @@ const useDeliveryAgents = ({
     navigate(`/dashboard/agent-details/${state?.agentId}`, { state });
   };
   const navigateToAgents = () => {
-    navigate("/dashboard/agents"); // Use navigate function to navigate
+    navigate("/dashboard/agents"); 
   };
   const showDeleteConfirm = (id: number) => {
     confirm({
-      title: "Are you sure you want to delete this task?",
+      title: "Are you sure you want to delete this Agent?",
       content: "The agent will be removed from your list.",
       okText: "Yes",
       okType: "danger",
@@ -61,14 +61,13 @@ const useDeliveryAgents = ({
       async onOk() {
         console.log("OK");
         await deleteAgent(id);
-        navigateToAgents(); 
+        navigateToAgents();
       },
       onCancel() {
         console.log("Cancel");
       },
     });
   };
-  
 
   const handleTableChange = (pagination: any) => {
     const { current, pageSize } = pagination;
@@ -79,22 +78,22 @@ const useDeliveryAgents = ({
     let payload = pagination;
     dispatch(getAllAgents({ payload, filters, searchInput }));
   };
-  
-  
-  const deleteAgent = (id: number) =>{
+
+  const deleteAgent = (id: number) => {
     let payload = {
-       agentId: id,
-       isDeleted: true,
-    }
-    
-    AgentService.deleteAgent(payload).then((res) =>{
-           message.success(res?.message);
-           fetchAgents();
-       
-    }).catch(err =>{
+      agentId: id,
+      isDeleted: true,
+    };
+
+    AgentService.deleteAgent(payload)
+      .then((res) => {
+        message.success(res?.message);
+        fetchAgents();
+      })
+      .catch((err) => {
         console.log("Agent Deletion Error", err);
-    })
-  }
+      });
+  };
   useEffect(() => {
     fetchAgents();
   }, [dispatch, pagination.pageNumber, filters, searchInput]);
@@ -110,7 +109,7 @@ const useDeliveryAgents = ({
     handleTableChange,
     handleClick,
     deleteAgent,
-    showDeleteConfirm
+    showDeleteConfirm,
   };
 };
 

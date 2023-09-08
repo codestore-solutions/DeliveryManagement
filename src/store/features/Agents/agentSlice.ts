@@ -21,7 +21,7 @@ const initialState: AgentStateInterface = {
 // Get All agents List
 export const getAllAgents = createAsyncThunk(
   "agents/getAll",
-  async ({ payload, filters, searchInput }: { payload: pagination, filters: {}, searchInput:any }, thunkAPI) => {
+  async ({ payload, filters, searchInput }: { payload: pagination, filters: any, searchInput:any }, thunkAPI) => {
     try {
       const res = await AgentService.getAllAgents(payload, filters, searchInput);
       return res;
@@ -75,7 +75,7 @@ const agentSlice: any = createSlice({
           (state.agentList = null);
       });
 
-    // Get All Avialable agents
+    // Get All Available agents
     builder
       .addCase(getAvailableAgent.pending, (state) => {
         state.loading = true;

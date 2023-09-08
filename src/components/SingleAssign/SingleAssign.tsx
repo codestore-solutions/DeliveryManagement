@@ -119,7 +119,7 @@ const AutomaticAssign: React.FC<AutoProps> = ({ orders, onClose }) => {
   return (
     <div id="automatic-assign">
       <div className="automatic-assign-header">
-        <h3 className="tableTxt">Selected Agnets Preview</h3>
+        <h3 className="tableTxt">Selected Agents Preview</h3>
         <Button
           type="default"
           className="custom-button"

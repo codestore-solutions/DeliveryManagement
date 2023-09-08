@@ -95,7 +95,7 @@ const AvailableOrders: React.FC<Props> = ({
       render: (text: any) => CutomizeText(text),
     },
     {
-      title: "Vender Name",
+      title: "Vendor Name",
       dataIndex: "vendor",
       key: "vendor",
       render: (vendor: any) => CutomizeText(vendor?.business?.name),

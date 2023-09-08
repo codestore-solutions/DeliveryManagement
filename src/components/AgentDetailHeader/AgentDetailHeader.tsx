@@ -2,8 +2,8 @@ import React from "react";
 import { Row, Col, Image, Typography } from "antd";
 import { DeleteIcon, LeftArrowIcon } from "../../assets";
 import useDeliveryAgents from "../../pages/DeliveryAgents/Hook";
+import useScreenWidth from "../../Hooks/ScreenWidthHook";
 const { Title, Text } = Typography;
-
 
 interface Props {
   data: any;
@@ -12,9 +12,16 @@ interface Props {
 
 const AgentDetailHeader: React.FC<Props> = ({ data, goBack }) => {
   let searchInput = {};
+  const { isSmallScreen } = useScreenWidth();
   const { showDeleteConfirm } = useDeliveryAgents(searchInput);
   return (
-    <Row style={{ display: "flex", justifyContent: "space-between" }}>
+    <Row
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        padding: "10px 0",
+      }}
+    >
       <Col>
         <Row gutter={16}>
           <Col onClick={goBack}>
@@ -26,7 +33,9 @@ const AgentDetailHeader: React.FC<Props> = ({ data, goBack }) => {
             />
           </Col>
           <Col>
-            <Title level={4}>Delivery Partner Details</Title>
+            {!isSmallScreen && (
+              <Title level={4}>Delivery Partner Details</Title>
+            )}
           </Col>
         </Row>
       </Col>

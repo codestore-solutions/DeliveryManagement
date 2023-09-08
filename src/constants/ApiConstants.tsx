@@ -39,5 +39,7 @@ export const ApiConstants = {
      //Image Service
      uploadImage: 'images/upload',
      // Count Apis
-     getAcceptRejectOrders:'assignAgent/CountDeliveredOrRejectedOrders'
+     getAcceptRejectOrders:'assignAgent/CountDeliveredOrRejectedOrders',
+     //Timeslots By Id
+     getTimeSlots:'TimeSlot/getBySlotIds'
 }

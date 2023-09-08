@@ -73,7 +73,7 @@ const CustomTimeline: React.FC<Props> = ({ id }) => {
 
   return (
     <Steps
-      className="custom-steps"
+      className={"custom-steps"}
       progressDot={  customDot  }
       current={curr}
       items={timeLinedata}

@@ -1,14 +1,14 @@
 import { FC } from "react";
 import "./style.scss";
-import { Layout, Menu } from "antd";
+import { Image, Layout, Menu, Typography } from "antd";
 const { Sider } = Layout;
 import { Link, } from "react-router-dom";
 import { LogoImg } from "../../assets";
 import SubMenu from "antd/es/menu/SubMenu";
-
 import { reset } from "../../store/features/Auth/authSlice";
 import { useAppDispatch } from "../../store/hooks/app";
 
+const {Title} = Typography
 
 interface SidebarProps {
   menuItems: Array<any>;
@@ -19,8 +19,6 @@ interface SidebarProps {
 const Sidebar: FC<SidebarProps> = ({ menuItems, collapsed, setCollapsed }) => {
   const dispatch = useAppDispatch();
   const logoutHandler = () => {
-    console.log('Handlr')
-    //  UserStorage.logout();
      dispatch(reset());
   };
   const renderMenuItems = (menuItems: any) => {
@@ -65,8 +63,8 @@ const Sidebar: FC<SidebarProps> = ({ menuItems, collapsed, setCollapsed }) => {
           className="demo-logo-vertical"
           onClick={() => setCollapsed(!collapsed)}
         >
-          <img src={LogoImg} className={"img"} />
-          <h3 className={collapsed ? "logo-tag-collapse" : "logo-tag"}>Logo</h3>
+          <Image preview={false} src={LogoImg} className={"img"} />
+          <Title level={3} className={collapsed ? "logo-tag-collapse" : "logo-tag"}>Logo</Title>
         </div>
         <Menu selectedKeys={["sidebar"]} mode="inline">
           {renderMenuItems(menuItems)}
