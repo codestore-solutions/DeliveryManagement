@@ -16,6 +16,7 @@ namespace BusinessLogicLayer.IServices
         public Task<UpdateProfileCompletedDto?> UpdateProfileCompletedStatusAsync(UpdateProfileCompletedDto updateProfileCompletedDto);
         public Task<ProfileCompletedDto?> GetProfileCompletedStatusAsync(long agentId);
         public Task<bool> SoftDeleteAgentAsync(long agentId, bool isDeleted);
-
+        public Task<object> GetTotalAgentsAndDeliveryCountAsync();
+        public Task<IEnumerable<TopPerformingAgentDto>> GetTopPerformingAgentListAsync();
     }
 }

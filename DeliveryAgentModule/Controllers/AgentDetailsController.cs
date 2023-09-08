@@ -157,5 +157,33 @@ namespace DeliveryAgent.API.Controllers
             return NotFound(new { message = StringConstant.ResourceNotFoundError });
         }
 
+        /// <summary>
+        /// Get total agents count associated with profile completed and total deliveries count. 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("getTotalAgentsAndDeliveryCount")]
+        // [Authorize(Roles = "2")]
+        public async Task<IActionResult> TotalAgentsAndDeliveryCountAsync()
+        {
+            var result = await agentDetailsService.GetTotalAgentsAndDeliveryCountAsync();
+            return Ok(new ResponseDto {StatusCode = 200, Success = true, Data = result, Message = StringConstant.SuccessMessage});
+        }
+
+        /// <summary>
+        /// Get top performing agents based on deliveries count in past 7 days.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("getTopPerformingAgent")]
+        // [Authorize(Roles = "2")]
+        public async Task<IActionResult> GetTopPerformingAgentListAsync()
+        {
+            var result = await agentDetailsService.GetTopPerformingAgentListAsync();
+            if (result.Any())
+            {
+                return Ok(new ResponseDto { StatusCode = 200, Success = true, Data = result, Message = StringConstant.SuccessMessage });
+            }
+            return NoContent();
+        }
+
     }
 }

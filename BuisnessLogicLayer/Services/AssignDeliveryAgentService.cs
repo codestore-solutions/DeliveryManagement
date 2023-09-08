@@ -5,7 +5,6 @@ using DeliveryAgent.Entities.Common;
 using DeliveryAgent.Entities.Dtos;
 using DeliveryAgent.Entities.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.Text;
 
@@ -15,7 +14,7 @@ namespace BusinessLogicLayer.Services
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
-      
+
         private readonly Dictionary<long, long> _assignedAgents = new Dictionary<long, long>();
 
         public AssignDeliveryAgentService(IUnitOfWork unitOfWork, IMapper mapper)
@@ -163,7 +162,7 @@ namespace BusinessLogicLayer.Services
             && u.AgentDetails.AgentStatus == EnumConstants.AvailabilityStatus.OnDuty
             && u.AgentDetails.verificationStatus == EnumConstants.VerificationStatus.Verified
             && u.SelectedDays.Contains(currentDay)).ToListAsync();
-           // && u.AgentTimeSlots.Any(slot => slot.TimeSlotId == slotId)).ToListAsync();
+            // && u.AgentTimeSlots.Any(slot => slot.TimeSlotId == slotId)).ToListAsync();
 
             long? nearsestAgentId = null;
             foreach (var agent in availableAgentList)
@@ -267,7 +266,7 @@ namespace BusinessLogicLayer.Services
                 RejectedOrdersCount = rejectedOrdersCount
             };
             return response;
-           
+
         }
 
         public async Task<ResponseDto?> UpdatePickupOrDeliveryStatusAsync(UpdatePickupOrDeliveryStatusDto pickupOrDeliveryStatusDto)

@@ -25,7 +25,7 @@ namespace BusinessLogicLayer.Services
         {
             var agentDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == agentId);
             if (agentDetail == null) { return null; }
-            
+
             var agentDetailResponse = new AgentDetailResponseDto();
             mapper.Map(agentDetail, agentDetailResponse);
             return agentDetailResponse;
@@ -60,7 +60,7 @@ namespace BusinessLogicLayer.Services
 
             agentDetail.UpdatedOn = DateTime.Now;
             mapper.Map(agentDetailsDto, agentDetail);
-            
+
             await unitOfWork.SaveAsync();
             return agentDetail;
         }
@@ -163,6 +163,53 @@ namespace BusinessLogicLayer.Services
                 return true;
             }
             return false;
+        }
+
+        public async Task<object> GetTotalAgentsAndDeliveryCountAsync()
+        {
+            // Count total agents present in db with profile completed.
+            var totalAgentsCount = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().Where(u => u.IsProfileCompleted && !u.IsDeleted).CountAsync();
+            // Count total deliveries completed till now.
+            var totalDeliveryCount = await unitOfWork.AssignDeliveryAgentRepository.GetAllAsQueryable().Where(u => u.DeliveryStatus == EnumConstants.DeliveryStatus.Delivered).CountAsync();
+
+            var response = new
+            {
+                TotalAgentsCount = totalAgentsCount,
+                TotalDeliveryCount = totalDeliveryCount
+            };
+            return response;
+        }
+
+        public async Task<IEnumerable<TopPerformingAgentDto>> GetTopPerformingAgentListAsync()
+        {
+            DateTime startDate = DateTime.Now.Date.AddDays(-50);
+            DateTime endDate = DateTime.Now.Date;
+
+            var topPerformingAgent = await unitOfWork.AssignDeliveryAgentRepository.GetAllAsQueryable().Where(u => u.DeliveryStatus == EnumConstants.DeliveryStatus.Delivered
+            && u.CreatedOn >= startDate && u.CreatedOn <= endDate
+            ).GroupBy(u => u.AgentId)
+            .OrderByDescending(agentGroup => agentGroup.Count())
+            .Take(5)
+            .Select(agentGroup => new { AgentId = agentGroup.Key, Count = agentGroup.Count() })
+            .ToListAsync();
+
+            var responseList = new List<TopPerformingAgentDto>();
+            foreach (var agentGroup in topPerformingAgent)
+            {
+                var agent = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == agentGroup.AgentId);
+
+                var agentList = new TopPerformingAgentDto();
+                if(agent != null)
+                {
+                    agentList.AgentId = agent.AgentId;
+                    agentList.AgentName = agent.FullName;
+                    agentList.DeliveryCount = agentGroup.Count;
+                    agentList.Region = agent.Address;
+                }
+                responseList.Add(agentList);
+            }
+
+            return responseList;
         }
 
     }
