@@ -182,6 +182,8 @@ namespace BusinessLogicLayer.Services
 
         public async Task<IEnumerable<TopPerformingAgentDto>> GetTopPerformingAgentListAsync()
         {
+            // Added past 50 days data because past 7 days data is not available for the time being.
+            // DateTime startDate = DateTime.Now.Date.AddDays(-7);
             DateTime startDate = DateTime.Now.Date.AddDays(-50);
             DateTime endDate = DateTime.Now.Date;
 

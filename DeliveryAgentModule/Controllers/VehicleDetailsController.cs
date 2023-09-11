@@ -25,9 +25,9 @@ namespace DeliveryAgent.API.Controllers
         /// <returns></returns>
         [HttpGet("get")]
         // [Authorize(Roles = "2,5")]
-        public async Task<ActionResult<ResponseDto>> GetAgentDetailAsync([FromQuery][Required] long agentId)
+        public async Task<ActionResult<ResponseDto>> GetAgentDetailAsync([FromQuery][Required] long agentId, bool? masked)
         {
-            var result = await vehicleDetailsService.GetAsync(agentId);
+            var result = await vehicleDetailsService.GetAsync(agentId, masked);
             return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError })
                : new ResponseDto { StatusCode = 200, Data = result, Success = true, Message = StringConstant.SuccessMessage };
         }

@@ -19,7 +19,7 @@ namespace BusinessLogicLayer.Services
             this.mapper = mapper;
         }
 
-        public async Task<BankDetailResponseDto?> GetAsync(long agentId)
+        public async Task<BankDetailResponseDto?> GetAsync(long agentId, bool? masked)
         {
             var agentDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable()
             .FirstOrDefaultAsync(u => u.AgentId == agentId);
@@ -36,8 +36,17 @@ namespace BusinessLogicLayer.Services
             // Decrypting sensitive info and sending into mask form in response.
             var decryptedIfsc = AesED.Decrypt(bankDetails.IFSCCode);
             var decryptedAccountNumber = AesED.Decrypt(bankDetails.AccountNumber);
-            response.IFSCCode = MaskData.SensitiveInfo(decryptedIfsc);
-            response.AccountNumber = MaskData.SensitiveInfo(decryptedAccountNumber);
+            if (masked == null || masked == true)
+            {
+                response.IFSCCode = MaskData.SensitiveInfo(decryptedIfsc);
+                response.AccountNumber = MaskData.SensitiveInfo(decryptedAccountNumber);
+            }
+            else
+            {
+                response.IFSCCode = decryptedIfsc;
+                response.AccountNumber = decryptedAccountNumber;
+            }
+            
             return response;
         }
 
