@@ -19,7 +19,7 @@ namespace BusinessLogicLayer.Services
             this.mapper = mapper;
         }
 
-        public async Task<VehicleDetailResponseDto?> GetAsync(long agentId, bool? masked)
+        public async Task<VehicleDetailResponseDto?> GetAsync(long agentId, bool masked)
         {
             var agentDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == agentId);
             if (agentDetail == null || agentDetail.VehicleDetails == null) { return null; }
@@ -27,7 +27,7 @@ namespace BusinessLogicLayer.Services
             var vehicleDetail = agentDetail.VehicleDetails;
             var response = new VehicleDetailResponseDto();
             mapper.Map(vehicleDetail, response);
-            if (masked == null || masked == true)
+            if (masked)
             {
                 response.RegistrationNumber = MaskData.SensitiveInfo(vehicleDetail.RegistrationNumber);
             }

@@ -26,7 +26,7 @@ namespace DeliveryAgent.API.Controllers
         /// <returns></returns>
         [HttpGet("get")]
         // [Authorize(Roles = "2,5")]
-        public async Task<ActionResult<ResponseDto>> GetBankDetailAsync([FromQuery][Required] long agentId , bool? masked)
+        public async Task<ActionResult<ResponseDto>> GetBankDetailAsync([FromQuery][Required] long agentId ,[FromQuery] bool masked)
         {
             var result = await bankDetailsService.GetAsync(agentId, masked);
             return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError })

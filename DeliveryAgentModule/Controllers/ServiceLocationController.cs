@@ -28,7 +28,7 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> GetAllWorkingLocationsAsync([FromQuery][Required] long agentId)
         {
             var result = await workingLocationService.GetAllWorkingLocationsAsync(agentId);
-            if(result.Any())
+            if(result!=null && result.Any())
             {
                 return Ok(new ResponseDto { StatusCode = 200, Success = true , Data = result,Message = StringConstant.SuccessMessage });
             }
