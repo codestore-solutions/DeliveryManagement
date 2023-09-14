@@ -1,25 +1,33 @@
-import React from 'react'
-import { AgentsIcon } from '../../../assets';
-import './style.scss';
+import React from "react";
+import { AgentsIcon } from "../../../assets";
+import "./style.scss";
 
-interface StatusCardProps{
-       cardNumber: number;
-       cardTag: string;
-       cardImage: any
+interface StatusCardProps {
+  cardNumber: number;
+  cardTag: string;
+  cardImage: any;
 }
 
-const StatusCard:React.FC<StatusCardProps> = ({cardNumber, cardTag, cardImage}) => {
+const StatusCard: React.FC<StatusCardProps> = ({
+  cardNumber,
+  cardTag,
+  cardImage,
+}) => {
   return (
-    <div id='status-card'>
-        <div className="status-card-left">
-            <span className="card-number">{ cardNumber ?? '234254'}</span>
-            <span className='card-tag'>{ cardTag ?? 'Total Orders'}</span>
-        </div>
-        <div className="status-card-right">
-              <img src={ cardImage ?? AgentsIcon} alt="img" />
-        </div>
-    </div>
-  )
-}
+    <div id="status-card">
+      <div className="status-card-left">
+        <img src={cardImage ?? AgentsIcon} alt="img" />
+      </div>
+      <div className="status-card-right">
+      <div className="tags">
+        <span className="card-number">{cardTag ?? "Total Orders"}</span>
+       
 
-export default StatusCard
+        <span className="card-tag">{cardNumber}</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default StatusCard;

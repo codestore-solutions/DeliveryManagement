@@ -47,6 +47,7 @@ const DeliveryAgents: React.FC<Props> = ({ searchInput, filters, setFiltersInput
       title: "Email Id",
       dataIndex: "email",
       key: "email",
+   
       render: (email: string) => <p className="col-text">{email}</p>,
     },
     {
@@ -117,7 +118,7 @@ const DeliveryAgents: React.FC<Props> = ({ searchInput, filters, setFiltersInput
       ),
     },
     {
-      title: "Address",
+      title: "Address  ",
       dataIndex: "address",
       key: "address",
       render: (address: string) => CustomizeText(address),

@@ -31,8 +31,8 @@ const CompletedOrders: React.FC<Props> = ({ activeTab }) => {
     pageNumber: 1,
     total: data?.total,
     pageSize: 7,
-    showTotal: (total: any, range: any) =>
-      `${range[0]}-${range[1]} of ${total} items`,
+    // showTotal: (total: any, range: any) =>
+    //   `${range[0]}-${range[1]} of ${total} items`,
   });
   const handleTableChange = (pagination: any) => {
     const { current, pageSize } = pagination;
@@ -62,7 +62,7 @@ const CompletedOrders: React.FC<Props> = ({ activeTab }) => {
       render: (deliveryAgent: any) => <p className="tableTxt">{deliveryAgent?.fullName}</p>,
     },
     {
-      title: "Vender Name",
+      title: "Vendor Name",
       dataIndex: "vendor",
       key: "vendor",
       render: (vender: any) => <p className="tableTxt">{vender?.business?.name}</p>,
@@ -73,7 +73,7 @@ const CompletedOrders: React.FC<Props> = ({ activeTab }) => {
       key: "paymentMode",
       render: (_, record: any) => (
         <Space size="middle">
-          {record?.payment_type === 2 ? (
+          {record?.paymentMode === 2 ? (
             <p className="offline">COD</p>
           ) : (
             <p className="available">Online</p>

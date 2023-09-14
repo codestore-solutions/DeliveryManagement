@@ -1,31 +1,42 @@
 @import "../../../App.scss";
 
 #status-card {
-    display: flex;
-    padding:  21px 15px;
-    background: #ffffff;
-    border: 1px solid #eaeaea;
-    box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.05);
-    border-radius: 10px;
+  display: flex;
+  padding: 1.5rem 15px;
+  background: #ffffff;
+  border: 1px solid #eaeaea;
+  box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  gap: 2rem;
+  max-height: 10rem;
   .status-card-left {
-    flex: 9;
+    flex: 4;
     display: flex;
-    flex-direction: column;
-    .card-number{
-        font-weight: 700;
-        line-height: 30px;
-        font-size: 25px;
-        color: $heading_color;
-    }
-    .card-tag{
-         color: #7E8299;
-         font-size: 14px;
-         padding: 2px 0;
-         font-weight: 400;
-    }
-    
+    justify-content: center;
+    align-items: center;
   }
   .status-card-right {
-    flex: 3;
+    flex: 8;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    .card-number {
+      font-weight: 500;
+      line-height: 30px;
+      font-size: 20px;
+      color: $heading_color;
+    }
+    .tags {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      .card-tag {
+        color: $base_color;
+        font-size: 18px;
+        padding: 2px 0;
+        font-weight: 500;
+      }
+    }
   }
 }

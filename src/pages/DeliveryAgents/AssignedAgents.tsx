@@ -35,6 +35,7 @@ const AssignedAgents: React.FC<Props> = ({ activeTab }) => {
     pageSize: 6,
     showTotal: (total: any, range: any) =>
       `${range[0]}-${range[1]} of ${total} items`,
+    
   });
   const handleTableChange = (pagination: any) => {
     const { current, pageSize } = pagination;

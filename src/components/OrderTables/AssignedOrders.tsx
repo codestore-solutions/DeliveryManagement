@@ -72,7 +72,7 @@ const AssignedOrders: React.FC<Props> = ({ activeTab }) => {
       ),
     },
     {
-      title: "Vender Name",
+      title: "Vendor Name",
       dataIndex: "vendor",
       key: "vendor",
       render: (vendor: any) => <p className="tableTxt">{vendor?.first_name + vendor?.last_name}</p>,
@@ -83,7 +83,7 @@ const AssignedOrders: React.FC<Props> = ({ activeTab }) => {
       key: "paymentMode",
       render: (_, record: any) => (
         <Space size="middle">
-          {record?.payment_type === 2 ? (
+          {record?.paymentMode === 2 ? (
             <p className="offline">COD</p>
           ) : (
             <p className="available">Online</p>

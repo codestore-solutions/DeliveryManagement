@@ -7,7 +7,7 @@ const dummyData = {
       deliveryAgentAddress: "Noida sector 59 Metro Station",
       contact: "7860965109",
       verStatus: 0,
-      date:"10/12/2022"
+      date: "10/12/2022",
     },
     {
       key: "2",
@@ -16,7 +16,7 @@ const dummyData = {
       deliveryAgentAddress: "Noida sector 59 Metro Station",
       contact: "7860965109",
       verStatus: 0,
-      date:"10/12/2022"
+      date: "10/12/2022",
     },
     {
       key: "3",
@@ -25,7 +25,7 @@ const dummyData = {
       deliveryAgentAddress: "Noida sector 59 Metro Station",
       contact: "7860965109",
       verStatus: 0,
-      date:"10/12/2022"
+      date: "10/12/2022",
     },
     {
       key: "4",
@@ -34,7 +34,7 @@ const dummyData = {
       deliveryAgentAddress: "Noida sector 59 Metro Station",
       contact: "7860965109",
       verStatus: 0,
-      date:"10/12/2022"
+      date: "10/12/2022",
     },
     {
       key: "5",
@@ -43,7 +43,7 @@ const dummyData = {
       deliveryAgentAddress: "Noida sector 59 Metro Station",
       contact: "7860965109",
       verStatus: 0,
-      date:"10/12/2022"
+      date: "10/12/2022",
     },
     {
       key: "6",
@@ -52,7 +52,7 @@ const dummyData = {
       deliveryAgentAddress: "Noida sector 59 Metro Station",
       contact: "7860965109",
       verStatus: 0,
-      date:"10/12/2022"
+      date: "10/12/2022",
     },
     {
       key: "7",
@@ -61,7 +61,7 @@ const dummyData = {
       deliveryAgentAddress: "Noida sector 59 Metro Station",
       contact: "7860965109",
       verStatus: 0,
-      date:"10/12/2022"
+      date: "10/12/2022",
     },
     {
       key: "8",
@@ -70,7 +70,7 @@ const dummyData = {
       deliveryAgentAddress: "Noida sector 59 Metro Station",
       contact: "7860965109",
       verStatus: 0,
-      date:"10/12/2022"
+      date: "10/12/2022",
     },
   ],
   selectOptions: [
@@ -128,6 +128,22 @@ const dummyData = {
       payment_type: 2,
       shippingAddress: "Sector 59 Noida",
       date: "10/02/2023",
+    },
+  ],
+  agent: [
+    {
+      key: 1,
+      agentId: 12,
+      deliveryCount: 12,
+      agentName: "Kapil Prasad",
+      region: "Delhi",
+    },
+    {
+      key: 2,
+      agentId: 12,
+      deliveryCount: 12,
+      agentName: "Kapil Prasad",
+      region: "Delhi",
     },
   ],
   assignedOrderData: [
@@ -250,68 +266,57 @@ const dummyData = {
   ],
 };
 
-export const storesIds = [3,4];
+export const storesIds = [3, 4];
 
 export const stores = [
-
   {
+    id: "3",
 
-      "id": '3',
+    sellerId: "3",
 
-      "sellerId": '3',
+    businessId: "2",
 
-      "businessId": '2',
+    name: "Fashion Junction",
 
-      "name": "Fashion Junction",
+    description:
+      "A trendy fashion store offering a wide range of clothing and accessories.",
 
-      "description": "A trendy fashion store offering a wide range of clothing and accessories.",
+    address: {
+      street: "1234 Fashion Avenue",
 
-      "address": {
+      city: "New Delhi",
 
-          "street": "1234 Fashion Avenue",
+      state: "Delhi",
 
-          "city": "New Delhi",
+      country: "India",
 
-          "state": "Delhi",
+      pincode: "110001",
 
-          "country": "India",
-
-          "pincode": "110001",
-
-          "landmark": "Near Connaught Place"
-
-      }
-
+      landmark: "Near Connaught Place",
+    },
   },
 
   {
+    id: "4",
 
-      "id": '4',
+    sellerId: "3",
 
-      "sellerId": '3',
+    businessId: "2",
 
-      "businessId": '2',
+    name: "Tech Bazaar",
 
-      "name": "Tech Bazaar",
+    description:
+      "An electronics store specializing in the latest tech gadgets and devices.",
 
-      "description": "An electronics store specializing in the latest tech gadgets and devices.",
-
-      "address": {
-
-          "street": "5678 Innovation Road",
-          "city": "New Delhi",
-          "state": "Delhi",
-          "country": "India",
-          "pincode": "110002",
-          "landmark": "Near Karol Bagh Market"
-      }
-
+    address: {
+      street: "5678 Innovation Road",
+      city: "New Delhi",
+      state: "Delhi",
+      country: "India",
+      pincode: "110002",
+      landmark: "Near Karol Bagh Market",
+    },
   },
-
-]
-
-
-
+];
 
 export default dummyData;
-

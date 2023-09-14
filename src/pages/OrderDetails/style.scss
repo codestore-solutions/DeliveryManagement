@@ -49,6 +49,7 @@
           display: flex;
           justify-content: space-between;
           gap:1rem;
+          overflow-x: scroll;
           .container-col {
             font-weight: 400;
             font-size: 16px;

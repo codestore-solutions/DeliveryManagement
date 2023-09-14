@@ -13,7 +13,7 @@ import useScreenWidth from "../../Hooks/ScreenWidthHook";
 
 const OrderDetails: React.FC = () => {
   const navigate = useNavigate();
-  const {isSmallScreen} = useScreenWidth()
+  const {isSmallScreen, isMiddleScreen} = useScreenWidth()
   const { id } = useParams();
   const [data, setData] = useState<any>();
   const [feedbackdata, setFeedbackData] = useState<any>();
@@ -115,7 +115,7 @@ const OrderDetails: React.FC = () => {
                   </div>
                   <div className="container-row">
                     <span className="container-col">Email</span>
-                    <span className={isSmallScreen ? 'container-col dark hidden': 'container-col dark'}>
+                    <span className={isSmallScreen || isMiddleScreen ? 'container-col dark hidden': 'container-col dark'}>
                       {data?.customer?.email}
                     </span>
                   </div>

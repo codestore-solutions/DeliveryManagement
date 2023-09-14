@@ -41,5 +41,11 @@ export const ApiConstants = {
      // Count Apis
      getAcceptRejectOrders:'assignAgent/CountDeliveredOrRejectedOrders',
      //Timeslots By Id
-     getTimeSlots:'TimeSlot/getBySlotIds'
+     getTimeSlots:'TimeSlot/getBySlotIds',
+
+     // Dashboard Apis
+     getTopPerformingAgents:'personal-details/getTopPerformingAgent',
+     // Get Agents dahsboard Details
+     getTotalAgentsAndDeliveryCount:'personal-details/getTotalAgentsAndDeliveryCount',
+     getAgentAndDeliveryCounts:'personal-details/getTotalAgentsAndDeliveryCount'
 }

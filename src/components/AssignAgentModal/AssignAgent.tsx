@@ -2,14 +2,11 @@ import { ColumnsType } from "antd/es/table";
 import { Button, Table, message } from "antd";
 import React, { useEffect, useState } from "react";
 import "./style.scss";
-// import date from "../../utils/helpers/CustomizeDate";
 import CustomizeData from "../../utils/helpers/CustomizeData";
 import AgentService from "../../services/AgentService";
 import { ApiConstants } from "../../constants/ApiConstants";
-// import OrderService from "../../services/OrderService";
 import CustomizeText from "../../utils/helpers/CustomizeText";
 import { TableRowSelection } from "antd/es/table/interface";
-// import CustomizeDate from "../../utils/helpers/CustomizeDate";
 import { manualAssignAgentInterface } from "../../utils/types";
 import { useDebounce } from "use-debounce";
 import useScreenWidth from "../../Hooks/ScreenWidthHook";
@@ -239,7 +236,7 @@ const AssignAgent: React.FC<Props> = ({
           pagination={false}
           loading={loading}
           onChange={handleTableChange}
-          scroll={{ y: 340 }}
+          scroll={{ y: 340, x:300 }}
           className="custom-table"
         />
       </div>

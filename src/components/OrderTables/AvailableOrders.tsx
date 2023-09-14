@@ -4,7 +4,6 @@ import "../../pages/DeliveryAgents/style.scss";
 import { Space, Tooltip } from "antd";
 import { ColumnsType } from "antd/es/table";
 import {  CustomModal, CustomTable } from "../index";
-// import { LoadingOutlined } from "@ant-design/icons";
 import {  DeliveryUserIcon, DetailsIcon } from "../../assets";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks/app";
@@ -18,7 +17,7 @@ import { useEffect } from "react";
 import date from "../../utils/helpers/CustomizeDate";
 import CutomizeText from "../../utils/helpers/CustomizeText";
 import SingleAssign from "../SingleAssign/SingleAssign";
-// import dummyData from "../../../dummyData";
+
 
 export interface DataType {
   key: React.Key;
@@ -37,7 +36,7 @@ interface Props {
   fetch: any;
   isOpen: boolean;
 }
-// const antIcon = <LoadingOutlined style={{ color: "#fff" }} spin />;
+
 
 const AvailableOrders: React.FC<Props> = ({
   selectedRowKeys,
@@ -106,7 +105,7 @@ const AvailableOrders: React.FC<Props> = ({
       key: "paymentMode",
       render: (_, record: any) => (
         <Space size="middle">
-          {record?.payment_type === 2 ? (
+          {record?.paymentMode === 2 ? (
             <p className="offline">COD</p>
           ) : (
             <p className="available">Online</p>

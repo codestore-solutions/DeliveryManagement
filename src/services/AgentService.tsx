@@ -13,22 +13,20 @@ const getAllAgents = async (
 ) => {
   const { pageNumber, pageSize } = pagination;
   let params;
-  if(filters == 2){
+  if (filters == 2) {
     params = {
       pageNumber: pageNumber,
       limit: pageSize,
       filterQuery: searchInput,
     };
-  }else{
+  } else {
     params = {
       pageNumber: pageNumber,
       limit: pageSize,
-      agentStatus:  filters,
+      agentStatus: filters,
       filterQuery: searchInput,
     };
-    
   }
- 
 
   let url = `${ApiConstants.baseUrl}${ApiConstants.getAgentList}`;
   const { data } = await API({}, url, "GET", params);
@@ -64,12 +62,12 @@ const verifyAgentKyc = async (payload: verifyAgentKycInterface) => {
   return res?.data;
 };
 
-const getVerificationStatus = async(params: { agentId: number}) =>{
+const getVerificationStatus = async (params: { agentId: number }) => {
   let url = `${ApiConstants.baseUrl}${ApiConstants.getVerificationStatus}`;
   const { data } = await API({}, url, "GET", params);
   console.log("data", data);
   return data;
-} 
+};
 
 /**
  * @param pagination
@@ -120,21 +118,42 @@ const getFeedbackDetails = async (id: any) => {
   return res?.data;
 };
 
-const acceptRejectOrders = async (id:number) =>{
+const acceptRejectOrders = async (id: number) => {
   let params = {
-     agentId: id
-  }
+    agentId: id,
+  };
   let url = `${ApiConstants.baseUrl}${ApiConstants.getAcceptRejectOrders}`;
   const res = await API({}, url, "GET", params);
   return res?.data;
-}
+};
 
-const deleteAgent = async (payload: any) =>{
-  const {agentId, isDeleted} = payload;
- let url = `${ApiConstants.baseUrl}${ApiConstants.deleteAgent}?agentId=${agentId}&isDeleted=${isDeleted}`;
- const res = await API({}, url, "PUT");
- return res?.data;
-}
+const deleteAgent = async (payload: any) => {
+  const { agentId, isDeleted } = payload;
+  let url = `${ApiConstants.baseUrl}${ApiConstants.deleteAgent}?agentId=${agentId}&isDeleted=${isDeleted}`;
+  const res = await API({}, url, "PUT");
+  return res?.data;
+};
+
+
+const getTopPerfomingAgent = async () => {
+  let url = `${ApiConstants.baseUrl}${ApiConstants.getTopPerformingAgents}`;
+  const res = await API({}, url, "GET");
+  let count = 1;
+  let formattedList = res.data?.data?.map((item: any) => {
+    return { ...item, key: count++ };
+  });
+  let dataFetched = {
+    statusCode: res?.data?.statusCode,
+    data: formattedList,
+  };
+  return dataFetched;
+};
+
+const getTotalAgentAndDelivery= async () => {
+  let url = `${ApiConstants.baseUrl}${ApiConstants.getAgentAndDeliveryCounts}`;
+  const res = await API({}, url, "GET");
+  return res?.data;
+};
 const AgentService = {
   getAllAgents,
   getAgentDetails,
@@ -145,7 +164,9 @@ const AgentService = {
   verifyAgentKyc,
   getVerificationStatus,
   acceptRejectOrders,
-  deleteAgent
+  deleteAgent,
+  getTopPerfomingAgent,
+  getTotalAgentAndDelivery
 };
 
 export default AgentService;

@@ -5,9 +5,10 @@ export interface pagination {
   pageNumber: number;
   total: number;
   pageSize: number;
-  showTotal: any;
+  showTotal?: any;
   nextIcon?: any;
   prevIcon?: any;
+  itemRender?:any
 }
 
 export interface manualAssignAgentInterface {

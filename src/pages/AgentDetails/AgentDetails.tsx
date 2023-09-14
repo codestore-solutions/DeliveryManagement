@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./style.scss";
 import { useLocation, useNavigate } from "react-router-dom";
-import { CheckTick, StatusTick, TimeTick } from "../../assets";
+import { CheckTick, StatusTick } from "../../assets";
 import { Row, Col, Typography, Switch, message } from "antd";
 import AgentService from "../../services/AgentService";
 import Spinner from "../Spinner/Spinner";
@@ -144,7 +144,7 @@ const AgentDetails: React.FC = () => {
           label="Rejected"
           iconClassName="status-tick"
         />
-        <DeliveryStatusCard
+        {/* <DeliveryStatusCard
           icon={TimeTick}
           value="7 hrs"
           label="Online Hours"
@@ -155,7 +155,7 @@ const AgentDetails: React.FC = () => {
           value="1500"
           label="Feedback Received"
           iconClassName="time-tick"
-        />
+        /> */}
       </Row>
     </div>
   );

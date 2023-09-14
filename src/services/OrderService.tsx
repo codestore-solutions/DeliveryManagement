@@ -98,16 +98,15 @@ const getOrderTimeline = async (id: number) => {
 
 const getTimSlotsByIds = async (params: { slotIds: number[] }) => {
   let url = `${ApiConstants.baseUrl}${ApiConstants.getTimeSlots}`;
-  
   // Constructing the query string from the array of ids
   let queryString = params.slotIds.map(id => `slotIds=${id}`).join('&');
   url = `${url}?${queryString}`;
-
   console.log("Constructed URL:", url);
-
   let res = await API({}, url, "GET");
   return res?.data;
 }
+
+
 
 
 

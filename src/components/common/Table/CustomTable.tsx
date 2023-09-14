@@ -9,10 +9,10 @@ interface customTableProps {
   columns: Array<any>;
   data: any;
   pagination: {};
-  handleTableChange: any;
+  handleTableChange?: any;
   loading: boolean;
   scroll?: {
-    x: number | string; // Set the value according to your needs
+    x: number | string; 
   };
 }
 
