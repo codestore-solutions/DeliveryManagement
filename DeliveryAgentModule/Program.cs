@@ -5,8 +5,8 @@ using DataAccessLayer.Data;
 using DataAccessLayer.IRepository;
 using DataAccessLayer.Repository;
 using DeliveryAgent.API.CustomActionFilter;
+using DeliveryAgent.Entities.Common;
 using DeliveryAgentModule.Middlewares;
-using EntityLayer.Common;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -105,7 +105,7 @@ namespace DeliveryAgentModule
             builder.Services.AddScoped<ITokenRepository, TokenRepository>();
             builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
             builder.Services.AddScoped<LoggingActionFilter>();
-            builder.Services.AddScoped<IAccountService, AccountService>();  
+            builder.Services.AddScoped<IAccountService, AccountService>();
 
             builder.Services.AddDbContext<DeliveryDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString(StringConstant.ConnectionStringPath)));

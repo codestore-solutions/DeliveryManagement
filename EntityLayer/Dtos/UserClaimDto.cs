@@ -1,4 +1,4 @@
-﻿namespace EntityLayer.Dtos
+﻿namespace DeliveryAgent.Entities.Dtos
 {
     public class UserClaimDto
     {

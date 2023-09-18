@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EntityLayer.Dtos
+namespace DeliveryAgent.Entities.Dtos
 {
     public class RegisterRequestDto
     {
@@ -15,7 +15,7 @@ namespace EntityLayer.Dtos
 
         [Required]
         [DataType(DataType.Password)]
-        public string Password { get; set; }= null!;
+        public string Password { get; set; } = null!;
         public string[] Roles { get; set; } = null!;
     }
 

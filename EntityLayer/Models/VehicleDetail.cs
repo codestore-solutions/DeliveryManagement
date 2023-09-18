@@ -5,9 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static EntityLayer.Common.EnumConstants;
+using static DeliveryAgent.Entities.Common.EnumConstants;
 
-namespace EntityLayer.Models
+namespace DeliveryAgent.Entities.Models
 {
     public class VehicleDetail
     {
@@ -17,7 +17,7 @@ namespace EntityLayer.Models
         [Required]
         [ForeignKey("AgentDetail")]
         public long AgentDetailId { get; set; }
-       
+
         public VehicleTypes VehicleType { get; set; }
 
         [Required]

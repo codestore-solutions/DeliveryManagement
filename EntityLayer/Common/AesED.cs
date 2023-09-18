@@ -1,15 +1,18 @@
 ﻿
+using Castle.Core.Configuration;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace DeliveryAgent.Entities.Models
+namespace DeliveryAgent.Entities.Common
 {
-    public class EncryptDecryptManager
+    public class AesED
     {
+        // Encryption key
         protected readonly static string key = "sfcvixkmffm134eASJDNIfdg";
-
+        
         public static string Encrypt(string text)
         {
+            // Initialization vector
             byte[] iv = new byte[16];
             byte[] array;
             using (Aes aes = Aes.Create())
@@ -17,12 +20,12 @@ namespace DeliveryAgent.Entities.Models
                 aes.Key = Encoding.UTF8.GetBytes(key);
                 aes.IV = iv;
                 ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
-                using(MemoryStream ms = new MemoryStream())
+                using (MemoryStream ms = new ())
                 {
-                    using (CryptoStream cryptoStream = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
+                    using (CryptoStream cryptoStream = new (ms, encryptor, CryptoStreamMode.Write))
                     {
-                        using(StreamWriter streamWriter = new StreamWriter(cryptoStream)) 
-                        { 
+                        using (StreamWriter streamWriter = new (cryptoStream))
+                        {
                             streamWriter.Write(text);
                         }
                         array = ms.ToArray();
@@ -34,9 +37,10 @@ namespace DeliveryAgent.Entities.Models
 
         public static string Decrypt(string text)
         {
-            byte[] iv = new byte[16];   
+            // iv - Intialization vector.
+            byte[] iv = new byte[16];
             byte[] buffer = Convert.FromBase64String(text);
-            using(Aes  aes = Aes.Create())
+            using (Aes aes = Aes.Create())
             {
                 aes.Key = Encoding.UTF8.GetBytes(key);
                 aes.IV = iv;

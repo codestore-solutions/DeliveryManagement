@@ -1,12 +1,11 @@
-﻿
-using System.ComponentModel.DataAnnotations;
-using static EntityLayer.Common.EnumConstants;
+﻿using System.ComponentModel.DataAnnotations;
+using static DeliveryAgent.Entities.Common.EnumConstants;
 
-namespace EntityLayer.Models
+namespace DeliveryAgent.Entities.Models
 {
     public class AssignDeliveryAgent
     {
-        [Key]     
+        [Key]
         public long Id { get; set; }
 
         [Required]
@@ -16,7 +15,7 @@ namespace EntityLayer.Models
         public long OrderId { get; set; }
 
         [Required]
-        public long VendorAddressId { get; set; } 
+        public long VendorAddressId { get; set; }
 
         [Required]
         public double PickupLatitude { get; set; }
@@ -29,7 +28,7 @@ namespace EntityLayer.Models
 
         [Required]
         public DateTime UpdatedOn { get; set; }
-      
+
         [Required]
         public long DeliveryAddressId { get; set; }
 
@@ -44,7 +43,7 @@ namespace EntityLayer.Models
 
         [Required]
         public string DeliveryImage { get; set; } = string.Empty;
-       
+
         public DeliveryStatus DeliveryStatus { get; set; }
 
     }

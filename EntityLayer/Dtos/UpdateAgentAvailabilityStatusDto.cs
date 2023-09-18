@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EntityLayer.Dtos
+namespace DeliveryAgent.Entities.Dtos
 {
     public class UpdateAgentAvailabilityStatusDto
     {
@@ -20,7 +20,7 @@ namespace EntityLayer.Dtos
         }
 
         [Required]
-        [Range (0, 1)]
+        [Range(0, 1)]
         public AvailabilityStatus AgentStatus { get; set; }
     }
 }

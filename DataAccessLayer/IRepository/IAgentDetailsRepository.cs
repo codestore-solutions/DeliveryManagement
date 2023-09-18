@@ -1,13 +1,8 @@
-﻿using EntityLayer.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DeliveryAgent.Entities.Models;
 
 namespace DataAccessLayer.IRepository
 {
-    public interface IAgentDetailsRepository: IGenericRepository<AgentDetail>
+    public interface IAgentDetailsRepository : IGenericRepository<AgentDetail>
     {
     }
 }

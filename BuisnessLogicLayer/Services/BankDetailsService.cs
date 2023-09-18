@@ -2,10 +2,8 @@
 using BusinessLogicLayer.IServices;
 using DataAccessLayer.IRepository;
 using DeliveryAgent.Entities.Common;
+using DeliveryAgent.Entities.Dtos;
 using DeliveryAgent.Entities.Models;
-using EntityLayer.Common;
-using EntityLayer.Dtos;
-using EntityLayer.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLogicLayer.Services
@@ -21,83 +19,78 @@ namespace BusinessLogicLayer.Services
             this.mapper = mapper;
         }
 
-        public async Task<BankDetailResponseDto?> GetAsync(long agentId)
+        public async Task<BankDetailResponseDto?> GetAsync(long agentId, bool masked)
         {
             var agentDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable()
             .FirstOrDefaultAsync(u => u.AgentId == agentId);
 
+            // If agentId does not exist in db.
             if (agentDetail == null || agentDetail.BankDetails == null)
             {
                 return null;
             }
+
             var bankDetails = agentDetail.BankDetails;
             var response = new BankDetailResponseDto();
             mapper.Map(bankDetails, response);
-            var decryptedIfsc = EncryptDecryptManager.Decrypt(bankDetails.IFSCCode);
-            var decryptedAccountNumber = EncryptDecryptManager.Decrypt(bankDetails.AccountNumber);
-            response.IFSCCode = CommonFunctions.MaskData(decryptedIfsc);
-            response.AccountNumber = CommonFunctions.MaskData(decryptedAccountNumber);
+            // Decrypting sensitive info and sending into mask form in response.
+            var decryptedIfsc = AesED.Decrypt(bankDetails.IFSCCode);
+            var decryptedAccountNumber = AesED.Decrypt(bankDetails.AccountNumber);
+            if (masked)
+            {
+                response.IFSCCode = MaskData.SensitiveInfo(decryptedIfsc);
+                response.AccountNumber = MaskData.SensitiveInfo(decryptedAccountNumber);
+            }
+            else
+            {
+                response.IFSCCode = decryptedIfsc;
+                response.AccountNumber = decryptedAccountNumber;
+            }
+            
             return response;
         }
 
-        public async Task<ResponseDto?> AddDetailsAsync(BankDetailsDto bankDetailsDto)
+        public async Task<BankDetail?> AddDetailsAsync(BankDetailsDto bankDetailsDto)
         {
             var agentDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable()
             .FirstOrDefaultAsync(u => u.AgentId == bankDetailsDto.AgentId);
-            if(agentDetail== null)
+
+            // Edge Case : Check if bank details already exists or not.
+            if (agentDetail != null && agentDetail.BankDetails == null)
             {
-                return null;
+                var bankDetails = new BankDetail();
+                mapper.Map(bankDetailsDto, bankDetails);
+                bankDetails.AgentDetailId = agentDetail.Id;
+                // Encrypting sensitive info into cipher text.
+                var encryptedIfsc = AesED.Encrypt(bankDetails.IFSCCode);
+                var encryptedAccountNumber = AesED.Encrypt(bankDetails.AccountNumber);
+                // Adding encrypted info into db.
+                bankDetails.IFSCCode = encryptedIfsc;
+                bankDetails.AccountNumber = encryptedAccountNumber;
+                bankDetails.CreatedOn = bankDetails.UpdatedOn = DateTime.Now;
+
+                await unitOfWork.BankDetailsRepository.AddAsync(bankDetails);
+                await unitOfWork.SaveAsync();
+                return bankDetails;
             }
-            var existingDetails = agentDetail.BankDetails;
-
-            if (existingDetails != null)
-            {
-                return null;
-            }
-            var bankDetails = new BankDetail();
-            mapper.Map(bankDetailsDto, bankDetails);
-            bankDetails.AgentDetailId = agentDetail.Id;
-            var encryptedIfsc = EncryptDecryptManager.Encrypt(bankDetails.IFSCCode);
-            var encryptedAccountNumber = EncryptDecryptManager.Encrypt(bankDetails.AccountNumber);
-            bankDetails.IFSCCode = encryptedIfsc;
-            bankDetails.AccountNumber = encryptedAccountNumber;
-            bankDetails.CreatedOn = DateTime.Now;
-            bankDetails.UpdatedOn = DateTime.Now;
-
-            await unitOfWork.BankDetailsRepository.AddAsync(bankDetails);
-            bool saveResult = await unitOfWork.SaveAsync();          
-
-            return new ResponseDto
-            {
-                StatusCode      = saveResult ? 200 : 500,
-                Success         = saveResult,
-                Data            = bankDetails,
-                Message         = saveResult ? StringConstant.SuccessMessage : StringConstant.DatabaseMessage
-            };
+            return null;
         }
 
-        public async Task<ResponseDto?> UpdateDetailsAsync(long id, BankDetailsDto bankDetailsDto)
+        public async Task<BankDetail?> UpdateDetailsAsync(long id, BankDetailsDto bankDetailsDto)
         {
             var bankDetails = await unitOfWork.BankDetailsRepository.GetByIdAsync(id);
-            if (bankDetails == null)
+            if (bankDetails != null)
             {
-                return null;
+                mapper.Map(bankDetailsDto, bankDetails);
+                // Adding encryped data in db.
+                var encryptedIfsc = AesED.Encrypt(bankDetails.IFSCCode);
+                var encryptedAccountNumber = AesED.Encrypt(bankDetails.AccountNumber);
+                bankDetails.IFSCCode = encryptedIfsc;
+                bankDetails.AccountNumber = encryptedAccountNumber;
+                bankDetails.UpdatedOn = DateTime.Now;
+                await unitOfWork.SaveAsync();
             }
-            mapper.Map(bankDetailsDto, bankDetails);
-            var encryptedIfsc = EncryptDecryptManager.Encrypt(bankDetails.IFSCCode);
-            var encryptedAccountNumber = EncryptDecryptManager.Encrypt(bankDetails.AccountNumber);
-            bankDetails.IFSCCode = encryptedIfsc;
-            bankDetails.AccountNumber = encryptedAccountNumber;
-            bankDetails.UpdatedOn = DateTime.Now;
-            bool saveResult = await unitOfWork.SaveAsync();
-
-            return new ResponseDto
-            {
-                StatusCode      = saveResult ? 200 : 500,
-                Success         = saveResult,
-                Data            = bankDetails,
-                Message         = saveResult ? StringConstant.UpdatedMessage : StringConstant.DatabaseMessage
-            };
+            return bankDetails;
         }
 
     }

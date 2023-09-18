@@ -1,12 +1,9 @@
 ﻿using BusinessLogicLayer.IServices;
-using BusinessLogicLayer.Services;
+using DeliveryAgent.Entities.Common;
+using DeliveryAgent.Entities.Dtos;
 using DeliveryAgentModule.CustomActionFilter;
-using EntityLayer.Common;
-using EntityLayer.Dtos;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
-using System.Net;
 
 namespace DeliveryAgent.API.Controllers
 {
@@ -28,9 +25,9 @@ namespace DeliveryAgent.API.Controllers
         /// <returns></returns>
         [HttpGet("get")]
         // [Authorize(Roles = "2,5")]
-        public async Task<ActionResult<ResponseDto>> GetAgentDetailAsync([FromQuery][Required] long agentId)
+        public async Task<ActionResult<ResponseDto>> GetAgentDetailAsync([FromQuery][Required] long agentId, bool masked)
         {
-            var result = await vehicleDetailsService.GetAsync(agentId);
+            var result = await vehicleDetailsService.GetAsync(agentId, masked);
             return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError })
                : new ResponseDto { StatusCode = 200, Data = result, Success = true, Message = StringConstant.SuccessMessage };
         }
@@ -48,7 +45,7 @@ namespace DeliveryAgent.API.Controllers
             var result = await vehicleDetailsService.AddDetailsAsync(vehicleDetailsDto);
             if (result != null)
             {
-                return Ok(result);
+                return Ok(new ResponseDto { StatusCode = 200, Success = true, Data = result, Message = StringConstant.AddedMessage});
             }
             return BadRequest(new { message = StringConstant.ExistingMessage });
         }
@@ -65,7 +62,8 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> UpdateDetailsAsync([FromQuery][Required] long id, [FromBody] VehicleDetailsDto vehicleDetailsDto)
         {
             var result = await vehicleDetailsService.UpdateDetailsAsync(id, vehicleDetailsDto);
-            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError })
+                : Ok(new ResponseDto { StatusCode = 200, Success = true, Data = result, Message = StringConstant.UpdatedMessage });
         }
 
     }

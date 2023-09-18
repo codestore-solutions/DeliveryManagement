@@ -1,9 +1,8 @@
 ﻿using BusinessLogicLayer.IServices;
-using BusinessLogicLayer.Services;
+using DeliveryAgent.Entities.Common;
+using DeliveryAgent.Entities.Dtos;
+using DeliveryAgent.Entities.Models;
 using DeliveryAgentModule.CustomActionFilter;
-using EntityLayer.Common;
-using EntityLayer.Dtos;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
@@ -27,11 +26,11 @@ namespace DeliveryAgent.API.Controllers
         /// <returns></returns>
         [HttpGet("get")]
         // [Authorize(Roles = "2,5")]
-        public async Task<ActionResult<ResponseDto>> GetBankDetailAsync([FromQuery][Required] long agentId)
+        public async Task<ActionResult<ResponseDto>> GetBankDetailAsync([FromQuery][Required] long agentId ,[FromQuery] bool masked)
         {
-            var result = await bankDetailsService.GetAsync(agentId);
-            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) 
-                : new ResponseDto { StatusCode = 200, Data = result, Success = true, Message = StringConstant.SuccessMessage};
+            var result = await bankDetailsService.GetAsync(agentId, masked);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError })
+                : new ResponseDto { StatusCode = 200, Data = result, Success = true, Message = StringConstant.SuccessMessage };
         }
 
         /// <summary>
@@ -45,7 +44,8 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> AddBankDetailsAsync([FromBody][Required] BankDetailsDto bankDetailsDto)
         {
             var result = await bankDetailsService.AddDetailsAsync(bankDetailsDto);
-            return result == null ? BadRequest(new { message = StringConstant.ExistingMessage }) : Ok(result);
+            return result == null ? BadRequest(new { message = StringConstant.ExistingMessage })
+                : Ok(new ResponseDto { StatusCode = 200, Success = true, Data = result, Message = StringConstant.AddedMessage });
         }
 
         /// <summary>
@@ -60,7 +60,8 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> UpdateDetailsAsync([FromQuery][Required] long id, [FromBody][Required] BankDetailsDto bankDetailsDto)
         {
             var result = await bankDetailsService.UpdateDetailsAsync(id, bankDetailsDto);
-            return result == null? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError })
+                : Ok(new ResponseDto { StatusCode = 200, Success = true, Data = result, Message = StringConstant.UpdatedMessage });
         }
 
     }

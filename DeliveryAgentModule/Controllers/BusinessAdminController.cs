@@ -1,14 +1,6 @@
-﻿using AutoMapper;
-using BusinessLogicLayer.IServices;
-using DeliveryAgent.API;
-using EntityLayer.Common;
-using EntityLayer.Dtos;
-using EntityLayer.Models;
+﻿using BusinessLogicLayer.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System.Collections;
-using static EntityLayer.Models.BusinessAdmin;
 
 namespace DeliveryAgentModule.Controllers
 {
@@ -28,6 +20,6 @@ namespace DeliveryAgentModule.Controllers
             this.businessAdminService = businessAdminService;
             this.httpClient = httpClient;
         }
-      
+
     }
 }

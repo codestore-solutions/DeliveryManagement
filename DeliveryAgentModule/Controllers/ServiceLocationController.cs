@@ -1,13 +1,9 @@
 ﻿using BusinessLogicLayer.IServices;
-using BusinessLogicLayer.Services;
+using DeliveryAgent.Entities.Common;
+using DeliveryAgent.Entities.Dtos;
 using DeliveryAgentModule.CustomActionFilter;
-using EntityLayer.Common;
-using EntityLayer.Dtos;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
-using System.Reflection.Metadata.Ecma335;
 
 namespace DeliveryAgent.API.Controllers
 {
@@ -32,7 +28,11 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> GetAllWorkingLocationsAsync([FromQuery][Required] long agentId)
         {
             var result = await workingLocationService.GetAllWorkingLocationsAsync(agentId);
-            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
+            if(result!=null && result.Any())
+            {
+                return Ok(new ResponseDto { StatusCode = 200, Success = true , Data = result,Message = StringConstant.SuccessMessage });
+            }
+            return NotFound(new { message = StringConstant.ResourceNotFoundError });
         }
 
         /// <summary>
@@ -46,7 +46,8 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> AddNewWorkingLocationAsync([FromBody][Required] ServiceLocationDto workingLocationDto)
         {
             var result = await workingLocationService.AddNewWorkingLocationAsync(workingLocationDto);
-            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) 
+                : Ok(new ResponseDto { StatusCode = 200, Success = true, Data = result, Message = StringConstant.AddedMessage });
         }
 
         /// <summary>
@@ -60,7 +61,8 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> DeleteWorkingLocationAsync([FromQuery][Required] long serviceLocationId)
         {
             var result = await workingLocationService.DeleteWorkingLocationAsync(serviceLocationId);
-            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError })
+                : Ok(new ResponseDto { StatusCode = 200, Success = true, Data = result, Message = StringConstant.DeletedMessage });
         }
 
         /// <summary>
@@ -75,7 +77,8 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> UpdateWorkingLocationAsync([Required] long serviceLocationId, [FromBody][Required] UpdateWorkingLocationDto updateWorkingLocationDto)
         {
             var result = await workingLocationService.UpdateWorkingLocationAsync(serviceLocationId, updateWorkingLocationDto);
-            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError })
+                : Ok(new ResponseDto { StatusCode = 200, Success = true, Data = result, Message = StringConstant.UpdatedMessage });
         }
 
         /// <summary>
@@ -102,7 +105,8 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> GetAgentAvailabilityStatusAsync([Required] long agentId)
         {
             var result = await workingLocationService.GetAgentAvailabilityStatusAsync(agentId);
-            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError })
+                : Ok(new ResponseDto { StatusCode = 200, Success = true, Data = result, Message = StringConstant.SuccessMessage });
         }
 
         /// <summary>
@@ -116,7 +120,8 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> UpdateAgentAvailabilityStatusAsync([FromBody][Required] UpdateAgentAvailabilityStatusDto statusDto)
         {
             var result = await workingLocationService.UpdateAgentAvailabilityStatusAsync(statusDto);
-            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError })
+                : Ok(new ResponseDto { StatusCode = 200, Success = true, Data = result, Message = StringConstant.UpdatedMessage });
         }
 
         [HttpPost("VerifyAgentKycDocuments")]
@@ -125,7 +130,8 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> UpdateVerificationStatusAsync(UpdateVerificationStatusDto updateVerificationStatusDto)
         {
             var result = await workingLocationService.UpdateVerificationStatusAsync(updateVerificationStatusDto);
-            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError })
+                : Ok(new ResponseDto { StatusCode = 200, Success = true, Data = result, Message = StringConstant.UpdatedMessage });
         }
 
         [HttpGet("getVerificationStatus")]
@@ -133,7 +139,8 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> GetVerificationStatusAsync([FromQuery][Required] long agentId)
         {
             var result = await workingLocationService.GetVerificationStatusAsync(agentId);
-            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError })
+               : Ok(new ResponseDto { StatusCode = 200, Success = true, Data = result, Message = StringConstant.SuccessMessage });
         }
     }
 }

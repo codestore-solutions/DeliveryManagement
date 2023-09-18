@@ -1,18 +1,11 @@
 ﻿using BusinessLogicLayer.IServices;
 using DataAccessLayer.IRepository;
-using EntityLayer.Common;
-using EntityLayer.Dtos;
-using EntityLayer.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks; 
+using DeliveryAgent.Entities.Common;
+using DeliveryAgent.Entities.Models;
 
 namespace BusinessLogicLayer.Services
 {
-    public class ImageService: IImageService
+    public class ImageService : IImageService
     {
         private readonly IUnitOfWork unitOfWork;
 
@@ -29,12 +22,12 @@ namespace BusinessLogicLayer.Services
             return new ResponseDto
             {
                 StatusCode = 200,
-                Success    = true,
-                Data       = image,
-                Message    = StringConstant.AddedMessage
+                Success = true,
+                Data = image,
+                Message = StringConstant.AddedMessage
             };
         }
 
-       
+
     }
 }

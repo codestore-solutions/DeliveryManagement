@@ -1,12 +1,6 @@
-﻿using EntityLayer.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace EntityLayer.Dtos
+namespace DeliveryAgent.Entities.Dtos
 {
     public class BankDetailsDto
     {
@@ -33,6 +27,6 @@ namespace EntityLayer.Dtos
         [StringLength(50)]
         [RegularExpression(@"^[A-Za-z0-9.:,/ -]+$")]
         public string AccountNumber { get; set; } = null!;
-     
+
     }
 }

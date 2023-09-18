@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace EntityLayer.Models
+namespace DeliveryAgent.Entities.Models
 {
     public class AgentTimeSlot
     {

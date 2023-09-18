@@ -1,12 +1,10 @@
-﻿using EntityLayer.Dtos;
-using EntityLayer.Models;
-using System.Collections;
+﻿using DeliveryAgent.Entities.Models;
 
 namespace DataAccessLayer.IRepository
 {
-    public interface IAssignDeliveryAgentRepository: IGenericRepository<AssignDeliveryAgent>
+    public interface IAssignDeliveryAgentRepository : IGenericRepository<AssignDeliveryAgent>
     {
-   
+
     }
 }
 

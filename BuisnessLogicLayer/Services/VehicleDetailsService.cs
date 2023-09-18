@@ -2,9 +2,8 @@
 using BusinessLogicLayer.IServices;
 using DataAccessLayer.IRepository;
 using DeliveryAgent.Entities.Common;
-using EntityLayer.Common;
-using EntityLayer.Dtos;
-using EntityLayer.Models;
+using DeliveryAgent.Entities.Dtos;
+using DeliveryAgent.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLogicLayer.Services
@@ -20,7 +19,7 @@ namespace BusinessLogicLayer.Services
             this.mapper = mapper;
         }
 
-        public async Task<VehicleDetailResponseDto?> GetAsync(long agentId)
+        public async Task<VehicleDetailResponseDto?> GetAsync(long agentId, bool masked)
         {
             var agentDetail = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefaultAsync(u => u.AgentId == agentId);
             if (agentDetail == null || agentDetail.VehicleDetails == null) { return null; }
@@ -28,11 +27,18 @@ namespace BusinessLogicLayer.Services
             var vehicleDetail = agentDetail.VehicleDetails;
             var response = new VehicleDetailResponseDto();
             mapper.Map(vehicleDetail, response);
-            response.RegistrationNumber = CommonFunctions.MaskData(vehicleDetail.RegistrationNumber);
+            if (masked)
+            {
+                response.RegistrationNumber = MaskData.SensitiveInfo(vehicleDetail.RegistrationNumber);
+            }
+            else
+            {
+                response.RegistrationNumber = vehicleDetail.RegistrationNumber;
+            }
             return response;
         }
 
-        public async Task<ResponseDto?> AddDetailsAsync(VehicleDetailsDto vehicleDetailsDto)
+        public async Task<VehicleDetail?> AddDetailsAsync(VehicleDetailsDto vehicleDetailsDto)
         {
             var agentDetails = await unitOfWork.AgentDetailsRepository.GetAllAsQueryable()
             .FirstOrDefaultAsync(u => u.AgentId == vehicleDetailsDto.AgentId);
@@ -44,43 +50,29 @@ namespace BusinessLogicLayer.Services
             }
 
             var addVehicleDetails = new VehicleDetail();
-            mapper.Map(vehicleDetailsDto, addVehicleDetails);
-
             addVehicleDetails.AgentDetailId = agentDetails.Id;
             addVehicleDetails.CreatedOn = DateTime.Now;
             addVehicleDetails.UpdatedOn = DateTime.Now;
+            mapper.Map(vehicleDetailsDto, addVehicleDetails);
 
             await unitOfWork.VehicleDetailsRepository.AddAsync(addVehicleDetails);
-            bool saveResult = await unitOfWork.SaveAsync();
+            await unitOfWork.SaveAsync();
 
-            return new ResponseDto
-            {
-                StatusCode = 200,
-                Success = true,
-                Data = addVehicleDetails,
-                Message = saveResult ? StringConstant.AddedMessage : StringConstant.DatabaseMessage
-            };
+            return addVehicleDetails;
         }
 
-        public async Task<ResponseDto?> UpdateDetailsAsync(long id, VehicleDetailsDto vehicleDetailsDto)
+        public async Task<VehicleDetail?> UpdateDetailsAsync(long id, VehicleDetailsDto vehicleDetailsDto)
         {
             var vehicleDetails = await unitOfWork.VehicleDetailsRepository.GetByIdAsync(id);
-            if (vehicleDetails == null)
+
+            if (vehicleDetails != null)
             {
-                return null;
+                mapper.Map(vehicleDetailsDto, vehicleDetails);
+                vehicleDetails.UpdatedOn = DateTime.Now;
+                await unitOfWork.SaveAsync();
             }
-            mapper.Map(vehicleDetailsDto, vehicleDetails);
-            vehicleDetails.UpdatedOn = DateTime.Now;
-            bool saveResult = await unitOfWork.SaveAsync();
 
-            return new ResponseDto
-            {
-                StatusCode = 200,
-                Success = true,
-                Data = vehicleDetails,
-                Message = saveResult ? StringConstant.UpdatedMessage : StringConstant.DatabaseMessage
-            };
+            return vehicleDetails;
         }
-
     }
 }

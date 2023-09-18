@@ -1,6 +1,6 @@
-﻿using EntityLayer.Models;
+﻿using DeliveryAgent.Entities.Models;
 using System.ComponentModel.DataAnnotations;
-using static EntityLayer.Common.EnumConstants;
+using static DeliveryAgent.Entities.Common.EnumConstants;
 
 namespace DeliveryAgent.Entities.Dtos
 {

@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using DeliveryAgent.Entities.Dtos;
-using EntityLayer.Dtos;
-using EntityLayer.Models;
+using DeliveryAgent.Entities.Models;
 
 namespace BusinessLogicLayer.Mappings
 {

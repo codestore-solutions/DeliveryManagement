@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using EntityLayer.Models;
+using DeliveryAgent.Entities.Models;
 
 namespace DataAccessLayer.Data
 {

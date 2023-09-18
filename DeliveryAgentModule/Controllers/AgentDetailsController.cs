@@ -1,7 +1,7 @@
 ﻿using BusinessLogicLayer.IServices;
+using DeliveryAgent.Entities.Common;
+using DeliveryAgent.Entities.Dtos;
 using DeliveryAgentModule.CustomActionFilter;
-using EntityLayer.Common;
-using EntityLayer.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
@@ -18,13 +18,6 @@ namespace DeliveryAgent.API.Controllers
         {
             this.agentDetailsService = agentDetailsService;
         }
-
-        /*  [HttpGet]
-          public IActionResult Get(string key)
-          {
-              var encryptedKey = EncryptDecryptManager.Encrypt(key);
-              return Ok(encryptedKey);
-          }*/
 
         /// <summary>
         /// Get Agent details by agent Id.
@@ -71,7 +64,8 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> GetDetailByAgentId(long agentId)
         {
             var result = await agentDetailsService.GetDetailByAgentId(agentId);
-            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) :
+                Ok(new ResponseDto { StatusCode = 200, Success = true, Data = result, Message = StringConstant.SuccessMessage });
         }
 
         /// <summary>
@@ -82,14 +76,14 @@ namespace DeliveryAgent.API.Controllers
         [HttpPost("add")]
         [ValidateModel]
         //[Authorize(Roles = "5")]
-        public async Task<IActionResult> AddPersonaltDetailsAsync([FromBody][Required] AgentDetailsDto agentDetailsDto)
+        public async Task<IActionResult> AddAgentDetailsAsync([FromBody][Required] AgentDetailsDto agentDetailsDto)
         {
             var result = await agentDetailsService.AddDetailsAsync(agentDetailsDto);
-            if (result.Success)
+            if (result != null)
             {
-                return Ok(result);
+                return Ok(new ResponseDto { StatusCode = 200, Success = true, Data = result, Message = StringConstant.AddedMessage });
             }
-            return StatusCode(result.StatusCode, result);
+            return BadRequest(new { message = StringConstant.ExistingMessage });
         }
 
         /// <summary>
@@ -104,11 +98,11 @@ namespace DeliveryAgent.API.Controllers
         public async Task<IActionResult> UpdateDetailsAsync([FromQuery][Required] long id, [FromBody] AgentDetailsDto agentDetailsDto)
         {
             var result = await agentDetailsService.UpdateDetailsAsync(id, agentDetailsDto);
-            if (result.Success)
+            if (result != null)
             {
-                return Ok(result);
+                return Ok(new ResponseDto { StatusCode = 200, Success = true, Data = result, Message = StringConstant.UpdatedMessage });
             }
-            return StatusCode(result.StatusCode, result);
+            return NotFound(new { message = StringConstant.ResourceNotFoundError });
         }
 
         /// <summary>
@@ -124,21 +118,26 @@ namespace DeliveryAgent.API.Controllers
             return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
         }
 
+
         [HttpPut("updateProfileCompletedStatus")]
         // [Authorize(Roles = "2,5")]
         public async Task<IActionResult> UpdateProfileCompletedStatusAsync(UpdateProfileCompletedDto updateProfileCompletedDto)
         {
             var result = await agentDetailsService.UpdateProfileCompletedStatusAsync(updateProfileCompletedDto);
-            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) 
+                : Ok(new ResponseDto { StatusCode = 200, Success = true, Data = result, Message = StringConstant.UpdatedMessage });
         }
+
 
         [HttpGet("getProfileCompletedStatus")]
         // [Authorize(Roles = "2,5")]
         public async Task<IActionResult> GetProfileCompletedStatusAsync([FromQuery] long agentId)
         {
             var result = await agentDetailsService.GetProfileCompletedStatusAsync(agentId);
-            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError }) : Ok(result);
+            return result == null ? NotFound(new { message = StringConstant.ResourceNotFoundError })
+                : Ok(new ResponseDto { StatusCode = 200, Success = true, Data = result, Message = StringConstant.SuccessMessage });
         }
+
 
         /// <summary>
         /// Soft delete agent from Business Admin portal.
@@ -148,14 +147,42 @@ namespace DeliveryAgent.API.Controllers
         /// <returns></returns>
         // [Authorize(Roles = "2")]
         [HttpPut("markAgentAsInactive")]
-        public async Task<IActionResult> SoftDeleteAgentAsync([FromQuery][Required]long agentId, [FromQuery][Required]bool isDeleted)
+        public async Task<IActionResult> SoftDeleteAgentAsync([FromQuery][Required] long agentId, [FromQuery][Required] bool isDeleted)
         {
             var result = await agentDetailsService.SoftDeleteAgentAsync(agentId, isDeleted);
             if (result)
             {
-                return Ok(new { message = StringConstant.DeletedMessage});
+                return Ok(new { message = StringConstant.DeletedMessage });
             }
-            return NotFound(new {message = StringConstant.ResourceNotFoundError});
+            return NotFound(new { message = StringConstant.ResourceNotFoundError });
+        }
+
+        /// <summary>
+        /// Get total agents count associated with profile completed and total deliveries count. 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("getTotalAgentsAndDeliveryCount")]
+        // [Authorize(Roles = "2")]
+        public async Task<IActionResult> TotalAgentsAndDeliveryCountAsync()
+        {
+            var result = await agentDetailsService.GetTotalAgentsAndDeliveryCountAsync();
+            return Ok(new ResponseDto {StatusCode = 200, Success = true, Data = result, Message = StringConstant.SuccessMessage});
+        }
+
+        /// <summary>
+        /// Get top performing agents based on deliveries count in past 7 days.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("getTopPerformingAgent")]
+        // [Authorize(Roles = "2")]
+        public async Task<IActionResult> GetTopPerformingAgentListAsync()
+        {
+            var result = await agentDetailsService.GetTopPerformingAgentListAsync();
+            if (result.Any())
+            {
+                return Ok(new ResponseDto { StatusCode = 200, Success = true, Data = result, Message = StringConstant.SuccessMessage });
+            }
+            return NoContent();
         }
 
     }

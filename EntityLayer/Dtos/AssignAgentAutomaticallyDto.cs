@@ -5,17 +5,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EntityLayer.Dtos
+namespace DeliveryAgent.Entities.Dtos
 {
     public class AssignAutomaticObjectDto
     {
         [Required]
         [Range(1, long.MaxValue)]
-        public long OrderId { get; set; } 
+        public long OrderId { get; set; }
 
         [Required]
         [Range(1, long.MaxValue)]
-        public long VendorAddressId { get; set; } 
+        public long VendorAddressId { get; set; }
 
         [Required]
         [Range(0, double.MaxValue)]
@@ -27,11 +27,11 @@ namespace EntityLayer.Dtos
 
         [Required]
         [Range(1, long.MaxValue)]
-        public long DeliveryAddressId { get; set; } 
+        public long DeliveryAddressId { get; set; }
 
         [Required]
         [Range(0, double.MaxValue)]
-        public double DeliveryAddressLatitude { get; set; } 
+        public double DeliveryAddressLatitude { get; set; }
 
         [Required]
         [Range(0, double.MaxValue)]
@@ -43,5 +43,5 @@ namespace EntityLayer.Dtos
     {
         public List<AssignAutomaticObjectDto> List { get; set; } = null!;
     }
-    
+
 }

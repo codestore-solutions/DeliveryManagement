@@ -1,6 +1,6 @@
 ﻿using DataAccessLayer.Data;
 using DataAccessLayer.IRepository;
-using EntityLayer.Models;
+using DeliveryAgent.Entities.Models;
 
 namespace DataAccessLayer.Repository
 {

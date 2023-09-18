@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EntityLayer.Dtos
+namespace DeliveryAgent.Entities.Dtos
 {
     public class UpdateVerificationStatusDto
     {
@@ -21,7 +21,7 @@ namespace EntityLayer.Dtos
         }
 
         [Required]
-        [Range(0,2)]
+        [Range(0, 2)]
         public VerificationStatus verificationStatus { get; set; }
     }
 }
