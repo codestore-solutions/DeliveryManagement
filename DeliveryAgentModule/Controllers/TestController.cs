@@ -1,5 +1,8 @@
-﻿using DeliveryAgent.Entities.Common;
+﻿using DataAccessLayer.IRepository;
+using DataAccessLayer.Repository;
+using DeliveryAgent.Entities.Common;
 using DeliveryAgent.Entities.Dtos;
+using DeliveryAgent.Entities.Models;
 using DeliveryAgentModule.CustomActionFilter;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -19,10 +22,12 @@ namespace DeliveryAgentModule.Controllers
     {
 
         private readonly HttpClient httpClient;
+        private readonly IUnitOfWork unitOfWork;
 
-        public TestController(HttpClient httpClient)
+        public TestController(HttpClient httpClient, IUnitOfWork unitOfWork)
         {
             this.httpClient = httpClient;
+            this.unitOfWork = unitOfWork;
         }
 
         [HttpPost("login")]
@@ -35,16 +40,22 @@ namespace DeliveryAgentModule.Controllers
             {
                 return BadRequest(new { message = StringConstant.MicroserviceError });
             }
+            
             var content = await microserviceResponse.Content.ReadAsStringAsync();
             var data = JsonConvert.DeserializeObject<MyDataClass>(content);
             if (data == null)
             {
                 return NotFound(new { message = StringConstant.ResourceNotFoundError });
             }
-
+            AgentDetail existingUser;
             foreach (var item in data.Data)
             {
-                if (IsValidCredentials(item.Email, item.Password, loginRequestDto))
+                existingUser = unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefault(u => u.AgentId.ToString() == item.Id);
+                //check if user doesnot exist here or is deleted then return Error
+                if (existingUser == null || existingUser.IsDeleted)
+                    break;
+
+                else if (IsValidCredentials(item.Email, item.Password, loginRequestDto))
                 {
                     var jwtToken = GenerateJwtToken(item);
                     var responseDto = new LoginResponseDto

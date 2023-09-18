@@ -39,7 +39,7 @@ namespace BusinessLogicLayer.Services
         {
             using var client = new HttpClient();
             var responseObject = new List<object>();
-            bool saveResult = false;
+
             foreach (var obj in assignManuallyDto.List)
             {
                 var assignNewAgent = new AssignDeliveryAgent();
@@ -52,24 +52,13 @@ namespace BusinessLogicLayer.Services
                   timer.Elapsed += (sender, e) => HandleTimeout(obj.OrderId);
                   Console.WriteLine("Timer started. Waiting for 30 seconds...");
                   timer.Start();*/
-                saveResult = await unitOfWork.SaveAsync();
                 responseObject.Add(assignNewAgent);
             }
+            await unitOfWork.SaveAsync();
 
-            // Updating order status in order-processing module.
-            var requestBody = new UpdateOrderStatus();
-            requestBody.orderStatus = 5;
-            foreach (var obj in assignManuallyDto.List)
-            {
-                var order = new Order
-                {
-                    orderId = obj.OrderId,
-                    deliveryAgentId = obj.AgentId,
-                };
-                requestBody.orders.Add(order);
-            }
+            //Now status will be updated from frontend if this service respondes with 200
 
-            HttpContent requestJson = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json");
+            /*HttpContent requestJson = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json");
             // Add the authorization header with the token
             string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFtYW4uc2hhaEBleGFtcGxlLmNvbSIsInJvbGUiOiIyIiwiaWQiOiIyIiwiYnVzaW5lc3NDYXRlZ29yeSI6IjEiLCJleHAiOjE2OTQ2Njg1NTd9.5o0-bpi-JluyVoztkzksonQRmCINzYjPYle6xVu4HHo";
             client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
@@ -92,7 +81,14 @@ namespace BusinessLogicLayer.Services
                     Success = false,
                     Message = StringConstant.MicroserviceError
                 };
-            }
+            }*/
+            return new ResponseDto()
+            {
+                StatusCode = 200,
+                Success = true,
+                Data = responseObject,
+                Message = StringConstant.AssignedSuccessMessage
+            };
         }
 
         public async Task<IEnumerable<AutomaticallyAssignResponseDto>?> AssignAgentAutomaticallyAsync(AssignAgentAutomaticallyDto assignAgentAutomaticallyDto)

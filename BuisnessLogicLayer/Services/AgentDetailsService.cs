@@ -204,6 +204,7 @@ namespace BusinessLogicLayer.Services
                 if(agent != null)
                 {
                     agentList.AgentId = agent.AgentId;
+                    agentList.Email = agent.Email;
                     agentList.AgentName = agent.FullName;
                     agentList.DeliveryCount = agentGroup.Count;
                     agentList.Region = agent.Address;

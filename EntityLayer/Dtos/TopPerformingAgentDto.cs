@@ -10,6 +10,7 @@ namespace DeliveryAgent.Entities.Dtos
     {
         public long AgentId { get; set; }
         public string AgentName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
         public int DeliveryCount { get; set; }
         public string Region { get; set; } = string.Empty;
 
