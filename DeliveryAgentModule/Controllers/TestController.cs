@@ -47,15 +47,12 @@ namespace DeliveryAgentModule.Controllers
             {
                 return NotFound(new { message = StringConstant.ResourceNotFoundError });
             }
-            AgentDetail existingUser;
+            List<string> existingUsers;
+            existingUsers = unitOfWork.AgentDetailsRepository.GetAllAsQueryable().Where(u => !u.IsDeleted).Select(u => u.AgentId.ToString()).ToList();
             foreach (var item in data.Data)
             {
-                existingUser = unitOfWork.AgentDetailsRepository.GetAllAsQueryable().FirstOrDefault(u => u.AgentId.ToString() == item.Id);
                 //check if user doesnot exist here or is deleted then return Error
-                if (existingUser == null || existingUser.IsDeleted)
-                    break;
-
-                else if (IsValidCredentials(item.Email, item.Password, loginRequestDto))
+                if (existingUsers != null && existingUsers.Contains(item.Id) && IsValidCredentials(item.Email, item.Password, loginRequestDto))
                 {
                     var jwtToken = GenerateJwtToken(item);
                     var responseDto = new LoginResponseDto
