@@ -119,8 +119,8 @@ const ReqComponent: React.FC<Props> = ({
       // console.log('payload', payload);
       const res = await OrderServices.pickupAndDeliveryRequest(payload, data);
       if (res?.statusCode === ApiConstant.successCode) {
-        // handleRefresh(data);
-        updateOrderList(item?.id);
+        handleRefresh(data);
+        // updateOrderList(item?.id);
         closeModal();
       }
     } catch (err) {
