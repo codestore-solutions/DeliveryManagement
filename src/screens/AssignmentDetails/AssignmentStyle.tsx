@@ -4,6 +4,9 @@ import globalStyle from '../../global/globalStyle';
 
 
 const styles = StyleSheet.create({
+    scrollViewContent: {
+        flexGrow: 1,
+      },
     container:{
         backgroundColor:'#fff',
         paddingHorizontal:10,
@@ -38,6 +41,10 @@ const styles = StyleSheet.create({
         lineHeight:24,
         paddingVertical:4
     },
+    switch: {
+        height: 30,
+        transform: [{scaleX: 1.2}, {scaleY: 1.2}],
+      },
     detailsUser:{
         marginVertical:15
     },
@@ -64,7 +71,6 @@ const styles = StyleSheet.create({
     avatar:{},
     avatarLabel:{
         color:globalStyle.colors.labelColor,
-        paddingLeft:15,
         fontWeight:'500',
         fontSize:20,
         lineHeight:25
@@ -106,6 +112,43 @@ const styles = StyleSheet.create({
     },
     btnContainerDel:{
        
+    },
+    timeLineContainer:{
+        display:'flex',
+        flexDirection:'row' ,
+        justifyContent:'space-between'
+    },
+   
+    imagesButtons:{
+        
+    },
+    imageContainer:{
+        marginTop:-40,
+        display:'flex',
+        flexDirection:'row',
+        gap:10,
+        padding:5,
+        marginBottom:30
+       
+    },
+    image:{
+        height:180,
+        width:'100%',  
+         borderColor:"#CCCCCC",
+         borderWidth:1,
+         borderRadius:10,
+    },
+    preview:{
+        height:180,
+        width:'100%',
+        resizeMode:'cover',
+        borderRadius:10,
+        padding: 5,
+    },
+    tag:{
+        flex:6,
+        justifyContent:'center',
+        alignItems:'center',
     }
 });
 

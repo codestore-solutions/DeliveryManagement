@@ -1,7 +1,5 @@
 // import {useNavigation} from '@react-navigation/native';
 import {constant} from '../constant/GenralConstant'
-import { RootState } from '../store';
-import { useAppSelector } from '../store/hooks';
 import axios from '../utils/intercepters/axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import UserHelper from '../utils/helpers/user'
@@ -14,14 +12,20 @@ import UserHelper from '../utils/helpers/user'
  * @param payloadType Differtiate the form data type multipart/application-json
  * @returns Genric http methods response
  */
+
+const getToken = () =>{
+  const data = UserHelper.getUser();
+  return data;
+}
 export default async function API(
   payload: Object,
   endpoint: string,
   apiMethod: string,
   params?: Object,
-  auth?: string,
 ) {
   let init: Object = {};
+  const data = await getToken();
+  let auth = data?.jwtToken;
   switch (apiMethod) {
     case "GET":
       init = {
@@ -47,7 +51,6 @@ export default async function API(
       break;
 
     case "PUT":
-     
       init = {
         method: "PUT",
         url: `${endpoint}`,
@@ -71,7 +74,7 @@ export default async function API(
         };
       break;
   }
-  console.log("Api URL ::" ,init, `${endpoint}`);
+
 
   return axios(init)
     .then((res) => {

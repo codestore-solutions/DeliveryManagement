@@ -1,5 +1,5 @@
 import {View, Text, StyleSheet} from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {TabView, TabBar} from 'react-native-tab-view';
 import AssignmentScreen from './AssignmentScreen';
 import PendingAssignment from './PendingAssignment';
@@ -7,16 +7,21 @@ import CompletedAssignment from './CompletedAssignment';
 import {useAppSelector} from '../../store/hooks';
 import {RootState} from '../../store';
 import IgnoredAssignment from './IgnoredAssignment';
+import { useRoute } from '@react-navigation/native';
 
 const AssignmentTabination = () => {
+  const route = useRoute();
+  const initialIdx = (route.params as { index?: number })?.index || 0;
+  console.log('route',initialIdx);
   const {data} = useAppSelector((state: RootState) => state.auth);
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(initialIdx);
   const [routes] = useState([
     {key: '1', title: 'Pending'},
     {key: '2', title: 'Ongoing'},
     {key: '3', title: 'Completed'},
     {key: '4', title: 'Rejected'},
   ]);
+ 
   const renderScene = ({route}: any) => {
     switch (route.key) {
       case '1':
@@ -48,6 +53,7 @@ const AssignmentTabination = () => {
     }
   };
 
+ 
   const renderTabBar = (props: any) => (
     <TabBar
       {...props}
@@ -98,7 +104,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0,
   },
   indicator: {
-    backgroundColor: '#f2f2f2', // Set the indicator width to 0 to hide it
+    backgroundColor: '#f2f2f2',
     height: 0,
     width: 0,
   },
@@ -110,6 +116,7 @@ const styles = StyleSheet.create({
     textDecorationLine: 'none',
     paddingVertical: 10,
     paddingHorizontal: 5,
+    marginRight:10,
     backgroundColor: '#EAEAEA',
     borderRadius: 25,
     marginHorizontal: 5,

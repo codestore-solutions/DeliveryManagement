@@ -19,8 +19,10 @@ const styles = StyleSheet.create({
         borderRadius:10,
       },
        inputContainermob:{
-        paddingHorizontal:2,
-        
+        paddingVertical:10,
+        borderColor:'#CCCCCC',
+        borderWidth:1,
+        borderRadius:10,
       },
       inputBox:{
          color:globalStyle.colors.labelColor

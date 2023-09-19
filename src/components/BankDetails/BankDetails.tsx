@@ -15,12 +15,13 @@ interface Props {
 }
 const BankDetails: React.FC<Props> = ({data, index, goToPrevIndex, goToNextIndex}) => {
   const [bankDetails, setBankDetails] = useState<any>(null);
+  const [bankDetailsOpen, setBankDetailsOpen] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
   const [notFound, setNotFound] = useState<boolean>(false);
 
-  const updateDetails = (data: any) => {
-    setBankDetails(data);
+  const updateDetails = (updatedata: any) => {
+    fetchbankDetails(data?.id);
   };
   const onEdit = () => {
     setEdit(false);
@@ -66,6 +67,7 @@ const BankDetails: React.FC<Props> = ({data, index, goToPrevIndex, goToNextIndex
       let {data} = await AgentServices.getAgentDetails(
         id,
         ApiConstant.getbankdetailEndpoint,
+        true
       );
       // console.log('data', data)
       if (data !== null) {
@@ -84,10 +86,27 @@ const BankDetails: React.FC<Props> = ({data, index, goToPrevIndex, goToNextIndex
       setLoading(false);
     }
   };
-
+  
+  const fetchbankDetailsUnMasked = async (id: string) => {
+    try {
+      setLoading(true);
+      let {data} = await AgentServices.getAgentDetails(
+        id,
+        ApiConstant.getbankdetailEndpoint,
+        false
+      );
+      if (data !== null) {
+        setBankDetailsOpen(data);
+      } 
+      setLoading(false);
+    } catch (err:any) {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    if(index === 3){
+    if(index === 2){
       fetchbankDetails(data?.id);
+      fetchbankDetailsUnMasked(data?.id)
       if(notFound){
           setEdit(false);
       }
@@ -99,11 +118,11 @@ const BankDetails: React.FC<Props> = ({data, index, goToPrevIndex, goToNextIndex
   } else {
     return (
       <View style={[styles.container]}>
-        {!edit ? (
+        {!edit && !loading ? (
           <BankDetailForm
             data={data}
             onCancel={onCancel}
-            bankDetails={bankDetails}
+            bankDetails={bankDetailsOpen}
             updateDetails={updateDetails}
             notFound={notFound}
             goToPrevIndex={goToPrevIndex}

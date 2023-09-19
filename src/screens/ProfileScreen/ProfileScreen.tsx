@@ -29,7 +29,7 @@ const ProfileScreen = () => {
           <Text style={styles.profileFounded}>Agent Id - 45</Text>
           <Text style={styles.profileFounded}>Business Id: 2342</Text>
           <View style={styles.profileDescription}>
-            <Text>Your Verfication request is under process. Please wait for Verification. </Text>
+            <Text>Your Verification request is under process. Please wait for Verification. </Text>
           </View>
         </View>
       </View>

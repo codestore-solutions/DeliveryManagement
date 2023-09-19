@@ -1,4 +1,5 @@
 import {ApiConstant} from '../constant/ApiConstant';
+import axios from 'axios';
 import { acceptRejectInterface, pickupAndDelivery } from '../utils/types/deliveryRequestTypes';
 import API from './ApiBase';
 import Toast from 'react-native-toast-message';
@@ -12,13 +13,26 @@ const OrderServices = {
       pageSize: payload?.pageSize,
       orderStatus: payload?.status,
     };
-    const res = await API({}, url, 'GET', params, data?.jwtToken);
-    return res?.data;
+  
+    try {
+      const response = await axios.get(url, {
+        params: params,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: data?.jwtToken ? "Bearer " + data?.jwtToken : "",
+        },
+      });
+      return response?.data;
+    } catch (err) {
+      console.error('Request error:', err);
+      throw err;
+    }
   },
+  
   // Get a Single Delivery Request Details By Id
   getOrderDetailsById: async (id: string | undefined, data:any) => {
     let url = `${ApiConstant.orderUrl}/v1/${ApiConstant.getOrderDetailsById}/${id}`;
-    let res = await API({}, url, "GET",{}, data?.jwtToken);
+    let res = await API({}, url, "GET");
     return res?.data;
   },
   acceptAndRejectDeliveryRequest: async (payload: acceptRejectInterface, data:any) => {
@@ -44,9 +58,9 @@ const OrderServices = {
     return res?.data;
   },
  getOrderTimeline :async (id: number, data:any) =>{
-  console.log('data', data)
+  // console.log('data', data)
     let url = `${ApiConstant.orderUrl}/v1/${ApiConstant.getOrderTimeLine}/${id}`;
-    let res = await API({}, url, "GET",{},data?.jwtToken);
+    let res = await API({}, url, "GET");
     return res?.data;
   }
 };

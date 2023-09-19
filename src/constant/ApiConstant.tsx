@@ -11,7 +11,7 @@ export const ApiConstant = {
     internalServerError: 500,
     notFound: 404,
     
-    //Authentiction endpoint
+    //Authentication endpoint
     loginEndpoint:  'testing/login',
     // Agents EndPoints
     agentDetails: 'agentDetail',
@@ -21,20 +21,21 @@ export const ApiConstant = {
     // Address Api EndPoints
     changeWorkingLocation:'working-location/updateActiveStatus',
     addNewWorkingLocationEndpoint:'working-location',
+    updateWorkingLocationEndpoint:'working-location',
     getAgentStatus:'working-location/getAvailabilityStatus',
     updateAgentStatus:'working-location/updateAgentStatus',
-    // Agent Onboarding Api Enpoints
+    // Agent Onboarding Api Endpoints
     personalDetailendpoint:'personal-details/get',
     addpersonalDetailendpoint:'personal-details/add',
     updatepersonalDetailendpoint:'personal-details/update',
     kycDetailendpoint:'KYC',
     addvehicleDetailendpoint:'vehicle-details/add',
-    getvechileDetailendpoint:'vehicle-details/get',
+    getVehicleDetailEndPoint:'vehicle-details/get',
     updatevechileDetailendpoint:'vehicle-details/update',
     getbankdetailEndpoint:'bank-details/get',
     addbankdetailEndpoint:'bank-details/add',
     updatebankdetailEndpoint:'bank-details/update',
-     // Orders Requets Endpoints
+     // Orders Request Endpoints
     getOrderRequest:'delivery/getOrdersByDeliveryAgentId',
     acceptAndRejectOrderRequest:'assignAgent/acceptOrReject',
     pickupAndDelivery: 'assignAgent/updatePickupOrDeliveryStatus',
@@ -45,6 +46,8 @@ export const ApiConstant = {
     //Time Slots
     getTimeSlots:'TimeSlot/getAllTimeSlots',
     getActiveTimeSlots:'TimeSlot/getAllActiveTimeSlots',
-    updateTimeSlots:'TimeSlot/updateSlotsStatus'
+    updateTimeSlots:'TimeSlot/updateSlotsStatus',
+    getAgentAndDeliveryCounts:'assignAgent/CountDeliveredOrRejectedOrders',
+    getTimeSlotsWithIds:'TimeSlot/getBySlotIds',
     
   };

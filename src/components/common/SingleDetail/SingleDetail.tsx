@@ -27,7 +27,6 @@ const SingleDetail: React.FC<Props> = ({label, value, type, addUrl}) => {
     setVisible(false);
   };
 
-
   const uploadImage = async(selectedImage:any) =>{
       const {statusCode, data} = await UploadService.uploadImage(selectedImage);
       if(statusCode === ApiConstant.successCode){
@@ -40,7 +39,6 @@ const SingleDetail: React.FC<Props> = ({label, value, type, addUrl}) => {
   }
  
  
-
   return (
     <View style={styles.container}>
       <View style={styles.containerLeft}>

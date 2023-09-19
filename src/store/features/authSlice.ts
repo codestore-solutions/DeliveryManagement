@@ -130,6 +130,7 @@ const authSlice = createSlice({
       })
       .addCase(getAgentProfileStatus.fulfilled, (state, action) => {
         state.loading = false;
+        // console.log("SETING Status", action.payload?.data?.isProfileCompleted)
         state.profileStatus = action.payload?.data?.isProfileCompleted;
       })
       .addCase(getAgentProfileStatus.rejected, (state, action) => {

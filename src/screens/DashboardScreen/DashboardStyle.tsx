@@ -3,6 +3,7 @@ import globalStyle from '../../global/globalStyle';
 
 const styles = StyleSheet.create({
   dashboard: {
+    flex:1,
     backgroundColor: '#fff',
     paddingHorizontal: 8,
     paddingVertical: 5,
@@ -12,6 +13,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    paddingVertical:10
   },
   dropdown: {
     width: '50%',

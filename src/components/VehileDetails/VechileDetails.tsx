@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, Image} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import globalStyle from '../../global/globalStyle';
 import SingleDetail from '../common/SingleDetail/SingleDetail';
@@ -16,12 +16,14 @@ interface Props {
 }
 
 const VehileDetails: React.FC<Props> = ({data, index, goToNextIndex}) => {
-  const [vechileDetails, setVechileDetails] = useState<any>(null);
+  const [vehicleDetails, setVehicleDetails] = useState<any>(null);
+  const [vehicleDetailsOpen, setVehicleDetailsOpen] = useState<any>(null);
+  console.log('vechileDetails', vehicleDetails);
   const [notFound, setNotFound] = useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const updateDetails = (data: any) => {
-    setVechileDetails(data);
+  const updateDetails = (updatedata: any) => {
+    fetchVechileDetails(data?.id);
   };
   const onEdit = () => {
     setEdit(false);
@@ -35,12 +37,12 @@ const VehileDetails: React.FC<Props> = ({data, index, goToNextIndex}) => {
       setLoading(true);
       const {data} = await AgentServices.getAgentDetails(
         id,
-        ApiConstant.getvechileDetailendpoint,
+        ApiConstant.getVehicleDetailEndPoint,
+        true
       );
-      // console.log("Vex data", data);
       if (data) {
-        setVechileDetails(data);
-        setEdit(true);
+          setVehicleDetails(data);
+          setEdit(true);
       } else {
         setEdit(false);
       }
@@ -50,7 +52,25 @@ const VehileDetails: React.FC<Props> = ({data, index, goToNextIndex}) => {
         setEdit(false);
         setNotFound(true);
       }
-      console.log('Vechile Detail Fetching Error', err);
+      console.log('Vehicle Detail Fetching Error', err);
+      setLoading(false);
+    }
+  };
+
+  const fetchVechileDetailsUnMasked = async (id: string) => {
+    try {
+      setLoading(true);
+      const {data} = await AgentServices.getAgentDetails(
+        id,
+        ApiConstant.getVehicleDetailEndPoint,
+        false
+      );
+      if (data) {
+         
+          setVehicleDetailsOpen(data);
+      } 
+      setLoading(false);
+    } catch (err: any) {
       setLoading(false);
     }
   };
@@ -59,59 +79,79 @@ const VehileDetails: React.FC<Props> = ({data, index, goToNextIndex}) => {
     {
       key: 1,
       label: 'Vehicle Type',
-      value: getVehicleLabel(vechileDetails?.vehicleType),
+      value: getVehicleLabel(vehicleDetails?.vehicleType),
     },
     {
       key: 2,
       label: 'Brand',
-      value: vechileDetails?.company,
+      value: vehicleDetails?.company,
     },
     {
       key: 3,
       label: 'ManufacturedYear',
-      value: vechileDetails?.manufacturedYear,
+      value: vehicleDetails?.manufacturedYear,
     },
     {
       key: 4,
       label: 'Model',
-      value: vechileDetails?.vehicleModel,
+      value: vehicleDetails?.vehicleModel,
     },
     {
       key: 5,
       label: 'Registration Number',
-      value: vechileDetails?.registrationNumber,
+      value: vehicleDetails?.registrationNumber,
+    },
+    {
+      key: 6,
+      label: 'Vehicle Image',
+      value: vehicleDetails?.vehicleImage,
     },
   );
+
   useEffect(() => {
-    if (index === 2) {
+    if (index === 1) {
+      setLoading(true)
       fetchVechileDetails(data?.id);
+      fetchVechileDetailsUnMasked(data?.id)
+      setLoading(false)
       if (notFound) {
         setEdit(false);
       }
     }
-  }, [data?.id, index]);
+  }, [data, index]);
 
   if (loading) {
     return <Loader />;
   } else {
     return (
       <View style={styles.container}>
-        {!edit ? (
+        {loading ? (
+          <Loader />
+        ) : !edit && !loading ? (
           <VechileDetailsForm
             onCancel={onCancel}
             data={data}
-            vechileDetails={vechileDetails}
+            vechileDetails={vehicleDetailsOpen}
             updateDetails={updateDetails}
             goToNextIndex={goToNextIndex}
           />
         ) : (
           <>
             <Text style={styles.heading}>Your Vehicle Details</Text>
-            {dataArr?.map((item: any) => (
-              <View style={styles.row} key={item.key}>
-                <SingleDetail label={item.label} value={item.value} />
+            {dataArr?.map(
+              (item: any) =>
+                item.key !== 6 ? (
+                  <View style={styles.row} key={item.key}>
+                    <SingleDetail label={item.label} value={item.value} />
+                  </View>
+                ) :<View style={styles.imageContainer}>
+                <Image
+                  source={{uri: item?.value + `?${new Date()}`}}
+                  style={{width: '100%', height: 200, resizeMode: 'contain'}}
+                />
               </View>
-            ))}
+            )}
+            
             <View style={styles.lower}>
               <CustomButton title={'Edit Details'} onPress={onEdit} />
             </View>
@@ -135,6 +175,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     flex: 1,
   },
+  imageContainer: {
+    height: 130,
+    width: '100%',
+  },
   lower: {
     width: '100%',
     position: 'absolute',
@@ -145,7 +189,7 @@ const styles = StyleSheet.create({
   row: {
     marginVertical: 10,
   },
-  btnConatiner: {
+  btnContainer: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',

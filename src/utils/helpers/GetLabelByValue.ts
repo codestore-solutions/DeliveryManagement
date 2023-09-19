@@ -24,7 +24,7 @@ export function generateLabelArray(dataArray: Array<any>) {
   const resultArray = [];
 
   for (const data of dataArray) {
-    const label = `${data.startTime} - ${data.endTime}`;
+    const label = `${data.slotName}`;
     const newObj = {
       label,
       value: data.id,
@@ -32,5 +32,22 @@ export function generateLabelArray(dataArray: Array<any>) {
     resultArray.push(newObj);
   }
 
+  return resultArray;
+}
+
+export function generateIdArray(dataArray: Array<any>) {
+  const resultArray = [];
+  if(dataArray){
+    for (const data of dataArray) {
+      const id = `${data.timeSlotId}`;
+      resultArray.push(Number(id));
+    }
+  }
+
+  return resultArray;
+}
+
+export function generateDaysArray(days: string) {
+  const resultArray = days?.split(" ");
   return resultArray;
 }

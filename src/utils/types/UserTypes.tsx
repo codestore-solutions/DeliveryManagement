@@ -12,6 +12,7 @@ export interface personalDetailInterface {
   gender: string;
   dateOfBirth: string;
   address: string;
+  profileImage: string;
 }
 
 export interface vehicleDetailInterface {

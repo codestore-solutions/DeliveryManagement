@@ -9,6 +9,7 @@ import OrderServices from '../../services/OrderServices';
 import {VericalMenuIcon} from '../../assets';
 import {FlatList} from 'react-native';
 import Loader from '../../components/common/Loader/Loader';
+import NotAvailable from '../../components/common/NotAvailable/NotAvailable';
 
 interface Props {
   userData: any;
@@ -25,12 +26,9 @@ const IgnoredAssignment: React.FC<Props> = ({userData, index}) => {
   };
   const handleRefresh = useCallback(() => {
     setRefreshing(true);
-    // Call the function to fetch the updated data here
     fetchCompletedRequestList(userData).finally(() => setRefreshing(false));
   }, [userData]);
-  const renderItem = ({item}: any) => (
-    <ReqComponent item={item} onPress={() => navigate(item)} />
-  );
+  const renderItem = ({item}: any) => <ReqComponent item={item} />;
 
   const fetchCompletedRequestList = async (userData: any) => {
     try {
@@ -45,37 +43,33 @@ const IgnoredAssignment: React.FC<Props> = ({userData, index}) => {
         userData,
       );
       if (statusCode === ApiConstant.successCode) {
-        console.log('data', data);
         setOrderList(data);
       }
     } catch (err) {
-      console.log('Fexthing Pending Request Error', err);
+      console.log('Fetching Rejected Request Error', err);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchCompletedRequestList(userData);
+    if (index === 3) {
+      fetchCompletedRequestList(userData);
+    }
   }, [userData, handleRefresh, index]);
   return (
     <SafeAreaView style={{flex: 1}}>
       {loading ? (
         <Loader />
-      ) : orderList?.totalOrders === 0 ? (
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          <Text style={{fontSize: 20, color: 'black'}}>
-            No Avialable Orders.
-          </Text>
-        </View>
+      ) : !orderList ? (
+        // <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        //   <Text style={{fontSize: 20, color: 'black'}}>
+        //     No Available Orders.
+        //   </Text>
+        // </View>
+        <NotAvailable />
       ) : (
         <View style={styles.container}>
-          {/* <View style={styles.header}>
-        <Text style={styles.pageHeading}>Ignored Request</Text>
-        <View style={styles.menuIcon}>
-          <VericalMenuIcon width={20} height={20} />
-        </View>
-      </View> */}
           <FlatList
             data={orderList?.list}
             showsVerticalScrollIndicator={false}

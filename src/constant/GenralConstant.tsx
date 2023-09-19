@@ -2,7 +2,7 @@ import { DeliveryImg } from "../assets";
 export var constant = {
   //App Connstants
   defaultLanguage: 'en',
-  appTitle:'App Title',
+  appTitle:'Delivery Agent App',
   appLogo: <DeliveryImg/> ,
   splashScreenTiltle:'Welcome to Agent App',
   drawernavItems:{

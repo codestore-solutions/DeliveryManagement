@@ -10,8 +10,9 @@ import Toast from 'react-native-toast-message';
 
 const AgentServices = {
   // Get All Details of Agent
-  getAgentDetails: async (id: string, endPoint: string) => {
-    const url = `${ApiConstant.baseUrl}${endPoint}?agentId=${id}`;
+  getAgentDetails: async (id: string, endPoint: string, masked?: boolean) => {
+    console.log('masked', masked)
+    const url = `${ApiConstant.baseUrl}${endPoint}?agentId=${id}&masked=${masked}`;
     const res = await API({}, url, 'GET');
     return res?.data;
   },
@@ -33,7 +34,7 @@ const AgentServices = {
     id: number,
   ) => {
     const url = `${ApiConstant.baseUrl}${ApiConstant.updatepersonalDetailendpoint}?id=${id}`;
-    // console.log('updated', payload, id);
+    console.log('updated', payload, id);
     const res = await API(payload, url, 'PUT');
     if (res?.data.statusCode === ApiConstant.successCode) {
       Toast.show({
@@ -47,7 +48,7 @@ const AgentServices = {
 
   addUpdateKycDetails: async (payload: any) => {
     const url = `${ApiConstant.baseUrl}${ApiConstant.kycDetailendpoint}`;
-    console.log('p', payload);
+    
     const res = await API(payload, url, 'PUT');
     if (res?.data.statusCode === ApiConstant.successCode) {
       Toast.show({
@@ -61,7 +62,7 @@ const AgentServices = {
 
   addVehicleDetails: async (payload: vehicleDetailInterface) => {
     const url = `${ApiConstant.baseUrl}${ApiConstant.addvehicleDetailendpoint}`;
-    console.log('p', payload);
+    // console.log('p', payload);
     const res = await API(payload, url, 'POST');
     if (res?.data.statusCode === ApiConstant.successCode) {
       Toast.show({
@@ -73,6 +74,7 @@ const AgentServices = {
   },
   updateVechileDetail: async (payload: vehicleDetailInterface, id: number) => {
     const url = `${ApiConstant.baseUrl}${ApiConstant.updatevechileDetailendpoint}?id=${id}`;
+    console.log('update Vehicle', url, payload)
     const res = await API(payload, url, 'PUT');
     if (res?.data.statusCode === ApiConstant.successCode) {
       Toast.show({
@@ -85,7 +87,7 @@ const AgentServices = {
   // Bank Detail Services
   addBankDetails: async (payload: bankDetailInterface) => {
     const url = `${ApiConstant.baseUrl}${ApiConstant.addbankdetailEndpoint}`;
-    console.log('p', payload);
+    // console.log('p', payload);
     const res = await API(payload, url, 'POST');
     if (res?.data.statusCode === ApiConstant.successCode) {
       Toast.show({
@@ -122,7 +124,24 @@ const AgentServices = {
     return res?.data;
   },
 
-  
+  getTotalAgentAndDelivery: async (id: number) => {
+    let params = {
+      agentId: id,
+    };
+    let url = `${ApiConstant.baseUrl}${ApiConstant.getAgentAndDeliveryCounts}`;
+    const res = await API({}, url, "GET", params);
+    return res?.data;
+  },
+
+ getTimSlotsByIds : async (params: { slotIds: number[] }) => {
+    let url = `${ApiConstant.baseUrl}${ApiConstant.getTimeSlotsWithIds}`;
+    // Constructing the query string from the array of ids
+    let queryString = params.slotIds.map(id => `slotIds=${id}`).join('&');
+    url = `${url}?${queryString}`;
+    console.log("Constructed URL:", url);
+    let res = await API({}, url, "GET");
+    return res?.data;
+  }
   
 };
 
