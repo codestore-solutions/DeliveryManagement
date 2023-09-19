@@ -1,8 +1,6 @@
 ﻿using DataAccessLayer.IRepository;
-using DataAccessLayer.Repository;
 using DeliveryAgent.Entities.Common;
 using DeliveryAgent.Entities.Dtos;
-using DeliveryAgent.Entities.Models;
 using DeliveryAgentModule.CustomActionFilter;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -40,19 +38,25 @@ namespace DeliveryAgentModule.Controllers
             {
                 return BadRequest(new { message = StringConstant.MicroserviceError });
             }
-            
+
             var content = await microserviceResponse.Content.ReadAsStringAsync();
             var data = JsonConvert.DeserializeObject<MyDataClass>(content);
             if (data == null)
             {
                 return NotFound(new { message = StringConstant.ResourceNotFoundError });
             }
-            List<string> existingUsers;
-            existingUsers = unitOfWork.AgentDetailsRepository.GetAllAsQueryable().Where(u => !u.IsDeleted).Select(u => u.AgentId.ToString()).ToList();
+            List<string> deletedUsers;
+            deletedUsers = unitOfWork.AgentDetailsRepository.GetAllAsQueryable().Where(u => u.IsDeleted).Select(u => u.AgentId.ToString()).ToList();
             foreach (var item in data.Data)
             {
-                //check if user doesnot exist here or is deleted then return Error
-                if (existingUsers != null && existingUsers.Contains(item.Id) && IsValidCredentials(item.Email, item.Password, loginRequestDto))
+                //check if user is deleted then return Error
+                if (deletedUsers != null && deletedUsers.Contains(item.Id))
+                {
+                    return BadRequest(new { message = StringConstant.InvalidCredentialError });
+                }
+                    
+
+                if (IsValidCredentials(item.Email, item.Password, loginRequestDto))
                 {
                     var jwtToken = GenerateJwtToken(item);
                     var responseDto = new LoginResponseDto
