@@ -22,6 +22,12 @@ const styles = StyleSheet.create({
       alignItems:'center',
       gap:5
   }
+  ,inputlabel:{
+    paddingLeft:3,
+    paddingBottom:5,
+    color:'#7E8299',
+    fontWeight:'500'
+  }
 });
 
 export default styles;

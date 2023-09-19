@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
+  PixelRatio,
+  SafeAreaView,
 } from 'react-native';
 import {AddIcon, CheckedRadioIcon, RadioIcon} from '../../assets';
 import globalStyle from '../../global/globalStyle';
@@ -20,17 +22,26 @@ import {
 } from '../../store/features/authSlice';
 import {setLocationInterface} from '../../utils/types/addressTypes';
 import {updateProfileInterface} from '../../utils/types/UserTypes';
+import NotAvailable from '../common/NotAvailable/NotAvailable';
+import AgentServices from '../../services/AgentServices';
+import {ApiConstant} from '../../constant/ApiConstant';
+import {useIsFocused} from '@react-navigation/native';
 
-const AddAddress: React.FC<{index?: number}> = ({index}) => {
+const AddAddress: React.FC<{index?: number; page?: boolean}> = ({
+  index,
+  page,
+}) => {
+  const isFocused = useIsFocused();
   const dispatch = useAppDispatch();
   const {data, profileStatus} = useAppSelector(
     (state: RootState) => state.auth,
   ) as AuthStateInterface;
-  console.log('profileStatus', profileStatus);
-  const [selectedIndex, setIndex] = React.useState(0);
-  const [locations, setLocations] = React.useState<any>(null);
+  // console.log('profileStatus', profileStatus);
+  const [locations, setLocations] = React.useState<any>([]);
+  const [timeSlots, setTimeSlots] = React.useState<any>([]);
+  const [ids, setIds] = React.useState<any>([]);
   const [edit, setEdit] = useState<boolean>(false);
-  const [editAddress, setEditAddress] = useState<any>(false);
+  const [editAddress, setEditAddress] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const isEdit = () => {
     setEdit(true);
@@ -60,18 +71,39 @@ const AddAddress: React.FC<{index?: number}> = ({index}) => {
     isEdit();
   };
 
+  const getTimeSlots = async () => {
+    try {
+      const timeSlotIds = [];
+      for (const item of locations) {
+        for (const slot of item.agentTimeSlots) {
+          timeSlotIds.push(slot.timeSlotId);
+        }
+      }
+      let params = {
+        slotIds: timeSlotIds,
+      };
+      const {statusCode, data} = await AgentServices.getTimSlotsByIds(params);
+      if (statusCode === ApiConstant.successCode) {
+        setTimeSlots(data);
+      }
+    } catch (err) {
+      console.log('err', err);
+    }
+  };
   const renderItem = (item: any) => {
     let arr = item?.selectedDays.split(' ');
     const getFirstThreeChars = (selectedDays: string[]) => {
       return selectedDays.map(day => day.substring(0, 3));
     };
-
     const firstThreeCharsOfSelectedDays = getFirstThreeChars(arr);
+    console.log('timeSlots', timeSlots);
     return (
       <Pressable
         style={styles.card}
         key={item.id}
-        onPress={() => setActiveLocation(item)}>
+        onPress={() => {
+          if (!item?.isActive) setActiveLocation(item);
+        }}>
         <View style={styles.cardLeft}>
           {item?.isActive ? (
             <CheckedRadioIcon width={20} height={20} />
@@ -87,9 +119,23 @@ const AddAddress: React.FC<{index?: number}> = ({index}) => {
               <Text style={styles.time}>
                 {firstThreeCharsOfSelectedDays.join(', ')}
               </Text>
-              <Text style={styles.time}>
-                {item?.agentTimeSlots[0]?.timeSlotId}
-              </Text>
+              {/* <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  width:'100%',
+                  paddingVertical: 10,
+                  // overflow: 'scroll',
+                  marginTop:10,
+                  paddingRight:10
+                  
+                }}>
+                {timeSlots?.map((slot: any) => (
+                  <Text style={[styles.time, { borderColor: '#EAEAEA',
+                  borderRadius: 8,
+                  borderWidth: 1, marginHorizontal:2,paddingHorizontal:5}]}>{slot.slotName}</Text>
+                ))}
+              </View> */}
             </View>
             <View style={styles.cardFooterRight}>
               <TouchableOpacity
@@ -133,12 +179,12 @@ const AddAddress: React.FC<{index?: number}> = ({index}) => {
       if (statusCode === 200) {
         setLocations(data);
         if (data?.length > 0) {
-          // Update Profile Status Completed
           if (!profileStatus) {
             let payload: updateProfileInterface = {
               agentId: id,
               isProfileCompleted: true,
             };
+            console.log('payload', payload);
             dispatch(updateAgentProfileStatus(payload));
           }
         }
@@ -151,8 +197,12 @@ const AddAddress: React.FC<{index?: number}> = ({index}) => {
   };
 
   useEffect(() => {
-    fetchLocations(Number(data?.id));
-  }, [index, data?.id]);
+    if (index === 3) fetchLocations(Number(data?.id));
+    else if (edit || page) {
+      fetchLocations(Number(data?.id));
+      getTimeSlots();
+    }
+  }, [index, data?.id, edit, page, isFocused]);
 
   if (edit) {
     return (
@@ -163,7 +213,12 @@ const AddAddress: React.FC<{index?: number}> = ({index}) => {
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.heading}>My Working Location</Text>
-          <Pressable style={styles.add} onPress={isEdit}>
+          <Pressable
+            style={styles.add}
+            onPress={() => {
+              setEditAddress(null);
+              isEdit();
+            }}>
             <AddIcon width={18} height={18} />
           </Pressable>
         </View>
@@ -174,6 +229,8 @@ const AddAddress: React.FC<{index?: number}> = ({index}) => {
                 color={globalStyle.colors.baseColor}
                 size={'large'}
               />
+            ) : locations && locations?.length <= 0 ? (
+              <NotAvailable message="No Available loctions." />
             ) : (
               locations?.map((item: any) => renderItem(item))
             )}
@@ -185,7 +242,6 @@ const AddAddress: React.FC<{index?: number}> = ({index}) => {
 };
 
 export default AddAddress;
-
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 10,
@@ -214,13 +270,12 @@ const styles = StyleSheet.create({
   },
   card: {
     padding: 6,
+    marginVertical: 5,
     display: 'flex',
     flexDirection: 'row',
-    marginVertical: 5,
     borderColor: '#EAEAEA',
-    borderWidth: 0.01,
     borderRadius: 8,
-    elevation: 1,
+    borderWidth: 2,
   },
   cardLeft: {
     flex: 1,

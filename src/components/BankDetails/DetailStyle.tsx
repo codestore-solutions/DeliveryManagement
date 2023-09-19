@@ -4,7 +4,16 @@ const styles = StyleSheet.create({
     formContainer: {
         paddingHorizontal: 6,
         flex: 1,
+      
       },
+     
+      container:{
+        flex:1,
+        overflow:'scroll',
+        paddingVertical: 10,
+        paddingHorizontal:10,
+        backgroundColor:"#fff"
+     },
       lower: {
         width: '100%',
         position: 'absolute',
@@ -22,5 +31,7 @@ const styles = StyleSheet.create({
         gap: 5,
       },
 })
+
+
 
 export default styles;

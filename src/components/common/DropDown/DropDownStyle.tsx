@@ -17,6 +17,10 @@ const styles = StyleSheet.create({
         color:'#7E8299',
         fontWeight:'500'
     },
+    errorMessage:{
+        color: 'red',
+        fontSize: 12,
+    },
     textItem:{
         color: globalStyle.colors.labelColor,
     },

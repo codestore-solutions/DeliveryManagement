@@ -1,6 +1,8 @@
 
 const globalStyle = {
      container:{
+        flex:1,
+        overflow:'scroll',
         paddingVertical: 15,
         paddingHorizontal:10,
         backgroundColor:"#fff"

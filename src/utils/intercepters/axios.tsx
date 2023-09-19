@@ -33,7 +33,7 @@ instance.interceptors.response.use(
     }as any;
     if (error && error.response) {
       // Request made and server responded
-      console.log(error.response.data);
+      console.log("daate error",error.response.data);
       console.log('status', error.response.status);
       console.log(error.response.headers);
 
@@ -71,7 +71,7 @@ instance.interceptors.response.use(
         };
         // Toast.show({
         //   type: 'error',
-        //   text1: `${apiData.status} ${apiData?.data}`,
+        //   text1: `${apiData?.data}`,
         // });
       }else if (error.response.status === ApiConstant.internalServerError) {
          apiData = {

@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   imageContainer: {
-    height: 130,
+    height: 150,
     width: '100%',
     display: 'flex',
     padding:15,
@@ -39,6 +39,24 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#CCCCCC',
     borderStyle: 'dotted',
+    resizeMode:'cover'
+  },
+  imageContainerImage:{
+    height: 200,
+    width: '100%',
+    display: 'flex',
+    padding:15,
+    justifyContent: 'center',
+    alignItems:'center',
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: 10,
+    borderStyle: 'dotted',
+    resizeMode:'contain'
+  },
+  errorMessage: {
+    color: 'red',
+    fontSize: 12,
   },
   label: {
     paddingLeft: 3,

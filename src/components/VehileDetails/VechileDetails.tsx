@@ -17,12 +17,13 @@ interface Props {
 
 const VehileDetails: React.FC<Props> = ({data, index, goToNextIndex}) => {
   const [vehicleDetails, setVehicleDetails] = useState<any>(null);
+  const [vehicleDetailsOpen, setVehicleDetailsOpen] = useState<any>(null);
   console.log('vechileDetails', vehicleDetails);
   const [notFound, setNotFound] = useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const updateDetails = (data: any) => {
-    setVehicleDetails(data);
+  const updateDetails = (updatedata: any) => {
+    fetchVechileDetails(data?.id);
   };
   const onEdit = () => {
     setEdit(false);
@@ -37,11 +38,11 @@ const VehileDetails: React.FC<Props> = ({data, index, goToNextIndex}) => {
       const {data} = await AgentServices.getAgentDetails(
         id,
         ApiConstant.getVehicleDetailEndPoint,
+        true
       );
-      // console.log("Vex data", data);
       if (data) {
-        setVehicleDetails(data);
-        setEdit(true);
+          setVehicleDetails(data);
+          setEdit(true);
       } else {
         setEdit(false);
       }
@@ -52,6 +53,24 @@ const VehileDetails: React.FC<Props> = ({data, index, goToNextIndex}) => {
         setNotFound(true);
       }
       console.log('Vehicle Detail Fetching Error', err);
+      setLoading(false);
+    }
+  };
+
+  const fetchVechileDetailsUnMasked = async (id: string) => {
+    try {
+      setLoading(true);
+      const {data} = await AgentServices.getAgentDetails(
+        id,
+        ApiConstant.getVehicleDetailEndPoint,
+        false
+      );
+      if (data) {
+         
+          setVehicleDetailsOpen(data);
+      } 
+      setLoading(false);
+    } catch (err: any) {
       setLoading(false);
     }
   };
@@ -82,40 +101,57 @@ const VehileDetails: React.FC<Props> = ({data, index, goToNextIndex}) => {
       label: 'Registration Number',
       value: vehicleDetails?.registrationNumber,
     },
+    {
+      key: 6,
+      label: 'Vehicle Image',
+      value: vehicleDetails?.vehicleImage,
+    },
   );
+
   useEffect(() => {
-    if (index === 2) {
+    if (index === 1) {
+      setLoading(true)
       fetchVechileDetails(data?.id);
+      fetchVechileDetailsUnMasked(data?.id)
+      setLoading(false)
       if (notFound) {
         setEdit(false);
       }
     }
-  }, [data?.id, index]);
+  }, [data, index]);
 
   if (loading) {
     return <Loader />;
   } else {
     return (
       <View style={styles.container}>
-        {!edit ? (
+        {loading ? (
+          <Loader />
+        ) : !edit && !loading ? (
           <VechileDetailsForm
             onCancel={onCancel}
             data={data}
-            vechileDetails={vehicleDetails}
+            vechileDetails={vehicleDetailsOpen}
             updateDetails={updateDetails}
             goToNextIndex={goToNextIndex}
           />
         ) : (
           <>
             <Text style={styles.heading}>Your Vehicle Details</Text>
-            {dataArr?.map((item: any) => (
-              <View style={styles.row} key={item.key}>
-                <SingleDetail label={item.label} value={item.value} />
+            {dataArr?.map(
+              (item: any) =>
+                item.key !== 6 ? (
+                  <View style={styles.row} key={item.key}>
+                    <SingleDetail label={item.label} value={item.value} />
+                  </View>
+                ) :<View style={styles.imageContainer}>
+                <Image
+                  source={{uri: item?.value + `?${new Date()}`}}
+                  style={{width: '100%', height: 200, resizeMode: 'contain'}}
+                />
               </View>
-            ))}
-            <View style={styles.imageContainer}>
-              <Image source={{uri: "https://app-deliveryagent-dev.azurewebsites.net/Images/image.jpg"}} />
-            </View>
+            )}
+            
             <View style={styles.lower}>
               <CustomButton title={'Edit Details'} onPress={onEdit} />
             </View>

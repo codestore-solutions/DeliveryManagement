@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useIsFocused} from '@react-navigation/native';
 import {RootStackParamList} from '../../navigations/types';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {useCallback, useState, useEffect} from 'react';
@@ -22,6 +22,9 @@ import {AuthStateInterface} from '../../store/features/authSlice';
 import OrderServices from '../../services/OrderServices';
 import {ApiConstant} from '../../constant/ApiConstant';
 import Loader from '../../components/common/Loader/Loader';
+import AddressService from '../../services/AddressService';
+import {setLocationInterface} from '../../utils/types/addressTypes';
+import NotAvailable from '../../components/common/NotAvailable/NotAvailable';
 
 const Adddata = [
   {label: 'Home', value: '1'},
@@ -30,11 +33,16 @@ const Adddata = [
   {label: 'Current Location', value: '4'},
 ];
 
-
 const HomeScreen = () => {
+  const isFocused = useIsFocused()
   const [orderList, setOrderList] = useState<any>(null);
+  const [total, setTotal] = useState<any>(0);
+  const [activeLocationVal, setActiveLocationVal] = useState<any>(null);
+  const [locations, setLocation] = useState<any>([]);
   const [dropDownValue, setDropDownValue] = useState<any>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const {data} = useAppSelector(
     (state: RootState) => state.auth,
   ) as AuthStateInterface;
@@ -43,15 +51,17 @@ const HomeScreen = () => {
   const navigate = (item: any) => {
     navigation.navigate('AssignmentDetail', {item});
   };
-  const updateDropDown = (value:any) =>{
-     setDropDownValue(value)
-  }
+  const updateDropDown = (value: any) => {
+    console.log('value', value);
+    setDropDownValue(value);
+    setActiveLocation(value);
+  };
   const [isEnabled, setIsEnabled] = useState<boolean>(false);
   // Toggle Switch handler
   const toggleSwitch = () => {
     let payload: updateAgentStatus = {
       agentId: data?.id,
-      agentStatus: isEnabled? 0: 1,
+      agentStatus: isEnabled ? 0 : 1,
     };
     // console.log('payload', payload)
     updateAgentStatus(payload);
@@ -61,11 +71,11 @@ const HomeScreen = () => {
     try {
       const {statusCode, data} = await AgentServices.updateAgentStatus(payload);
       if (statusCode === 200) {
-        console.log('data', data)
-        if(data?.agentStatus === 1){
-            setIsEnabled(true);
-        }else{
-           setIsEnabled(false);
+        console.log('data', data);
+        if (data?.agentStatus === 1) {
+          setIsEnabled(true);
+        } else {
+          setIsEnabled(false);
         }
       }
     } catch (err) {
@@ -77,16 +87,16 @@ const HomeScreen = () => {
       setLoading(true);
       const {statusCode, data} = await AgentServices.getAgentStatus(id);
       if (statusCode === 200) {
-        console.log('sta', data)
-        if(data?.agentStatus === 1){
+        console.log('sta', data);
+        if (data?.agentStatus === 1) {
           setIsEnabled(true);
         }
         // setIsEnabled(previousState => !previousState);
       }
     } catch (err) {
       console.log('Error on updating agent Status', err);
-    }finally{
-       setLoading(false);
+    } finally {
+      setLoading(false);
     }
   };
   const fetchAcceptedRequestList = async (userData: any) => {
@@ -95,14 +105,13 @@ const HomeScreen = () => {
       let payload = {
         page: 1,
         pageSize: 10,
-        status: [8,9],
+        status: [8, 9],
       };
       const {data, statusCode} = await OrderServices.getDeliveryRequests(
         payload,
         userData,
       );
       if (statusCode === ApiConstant.successCode) {
-        console.log('data', data);
         setOrderList(data);
       }
     } catch (err) {
@@ -111,18 +120,125 @@ const HomeScreen = () => {
       setLoading(false);
     }
   };
+  const fetchMoreData = async () => {
+    try {
+      setLoading(true);
+      let payload = {
+        page: page + 1, // Increment the page number
+        pageSize: 10,
+        status: [8, 9],
+      };
+      const res = await OrderServices.getDeliveryRequests(
+        payload,
+        data
+      );
+      if (res?.statusCode === ApiConstant.successCode) {
+        if (res?.data?.list && res?.data.list.length > 0) {
+          setOrderList((prev:any) => ({
+            ...prev,
+            list: [...prev.list, ...res?.data.list],
+          }));
+          setPage(page + 1);
+        } else {
+          setHasMore(false);
+        }
+      }
+    } catch (err) {
+      console.log('Fetching More Data Error', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  const fetchLocations = async (id: number) => {
+    try {
+      setLoading(true);
+      const {data, statusCode} = await AddressService.getWorkingLocations(id);
+      if (statusCode === 200) {
+        const labelValueArray = data?.map((location: any) => (
+          {
+          label: location.locationName,
+          value: location.id,
+        }));
+        const activeValueArray = data?.filter((location: any) => (location.isActive === true));
+        setActiveLocationVal(activeValueArray[0]?.id)
+        console.log('activeValueArray', activeValueArray[0]?.id)
+        setLocation(labelValueArray);
+      }
+    } catch (err) {
+      console.log('Location fetching error', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Set Working Location
+  const setActiveLocation = async (id: any) => {
+    let payload: setLocationInterface = {
+      serviceLocationId: id,
+      agentId: Number(data?.id),
+      isActive: true,
+    };
+    try {
+      const {statusCode} = await AddressService.setWorkingLocation(payload);
+      if (statusCode === 200) {
+        await fetchLocations(Number(data?.id));
+      }
+    } catch (err) {
+      console.log('Error op setting working location', err);
+    }
+  };
+
+  const getTotalDeliveries = async (id: number) => {
+    try {
+      const {data, statusCode} = await AgentServices.getTotalAgentAndDelivery(
+        id,
+      );
+      if (statusCode === ApiConstant.successCode) {
+        setTotal(data?.deliveredOrdersCount);
+      }
+    } catch (err) {
+      console.log('err', err);
+    }
+  };
+  const handleEndReached = () => {
+    fetchMoreData();
+  };
   useEffect(() => {
-    fetchAcceptedRequestList(data);
-    getAgentStatus(data?.id)
-  }, [data]);
+    getTotalDeliveries(Number(data?.id));
+    fetchMoreData();
+    getAgentStatus(data?.id);
+    fetchLocations(data?.id);
+  }, [data, isFocused]);
+ 
+  const navigateToOngoing = (index:number) => {
+    navigation.navigate('Home', {
+      screen: 'Assignments',
+      params: { index }
+    });
+  }
+  
+  // useEffect(() => {
+  //   fetchLocations(data?.id);
+  // }, [data, route]);
 
+  const renderItem = ({ item }: any) => {
+    return (
+      <View key={item?.id}>
+        <RenderItem item={item} onPress={() => navigate(item)} />
+      </View>
+    );
+  };
   return (
     <SafeAreaView style={[styles.dashboard]}>
       <ScrollView>
         <View style={styles.header}>
           <View style={styles.dropdown}>
-            <DropDownComponent value={dropDownValue}  data={ Adddata} onChange={updateDropDown} />
+            <DropDownComponent
+              value={activeLocationVal}
+              data={locations}
+              onChange={updateDropDown}
+            />
           </View>
           <View style={styles.switchBox}>
             <Text style={styles.statusTag}>
@@ -137,7 +253,7 @@ const HomeScreen = () => {
             />
           </View>
         </View>
-        <ScrollView
+        {/* <ScrollView
           horizontal={true}
           showsHorizontalScrollIndicator={false}
           style={{flexGrow: 1}}>
@@ -154,8 +270,8 @@ const HomeScreen = () => {
               <Text style={styles.timeLintBtnText}>Last 3 Months</Text>
             </TouchableOpacity>
           </View>
-        </ScrollView>
-        <View style={styles.cardsContainer}>
+        </ScrollView> */}
+        {/* <View style={styles.cardsContainer}>
           <View style={styles.cardsOneContainer}>
             <DashboardCard
               cardBackground={'#7E72FF'}
@@ -174,37 +290,68 @@ const HomeScreen = () => {
               cardHeading={'$200'}
             />
           </View>
-        </View>
+        </View> */}
         <View style={styles.cardContainer}>
           <DashboardCard
+            cardBackground={'#7E72FF'}
+            iconBackground={'#A39AFF'}
+            cardIconType={0}
+            cardDesc={'Total Completed Deliveries'}
+            cardHeading={total}
+          />
+
+          {/* <DashboardCard
             cardBackground={'#F1416C'}
             iconBackground={'#EC85A1'}
             cardIconType={1}
             cardDesc={'Total Cash for Order Collected'}
             cardHeading={'$200'}
             type={1}
-          />
+          /> */}
         </View>
 
         <View style={styles.requestListContainer}>
           <View style={styles.requestListContainerHeader}>
-            <Text style={styles.heading}>Ongoing Request</Text>
-            <TouchableOpacity>
+            <Text style={styles.heading}>Ongoing Orders</Text>
+            <TouchableOpacity onPress={() => navigateToOngoing(1)}>
               <Text style={styles.btnText}>View All</Text>
             </TouchableOpacity>
           </View>
           {loading ? (
-            <View style={{flex: 1, height: 300, backgroundColor:"#fff"}}>
-            <Loader />
+            <View style={{flex: 1, height: 300, backgroundColor: '#fff'}}>
+              <Loader />
             </View>
+          ) : !orderList?.list ? (
+            <NotAvailable />
           ) : (
-            orderList?.list?.map((item: any) => {
-              return (
-                <View key={item?.id}>
-                  <RenderItem item={item} onPress={() => navigate(item)} />
-                </View>
-              );
-            })
+            // orderList?.list?.map((item: any) => {
+            //   return (
+            //     <View key={item?.id}>
+            //       <RenderItem item={item} onPress={() => navigate(item)} />
+            //     </View>
+            //   );
+            // })
+            <FlatList
+              data={orderList?.list}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.id.toString()}
+              ListFooterComponent={
+                hasMore ? (
+                  <TouchableOpacity onPress={fetchMoreData}>
+                    <Text style={{ textAlign: 'center', padding: 10 }}>
+                      Load More
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  <Text style={{ textAlign: 'center', padding: 10 }}>
+                    No more data
+                  </Text>
+                )
+              }
+               // Add onEndReached prop
+               // Specify the threshold for triggering onEndReached
+               onEndReachedThreshold={0.5}
+            />
           )}
         </View>
       </ScrollView>

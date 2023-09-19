@@ -35,7 +35,6 @@ const styles = StyleSheet.create({
          color:'#000000',
          fontSize:16,
          fontWeight:'400',
-        
       },
       btnConaṭiner:{
          display:'flex',

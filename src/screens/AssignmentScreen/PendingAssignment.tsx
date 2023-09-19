@@ -9,41 +9,9 @@ import OrderServices from '../../services/OrderServices';
 import {ApiConstant} from '../../constant/ApiConstant';
 import Loader from '../../components/common/Loader/Loader';
 import {Text} from 'react-native';
+import NotAvailable from '../../components/common/NotAvailable/NotAvailable';
+import {CustomButton} from '../../components';
 
-const data = [
-  {
-    key: 1,
-    requestId: '#HDYWFG28472CVSX',
-    pickup: '4653 Clearview Drive Englewood',
-    destination: '4653 Clearview Drive USA',
-    clientName: 'David Vese',
-    earning: ' $ 10',
-  },
-  {
-    key: 2,
-    requestId: '#HDYWFG28472CVSX',
-    pickup: '4653 Clearview Drive Englewood',
-    destination: '4653 Clearview Drive USA',
-    clientName: 'David Vese',
-    earning: ' $ 10',
-  },
-  {
-    key: 3,
-    requestId: '#HDYWFG28472CVSX',
-    pickup: '4653 Clearview Drive Englewood',
-    destination: '4653 Clearview Drive USA',
-    clientName: 'David Vese',
-    earning: ' $ 10',
-  },
-  {
-    key: 4,
-    requestId: '#HDYWFG28472CVSX',
-    pickup: '4653 Clearview Drive Englewood',
-    destination: '4653 Clearview Drive USA',
-    clientName: 'David Vese',
-    earning: ' $ 10',
-  },
-];
 interface Props {
   userData: any;
   index: any;
@@ -53,23 +21,18 @@ const PendingAssignment: React.FC<Props> = ({userData, index}) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [orderList, setOrderList] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const navigation = useNavigation<NavigationProps>();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loadingMore, setLoadingMore] = useState(false);
+
   const updateOrderList = (id: any) => {
-    let filtered = orderList?.list.filter((item: any) => item.id != id);
-    setOrderList({...orderList, list: filtered});
+    let filtered = orderList.filter((item: any) => item.id != id);
+    setOrderList(filtered);
   };
-  // const navigate = (item: any) => {
-  //   if(multiSelect){
-  //      console.log("Select");
-  //   }else{
-  //     navigation.navigate('AssignmentDetail', {item});
-  //   }
-  // };
 
   const handleRefresh = useCallback(() => {
     setRefreshing(true);
-    // Call the function to fetch the updated data here
-    fetchPendingRequestList(userData).finally(() => setRefreshing(false));
+    fetchPendingRequestList(userData, 1).finally(() => setRefreshing(false));
   }, [userData]);
 
   const onLongPressHandler = () => {
@@ -86,11 +49,11 @@ const PendingAssignment: React.FC<Props> = ({userData, index}) => {
     />
   );
 
-  const fetchPendingRequestList = async (userData: any) => {
+  const fetchPendingRequestList = async (userData: any, page: number) => {
     try {
       setLoading(true);
       let payload = {
-        page: 1,
+        page: page,
         pageSize: 10,
         status: [5],
       };
@@ -99,7 +62,18 @@ const PendingAssignment: React.FC<Props> = ({userData, index}) => {
         userData,
       );
       if (statusCode === ApiConstant.successCode) {
-        setOrderList(data);
+        if (page === 1) {
+          setOrderList(data.list);
+        } else {
+          setOrderList((prevList: any) => [...prevList, ...data.list]);
+        }
+        console.log('fetchPendingRequestList', data.list)
+        setTotalPages(data.totalOrders);
+        setCurrentPage(page);
+        // Check if there are no more records available
+        if (page !== 1 && data.list.length === 0) {
+          setOrderList([]);
+        }
       }
     } catch (err) {
       console.log('Fetching Pending Request Error', err);
@@ -108,24 +82,43 @@ const PendingAssignment: React.FC<Props> = ({userData, index}) => {
     }
   };
 
+  const renderFooter = () => (
+    <View style={styles.footerText}>
+      {/* {loadingMore && <Loader />} */}
+      {currentPage >= totalPages && <Text>No more Record the moment</Text>}
+    </View>
+  );
+
+  const renderEmpty = () => (
+    <View style={styles.emptyText}>
+      <Text>No Data at the moment</Text>
+    </View>
+  );
+
+  const handleLoadMore = () => {
+    if (currentPage < totalPages && !loadingMore) {
+      setLoadingMore(true);
+      fetchPendingRequestList(userData, currentPage + 1);
+    }
+  };
   useEffect(() => {
-    fetchPendingRequestList(userData);
+    if (index === 0) {
+      fetchPendingRequestList(userData, currentPage);
+    }
   }, [userData, handleRefresh, index]);
+
+
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      {loading ? (
+      {loading && !loadingMore ? (
         <Loader />
-      ) : orderList?.totalOrders === 0 ? (
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          <Text style={{fontSize: 20, color: 'black'}}>
-            No Available Orders.
-          </Text>
-        </View>
+      ) : !orderList ? (
+        <NotAvailable />
       ) : (
         <View style={styles.container}>
           <FlatList
-            data={orderList?.list}
+            data={orderList}
             showsVerticalScrollIndicator={false}
             renderItem={renderItem}
             keyExtractor={item => item?.id}
@@ -136,6 +129,10 @@ const PendingAssignment: React.FC<Props> = ({userData, index}) => {
                 onRefresh={handleRefresh}
               />
             }
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.2}
+            ListEmptyComponent={renderEmpty}
+            ListFooterComponent={renderFooter}
           />
         </View>
       )}

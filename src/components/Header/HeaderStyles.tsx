@@ -8,17 +8,21 @@ const styles = StyleSheet.create({
      flexDirection:'row',
      justifyContent:'space-between',
      backgroundColor:globalStyle.colors.baseColor,
-     paddingTop:20,
-     paddingBottom:5,
+     paddingVertical:15,
      paddingHorizontal:10
   },
-  left:{},
+  left:{
+    display:'none',
+    flex:3
+  },
   heading:{
+     flex:6,
      color: globalStyle.colors.titleColor,
      fontSize:20,
      lineHeight:25,
      letterSpacing:0.03,
-     fontWeight:'bold'
+     fontWeight:'bold',
+     textAlign:'center'
   },
   bellIcon:{
      position: 'relative'

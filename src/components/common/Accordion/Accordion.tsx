@@ -1,5 +1,11 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, Pressable} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Pressable,
+} from 'react-native';
 import {ArrowIcon} from '../../../assets';
 import globalStyle from '../../../global/globalStyle';
 
@@ -16,7 +22,7 @@ const Accordion: React.FC<AccordionProps> = ({title, content}) => {
 
   return (
     <View style={styles.container}>
-      <Pressable style={styles.header}  onPress={toggleAccordion}>
+      <Pressable style={styles.header} onPress={toggleAccordion}>
         <Text style={styles.title}>{title}</Text>
         <View>
           <ArrowIcon width={25} height={25} />
@@ -54,7 +60,6 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     fontSize: 14,
     letterSpacing: 0.01,
-    paddingVertical:15,
-
+    paddingVertical: 15,
   },
 });

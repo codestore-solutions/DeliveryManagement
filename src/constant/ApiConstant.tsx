@@ -21,6 +21,7 @@ export const ApiConstant = {
     // Address Api EndPoints
     changeWorkingLocation:'working-location/updateActiveStatus',
     addNewWorkingLocationEndpoint:'working-location',
+    updateWorkingLocationEndpoint:'working-location',
     getAgentStatus:'working-location/getAvailabilityStatus',
     updateAgentStatus:'working-location/updateAgentStatus',
     // Agent Onboarding Api Endpoints
@@ -45,6 +46,8 @@ export const ApiConstant = {
     //Time Slots
     getTimeSlots:'TimeSlot/getAllTimeSlots',
     getActiveTimeSlots:'TimeSlot/getAllActiveTimeSlots',
-    updateTimeSlots:'TimeSlot/updateSlotsStatus'
+    updateTimeSlots:'TimeSlot/updateSlotsStatus',
+    getAgentAndDeliveryCounts:'assignAgent/CountDeliveredOrRejectedOrders',
+    getTimeSlotsWithIds:'TimeSlot/getBySlotIds',
     
   };

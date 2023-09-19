@@ -3,7 +3,7 @@ import { CompositeNavigationProp, NavigatorScreenParams } from '@react-navigatio
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export type drawerParamList = {
-  Assignments: undefined;
+  Assignments:  { index: number };
   Dashboard: undefined;
   Settigns: undefined;
   Location: undefined;

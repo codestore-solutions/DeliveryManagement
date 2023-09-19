@@ -1,9 +1,8 @@
 import {View, ActivityIndicator} from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import {NavigationProps, RootStackParamList,} from './types';
+import {NavigationProps, RootStackParamList} from './types';
 import {
-  LandingScreen,
   LoginScreen,
   CreateProfileScreen,
   AboutUsScreen,
@@ -17,40 +16,61 @@ import DrawerNavigation from './DrawerNavigation';
 import {TabHeader} from '../components';
 import {constant} from '../constant/GenralConstant';
 import {useAppDispatch, useAppSelector} from '../store/hooks';
-import {AuthStateInterface, getAgentProfileStatus, initializeAuthStateUser, userSelector} from '../store/features/authSlice';
+import {
+  AuthStateInterface,
+  getAgentProfileStatus,
+  initializeAuthStateUser,
+  userSelector,
+} from '../store/features/authSlice';
+import UserService from '../services/UserService';
+import {ApiConstant} from '../constant/ApiConstant';
 const RootStack = createStackNavigator<RootStackParamList>();
 
 const StackNavigations = () => {
   const dispatch = useAppDispatch();
-  const navigation =
-    useNavigation<NavigationProps>();
-  const {isAuthenticated, loading, profileStatus, data} = useAppSelector(
+  const [status, setStatus] = useState<boolean>(false);
+  const [statusLoader, setStatusLoader] = useState<boolean>(true);
+  const navigation = useNavigation<NavigationProps>();
+  const {isAuthenticated, loading, data} = useAppSelector(
     userSelector,
   ) as AuthStateInterface;
-  console.log("A", data);
-  // Initalize the state
+
   useEffect(() => {
-    dispatch(getAgentProfileStatus(data?.id))
     dispatch(initializeAuthStateUser());
   }, [dispatch]);
 
   useEffect(() => {
-    
-    console.log('Init Value', isAuthenticated, profileStatus);
     if (isAuthenticated) {
-       if(profileStatus){
-         navigation.navigate('Home', {
-           screen: 'Dashboard',
-         });
-       }else{
-          navigation.navigate('CreateProfile');
-       }
+      UserService.getUserProfileStatus(data?.id)
+        .then(res => {
+          setStatusLoader(true)
+          if (res?.statusCode === 200) {
+            setStatus(res?.data?.isProfileCompleted);
+            if (res?.data?.isProfileCompleted) {
+              console.log('first', res?.data?.isProfileCompleted);
+              navigation.navigate('Home', {
+                screen: 'Dashboard',
+              });
+            } else {
+              console.log('comes first');
+              navigation.navigate('CreateProfile');
+            }
+          }
+        })
+        .catch(err => {
+          if(err?.status === 404){
+             setStatus(false);
+          }
+          console.log('profile status fetching err', err?.data);
+        }).finally(() =>{
+            setStatusLoader(false);
+        });
     } else {
       navigation.navigate('Login');
     }
-  }, [isAuthenticated, navigation]);
+  }, [isAuthenticated]);
 
-  if (loading && !isAuthenticated) {
+  if (loading && !isAuthenticated && statusLoader) {
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <ActivityIndicator size="large" color={'#7E72FF'} />
@@ -78,7 +98,13 @@ const StackNavigations = () => {
             options={{
               headerShown: true,
               header() {
-                return <TabHeader type={0} title={constant.appTitle} />;
+                return (
+                  <TabHeader
+                    status={status}
+                    type={0}
+                    title={constant.appTitle}
+                  />
+                );
               },
             }}
           />
@@ -88,7 +114,9 @@ const StackNavigations = () => {
             options={{
               headerShown: true,
               header() {
-                return <TabHeader type={0} title={'About US'} />;
+                return (
+                  <TabHeader status={status} type={0} title={'About US'} />
+                );
               },
             }}
           />
@@ -98,7 +126,13 @@ const StackNavigations = () => {
             options={{
               headerShown: true,
               header() {
-                return <TabHeader type={0} title={'Terms & Conditions'} />;
+                return (
+                  <TabHeader
+                    status={status}
+                    type={0}
+                    title={'Terms & Conditions'}
+                  />
+                );
               },
             }}
           />
@@ -108,7 +142,7 @@ const StackNavigations = () => {
             options={{
               headerShown: true,
               header() {
-                return <TabHeader type={0} title={'FAQ'} />;
+                return <TabHeader status={status} type={0} title={'FAQ'} />;
               },
             }}
           />
@@ -118,7 +152,13 @@ const StackNavigations = () => {
             options={{
               headerShown: true,
               header() {
-                return <TabHeader type={0} title={'Privacy Policy'} />;
+                return (
+                  <TabHeader
+                    status={status}
+                    type={0}
+                    title={'Privacy Policy'}
+                  />
+                );
               },
             }}
           />
@@ -128,7 +168,13 @@ const StackNavigations = () => {
             options={{
               headerShown: true,
               header() {
-                return <TabHeader type={0} title={'Assignment Details'} />;
+                return (
+                  <TabHeader
+                    status={status}
+                    type={0}
+                    title={'Assignment Details'}
+                  />
+                );
               },
             }}
           />

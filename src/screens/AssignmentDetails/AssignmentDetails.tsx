@@ -5,16 +5,13 @@ import {
   SafeAreaView,
   Image,
   ScrollView,
-  TouchableOpacity,
+  Alert,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import styles from './AssignmentStyle';
 import {CallSharpIcon, QrCodeIcon, SendIcon} from '../../assets';
 import {CustomButton, Timeline} from '../../components';
 import CustomModal from '../../components/common/CustomModal/CustomModal';
-import ModalMessage from '../../components/common/ModalMessage/ModalMessage';
-import OtpForm from '../../components/OtpForm/OtpForm';
-import FeedBackScreen from '../FeedBackScreen/FeedBackScreen';
 import {useRoute} from '@react-navigation/native';
 import OrderServices from '../../services/OrderServices';
 import {ApiConstant} from '../../constant/ApiConstant';
@@ -68,6 +65,7 @@ const AssignmentDetails = () => {
   const [deliverModal, setDeliverModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [delivered, setDelivered] = useState<boolean>(false);
+
   const addUrl = (url: string, type: string) => {
     if (type === 'pickupImg') setUrls({...urls, pickupImg: url});
     else setUrls({...urls, deliverImg: url});
@@ -100,7 +98,9 @@ const AssignmentDetails = () => {
       );
       if (statusCode === ApiConstant.successCode) {
         if (data.length > 0) {
-          getTimeLineData(data, updateTimeLineData);
+          let filterData = data?.filter((item: any) => item.orderStatusId > 4);
+          console.log('filterData', filterData);
+          getTimeLineData(filterData, updateTimeLineData);
           let currIdx = getCurrIdx(data);
           setCurr(currIdx);
         }
@@ -139,6 +139,7 @@ const AssignmentDetails = () => {
         userData?.data,
       );
       if (statusCode === ApiConstant.successCode) {
+        console.log('data', data);
         setOrderData(data);
       }
     } catch (err) {
@@ -163,6 +164,8 @@ const AssignmentDetails = () => {
       );
       if (res?.statusCode === ApiConstant.successCode) {
         getTimeLineDetails(item?.id);
+        setDelivered(true);
+        getOrderDetails(Number(item.id));
       }
     } catch (err) {
       console.log('Error on delivering Request', err);
@@ -171,26 +174,29 @@ const AssignmentDetails = () => {
     }
   };
 
-  const pickUpRequest = async (item: any) => {
-    // try {
-    //   setLoading(true);
-    //   let payload: pickupAndDelivery = {
-    //     image: '',
-    //     orderIds: [item?.id],
-    //     deliveryStatus: 11,
-    //   };
-    //   const res = await OrderServices.pickupAndDeliveryRequest(
-    //     payload,
-    //     userData?.data,
-    //   );
-    //   if (res?.statusCode === ApiConstant.successCode) {
-    //     getTimeLineDetails(item?.id);
-    //   }
-    // } catch (err) {
-    //   console.log('Error on delivering Request', err);
-    // } finally {
-    //   setLoading(false);
-    // }
+  const pickUpRequest = async (url: any) => {
+    try {
+      setLoading(true);
+      let payload: pickupAndDelivery = {
+        image: url,
+        orderIds: [item?.id],
+        deliveryStatus: 8,
+      };
+      console.log('payload', payload);
+      const res = await OrderServices.pickupAndDeliveryRequest(
+        payload,
+        userData?.data,
+      );
+      if (res?.statusCode === ApiConstant.successCode) {
+        getTimeLineDetails(item?.id);
+        getOrderDetails(Number(item.id));
+        closePickupModal();
+      }
+    } catch (err) {
+      console.log('Error on delivering Request', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const uploadDeliverImage = async (image: any) => {
@@ -208,6 +214,7 @@ const AssignmentDetails = () => {
       if (data.urlFilePath) {
         addUrl(data.urlFilePath, 'pickupImg');
         console.log('data.urlFilePath', data.urlFilePath);
+        pickUpRequest(data.urlFilePath);
       }
     }
   };
@@ -224,93 +231,136 @@ const AssignmentDetails = () => {
       <SafeAreaView style={styles.container}>
         <View style={styles.details}>
           <View style={styles.detailsRow}>
-            <Text style={styles.label}>Request ID</Text>
+            <Text style={styles.label}>Order ID</Text>
             <Text style={styles.value}>{orderData?.id}</Text>
           </View>
           <View style={styles.detailsRow}>
             <Text style={styles.label}>Pickup Location</Text>
             <View style={styles.valueContainer}>
-              <Text style={styles.value}>
+              <Text style={styles.value} numberOfLines={2}>
                 {orderData?.vendor?.business?.address?.street}
               </Text>
-              <Pressable>
+              {/* <Pressable>
                 <SendIcon width={20} height={20} />
-              </Pressable>
+              </Pressable> */}
             </View>
           </View>
           <View style={styles.detailsRow}>
             <Text style={styles.label}>Destination</Text>
             <View style={styles.valueContainer}>
-              <Text style={styles.value}>
+              <Text style={styles.value} numberOfLines={2}>
                 {orderData?.shippingAddress?.street}
               </Text>
-              <Pressable>
+              {/* <Pressable>
                 <SendIcon width={20} height={20} />
-              </Pressable>
+              </Pressable> */}
             </View>
           </View>
         </View>
         <View style={styles.detailsUser}>
           <View style={styles.row}>
-            <View style={styles.rowLeft}>
+            {/* <View style={styles.rowLeft}>
               <Image
                 source={require('../../assets/images/avatar.png')}
                 style={styles.avatar}
               />
-              <Text style={styles.avatarLabel}>
-                {orderData?.customer?.name}
-              </Text>
-            </View>
-            <View style={[styles.rowRight, styles.callIcon]}>
+            </View> */}
+            <Text style={styles.avatarLabel}>{orderData?.customer?.name}</Text>
+            {/* <View style={[styles.rowRight, styles.callIcon]}>
               <CallSharpIcon width={25} height={25} />
-            </View>
+            </View> */}
           </View>
           <View style={styles.row}>
             <Text style={styles.labeltxt}>Payment Status</Text>
-            <Text style={[styles.labeltxt, styles.payment]}>Done</Text>
+            <Text style={[styles.labeltxt, styles.payment]}>
+              {orderData?.paymentStatus === 1 ? 'Successful' : 'Pending'}
+            </Text>
           </View>
           <View style={styles.row}>
             <Text style={styles.labeltxt}>Payment Mode</Text>
             <Text style={styles.labeltxt}>
-              {orderData?.paymentStatus === 1 ? 'Online' : 'Card'}
+              {orderData?.paymentMode === 2 ? 'COD' : 'Online'}
             </Text>
           </View>
           <View style={styles.row}>
             <Text style={styles.labeltxt}>Total Amount</Text>
-            <Text style={[styles.labeltxt, styles.red]}>30 $</Text>
+            <Text style={[styles.labeltxt, styles.red]}>
+              {orderData?.total ?? 'N/A'}
+            </Text>
           </View>
           <View style={styles.row}>
             <Text style={styles.labeltxt}>Your Earning</Text>
-            <Text style={styles.labeltxt}>{orderData?.deliveryCharges}$</Text>
+            <Text style={styles.labeltxt}>{orderData?.deliveryCharges}</Text>
           </View>
         </View>
 
         {orderData?.orderStatus === 11 ? (
-          <FeedBackScreen />
+          <Timeline
+            data={timeLinedata}
+            currentIndex={curr}
+            openDeliverModal={() => {}}
+            openPickupModal={() => {}}
+          />
         ) : (
           <View>
             <Timeline
               data={timeLinedata}
               currentIndex={curr}
-              openDeliverModal={openDeliverModal}
-              openPickupModal={openPickupModal}
+              openDeliverModal={
+                orderData?.orderStatus === 9 ? openDeliverModal : () => {}
+              }
+              openPickupModal={
+                orderData?.orderStatus === 6 ? openPickupModal : () => {}
+              }
             />
 
-            {orderData?.orderStatus === 9 && (
+            <View style={styles.imageContainer}>
+              <View style={styles.tag}>
+                <View style={styles.image}>
+                  <Image
+                    source={
+                      urls?.pickupImg
+                        ? {uri: urls.pickupImg}
+                        : require('../../assets/images/pickup.png')
+                    }
+                    onError={error => console.log('Image Error:', error)}
+                    style={styles.preview}
+                  />
+                </View>
+                <Text>PickUp</Text>
+              </View>
+              <View style={styles.tag}>
+                <View style={styles.image}>
+                  <Image
+                    source={
+                      urls?.deliverImg
+                        ? {uri: urls.deliverImg}
+                        : require('../../assets/images/pickup.png')
+                    }
+                    style={styles.preview}
+                  />
+                </View>
+                <Text>Delivered</Text>
+              </View>
+            </View>
+            {orderData?.orderStatus === 9 && !delivered && (
               <>
                 <View style={styles.btnContainerDel}>
                   <CustomButton
                     disabled={delivered}
                     title={delivered ? 'Delivered' : 'Deliver Order'}
                     onPress={() => {
-                      if(urls?.deliverImg)
-                         deliverRequest(item)
+                      if (urls?.deliverImg) {
+                        deliverRequest(item);
+                      } else {
+                        openDeliverModal();
+                      }
                     }}
                   />
                 </View>
               </>
             )}
-            {orderData?.orderStatus === 6 && (
+            {orderData?.orderStatus === 8 && (
               <>
                 <View style={styles.btnContainerDel}>
                   <CustomButton
@@ -320,12 +370,12 @@ const AssignmentDetails = () => {
                 </View>
               </>
             )}
-            {orderData?.orderStatus === 5 && (
+            {orderData?.orderStatus === 6 && (
               <>
                 <View style={styles.btnContainerDel}>
                   <CustomButton
                     title={'PickUp Order'}
-                    onPress={() => pickUpRequest(item)}
+                    onPress={openPickupModal}
                   />
                 </View>
               </>

@@ -8,6 +8,16 @@ export interface addNewWorkingLocationInterface {
   longitude?: number;
 }
 
+export interface updateWorkingLocationInterface {
+  
+  locationName: string;
+  address: string;
+  timeSlotIds: Array<string>;
+  selectedDays: Array<string>;
+  latitude?: number;
+  longitude?: number;
+}
+
 export interface setLocationInterface {
   serviceLocationId: number;
   agentId: number;

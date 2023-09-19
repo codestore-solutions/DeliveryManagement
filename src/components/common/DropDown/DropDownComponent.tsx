@@ -9,12 +9,13 @@ interface Props {
   value: any;
   onChange: any;
   label?: string;
+ 
 }
 
 const DropDownComponent: React.FC<Props> = ({data, value, onChange, label}) => {
   return (
     <View style={{paddingVertical: 3}}>
-      {label && <Text style={styles.inputlabel}>{label}</Text>}
+      {label && <Text style={styles.inputlabel}>{label}<Text style={{color:'red', fontWeight:'700',paddingLeft:3, paddingBottom:5}}>*</Text></Text>}
       <Dropdown
         style={label ? styles.dropdown : {}}
         iconStyle={styles.iconStyle}
@@ -29,6 +30,7 @@ const DropDownComponent: React.FC<Props> = ({data, value, onChange, label}) => {
           onChange(item.value);
         }}
       />
+       
     </View>
   );
 };

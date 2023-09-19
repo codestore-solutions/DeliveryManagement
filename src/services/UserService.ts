@@ -14,7 +14,7 @@ const UserService = {
     console.log('res', res);
     return res?.data;
   },
-  getUserDteails: async (id: number) => {
+  getUserDetails: async (id: number) => {
     const url = `${ApiConstant.baseUrl}${ApiConstant.agentDetails}`;
     let params = {
       agentId: id,
@@ -27,6 +27,7 @@ const UserService = {
     let params = {
       agentId: id,
     };
+   console.log('Api calling err', params )
     const res = await API({}, url, 'GET', params);
     return res?.data;
   },

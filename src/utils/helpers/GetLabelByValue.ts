@@ -34,3 +34,20 @@ export function generateLabelArray(dataArray: Array<any>) {
 
   return resultArray;
 }
+
+export function generateIdArray(dataArray: Array<any>) {
+  const resultArray = [];
+  if(dataArray){
+    for (const data of dataArray) {
+      const id = `${data.timeSlotId}`;
+      resultArray.push(Number(id));
+    }
+  }
+
+  return resultArray;
+}
+
+export function generateDaysArray(days: string) {
+  const resultArray = days?.split(" ");
+  return resultArray;
+}

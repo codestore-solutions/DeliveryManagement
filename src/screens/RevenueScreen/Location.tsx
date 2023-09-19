@@ -1,25 +1,20 @@
-import { View, Text, TouchableOpacity, SafeAreaView, Pressable } from 'react-native';
-import React, { useState } from 'react'
-import { AddAddress, BottomSheet, SelectTimeScreen } from '../../components';
-import styles from './LocationStyle';
+import {
+  View,
+  SafeAreaView,
+} from 'react-native';
+import React, {useState} from 'react';
+import {AddAddress} from '../../components';
+
 const Location = () => {
-  const [visible, setVisible] = useState<boolean>(false);
- 
-  const openModal = () =>{
-      setVisible(true);
-  }
-  const closeModal = () =>{
-    setVisible(false);
-}
+  const [page, setPage] = useState<boolean>(true);
 
   return (
-    <SafeAreaView>
-         <Pressable style={styles.container} onPress={openModal}>
-            <Text style={styles.textColor}>View</Text>
-         </Pressable>
-      <BottomSheet visibility={visible} closeModel={closeModal} element={   <AddAddress/>} />
+    <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
+      <View style={{backgroundColor: '#fff', height:'100%'}}>
+        <AddAddress page={page} />
+      </View>
     </SafeAreaView>
-  )
-}
+  );
+};
 
-export default Location
+export default Location;

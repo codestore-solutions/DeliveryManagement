@@ -51,14 +51,7 @@ const Timeline: React.FC<Props> = ({
                 <Text>Pickup</Text>
               </TouchableOpacity> */}
 
-        <Pressable
-          onPress={() => {
-            if (item.key === 1) {
-              openPickupModal();
-            } else if (item.key === 3) {
-              openDeliverModal();
-            }
-          }}>
+        <View>
           <Svg height="100" width="100%">
             <View style={styles.tag}>
               <View style={isCompleted ? styles.circleStyle : styles.circleNot}>
@@ -94,7 +87,7 @@ const Timeline: React.FC<Props> = ({
                 )}
 
                 {item?.key === 3 && (
-                  <Pressable
+                  <TouchableOpacity
                     style={styles.tagContentRight}
                     onPress={() => {
                       console.log('Pressed the Deliver icon');
@@ -102,7 +95,7 @@ const Timeline: React.FC<Props> = ({
                     }}>
                     <DeliverImg width={20} height={20} />
                     <Text>Deliver</Text>
-                  </Pressable>
+                  </TouchableOpacity>
                 )}
               </View>
             </View>
@@ -119,7 +112,7 @@ const Timeline: React.FC<Props> = ({
               </View>
             )}
           </Svg>
-        </Pressable>
+        </View>
         <Text style={styles.itemText}>{item.title}</Text>
       </View>
     );
@@ -133,7 +126,7 @@ const Timeline: React.FC<Props> = ({
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 16,
+    paddingVertical: 10,
     flex: 1,
     overflow:'hidden'
   },

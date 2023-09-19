@@ -19,8 +19,8 @@ const CustomModal: FC<CustomModalProps> = ({ visible, closeModal, element }) => 
       <View style={styles.modalContainer}>
         <View style={styles.modalBackground} />
         <View style={styles.modalContent}>
-          <TouchableOpacity onPress={closeModal} style={styles.closeButton}>
-            <CrossIcon width={35} height={35}  />
+          <TouchableOpacity  onPress={closeModal} style={styles.closeButton}>
+            <CrossIcon width={40} height={40}  />
           </TouchableOpacity>
           {element}
           
@@ -52,7 +52,9 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position:'absolute',
-    padding: 10,
+    paddingHorizontal: 14,
+    paddingVertical:10,
+    lineHeight:50,
     borderRadius: 5,
     alignSelf: 'flex-end',
   },

@@ -1,4 +1,4 @@
-import {View, Text} from 'react-native';
+import {View, Image, Text} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import styles from './DetailStyle';
 import SingleDetail from '../common/SingleDetail/SingleDetail';
@@ -8,6 +8,8 @@ import AgentServices from '../../services/AgentServices';
 import {ApiConstant} from '../../constant/ApiConstant';
 import Loader from '../../components/common/Loader/Loader';
 import moment from 'moment';
+import globalStyle from '../../global/globalStyle';
+import { useIsFocused } from '@react-navigation/native';
 interface Props {
   data: any;
   index: number;
@@ -15,12 +17,15 @@ interface Props {
 }
 
 const PersonalDetails: React.FC<Props> = ({data, index, goToNextIndex}) => {
+  const isFocused = useIsFocused();
   const [personalDetails, setPersonalDetails] = useState<any>(null);
+  const [profileImg, setProfileImg] = useState<any>('');
   const [err, setError] = useState<any>(null);
   const [edit, setEdit] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const updateDetails = (data: any) => {
     setPersonalDetails(data);
+    setEdit(false);
   };
   const onEdit = () => {
     setEdit(false);
@@ -36,9 +41,11 @@ const PersonalDetails: React.FC<Props> = ({data, index, goToNextIndex}) => {
         id,
         ApiConstant.personalDetailendpoint,
       );
-      console.log('datatt', data);
+      setProfileImg(data.profileImage);
+      console.log('Profile data', data.profileImage);
       if (data !== null) {
         setPersonalDetails(data);
+
         setEdit(true);
       } else {
         setEdit(false);
@@ -54,7 +61,6 @@ const PersonalDetails: React.FC<Props> = ({data, index, goToNextIndex}) => {
     }
   };
 
-  
   const dataArr = Array<{key: number; label: string; value: string}>(
     {
       key: 1,
@@ -88,6 +94,11 @@ const PersonalDetails: React.FC<Props> = ({data, index, goToNextIndex}) => {
       label: 'Residential Address',
       value: personalDetails?.address,
     },
+    {
+      key: 7,
+      label: 'Profile Image',
+      value: personalDetails?.profileImage,
+    },
   );
   useEffect(() => {
     if (index === 0) {
@@ -96,13 +107,14 @@ const PersonalDetails: React.FC<Props> = ({data, index, goToNextIndex}) => {
         setEdit(false);
       }
     }
-  }, [data?.id, index]);
+  }, [data, index, isFocused]);
   if (loading) {
     return <Loader />;
   }
+
   return (
     <View style={[styles.container]}>
-      {!edit ? (
+      {!edit && !loading ? (
         <PersonalDetailForm
           onCancel={onCancel}
           personalDetails={personalDetails}
@@ -112,12 +124,35 @@ const PersonalDetails: React.FC<Props> = ({data, index, goToNextIndex}) => {
         />
       ) : (
         <View style={[styles.container]}>
-          {dataArr?.map((item: any) => (
-            <View style={styles.row} key={item.key}>
-              <SingleDetail label={item.label} value={item.value} />
-            </View>
-          ))}
-
+          {dataArr?.map((item: any) =>
+            item.key === 7 ? (
+              <View
+                key={item.key}
+                style={{
+                  display: 'flex',
+                  paddingHorizontal: 10,
+                  paddingVertical: 10,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}>
+                <Text style={styles.inputlabel}>{item.label}</Text>
+                <Image
+                  source={{uri: profileImg + `?${new Date()}`}}
+                  style={{
+                    width: 60,
+                    height: 60,
+                    resizeMode: 'contain',
+                    borderRadius: 50,
+                  }}
+                />
+              </View>
+            ) : (
+              <View style={styles.row} key={item.key}>
+                <SingleDetail label={item?.label} value={item?.value} />
+              </View>
+            ),
+          )}
           <View style={styles.lower}>
             <CustomButton title={'Edit Details'} onPress={onEdit} />
           </View>

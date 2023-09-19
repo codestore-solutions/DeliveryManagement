@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import {Formik} from 'formik';
 import styles from './LoginStyle';
-import {LogoDark, InputEmailIcon, InputEyeOffIcon} from '../../assets';
+import {LogoDark, InputEmailIcon, InputEyeOffIcon, InputEyeOnIcon} from '../../assets';
 import {loginValidationSchema} from '../../utils/validations/userValidation';
 import {useAppDispatch, useAppSelector} from '../../store/hooks';
 import {RootState} from '../../store';
@@ -25,8 +25,8 @@ const LoginScreen = () => {
       username: values?.email,
       password: values?.password,
     };
-    console.log('p', payload);
     dispatch(loginUser(payload));
+
   };
 
   return (
@@ -54,7 +54,10 @@ const LoginScreen = () => {
                 onBlur={handleBlur('email')}
                 value={values.email}
               />
+              <View style={{padding:5}}>
+
               <InputEmailIcon width={20} height={20} />
+              </View>
             </View>
             {touched.email && errors.email && (
               <Text style={styles.errorMessage}>{errors.email}</Text>
@@ -68,8 +71,12 @@ const LoginScreen = () => {
                 onBlur={handleBlur('password')}
                 value={values.password}
               />
-              <Pressable onPress={() => setShowPassword(!showPassword)}>
-                <InputEyeOffIcon width={20} height={20} />
+              <Pressable style={{padding: 5}} onPress={() => setShowPassword(!showPassword)}>
+                {showPassword ? (
+                  <InputEyeOnIcon width={20} height={20} />
+                ) : (
+                  <InputEyeOffIcon width={20} height={20} />
+                )}
               </Pressable>
             </View>
             {touched.password && errors.password && (
@@ -77,7 +84,7 @@ const LoginScreen = () => {
             )}
             <View style={styles.formtag}>
               <View />
-              <Text style={styles.formText}>Forgot Password?</Text>
+              {/* <Text style={styles.formText}>Forgot Password?</Text> */}
             </View>
             <TouchableOpacity
               style={styles.btn}

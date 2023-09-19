@@ -11,7 +11,7 @@ interface Props{
 
 const CustomButton:React.FC<Props> = ({title, onPress, outline, disabled}) => {
   return (
-    <TouchableOpacity disabled={disabled} style={ !outline? styles.btnContainer : [styles.btnContainer,styles.outLine]} onPress={onPress}>
+    <TouchableOpacity  disabled={disabled} style={ !outline? styles.btnContainer : [styles.btnContainer,styles.outLine]} onPress={onPress}>
       <View style={styles.row}>
       <Text style={ !outline ? styles.btnText : [styles.btnText, styles.outLineText]}>{title}</Text>
       {disabled && <ActivityIndicator color={'#fff'} size={'small'} />}
@@ -19,6 +19,7 @@ const CustomButton:React.FC<Props> = ({title, onPress, outline, disabled}) => {
     </TouchableOpacity>
   )
 }
+
 
 export default CustomButton
 

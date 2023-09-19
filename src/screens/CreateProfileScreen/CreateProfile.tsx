@@ -1,13 +1,8 @@
-import {View, Text} from 'react-native';
+import {View, Text, ScrollView, SafeAreaView} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {TabView, TabBar} from 'react-native-tab-view';
 import styles from './CreateProfileStyle';
-import {
-  BankDetails,
-  KycDetails,
-  PersonalDetails,
-  VechileDetails,
-} from '../../components';
+import {BankDetails, PersonalDetails, VechileDetails} from '../../components';
 import {useAppSelector} from '../../store/hooks';
 import {RootState} from '../../store';
 import {AuthStateInterface} from '../../store/features/authSlice';
@@ -26,7 +21,7 @@ const CreateProfile = () => {
   ]);
 
   const goToNextIndex = () => {
-    setIndex((prevIndex) => {
+    setIndex(prevIndex => {
       const nextIndex = prevIndex + 1;
       return nextIndex >= routes.length ? 0 : nextIndex;
     });
@@ -34,7 +29,7 @@ const CreateProfile = () => {
 
   // Function to navigate to the previous index
   const goToPrevIndex = () => {
-    setIndex((prevIndex:number) => {
+    setIndex((prevIndex: number) => {
       const prevIdx = prevIndex - 1;
       return prevIndex < 0 ? routes.length - 1 : prevIdx;
     });
@@ -44,32 +39,42 @@ const CreateProfile = () => {
       case '1':
         return (
           <View style={styles.sceneContainer}>
-            <PersonalDetails data={data} index={index} goToNextIndex={goToNextIndex} />
+            <PersonalDetails
+              data={data}
+              index={index}
+              goToNextIndex={goToNextIndex}
+            />
           </View>
         );
-      // case '2':
-      //   return (
-      //     <View style={styles.sceneContainer}>
-      //       <KycDetails data={data} goToNextIndex={goToNextIndex}   />
-      //     </View>
-      //   );
+
       case '2':
         return (
           <View style={styles.sceneContainer}>
-            <VechileDetails data={data} index={index} goToNextIndex={goToNextIndex} />
+            <VechileDetails
+              data={data}
+              index={index}
+              goToNextIndex={goToNextIndex}
+            />
           </View>
         );
       case '3':
         return (
           <View style={styles.sceneContainer}>
-            <BankDetails data={data} index={index} goToPrevIndex={goToPrevIndex}  goToNextIndex={goToNextIndex} />
+            <BankDetails
+              data={data}
+              index={index}
+              goToPrevIndex={goToPrevIndex}
+              goToNextIndex={goToNextIndex}
+            />
           </View>
         );
       case '4':
         return (
-          <View style={styles.sceneContainer}>
-             <WorkingLocation index={index} />
-          </View>
+          <ScrollView style={styles.sceneContainer}>
+            <View style={{backgroundColor: '#fff', height: '100%'}}>
+              <WorkingLocation index={index} />
+            </View>
+          </ScrollView>
         );
       default:
         return null;
@@ -91,7 +96,11 @@ const CreateProfile = () => {
           <Text
             style={[
               styles.tabLabelText,
-              {color, fontWeight: focused ? 'bold' : 'normal'},
+              {
+                color,
+                fontWeight: focused ? 'bold' : 'normal',
+                paddingBottom: 4,
+              },
             ]}>
             {route.title}
           </Text>
@@ -103,7 +112,7 @@ const CreateProfile = () => {
   return (
     <TabView
       navigationState={{index, routes}}
-      renderScene={({ route }) => renderScene({ route, data })}
+      renderScene={({route}) => renderScene({route, data})}
       onIndexChange={setIndex}
       renderTabBar={renderTabBar}
     />

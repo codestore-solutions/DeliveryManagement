@@ -7,8 +7,11 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Image,
+  Platform,
+  PermissionsAndroid,
+  Alert,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Formik} from 'formik';
 import globalStyle from '../../global/globalStyle';
 import CustomTextInput from '../common/CustomInput/CustomTextInput';
@@ -21,14 +24,12 @@ import {
 } from '../../utils/validations/userValidation';
 import styles from './VechileStyle';
 import {UploadIcon} from '../../assets';
-import {
-  uploadImageInterface,
-  vehicleDetailInterface,
-} from '../../utils/types/UserTypes';
+import {vehicleDetailInterface} from '../../utils/types/UserTypes';
 import AgentServices from '../../services/AgentServices';
 import DropDownComponent from '../common/DropDown/DropDownComponent';
 import UploadService from '../../services/UploadService';
 import {ApiConstant} from '../../constant/ApiConstant';
+import Loader from '../common/Loader/Loader';
 
 interface Props {
   onCancel: () => void;
@@ -63,21 +64,26 @@ const VechileDetailsForm: React.FC<Props> = ({
       vehicleImage: values?.image,
       registrationNumber: values?.registrationNumber,
     };
-    console.log('payload', payload);
     try {
       setLoading(true);
       if (vechileDetails) {
-        const {data} = await AgentServices.updateVechileDetail(
+        const {data, statusCode} = await AgentServices.updateVechileDetail(
           payload,
           vechileDetails?.id,
         );
-        updateDetails(data);
+        if (statusCode === ApiConstant.successCode) {
+          updateDetails(data);
+          onCancel();
+        }
       } else {
-        const {data} = await AgentServices.addVehicleDetails(payload);
-        console.log('Add Vec', data);
-        updateDetails(data);
+        const {data, statusCode} = await AgentServices.addVehicleDetails(
+          payload,
+        );
+        if (statusCode === ApiConstant.successCode) {
+          updateDetails(data);
+          goToNextIndex();
+        }
       }
-      goToNextIndex();
     } catch (err) {
       console.log('Add Vehicle Detail Error', err);
     } finally {
@@ -85,25 +91,71 @@ const VechileDetailsForm: React.FC<Props> = ({
     }
   };
 
-  const selectImage = (setFeildValue: any) => {
-    ImagePicker.openPicker({
-      cropping: false,
-    })
-      .then((image: any) => {
-        uploadImage(image, setFeildValue);
-      })
-      .catch((error: any) => {
-        console.log(error);
-      });
+  const requestStoragePermission = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+          {
+            title: 'Storage Permission',
+            message: 'App needs access to your storage.',
+            buttonPositive: 'OK',
+            buttonNegative: 'Cancel',
+          },
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          return true; // Permission granted
+        } else {
+          Alert.alert(
+            'Storage Permission Denied',
+            'Please grant storage permission to use this feature.',
+          );
+          return false; // Permission denied
+        }
+      } catch (error) {
+        console.error('Error requesting storage permission: ', error);
+        return false; // Permission denied (due to an error)
+      }
+    } else {
+      return true; // On platforms other than Android, assume permission is granted
+    }
   };
 
+  const selectImage = async (setFieldValue: any) => {
+    const hasPermission = await requestStoragePermission();
+    if (hasPermission) {
+      ImagePicker.openPicker({
+        cropping: false,
+      })
+        .then((image: any) => {
+          uploadImage(image, setFieldValue);
+        })
+        .catch((error: any) => {
+          console.log(error);
+        });
+    }
+  };
+
+  const takePhotoFromStorage = async (setFieldValue: any) => {
+    const hasPermission = await requestStoragePermission();
+    if (hasPermission) {
+      selectImage(setFieldValue);
+    }
+  };
   const uploadImage = async (image: any, setFieldValue: any) => {
-    const {statusCode, data} = await UploadService.uploadImage(image);
-    if (statusCode === ApiConstant.successCode) {
-      if (data.urlFilePath) {
-        setFieldValue('image', data.urlFilePath);
-        console.log('data.urlFilePath', data.urlFilePath);
+    try {
+      setFileUploading(true);
+      const {statusCode, data} = await UploadService.uploadImage(image);
+      if (statusCode === ApiConstant.successCode) {
+        if (data.urlFilePath) {
+          setFieldValue('image', data.urlFilePath);
+          console.log('data.urlFilePath', data.urlFilePath);
+        }
       }
+    } catch (err) {
+      console.log('err', err);
+    } finally {
+      setFileUploading(false);
     }
   };
 
@@ -119,9 +171,9 @@ const VechileDetailsForm: React.FC<Props> = ({
           model: vechileDetails?.vehicleModel ?? '',
           manufacturedYear: vechileDetails?.manufacturedYear ?? '',
           registrationNumber: vechileDetails?.registrationNumber ?? '',
-          image: vechileDetails?.vehicleImageUrl ?? '',
+          image: vechileDetails?.vehicleImage ?? '',
         }}
-        // validationSchema={vehicleDetailValidationSchema}
+        validationSchema={vehicleDetailValidationSchema}
         onSubmit={values => submitHandler(values)}>
         {({
           handleChange,
@@ -137,10 +189,19 @@ const VechileDetailsForm: React.FC<Props> = ({
                 <DropDownComponent
                   data={vehicleType}
                   value={values.vechileType}
-                  onChange={(text: any) => handleChange('vechileType')(text)}
+                  onChange={(text: any) => {
+                    handleChange('vechileType')(text);
+                    setFieldValue('vechileType', text);
+                  }}
                   label={'Vechile Type'}
                 />
               </View>
+              {touched.vechileType && errors.vechileType && (
+                <Text style={styles.errorMessage}>
+                  Vehicle Type is required
+                </Text>
+              )}
+
               <CustomTextInput
                 placeholder={'Eg: Hero'}
                 label={'Company Name'}
@@ -180,32 +241,65 @@ const VechileDetailsForm: React.FC<Props> = ({
               <View style={styles.image}>
                 <Text style={styles.label}>Vehicle Image</Text>
                 <Pressable
-                  style={styles.imageContainer}
-                  onPress={() => selectImage(setFieldValue)}>
-                  {values?.image !== '' ? (
-                    <Image source={{uri: values?.image}} />
+                  style={
+                    !values?.image
+                      ? styles.imageContainer
+                      : styles.imageContainerImage
+                  }
+                  onPress={() => takePhotoFromStorage(setFieldValue)}>
+                  {values?.image ? (
+                    fileUpLoading ? (
+                      <Loader />
+                    ) : (
+                      <View
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                        }}>
+                        <Image
+                          source={{uri: values?.image + `?${new Date()}`}}
+                          style={{
+                            width: '100%',
+                            height: 198,
+                            resizeMode: 'contain',
+                            borderRadius: 5,
+                          }}
+                        />
+                      </View>
+                    )
+                  ) : fileUpLoading ? (
+                    <Loader />
                   ) : (
-                    <UploadIcon width={70} height={70} />
+                    <UploadIcon width={30} height={30} />
                   )}
                 </Pressable>
               </View>
+              {touched && errors?.image && (
+                <Text style={styles.errorMessage}>
+                  Profile Image is required
+                </Text>
+              )}
             </ScrollView>
             <View style={styles.lower}>
               <View style={styles.btnContainer}>
-                <View style={{width: '50%'}}>
+                <View
+                  style={!vechileDetails ? {width: '100%'} : {width: '50%'}}>
                   <CustomButton
                     disabled={loading}
                     title={vechileDetails ? 'Update' : 'Save & Next'}
                     onPress={handleSubmit}
                   />
                 </View>
-                <View style={{width: '50%'}}>
-                  <CustomButton
-                    title={'Cancel'}
-                    outline={true}
-                    onPress={onCancel}
-                  />
-                </View>
+                {vechileDetails && (
+                  <View style={{width: '50%'}}>
+                    <CustomButton
+                      title={'Cancel'}
+                      outline={true}
+                      onPress={onCancel}
+                    />
+                  </View>
+                )}
               </View>
             </View>
           </View>
