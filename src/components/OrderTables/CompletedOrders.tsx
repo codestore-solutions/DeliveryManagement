@@ -121,7 +121,9 @@ const CompletedOrders: React.FC<Props> = ({ activeTab }) => {
   };
 
   useEffect(() => {
-    fetchOrder();
+    if(activeTab === "3"){
+      fetchOrder();
+    }
   }, [activeTab, pagination.pageNumber]);
   useEffect(() => {
     setPagination({ ...pagination, total: data?.total });

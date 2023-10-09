@@ -16,6 +16,7 @@ const { confirm } = Modal;
 interface DeliveryAgentHookProps {
   searchInput?: string;
   filters?: any;
+  activeTab?:string;
 }
 
 interface DeliveryAgentHookResult {
@@ -26,11 +27,13 @@ interface DeliveryAgentHookResult {
   handleClick: (state: any) => void;
   deleteAgent: (id: number) => void;
   showDeleteConfirm: (id: number) => void;
+
 }
 
 const useDeliveryAgents = ({
   searchInput,
   filters,
+  activeTab
 }: DeliveryAgentHookProps): DeliveryAgentHookResult => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -95,8 +98,10 @@ const useDeliveryAgents = ({
       });
   };
   useEffect(() => {
-    fetchAgents();
-  }, [dispatch, pagination.pageNumber, filters, searchInput]);
+    if(activeTab === "0"){
+      fetchAgents();
+    }
+  }, [dispatch, pagination.pageNumber, filters, searchInput, activeTab]);
 
   useEffect(() => {
     setPagination({ ...pagination, total: agentList?.total });

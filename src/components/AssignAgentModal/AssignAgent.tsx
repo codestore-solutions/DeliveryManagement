@@ -1,5 +1,5 @@
 import { ColumnsType } from "antd/es/table";
-import { Button, Table, message } from "antd";
+import { Button, Table } from "antd";
 import React, { useEffect, useState } from "react";
 import "./style.scss";
 import CustomizeData from "../../utils/helpers/CustomizeData";
@@ -7,9 +7,13 @@ import AgentService from "../../services/AgentService";
 import { ApiConstants } from "../../constants/ApiConstants";
 import CustomizeText from "../../utils/helpers/CustomizeText";
 import { TableRowSelection } from "antd/es/table/interface";
-import { manualAssignAgentInterface } from "../../utils/types";
+import {
+  manualAssignAgentInterface,
+  updateOrderStatusByAgent,
+} from "../../utils/types";
 import { useDebounce } from "use-debounce";
 import useScreenWidth from "../../Hooks/ScreenWidthHook";
+import OrderService from "../../services/OrderService";
 
 interface DataType {
   key: React.Key;
@@ -44,7 +48,7 @@ const AssignAgent: React.FC<Props> = ({
   const [apiCalling, setApiCalling] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [selectedRowData, setSelectedRowData] = useState<any>();
-  const {isSmallScreen} = useScreenWidth()
+  const { isSmallScreen } = useScreenWidth();
   const [pagination, setPagination] = useState({
     pageNumber: 1,
     total: data?.total,
@@ -67,6 +71,21 @@ const AssignAgent: React.FC<Props> = ({
   const searchHandler = (e: any) => {
     e.preventDefault();
     setSearchInput(searchInput);
+  };
+
+  const updateOrderStatusByAgent = async (payload: any) => {
+    try {
+      const {statusCode, message} = await OrderService.updateOrderByAgent(
+        payload
+      );
+      if (statusCode === ApiConstants.successCode) {
+        onClose();
+        fetchAgents();
+        message.success(message);
+      }
+    } catch (err) {
+      console.log("Update Order Status By Agent", err);
+    }
   };
   const AgentAssignHandler = async (values: any) => {
     try {
@@ -96,14 +115,22 @@ const AssignAgent: React.FC<Props> = ({
             orderStatus: 5,
           },
         ];
-       
-        const { statusCode, message } = await AgentService.assignAgentManually(
+
+        const res = await AgentService.assignAgentManually(
           payload
         );
-        if (statusCode === ApiConstants.successCode) {
-          onClose();
-          fetchAgents();
-          message.success(message);
+        if (res.statusCode === ApiConstants.successCode) {
+           let payload: updateOrderStatusByAgent = {
+                  orderStatus: 5,
+                  orders: [
+                    {
+                      orderId: res?.data[0]?.orderId,
+                      deliveryAgentId: res?.data[0]?.agentId,
+                    },
+                  ],
+                };
+                // console.log("Assign Agent Manually", payload);
+                updateOrderStatusByAgent(payload);
         }
       } else {
         let payload = CustomizeData.getOrdersArray(
@@ -114,10 +141,10 @@ const AssignAgent: React.FC<Props> = ({
         AgentService.assignAgentManually(payload)
           .then((res: any) => {
             if (res.statusCode === ApiConstants.successCode) {
+              let updatePayload = CustomizeData.updateOrderStatusPayload(res?.data);
+              updateOrderStatusByAgent(updatePayload);
               fetch();
               handleResetSelectionForOrder();
-              onClose();
-              message.success(res?.message);
             }
           })
           .catch((err) => {
@@ -178,12 +205,11 @@ const AssignAgent: React.FC<Props> = ({
       );
       if (response?.statusCode === 200) {
         setData(response);
-      } 
-
-    } catch (err:any) {
+      }
+    } catch (err: any) {
       console.log("err fetching", err?.message);
-      if(err?.status === 404){
-            setData(null)
+      if (err?.status === 404) {
+        setData(null);
       }
     } finally {
       setLoading(false);
@@ -202,7 +228,7 @@ const AssignAgent: React.FC<Props> = ({
   }, [isOpen, pagination.pageNumber, key, debouncedSearchTerm]);
 
   return (
-    <div id="assign-agent" >
+    <div id="assign-agent">
       <div className="assign-agent-header">
         <form className="search-box" onSubmit={searchHandler}>
           <input
@@ -212,7 +238,10 @@ const AssignAgent: React.FC<Props> = ({
             onChange={(e) => setSearchInput(e.target.value)}
           />
         </form>
-        <div className="header-btns" style={ isSmallScreen ? { display:'flex', overflow:'scroll' }:{}}>
+        <div
+          className="header-btns"
+          style={isSmallScreen ? { display: "flex", overflow: "scroll" } : {}}
+        >
           <Button
             type="default"
             onClick={handleResetSelection}
@@ -236,7 +265,7 @@ const AssignAgent: React.FC<Props> = ({
           pagination={false}
           loading={loading}
           onChange={handleTableChange}
-          scroll={{ y: 340, x:300 }}
+          scroll={{ y: 340, x: 300 }}
           className="custom-table"
         />
       </div>

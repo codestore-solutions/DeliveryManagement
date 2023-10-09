@@ -33,6 +33,7 @@ export const ApiConstants = {
      getAssignedOrders: 'order/assigned-orders',
      getCompletedOrders: 'order/completed-orders',
      updateOrder:'order/updateOrder',
+     updateOrderByAgent:'order/updateOrderWithAgent',
      getOrderTimeLine:'order/getOrderTimeline',
      //feedback endpoints
      getAgentFeedback:'feedback/deliveryAgentFeedback/',

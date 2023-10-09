@@ -42,3 +42,14 @@ export interface verifyAgentKycInterface {
   agentId: number;
   verificationStatus: number;
 }
+
+
+export interface updateOrderStatusByAgent{
+    orderStatus: number,
+    orders: [
+      {
+        orderId: number,
+        deliveryAgentId: number
+      }
+    ]
+}

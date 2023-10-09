@@ -20,7 +20,6 @@ const Orders: FC<OrderProps> = () => {
   const [selectedRowData, setSelectedRowData] = useState<React.Key[]>([]);
   const [activeTab, setActiveTab] = useState("1");
   const [isOpen, setIsOpen] = useState(false);
-  const [fetchOrders, setFetchOrders] = useState(false);
   const [isMultiSelect, setIsMultiSelect] = useState(false);
  
 
@@ -29,9 +28,7 @@ const Orders: FC<OrderProps> = () => {
     setSelectedRowData([]);
   };
 
-  const fetch = () => {
-    setFetchOrders(!fetchOrders);
-  };
+ 
   const startMultiSelect = (value: boolean) => {
     setIsMultiSelect(value);
   };
@@ -53,12 +50,12 @@ const Orders: FC<OrderProps> = () => {
       label: `Available Orders`,
       children: (
         <AvailableOrders
-          fetch={fetchOrders}
           startMultiSelect={startMultiSelect}
           selectedRowKeys={selectedRowKeys}
           setSelectedRowKeys={setSelectedRowKeys}
           setSelectedRowData={setSelectedRowData}
           isOpen={isOpen}
+          activeTab = {activeTab}
         />
       ),
     },

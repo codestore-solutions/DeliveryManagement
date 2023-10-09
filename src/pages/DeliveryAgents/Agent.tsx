@@ -53,6 +53,7 @@ const Agent = () => {
         <Tabs activeKey={activeTab} onChange={handleTabChange}>
           <TabPane tab="All Agents" key="0">
             <DeliveryAgents
+             activeTab={activeTab}
               searchInput={debouncedSearchTerm}
               filters={filters}
               setFiltersInput={setFiltersInput}

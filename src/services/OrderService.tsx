@@ -2,6 +2,7 @@ import API from "./ApiService";
 import { ApiConstants } from '../constants/ApiConstants';
 import { storesIds } from "../../dummyData";
 import { message } from "antd";
+import { updateOrderStatusByAgent } from "../utils/types";
 
 /**
  * @param pagination
@@ -88,6 +89,14 @@ const updateOrder = async (payload: any) => {
   return response;
 };
 
+const updateOrderByAgent = async (payload: updateOrderStatusByAgent) => {
+  let url = `${ApiConstants.orderProcessingbaseUrl}${ApiConstants.updateOrderByAgent}`;
+  let res = await API(payload, url, "PUT");
+  if (res?.status === ApiConstants.successCode) {
+    message.success("Agent Assigned Sucessfully");
+  }
+  return res?.data;
+};
 
 const getOrderTimeline = async (id: number) => {
   let url = `${ApiConstants.orderProcessingbaseUrl}${ApiConstants.getOrderTimeLine}/${id}`;
@@ -116,7 +125,8 @@ const OrderService = {
   getOrderDetailsById,
   updateOrder,
   getOrderTimeline,
-  getTimSlotsByIds
+  getTimSlotsByIds,
+  updateOrderByAgent
 };
 
 export default OrderService;

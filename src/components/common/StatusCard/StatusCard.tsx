@@ -1,6 +1,7 @@
 import React from "react";
 import { AgentsIcon } from "../../../assets";
 import "./style.scss";
+import useScreenWidth from "../../../Hooks/ScreenWidthHook";
 
 interface StatusCardProps {
   cardNumber: number;
@@ -13,16 +14,15 @@ const StatusCard: React.FC<StatusCardProps> = ({
   cardTag,
   cardImage,
 }) => {
+  const {isSmallScreen} = useScreenWidth();
   return (
-    <div id="status-card">
+    <div  id={isSmallScreen ? 'status-card-small': 'status-card'}>
       <div className="status-card-left">
         <img src={cardImage ?? AgentsIcon} alt="img" />
       </div>
       <div className="status-card-right">
       <div className="tags">
         <span className="card-number">{cardTag ?? "Total Orders"}</span>
-       
-
         <span className="card-tag">{cardNumber}</span>
         </div>
       </div>

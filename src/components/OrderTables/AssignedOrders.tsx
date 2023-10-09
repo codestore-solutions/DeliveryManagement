@@ -130,7 +130,9 @@ const AssignedOrders: React.FC<Props> = ({ activeTab }) => {
   };
 
   useEffect(() => {
-    fetchOrder();
+    if(activeTab === "2"){
+      fetchOrder();
+    }
   }, [activeTab, pagination.pageNumber])
   useEffect(() => {
     setPagination({ ...pagination, total: data?.total });

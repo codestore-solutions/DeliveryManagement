@@ -7,7 +7,7 @@ import { DeleteIcon, DetailsIcon } from "../../assets";
 import CustomizeText from "../../utils/helpers/CustomizeText";
 import CustomizeDate from "../../utils/helpers/CustomizeDate";
 import useDeliveryAgents from "./Hook";
-
+import { FilterOutlined } from '@ant-design/icons';
 
 export interface DataType {
   key: React.Key;
@@ -16,18 +16,20 @@ export interface DataType {
   deliveryAgentAddress: string;
   agentStatus: number;
   verStatus: number;
+  
 }
 
 interface Props {
   searchInput?: string;
   filters?: any;
-  setFiltersInput?: any
+  setFiltersInput?: any;
+  activeTab: string;
 }
 
-const DeliveryAgents: React.FC<Props> = ({ searchInput, filters, setFiltersInput }) => {
+const DeliveryAgents: React.FC<Props> = ({ searchInput, filters, setFiltersInput, activeTab }) => {
   const [statusFilter, setStatusFilter] = useState<any>(); 
   const { loading, agentList, pagination, handleTableChange, handleClick, showDeleteConfirm } =
-    useDeliveryAgents({ searchInput, filters });
+    useDeliveryAgents({ searchInput, filters, activeTab });
   const scrollConfig = {
     x: 900,
   };
@@ -73,7 +75,7 @@ const DeliveryAgents: React.FC<Props> = ({ searchInput, filters, setFiltersInput
       filterDropdown: () => (
         <div style={{ padding: 8 }}>
           <Select
-            style={{ width: 120 }}
+            style={{ width: 140 }}
             value={statusFilter}
             onChange={(value) => {
               setStatusFilter(value);
@@ -85,6 +87,10 @@ const DeliveryAgents: React.FC<Props> = ({ searchInput, filters, setFiltersInput
             <Select.Option value="2">All</Select.Option>
           </Select>
         </div>
+      ),
+      filterIcon: (filtered: boolean) => (
+        
+        <FilterOutlined  style={{ color: filtered ? '#1677ff' : undefined, fontSize:20 }} />
       ),
       onFilter: (value, record) => {
         return record.agentStatus === Number(value);

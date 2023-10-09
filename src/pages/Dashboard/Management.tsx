@@ -33,6 +33,7 @@ const Management: React.FC = () => {
 
   const getAgents = async () => {
     try {
+      setLoading(true)
       const { data, statusCode } = await AgentService.getTopPerfomingAgent();
       if (statusCode === ApiConstants.successCode) {
         setSetAgentData(data);
@@ -64,9 +65,9 @@ const Management: React.FC = () => {
       render: (text) => <p className="tableId">{text}</p>,
     },
     {
-      title: "Agent ID",
-      dataIndex: "agentId",
-      key: "agentId",
+      title: "Email ID",
+      dataIndex: "email",
+      key: "email",
       render: (text: any) => <p className="tableId">{text}</p>,
     },
     {

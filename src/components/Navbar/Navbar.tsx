@@ -50,8 +50,7 @@ const Navbar: FC<NavbarProps> = () => {
   return (
     <Header style={{ background: "#fff" }}>
       <Row style={{ display: "flex", justifyContent: "space-between" }}>
-        <Col>
-        </Col>
+        <Col></Col>
         <Col>
           <Row gutter={10}>
             <Col>
@@ -71,7 +70,7 @@ const Navbar: FC<NavbarProps> = () => {
                 </Col>
                 <Col>
                   <Dropdown menu={{ items }}>
-                    <Space>
+                    <Space style={{ position: "relative", top: -8, left: 0 }}>
                       <Text
                         style={
                           isSmallScreen
@@ -79,12 +78,12 @@ const Navbar: FC<NavbarProps> = () => {
                             : {
                                 display: "flex",
                                 flexDirection: "column",
-                                paddingTop: "-5px",
+                                paddingTop: "-15px",
                               }
                         }
                       >
                         {data?.name}
-                        <Text style={{ fontSize: "12px" }}>{data?.email}</Text>
+                        <Text style={{ fontSize: "10px" }}>{data?.email}</Text>
                       </Text>
                       <DownOutlined className="icon" />
                     </Space>

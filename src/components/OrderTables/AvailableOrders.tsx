@@ -33,8 +33,8 @@ interface Props {
   setSelectedRowKeys: Function;
   setSelectedRowData: Function;
   startMultiSelect: Function;
-  fetch: any;
   isOpen: boolean;
+  activeTab:string;
 }
 
 
@@ -43,7 +43,8 @@ const AvailableOrders: React.FC<Props> = ({
   setSelectedRowKeys,
   setSelectedRowData,
   startMultiSelect,
-  fetch,
+
+  activeTab
 }) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -167,8 +168,10 @@ const AvailableOrders: React.FC<Props> = ({
 
 
   useEffect(() => {
-    fetchOrders();
-  }, [dispatch, pagination.pageNumber, isOpen, fetch]);
+    if(activeTab === "1"){
+      fetchOrders();
+    }
+  }, [dispatch, pagination.pageNumber, isOpen, activeTab]);
 
   useEffect(() => {
     if (selectedRowKeys.length > 1) {
