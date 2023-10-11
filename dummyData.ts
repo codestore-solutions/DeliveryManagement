@@ -266,7 +266,7 @@ const dummyData = {
   ],
 };
 
-export const storesIds = [3, 4];
+export const storesIds = [1, 3];
 
 export const stores = [
   {
