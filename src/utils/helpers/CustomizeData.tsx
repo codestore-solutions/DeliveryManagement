@@ -1,7 +1,6 @@
 import {
   automaticAssignAgentInterface,
   manualAssignAgentInterface,
-  updateOrderStatusByAgent,
   updateOrders,
 } from "../types";
 
