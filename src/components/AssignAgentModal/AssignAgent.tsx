@@ -30,6 +30,7 @@ interface Props {
   fetch?: any;
   isOpen?: any;
   handleResetSelectionForOrder?: any;
+  fetchBulkData?: any;
 }
 
 const AssignAgent: React.FC<Props> = ({
@@ -40,6 +41,7 @@ const AssignAgent: React.FC<Props> = ({
   fetch,
   isOpen,
   handleResetSelectionForOrder,
+  fetchBulkData
 }) => {
   const [data, setData] = useState<any>(null);
   const [searchInput, setSearchInput] = useState<string>("");
@@ -144,6 +146,7 @@ const AssignAgent: React.FC<Props> = ({
               let updatePayload = CustomizeData.updateOrderStatusPayload(res?.data);
               updateOrderStatusByAgent(updatePayload);
               fetch();
+              fetchBulkData();
               handleResetSelectionForOrder();
             }
           })

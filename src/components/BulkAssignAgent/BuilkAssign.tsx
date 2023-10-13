@@ -23,6 +23,7 @@ interface Props {
   fetch: any;
   isOpen: any;
   handleResetSelectionForOrder: () => void;
+  fetchBulkData?: () => void;
 }
 
 // Bulk Automatic Assign Component
@@ -171,6 +172,7 @@ const BuilkAssign: React.FC<Props> = ({
   fetch,
   isOpen,
   handleResetSelectionForOrder,
+  fetchBulkData
 }) => {
   const [key, setKey] = useState<any>();
   const onChange = (key: string) => {
@@ -188,6 +190,7 @@ const BuilkAssign: React.FC<Props> = ({
           onClose={onClose}
           fetch={fetch}
           isOpen={isOpen}
+          fetchBulkData={fetchBulkData}
           handleResetSelectionForOrder={handleResetSelectionForOrder}
         />
       ),

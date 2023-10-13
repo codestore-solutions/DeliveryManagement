@@ -53,3 +53,8 @@ export interface updateOrderStatusByAgent{
       }
     ]
 }
+
+export interface updateOrders{
+      orderId: number,
+      deliveryAgentId: number
+}

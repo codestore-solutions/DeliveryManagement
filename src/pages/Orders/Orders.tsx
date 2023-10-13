@@ -20,6 +20,7 @@ const Orders: FC<OrderProps> = () => {
   const [selectedRowData, setSelectedRowData] = useState<React.Key[]>([]);
   const [activeTab, setActiveTab] = useState("1");
   const [isOpen, setIsOpen] = useState(false);
+  const [fetchBulk, setFetchBulk] = useState(false);
   const [isMultiSelect, setIsMultiSelect] = useState(false);
  
 
@@ -39,6 +40,8 @@ const Orders: FC<OrderProps> = () => {
   const handleCloseModal = () => {
     setIsOpen(false);
   };
+
+  const fetchBulkData = () => setFetchBulk(true);
   
   const onChangeTab = (key: string) => {
     setActiveTab(key);
@@ -56,6 +59,7 @@ const Orders: FC<OrderProps> = () => {
           setSelectedRowData={setSelectedRowData}
           isOpen={isOpen}
           activeTab = {activeTab}
+          fetchBulk={fetchBulk}
         />
       ),
     },
@@ -103,7 +107,12 @@ const Orders: FC<OrderProps> = () => {
             onClose={handleCloseModal}
             fetch={fetch}
             isOpen={isOpen}
+            fetchBulkData={fetchBulkData}
             handleResetSelectionForOrder = {handleResetSelectionForOrder}
+
+
+
+
           />
         }
         width={600}

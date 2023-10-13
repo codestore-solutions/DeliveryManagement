@@ -71,7 +71,7 @@ const AutomaticAssign: React.FC<AutoProps> = ({ orders, onClose }) => {
     },
   ];
 
-  const aasignAgentAutomatically = async () => {
+  const assignAgentAutomatically = async () => {
     try {
       let payload = {
         list: customizeOrders,
@@ -84,6 +84,7 @@ const AutomaticAssign: React.FC<AutoProps> = ({ orders, onClose }) => {
           setPreviewData(res?.data);
           setLoading(false);
         }
+        console.log("res?.data", res);
       });
     } catch (error) {
       console.log("AutomaticselectedAssignError", error);
@@ -96,7 +97,7 @@ const AutomaticAssign: React.FC<AutoProps> = ({ orders, onClose }) => {
     setPreviewData([]);
   };
   const PreViewHandler = () => {
-    aasignAgentAutomatically();
+    assignAgentAutomatically();
     setPreView(!preview);
   };
 

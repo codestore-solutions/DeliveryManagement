@@ -30,7 +30,7 @@ instance.interceptors.response.use(
     if (error && error.response) {
       // Request made and server responded
       console.log(error.response.data);
-      console.log(error.response.status);
+      console.log("vvcvcv",error.response.status);
       console.log(error.response.headers);
       if (error.response.status === ApiConstants.internalServerError) {
         apiData = {
@@ -109,9 +109,20 @@ instance.interceptors.response.use(
       );
     }
     if(error.response.status !== ApiConstants.notFound){
-      message.error(apiData?.data);
+      if(error?.response?.data?.message){
+        message.error(error?.response?.data?.message);
+      }else{
+
+        message.error(apiData?.data);
+      }
     }
 
+    if(error.response.status === 404){
+      if(error?.response?.data?.message){
+        message.error(error?.response?.data?.message);
+      }
+    }
+    
     return Promise.reject(apiData);
   }
 );

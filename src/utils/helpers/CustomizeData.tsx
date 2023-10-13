@@ -2,6 +2,7 @@ import {
   automaticAssignAgentInterface,
   manualAssignAgentInterface,
   updateOrderStatusByAgent,
+  updateOrders,
 } from "../types";
 
 function getRandomNumber() {
@@ -143,20 +144,20 @@ const assignAgentAutoData = (previewData: any, orderData: any) => {
 };
 
 const updateOrderStatusPayload = (data: any) => {
-  let payload = Array<updateOrderStatusByAgent>();
+  let payload = Array<updateOrders>();
   data.forEach((item: any) => {
-    let newPayload: updateOrderStatusByAgent = {
-      orderStatus: 5,
-      orders: [
-        {
-          orderId: item?.orderId,
-          deliveryAgentId: item?.agentId,
-        },
-      ],
+    let newPayload = {
+      orderId: item?.orderId,
+      deliveryAgentId: item?.agentId,
     };
+
     payload.push(newPayload);
   });
-  return payload;
+  const newPayload = {
+    orderStatus: 5,
+    orders: payload,
+  };
+  return newPayload;
 };
 
 const assignAgentAutoDataSingle = (previewData: any, orderData: any) => {
